@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "migangbot"
+version = "0.1.0"
+description = "基于Nonebot2的机器人"
+authors = ["LambdaYH"]
+license = "MIT"
+readme = "README.md"
+
+[[tool.poetry.source]]
+name = "ali"
+default = true
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+nonebot2 = {extras = ["fastapi"], version = "^2.0.0rc3"}
+nonebot-adapter-onebot = "^2.2.1"
+nonebot-plugin-apscheduler = "^0.2.0"
+aiofiles = "^0.8.0"
+ujson = "^5.7.0"
+ruamel-yaml = "^0.17.21"
+nonebot-plugin-imageutils = "^0.1.14"
+nonebot-plugin-htmlrender = "^0.2.0.1"
+
+[tool.poetry.group.dev.dependencies]
+black = {version = "^23.1a1", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
