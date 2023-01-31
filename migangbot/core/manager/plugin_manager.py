@@ -7,111 +7,6 @@ from migangbot.core.exception import FileTypeError
 from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
 
 
-class Plugin:
-    """
-    管理单个插件或任务在群聊中的状态
-    """
-
-    def __init__(self, data: Dict, usage: Optional[str] = None) -> None:
-        # 插件名
-        self.__name = data["name"]
-        self.__all_name: Set[str] = set(data["aliases"])
-        self.__all_name.add(self.__name)
-        self.__permission: int = data["permission"]
-        self.__category: Optional[str] = data["category"]
-        self.__author: str = data["author"]
-        self.__version: str = data["version"]
-        self.__usage: Optional[str] = usage
-        # 全局禁用状态
-        self.__global_status: bool = data["global_status"]
-        # 插件默认状态
-        self.__default_status: bool = data["default_status"]
-        # 快速查找用
-        self.__non_default_group: Set[int] = (
-            set(data["disbled_group"])
-            if self.__default_status
-            else set(data["enabled_group"])
-        )
-        # 保存入配置文件用，修改时需要2倍修改量
-        self.__enabled_group: List[int] = data["enabled_group"]
-        self.__disabled_group: List[int] = data["disbled_group"]
-
-    def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
-        return (
-            self.__global_status
-            and (group_permission >= self.__permission)
-            and (self.__default_status ^ (group_id in self.__non_default_group))
-        )
-
-    def SetGroupEnable(self, group_id: int) -> bool:
-        if not self.__global_status:
-            return False
-        if self.__default_status:
-            if group_id in self.__non_default_group:
-                self.__non_default_group.remove(group_id)
-                self.__disabled_group.remove(group_id)
-            if group_id not in self.__enabled_group:
-                self.__enabled_group.append(group_id)
-        else:
-            if group_id not in self.__non_default_group:
-                self.__non_default_group.add(group_id)
-                self.__enabled_group.append(group_id)
-            if group_id in self.__disabled_group:
-                self.__disabled_group.remove(group_id)
-        return True
-
-    def SetGroupDisable(self, group_id: int) -> bool:
-        if self.__default_status:
-            if group_id not in self.__non_default_group:
-                self.__non_default_group.add(group_id)
-                self.__disabled_group.append(group_id)
-            if group_id in self.__enabled_group:
-                self.__enabled_group.remove(group_id)
-        else:
-            if group_id in self.__non_default_group:
-                self.__non_default_group.remove(group_id)
-                self.__enabled_group.remove(group_id)
-            if group_id not in self.__disabled_group:
-                self.__disabled_group.append(group_id)
-        return True
-
-    def SetUsage(self, usage: Optional[str]) -> None:
-        self.__usage = usage
-
-    @property
-    def name(self) -> str:
-        return self.__name
-
-    @property
-    def all_name(self) -> Set[str]:
-        return self.__all_name
-
-    @property
-    def usage(self) -> Optional[str]:
-        return self.__usage
-
-    @property
-    def author(self) -> str:
-        return self.__author
-
-    @property
-    def version(self) -> str:
-        return self.__version
-
-    @property
-    def category(self) -> Optional[str]:
-        return self.__category
-
-    def CleanGroup(self, group_set: Set[int]):
-        self.__non_default_group &= group_set
-        if self.__default_status:
-            self.__disabled_group.clear()
-            self.__disabled_group += list(self.__non_default_group)
-        else:
-            self.__enabled_group.clear()
-            self.__enabled_group += list(self.__non_default_group)
-
-
 class PluginManager:
     """
     管理全部插件与任务
@@ -123,9 +18,113 @@ class PluginManager:
     禁用群组
     """
 
+    class Plugin:
+        """
+        管理单个插件或任务在群聊中的状态
+        """
+
+        def __init__(self, data: Dict, usage: Optional[str] = None) -> None:
+            # 插件名
+            self.__name = data["name"]
+            self.__all_name: Set[str] = set(data["aliases"])
+            self.__all_name.add(self.__name)
+            self.__permission: int = data["permission"]
+            self.__category: Optional[str] = data["category"]
+            self.__author: str = data["author"]
+            self.__version: str = data["version"]
+            self.__usage: Optional[str] = usage
+            # 全局禁用状态
+            self.__global_status: bool = data["global_status"]
+            # 插件默认状态
+            self.__default_status: bool = data["default_status"]
+            # 快速查找用
+            self.__non_default_group: Set[int] = (
+                set(data["disbled_group"])
+                if self.__default_status
+                else set(data["enabled_group"])
+            )
+            # 保存入配置文件用，修改时需要2倍修改量
+            self.__enabled_group: List[int] = data["enabled_group"]
+            self.__disabled_group: List[int] = data["disbled_group"]
+
+        def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
+            return (
+                self.__global_status
+                and (group_permission >= self.__permission)
+                and (self.__default_status ^ (group_id in self.__non_default_group))
+            )
+
+        def SetGroupEnable(self, group_id: int) -> bool:
+            if not self.__global_status:
+                return False
+            if self.__default_status:
+                if group_id in self.__non_default_group:
+                    self.__non_default_group.remove(group_id)
+                    self.__disabled_group.remove(group_id)
+                if group_id not in self.__enabled_group:
+                    self.__enabled_group.append(group_id)
+            else:
+                if group_id not in self.__non_default_group:
+                    self.__non_default_group.add(group_id)
+                    self.__enabled_group.append(group_id)
+                if group_id in self.__disabled_group:
+                    self.__disabled_group.remove(group_id)
+            return True
+
+        def SetGroupDisable(self, group_id: int) -> bool:
+            if self.__default_status:
+                if group_id not in self.__non_default_group:
+                    self.__non_default_group.add(group_id)
+                    self.__disabled_group.append(group_id)
+                if group_id in self.__enabled_group:
+                    self.__enabled_group.remove(group_id)
+            else:
+                if group_id in self.__non_default_group:
+                    self.__non_default_group.remove(group_id)
+                    self.__enabled_group.remove(group_id)
+                if group_id not in self.__disabled_group:
+                    self.__disabled_group.append(group_id)
+            return True
+
+        def SetUsage(self, usage: Optional[str]) -> None:
+            self.__usage = usage
+
+        @property
+        def name(self) -> str:
+            return self.__name
+
+        @property
+        def all_name(self) -> Set[str]:
+            return self.__all_name
+
+        @property
+        def usage(self) -> Optional[str]:
+            return self.__usage
+
+        @property
+        def author(self) -> str:
+            return self.__author
+
+        @property
+        def version(self) -> str:
+            return self.__version
+
+        @property
+        def category(self) -> Optional[str]:
+            return self.__category
+
+        def CleanGroup(self, group_set: Set[int]):
+            self.__non_default_group &= group_set
+            if self.__default_status:
+                self.__disabled_group.clear()
+                self.__disabled_group += list(self.__non_default_group)
+            else:
+                self.__enabled_group.clear()
+                self.__enabled_group += list(self.__non_default_group)
+
     def __init__(self, file: Union[Path, str]) -> None:
         self.__data: Dict = {}  # 用于写入文件
-        self.__plugin: Dict[str, Plugin] = {}  # 用于管理插件
+        self.__plugin: Dict[str, PluginManager.Plugin] = {}  # 用于管理插件
         self.__plugin_aliases: Dict[str, str] = {}  # 建立插件别名与插件名的映射
         self.__file: Path = Path(file) if isinstance(file, str) else file
 
@@ -138,7 +137,9 @@ class PluginManager:
                 self.__data = json.load(f)
 
         for plugin in self.__data:
-            self.__plugin[plugin]: Plugin = Plugin(self.__data[plugin])
+            self.__plugin[plugin]: PluginManager.Plugin = PluginManager.Plugin(
+                self.__data[plugin]
+            )
             for alias in self.__plugin[plugin].all_name:
                 self.__plugin_aliases[alias] = plugin
 
@@ -201,7 +202,9 @@ class PluginManager:
         self.__data = await AsyncLoadData(self.__file)
         self.__plugin.clear()
         for plugin in self.__data:
-            self.__plugin[plugin]: Plugin = Plugin(self.__data[plugin])
+            self.__plugin[plugin]: PluginManager.Plugin = PluginManager.Plugin(
+                self.__data[plugin]
+            )
 
     async def CleanGroup(self, group_list: Union[List[int], Set[int]]) -> None:
         group_list = set(group_list)
@@ -242,7 +245,9 @@ class PluginManager:
             "author": author,
             "version": version,
         }
-        self.__plugin[plugin_name] = Plugin(data=self.__data[plugin_name], usage=usage)
+        self.__plugin[plugin_name] = PluginManager.Plugin(
+            data=self.__data[plugin_name], usage=usage
+        )
         for alias in self.__plugin[plugin_name].all_name:
             self.__plugin_aliases[alias] = plugin_name
         if auto_save:

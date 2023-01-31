@@ -13,7 +13,12 @@ async def init_plugin_config():
         if not hasattr(plugin.module, "__plugin_config__"):
             continue
         configs = plugin.module.__getattribute__("__plugin_config__")
-        if type(configs) is ConfigItem:
-            await config_manager.AddConfig(plugin_name=plugin.name, config=configs)
-        elif type(configs) is list:
-            await config_manager.AddConfigs(plugin_name=plugin.name, configs=configs)
+        try:
+            if type(configs) is ConfigItem:
+                await config_manager.AddConfig(plugin_name=plugin.name, config=configs)
+            elif type(configs) is list:
+                await config_manager.AddConfigs(
+                    plugin_name=plugin.name, configs=configs
+                )
+        except Exception as e:
+            logger.error(f"插件 {plugin.name} 配置加载失败：{e}")

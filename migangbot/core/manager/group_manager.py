@@ -8,35 +8,34 @@ from migangbot.core.exception import FileTypeError
 from migangbot.core.utils.file_operation import AsyncSaveData
 
 
-class Group:
-    def __init__(self, data: Dict) -> None:
-        self.__data = data
-        self.__permission: int = data["permission"]
-        self.__bot_status: bool = data["bot_status"]
-
-    @property
-    def permission(self) -> int:
-        return self.__permission
-
-    @property
-    def bot_status(self):
-        return self.__bot_status
-
-    def SetBotEnable(self):
-        self.__bot_status = True
-        self.__data["bot_status"] = True
-
-    def SetBotDisable(self):
-        self.__bot_status = False
-        self.__data["bot_status"] = False
-
-    def SetPermission(self, permission: int):
-        self.__permission = permission
-        self.__data["permission"] = permission
-
-
 class GroupManager:
     """ """
+
+    class Group:
+        def __init__(self, data: Dict) -> None:
+            self.__data = data
+            self.__permission: int = data["permission"]
+            self.__bot_status: bool = data["bot_status"]
+
+        @property
+        def permission(self) -> int:
+            return self.__permission
+
+        @property
+        def bot_status(self):
+            return self.__bot_status
+
+        def SetBotEnable(self):
+            self.__bot_status = True
+            self.__data["bot_status"] = True
+
+        def SetBotDisable(self):
+            self.__bot_status = False
+            self.__data["bot_status"] = False
+
+        def SetPermission(self, permission: int):
+            self.__permission = permission
+            self.__data["permission"] = permission
 
     def __init__(
         self,
@@ -45,7 +44,7 @@ class GroupManager:
         task_manager: PluginManager,
     ) -> None:
         self.__data: Dict[str, Dict] = {}
-        self.__group: Dict[int, Group] = {}
+        self.__group: Dict[int, GroupManager.Group] = {}
         self.__file: Path = Path(file) if isinstance(file, str) else file
 
         # 交由他俩检测插件是否允许，本类仅仅管理群本身权限与bot启用情况
@@ -61,7 +60,7 @@ class GroupManager:
                 self.__data = json.load(f)
 
         for group in self.__data:
-            self.__group[int(group)] = Group(self.__data[group])
+            self.__group[int(group)] = GroupManager.Group(self.__data[group])
 
     def CheckGroupPluginStatus(self, plugin_name: str, group_id: int):
         return (group_id not in self.__group) or (
@@ -101,7 +100,7 @@ class GroupManager:
             "permission": NORMAL,
             "bot_status": True,
         }
-        self.__group[group_id] = Group(self.__data[str(group_id)])
+        self.__group[group_id] = GroupManager.Group(self.__data[str(group_id)])
         if auto_save:
             await self.Save()
 
