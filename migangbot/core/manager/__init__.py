@@ -1,6 +1,8 @@
 from pathlib import Path
+
 from .plugin_manager import PluginManager
 from .group_manager import GroupManager
+from .config_manager import ConfigManager, ConfigItem
 
 core_data_path = Path() / "data" / "core"
 
@@ -11,3 +13,4 @@ group_manager: GroupManager = GroupManager(
     plugin_manager=plugin_manager,
     task_manager=task_manager,
 )
+config_manager: ConfigManager = ConfigManager()

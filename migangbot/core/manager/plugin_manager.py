@@ -16,12 +16,12 @@ class Plugin:
         # 插件名
         self.__name = data["name"]
         self.__all_name: Set[str] = set(data["aliases"])
-        self.__all_name.add(self.Name)
+        self.__all_name.add(self.__name)
         self.__permission: int = data["permission"]
         self.__category: Optional[str] = data["category"]
         self.__author: str = data["author"]
         self.__version: str = data["version"]
-        self.__Usage: Optional[str] = usage
+        self.__usage: Optional[str] = usage
         # 全局禁用状态
         self.__global_status: bool = data["global_status"]
         # 插件默认状态
@@ -76,30 +76,30 @@ class Plugin:
         return True
 
     def SetUsage(self, usage: Optional[str]) -> None:
-        self.__Usage = usage
+        self.__usage = usage
 
     @property
-    def Name(self) -> str:
+    def name(self) -> str:
         return self.__name
 
     @property
-    def AllName(self) -> Set[str]:
+    def all_name(self) -> Set[str]:
         return self.__all_name
 
     @property
-    def Usage(self) -> Optional[str]:
-        return self.__Usage
+    def usage(self) -> Optional[str]:
+        return self.__usage
 
     @property
-    def Author(self) -> str:
+    def author(self) -> str:
         return self.__author
 
     @property
-    def Version(self) -> str:
+    def version(self) -> str:
         return self.__version
 
     @property
-    def Category(self) -> Optional[str]:
+    def category(self) -> Optional[str]:
         return self.__category
 
     def CleanGroup(self, group_set: Set[int]):
@@ -139,7 +139,7 @@ class PluginManager:
 
         for plugin in self.__data:
             self.__plugin[plugin]: Plugin = Plugin(self.__data[plugin])
-            for alias in self.__plugin[plugin].AllName:
+            for alias in self.__plugin[plugin].all_name:
                 self.__plugin_aliases[alias] = plugin
 
     def CheckGroupStatus(
@@ -183,7 +183,7 @@ class PluginManager:
             return None
         if name not in self.__plugin:
             name = self.__plugin_aliases[name]
-        return self.__plugin[name].Usage
+        return self.__plugin[name].usage
 
     def CheckPlugin(self, name: str) -> bool:
         """
@@ -243,7 +243,7 @@ class PluginManager:
             "version": version,
         }
         self.__plugin[plugin_name] = Plugin(data=self.__data[plugin_name], usage=usage)
-        for alias in self.__plugin[plugin_name].AllName:
+        for alias in self.__plugin[plugin_name].all_name:
             self.__plugin_aliases[alias] = plugin_name
         if auto_save:
             await self.Save()

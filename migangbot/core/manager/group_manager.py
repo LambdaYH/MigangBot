@@ -15,11 +15,11 @@ class Group:
         self.__bot_status: bool = data["bot_status"]
 
     @property
-    def Permission(self) -> int:
+    def permission(self) -> int:
         return self.__permission
 
     @property
-    def BotStatus(self):
+    def bot_status(self):
         return self.__bot_status
 
     def SetBotEnable(self):
@@ -65,11 +65,11 @@ class GroupManager:
 
     def CheckGroupPluginStatus(self, plugin_name: str, group_id: int):
         return (group_id not in self.__group) or (
-            self.__group[group_id].BotStatus
+            self.__group[group_id].bot_status
             and self.__plugin_manager.CheckGroupStatus(
                 plugin_name=plugin_name,
                 group_id=group_id,
-                group_permission=self.__group[group_id].Permission,
+                group_permission=self.__group[group_id].permission,
             )
         )
 
@@ -78,11 +78,11 @@ class GroupManager:
 
     def CheckGroupTaskStatus(self, plugin_name: str, group_id: int):
         return (group_id not in self.__group) or (
-            self.__group[group_id].BotStatus
+            self.__group[group_id].bot_status
             and self.__task_manager.CheckGroupStatus(
                 plugin_name=plugin_name,
                 group_id=group_id,
-                group_permission=self.__group[group_id].Permission,
+                group_permission=self.__group[group_id].permission,
             )
         )
 

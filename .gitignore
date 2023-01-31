@@ -142,8 +142,9 @@ dmypy.json
 
 # migangbot
 data/
-config/
+configs/
 
 # developing
 migangbot/plugins/*
 .env.dev
+.env

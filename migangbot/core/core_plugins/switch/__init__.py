@@ -43,9 +43,8 @@ async def _(
                     count += 1
         await plugin_manager.Save()
         await switch.finish(
-            f"已{cmd}全部插件" + f"，不包括{count}个全局禁用插件"
-            if "cmd" == "开启" and count != 0
-            else ""
+            f"已{cmd}全部插件"
+            + (f"，不包括{count}个全局禁用插件" if "cmd" == "开启" and count != 0 else "")
         )
     if name := plugin_manager.GetPluginName(param):
         if cmd == "开启" and not await plugin_manager.SetGroupEnable(
