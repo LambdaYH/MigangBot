@@ -1,6 +1,5 @@
 from typing import Dict, Union, Callable, List
 from time import time
-from enum import Enum, unique
 
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -9,18 +8,7 @@ from nonebot.adapters.onebot.v11 import (
     PokeNotifyEvent,
 )
 
-
-@unique
-class CDLimitType(Enum):
-    user = 0
-    group = 1
-
-
-@unique
-class CDCheckType(Enum):
-    private = 0
-    group = 1
-    all = 2
+from .data_type import LimitType, CheckType
 
 
 class CDItem:
@@ -28,36 +16,20 @@ class CDItem:
         self,
         cd: Union[int, float],
         hint: Union[str, Message, None],
-        limit_type: CDLimitType = CDLimitType.user,
-        check_type: CDCheckType = CDCheckType.all,
+        limit_type: LimitType = LimitType.user,
+        check_type: CheckType = CheckType.all,
     ) -> None:
         """
         Args:
             cd (Union[int, float]): 插件CD
             hint (Union[str, Message, None]): 当CD未到时的提示语
-            limit_type (CDLimitType, optional): 检查CD的对象，群或用户. Defaults to CDLimitType.user.
-            check_type (CDCheckType, optional): 检查CD的会话，群聊或私聊或全部. Defaults to CDCheckType.all.
+            limit_type (LimitType, optional): 检查CD的对象，群或用户. Defaults to LimitType.user.
+            check_type (CheckType, optional): 检查CD的会话，群聊或私聊或全部. Defaults to CheckType.all.
         """
-        self.__cd = cd
-        self.__hint = hint
-        self.__limit_type = limit_type
-        self.__check_type = check_type
-
-    @property
-    def cd(self):
-        return self.__cd
-
-    @property
-    def hint(self):
-        return self.__hint
-
-    @property
-    def limit_type(self):
-        return self.__limit_type
-
-    @property
-    def check_type(self):
-        return self.__check_type
+        self.cd = cd
+        self.hint = hint
+        self.limit_type = limit_type
+        self.check_type = check_type
 
 
 class CDManager:
@@ -69,25 +41,21 @@ class CDManager:
         class CDChecker:
             def __init__(self, cd_item: CDItem) -> None:
                 self.__cd = cd_item.cd
-                self.__hint = cd_item.hint
+                self.hint = cd_item.hint
                 self.__last_called: Dict[int, float] = {}
                 self.__func: Callable = self.__CheckUserPrivate
                 limit_type, check_type = cd_item.limit_type, cd_item.check_type
-                if limit_type == CDLimitType.user and check_type == CDCheckType.private:
+                if limit_type == LimitType.user and check_type == CheckType.private:
                     self.__func = self.__CheckUserPrivate
-                elif limit_type == CDLimitType.user and check_type == CDCheckType.group:
+                elif limit_type == LimitType.user and check_type == CheckType.group:
                     self.__func = self.__CheckUserGroup
-                elif limit_type == CDLimitType.user and check_type == CDCheckType.all:
+                elif limit_type == LimitType.user and check_type == CheckType.all:
                     self.__func = self.__CheckUserAll
                 else:
                     self.__func = self.__CheckGroup
 
             def Check(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
                 return self.__func(event)
-
-            @property
-            def hint(self) -> Union[str, Message, None]:
-                return self.__hint
 
             def __CheckUserPrivate(
                 self, event: Union[MessageEvent, PokeNotifyEvent]

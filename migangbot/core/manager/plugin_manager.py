@@ -25,14 +25,14 @@ class PluginManager:
 
         def __init__(self, data: Dict, usage: Optional[str] = None) -> None:
             # 插件名
-            self.__name = data["name"]
-            self.__all_name: Set[str] = set(data["aliases"])
-            self.__all_name.add(self.__name)
+            self.name = data["name"]
+            self.all_name: Set[str] = set(data["aliases"])
+            self.all_name.add(self.name)
             self.__permission: int = data["permission"]
-            self.__category: Optional[str] = data["category"]
-            self.__author: str = data["author"]
-            self.__version: str = data["version"]
-            self.__usage: Optional[str] = usage
+            self.category: Optional[str] = data["category"]
+            self.author: str = data["author"]
+            self.version: str = data["version"]
+            self.usage: Optional[str] = usage
             # 全局禁用状态
             self.__global_status: bool = data["global_status"]
             # 插件默认状态
@@ -87,31 +87,7 @@ class PluginManager:
             return True
 
         def SetUsage(self, usage: Optional[str]) -> None:
-            self.__usage = usage
-
-        @property
-        def name(self) -> str:
-            return self.__name
-
-        @property
-        def all_name(self) -> Set[str]:
-            return self.__all_name
-
-        @property
-        def usage(self) -> Optional[str]:
-            return self.__usage
-
-        @property
-        def author(self) -> str:
-            return self.__author
-
-        @property
-        def version(self) -> str:
-            return self.__version
-
-        @property
-        def category(self) -> Optional[str]:
-            return self.__category
+            self.usage = usage
 
         def CleanGroup(self, group_set: Set[int]):
             self.__non_default_group &= group_set

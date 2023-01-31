@@ -14,27 +14,19 @@ class GroupManager:
     class Group:
         def __init__(self, data: Dict) -> None:
             self.__data = data
-            self.__permission: int = data["permission"]
-            self.__bot_status: bool = data["bot_status"]
-
-        @property
-        def permission(self) -> int:
-            return self.__permission
-
-        @property
-        def bot_status(self):
-            return self.__bot_status
+            self.permission: int = data["permission"]
+            self.bot_status: bool = data["bot_status"]
 
         def SetBotEnable(self):
-            self.__bot_status = True
+            self.bot_status = True
             self.__data["bot_status"] = True
 
         def SetBotDisable(self):
-            self.__bot_status = False
+            self.bot_status = False
             self.__data["bot_status"] = False
 
         def SetPermission(self, permission: int):
-            self.__permission = permission
+            self.permission = permission
             self.__data["permission"] = permission
 
     def __init__(

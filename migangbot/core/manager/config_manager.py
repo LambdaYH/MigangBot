@@ -8,6 +8,7 @@ from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
 from migangbot.core.exception import ConfigNoExistError
 
 _config_path = Path() / "configs"
+_config_path.mkdir(parents=True, exist_ok=True)
 
 
 class ConfigItem:
@@ -19,31 +20,11 @@ class ConfigItem:
         description: Optional[str] = None,
         config_name: Optional[str] = None,
     ) -> None:
-        self.__key = key
-        self.__initial_value = initial_value
-        self.__default_value = default_value
-        self.__description = description
-        self.__config_name = config_name
-
-    @property
-    def key(self) -> str:
-        return self.__key
-
-    @property
-    def initial_value(self) -> Optional[Any]:
-        return self.__initial_value
-
-    @property
-    def default_value(self) -> Optional[Any]:
-        return self.__default_value
-
-    @property
-    def description(self) -> Optional[str]:
-        return self.__description
-
-    @property
-    def config_name(self) -> Optional[str]:
-        return self.__config_name
+        self.key = key
+        self.initial_value = initial_value
+        self.default_value = default_value
+        self.description = description
+        self.config_name = config_name
 
 
 class ConfigManager:
