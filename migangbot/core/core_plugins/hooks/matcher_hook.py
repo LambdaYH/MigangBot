@@ -20,15 +20,15 @@ async def _(bot: Bot, matcher: Matcher, event: Event):
     ):
         raise IgnoredException("群插件不可用")
     if isinstance(event, MessageEvent) or type(event) is PokeNotifyEvent:
-        # 检查插件次数限制
-        if (
-            ret := count_manager.Check(plugin_name=matcher.plugin_name, event=event)
-        ) != True:
-            await matcher.send(ret)
-            raise IgnoredException("count...")
         # 检测插件CD
         if (
             ret := cd_manager.Check(plugin_name=matcher.plugin_name, event=event)
         ) != True:
             await matcher.send(ret)
             raise IgnoredException("cd...")
+        # 检查插件次数限制
+        if (
+            ret := count_manager.Check(plugin_name=matcher.plugin_name, event=event)
+        ) != True:
+            await matcher.send(ret)
+            raise IgnoredException("count...")

@@ -1,10 +1,12 @@
-import ujson as json
+import asyncio
 from pathlib import Path
-from typing import Union, Dict, Set, List, Optional
+from typing import Union, Dict, Set, List, Optional, Any
 
 from migangbot.core.permission import NORMAL
-from migangbot.core.exception import FileTypeError
 from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
+
+_file_path = Path() / "data" / "core" / "plugin_manager"
+_file_path.mkdir(parents=True, exist_ok=True)
 
 
 class PluginManager:
@@ -23,29 +25,49 @@ class PluginManager:
         管理单个插件或任务在群聊中的状态
         """
 
-        def __init__(self, data: Dict, usage: Optional[str] = None) -> None:
-            # 插件名
-            self.name = data["name"]
-            self.all_name: Set[str] = set(data["aliases"])
-            self.all_name.add(self.name)
-            self.__permission: int = data["permission"]
-            self.category: Optional[str] = data["category"]
-            self.author: str = data["author"]
-            self.version: str = data["version"]
+        def __init__(self, plugin_name: str, usage: Optional[str] = None) -> None:
+            # 数据
+            self.__data: Dict[str, Any]
+            self.__file = _file_path / f"{plugin_name}.json"
+
+            # 属性
+            self.name: str
+            self.all_name: Set[str]
+            self.category: Optional[str]
+            self.author: str
+            self.version: str
             self.usage: Optional[str] = usage
             # 全局禁用状态
-            self.__global_status: bool = data["global_status"]
+            self.__global_status: bool
             # 插件默认状态
-            self.__default_status: bool = data["default_status"]
+            self.__default_status: bool
             # 快速查找用
-            self.__non_default_group: Set[int] = (
-                set(data["disbled_group"])
-                if self.__default_status
-                else set(data["enabled_group"])
-            )
+            self.__non_default_group: Set[int]
             # 保存入配置文件用，修改时需要2倍修改量
-            self.__enabled_group: List[int] = data["enabled_group"]
-            self.__disabled_group: List[int] = data["disbled_group"]
+            self.__enabled_group: List[int]
+            self.__disabled_group: List[int]
+
+        async def Init(self) -> None:
+            self.__data = await AsyncLoadData(self.__file)
+            self.name = self.__data["name"]
+            self.all_name: Set[str] = set(self.__data["aliases"])
+            self.all_name.add(self.name)
+            self.__permission: int = self.__data["permission"]
+            self.category: Optional[str] = self.__data["category"]
+            self.author: str = self.__data["author"]
+            self.version: str = self.__data["version"]
+            self.__global_status: bool = self.__data["global_status"]
+            self.__default_status: bool = self.__data["default_status"]
+            self.__non_default_group: Set[int] = (
+                set(self.__data["disbled_group"])
+                if self.__default_status
+                else set(self.__data["enabled_group"])
+            )
+            self.__enabled_group: List[int] = self.__data["enabled_group"]
+            self.__disabled_group: List[int] = self.__data["disbled_group"]
+
+        async def Save(self) -> None:
+            await AsyncSaveData(self.__data, self.__file)
 
         def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
             return (
@@ -98,26 +120,27 @@ class PluginManager:
                 self.__enabled_group.clear()
                 self.__enabled_group += list(self.__non_default_group)
 
-    def __init__(self, file: Union[Path, str]) -> None:
-        self.__data: Dict = {}  # 用于写入文件
+    def __init__(self) -> None:
         self.__plugin: Dict[str, PluginManager.Plugin] = {}  # 用于管理插件
         self.__plugin_aliases: Dict[str, str] = {}  # 建立插件别名与插件名的映射
-        self.__file: Path = Path(file) if isinstance(file, str) else file
+        plugin_files = _file_path.iterdir()
+        for plugin_file in plugin_files:
+            if plugin_file.suffix == ".json":
+                plugin_name = plugin_file.name.removesuffix(".json")
+                self.__plugin[plugin_name]: PluginManager.Plugin = PluginManager.Plugin(
+                    plugin_name=plugin_name
+                )
 
-        if file.suffix != ".json":
-            raise FileTypeError("插件管理模块配置文件必须为json格式！")
-
-        file.parent.mkdir(parents=True, exist_ok=True)
-        if file.exists():
-            with open(file, "r", encoding="utf-8") as f:
-                self.__data = json.load(f)
-
-        for plugin in self.__data:
-            self.__plugin[plugin]: PluginManager.Plugin = PluginManager.Plugin(
-                self.__data[plugin]
-            )
-            for alias in self.__plugin[plugin].all_name:
-                self.__plugin_aliases[alias] = plugin
+    async def Init(self):
+        ret = await asyncio.gather(
+            *[plugin.Init() for plugin in self.__plugin.values()],
+            return_exceptions=True,
+        )
+        for i, plugin in enumerate(self.__plugin.values()):
+            if not ret[i]:
+                for alias in plugin.all_name:
+                    self.__plugin_aliases[alias] = plugin.name
+        return ret
 
     def CheckGroupStatus(
         self, plugin_name: str, group_id: int, group_permission: int
@@ -126,29 +149,31 @@ class PluginManager:
         检查插件是否响应
         若插件不受管理，则默认响应
         """
-        return plugin_name not in self.__plugin or self.__plugin[
-            plugin_name
-        ].CheckGroupStatus(group_id=group_id, group_permission=group_permission)
+        return (
+            not (plugin := self.__plugin.get(plugin_name))
+        ) or plugin.CheckGroupStatus(
+            group_id=group_id, group_permission=group_permission
+        )
 
     async def SetGroupEnable(
         self, plugin_name: str, group_id: int, auto_save=True
     ) -> bool:
-        if plugin_name in self.__plugin and self.__plugin[plugin_name].SetGroupEnable(
+        if (plugin := self.__plugin.get(plugin_name)) and plugin.SetGroupEnable(
             group_id
         ):
             if auto_save:
-                await self.Save()
+                await plugin.Save()
             return True
         return False
 
     async def SetGroupDisable(
         self, plugin_name: str, group_id: int, auto_save=True
     ) -> bool:
-        if plugin_name in self.__plugin and self.__plugin[plugin_name].SetGroupDisable(
+        if (plugin := self.__plugin.get(plugin_name)) and plugin.SetGroupDisable(
             group_id
         ):
             if auto_save:
-                await self.Save()
+                await plugin.Save()
             return True
         return False
 
@@ -169,32 +194,21 @@ class PluginManager:
         return name in self.__plugin
 
     def GetPluginList(self) -> Set[str]:
-        return self.__data.keys()
+        return self.__plugin.keys()
 
     def GetPluginName(self, name: str) -> Optional[str]:
         return self.__plugin_aliases.get(name)
 
-    async def ReLoad(self) -> None:
-        self.__data = await AsyncLoadData(self.__file)
-        self.__plugin.clear()
-        for plugin in self.__data:
-            self.__plugin[plugin]: PluginManager.Plugin = PluginManager.Plugin(
-                self.__data[plugin]
-            )
-
     async def CleanGroup(self, group_list: Union[List[int], Set[int]]) -> None:
         group_list = set(group_list)
-        for _, plugin in self.__plugin.items():
+        for plugin in self.__plugin.values():
             plugin.CleanGroup(group_list)
-        await self.Save()
+        await asyncio.gather(*[plugin.Save() for plugin in self.__plugin.values()])
 
     def SetPluginUsage(self, plugin_name: str, usage: Optional[str]):
         if plugin_name not in self.__plugin:
             return
         self.__plugin[plugin_name].SetUsage(usage=usage)
-
-    async def Save(self):
-        await AsyncSaveData(self.__data, self.__file)
 
     async def Add(
         self,
@@ -207,31 +221,27 @@ class PluginManager:
         usage: Optional[str] = None,
         default_status: bool = True,
         permission: int = NORMAL,
-        auto_save: bool = True,
     ) -> None:
-        self.__data[plugin_name] = {
-            "name": name,
-            "aliases": aliases,
-            "permission": permission,
-            "global_status": True,
-            "default_status": default_status,
-            "enabled_group": [],
-            "disbled_group": [],
-            "category": category,
-            "author": author,
-            "version": version,
-        }
-        self.__plugin[plugin_name] = PluginManager.Plugin(
-            data=self.__data[plugin_name], usage=usage
+        await AsyncSaveData(
+            {
+                "name": name,
+                "aliases": aliases,
+                "permission": permission,
+                "global_status": True,
+                "default_status": default_status,
+                "enabled_group": [],
+                "disbled_group": [],
+                "category": category,
+                "author": author,
+                "version": version,
+            },
+            _file_path / f"{plugin_name}.json",
         )
-        for alias in self.__plugin[plugin_name].all_name:
-            self.__plugin_aliases[alias] = plugin_name
-        if auto_save:
-            await self.Save()
+        self.__plugin[plugin_name] = PluginManager.Plugin(
+            plugin_name=plugin_name, usage=usage
+        )
 
-    async def Remove(self, plugin_name: str, auto_save: bool = True) -> None:
-        if plugin_name in self.__data:
-            del self.__data[plugin_name]
+    async def Remove(self, plugin_name: set) -> None:
+        if plugin_name in self.__plugin:
             del self.__plugin[plugin_name]
-        if auto_save:
-            await self.Save()
+            (_file_path / f"{plugin_name}.json").unlink()

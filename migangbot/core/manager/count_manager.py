@@ -44,20 +44,23 @@ _period_to_int = {
 
 
 def _default():
-    return [0, 0, 0, 0, 0]
+    return [0] * 5
 
 
 class CountManager:
     class PluginCount:
+        class Counter:
+            def __init__(self) -> None:
+                self.user: DefaultDict[int, List[int]] = defaultdict(_default)
+                self.group: DefaultDict[int, List[int]] = defaultdict(_default)
+
         class CountChecker:
-            def __init__(
-                self, data: DefaultDict[int, List[int]], count_item: CountItem
-            ) -> None:
+            def __init__(self, data, count_item: CountItem) -> None:
                 limit_type, check_type = count_item.limit_type, count_item.check_type
                 self.hint = count_item.hint
                 self.__count_limit = count_item.count
                 self.__data: DefaultDict[int, List[int]] = (
-                    data["user"] if limit_type == LimitType.user else data["group"]
+                    data.user if limit_type == LimitType.user else data.group
                 )
                 self.__idx: int = _period_to_int[count_item.count_period]
                 self.__func: Callable = self.__CheckUserPrivate
@@ -104,10 +107,9 @@ class CountManager:
 
         def __init__(self, plugin_name: str) -> None:
             self.__file = _file_path / plugin_name
-            self.__count_data: Dict[str, DefaultDict] = {
-                "group": defaultdict(_default),
-                "user": defaultdict(_default),
-            }
+            self.__count_data: CountManager.PluginCount.Counter = (
+                CountManager.PluginCount.Counter()
+            )
             self.__count_checkers: List[CountManager.PluginCount.CountChecker] = []
             self.__dirty_data: bool = False
 
@@ -149,10 +151,11 @@ class CountManager:
 
         def Reset(self, period: CountPeriod):
             p_int = _period_to_int[period]
-            for _, counts in self.__count_data["group"].items():
+            for counts in self.__count_data.group.values():
                 counts[p_int] = 0
-            for _, counts in self.__count_data["user"].items():
+            for counts in self.__count_data.user.values():
                 counts[p_int] = 0
+            self.__dirty_data = True
 
     def __init__(self) -> None:
         self.__plugin_count: Dict[str, CountManager.PluginCount] = {}

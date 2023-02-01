@@ -27,7 +27,6 @@ async def init_plugin_config():
                 )
         except Exception as e:
             logger.error(f"插件 {plugin.name} 配置加载失败：{e}")
-    add_ret = await asyncio.gather(*tasks, return_exceptions=True)
-    for i, e in enumerate(add_ret):
+    for i, e in enumerate(await asyncio.gather(*tasks, return_exceptions=True)):
         if e:
             logger.error(f"插件 {plugins[i].name} 配置加载失败：{e}")
