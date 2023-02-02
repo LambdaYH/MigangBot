@@ -1,7 +1,7 @@
 from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
 from migangbot.core import CountPeriod
-from migangbot.core.manager import Save
+from migangbot.core.manager import Save, count_manager
 
 require("nonebot_plugin_apscheduler")
 

@@ -154,7 +154,7 @@ class PluginManager:
         for i, plugin in enumerate(self.__plugin.values()):
             if not ret[i]:
                 for alias in plugin.all_name:
-                    self.__plugin_aliases[alias] = plugin.name
+                    self.__plugin_aliases[alias] = plugin.plugin_name
         return ret
 
     def CheckGroupStatus(

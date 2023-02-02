@@ -1,18 +1,27 @@
 from typing import Optional
 
+from nonebot import get_driver, Driver
 from nonebot.adapters.onebot.v11 import MessageSegment
-
 from nonebot_plugin_imageutils import BuildImage
-from migangbot.core.path import IMAGE_PATH
+from nonebot_plugin_imageutils.fonts import add_font
+
+from migangbot.core.path import IMAGE_PATH, FONT_PATH
 from migangbot.core.manager import plugin_manager
 
 from .utils import HelpImageBuild
 
 
-_plugin_help_bg_file = IMAGE_PATH / "plugin_help.png"
+_plugin_help_bg_file = IMAGE_PATH / "help" / "plugin_help.png"
+
+driver: Driver = get_driver()
 
 
-async def CreateHelpImage(group_id: Optional[int], user_id: Optional[int], super: bool):
+@driver.on_startup
+async def _():
+    await add_font("yz.ttf", FONT_PATH / "yz.ttf")
+
+
+async def GetHelpImage(group_id: Optional[int], user_id: Optional[int], super: bool):
     """
     说明:
         生成帮助图片
@@ -40,7 +49,10 @@ def GetPluginHelp(name: str) -> Optional[MessageSegment]:
             BuildImage.open(_plugin_help_bg_file)
             .resize(size=(width, height))
             .draw_bbcode_text(
-                xy=(int(width * 0.048), int(height * 0.21)), text=usage, fontsize=24
+                xy=(int(width * 0.048), int(height * 0.21)),
+                text=usage,
+                fontsize=24,
+                fontname="yz.ttf",
             )
         )
         return MessageSegment.image(help_img.save_jpg())
