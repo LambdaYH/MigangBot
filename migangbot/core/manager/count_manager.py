@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import (
     PokeNotifyEvent,
 )
 
-from .data_type import LimitType, CheckType, CountPeriod
+from .data_class import LimitType, CheckType, CountPeriod
 
 _file_path = Path() / "data" / "core" / "count_manager"
 _file_path.mkdir(parents=True, exist_ok=True)

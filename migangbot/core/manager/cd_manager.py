@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11 import (
     PokeNotifyEvent,
 )
 
-from .data_type import LimitType, CheckType
+from .data_class import LimitType, CheckType
 
 
 class CDItem:

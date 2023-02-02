@@ -22,7 +22,7 @@ async def _(
     cmd: Tuple[str, ...] = Command(),
     arg: Message = CommandArg(),
 ):
-    await group_manager.AddGroup(group_id=event.group_id, auto_save=True)
+    await group_manager.Add(group_id=event.group_id, auto_save=True)
     cmd = cmd[0]
     param = arg.extract_plain_text().strip()
     if not param:
@@ -30,14 +30,14 @@ async def _(
     if param == "全部插件":
         count = 0
         if cmd == "开启":
-            for plugin in plugin_manager.GetPluginList():
-                if not await plugin_manager.SetGroupEnable(
+            for plugin in plugin_manager.GetPluginNameList():
+                if not await group_manager.SetPluginEnable(
                     plugin_name=plugin, group_id=event.group_id, auto_save=False
                 ):
                     count += 1
         else:
-            for plugin in plugin_manager.GetPluginList():
-                if not await plugin_manager.SetGroupDisable(
+            for plugin in plugin_manager.GetPluginNameList():
+                if not await group_manager.SetPluginDisable(
                     plugin_name=plugin, group_id=event.group_id, auto_save=False
                 ):
                     count += 1
@@ -47,12 +47,12 @@ async def _(
             + (f"，不包括{count}个全局禁用插件" if "cmd" == "开启" and count != 0 else "")
         )
     if name := plugin_manager.GetPluginName(param):
-        if cmd == "开启" and not await plugin_manager.SetGroupEnable(
+        if cmd == "开启" and not await group_manager.SetPluginEnable(
             plugin_name=name, group_id=event.group_id
         ):
-            await switch.finish(f"插件 {param} 已被全局禁用，无法开启")
+            await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭":
-            await plugin_manager.SetGroupDisable(
+            await group_manager.SetPluginDisable(
                 plugin_name=name, group_id=event.group_id
             )
         await switch.finish(f"已{cmd}插件：{param}")

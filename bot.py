@@ -1,7 +1,7 @@
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter
 
-from migangbot.core.manager import count_manager
+from migangbot.core.manager import Save
 
 
 nonebot.init()
@@ -10,7 +10,7 @@ driver = nonebot.get_driver()
 driver.register_adapter(Adapter)
 config = driver.config
 
-driver.on_shutdown(count_manager.Save)
+driver.on_shutdown(Save)
 
 # core
 nonebot.load_plugin("nonebot_plugin_apscheduler")

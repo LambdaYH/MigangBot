@@ -21,3 +21,12 @@ class CountPeriod(Enum):
     week = 2
     month = 3
     year = 4
+
+
+@unique
+class PluginType(Enum):
+    Group = 0
+    Private = 1
+    All = 2
+    SuperUser = 3
+    GroupAdmin = 4

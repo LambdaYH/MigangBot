@@ -2,11 +2,9 @@ import asyncio
 from pathlib import Path
 from typing import Union, Dict, Set, List, Optional, Any
 
+from migangbot.core.manager.data_class import PluginType
 from migangbot.core.permission import NORMAL
 from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
-
-_file_path = Path() / "data" / "core" / "plugin_manager"
-_file_path.mkdir(parents=True, exist_ok=True)
 
 
 class PluginManager:
@@ -25,13 +23,15 @@ class PluginManager:
         管理单个插件或任务在群聊中的状态
         """
 
-        def __init__(self, plugin_name: str, usage: Optional[str] = None) -> None:
+        def __init__(self, file, usage: Optional[str] = None) -> None:
             # 数据
             self.__data: Dict[str, Any]
-            self.__file = _file_path / f"{plugin_name}.json"
+            self.__file = file
 
             # 属性
+            self.plugin_name = self.__file.name.removesuffix(".json")
             self.name: str
+            self.plugin_type: PluginType  # 只是一种提示，用于生成帮助界面
             self.all_name: Set[str]
             self.category: Optional[str]
             self.author: str
@@ -69,12 +69,25 @@ class PluginManager:
         async def Save(self) -> None:
             await AsyncSaveData(self.__data, self.__file)
 
+        def SetPluginType(self, type: PluginType):
+            self.plugin_type = type
+
+        @property
+        def global_status(self):
+            return self.__global_status
+
         def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
             return (
                 self.__global_status
                 and (group_permission >= self.__permission)
                 and (self.__default_status ^ (group_id in self.__non_default_group))
             )
+
+        def CheckUserStatus(self, user_permission: int) -> bool:
+            return self.__global_status and user_permission >= self.__permission
+
+        def CheckPermission(self, permission: int) -> bool:
+            return permission >= self.__permission
 
         def SetGroupEnable(self, group_id: int) -> bool:
             if not self.__global_status:
@@ -120,15 +133,17 @@ class PluginManager:
                 self.__enabled_group.clear()
                 self.__enabled_group += list(self.__non_default_group)
 
-    def __init__(self) -> None:
+    def __init__(self, file_path: Path) -> None:
+        self.__file_path = file_path
+        self.__file_path.mkdir(exist_ok=True, parents=True)
         self.__plugin: Dict[str, PluginManager.Plugin] = {}  # 用于管理插件
         self.__plugin_aliases: Dict[str, str] = {}  # 建立插件别名与插件名的映射
-        plugin_files = _file_path.iterdir()
+        plugin_files = self.__file_path.iterdir()
         for plugin_file in plugin_files:
             if plugin_file.suffix == ".json":
                 plugin_name = plugin_file.name.removesuffix(".json")
                 self.__plugin[plugin_name]: PluginManager.Plugin = PluginManager.Plugin(
-                    plugin_name=plugin_name
+                    file=plugin_file
                 )
 
     async def Init(self):
@@ -154,6 +169,16 @@ class PluginManager:
         ) or plugin.CheckGroupStatus(
             group_id=group_id, group_permission=group_permission
         )
+
+    def CheckUserStatus(self, plugin_name: str, user_permission: int):
+        return (
+            not (plugin := self.__plugin.get(plugin_name))
+        ) or plugin.CheckUserStatus(user_permission=user_permission)
+
+    def CheckPluginPermission(self, plugin_name: str, permission: int) -> bool:
+        return (
+            not (plugin := self.__plugin.get(plugin_name))
+        ) or plugin.CheckPermission(permission=permission)
 
     async def SetGroupEnable(
         self, plugin_name: str, group_id: int, auto_save=True
@@ -186,18 +211,21 @@ class PluginManager:
         if name not in self.__plugin:
             name = self.__plugin_aliases[name]
         return self.__plugin[name].usage
-
+    
     def CheckPlugin(self, name: str) -> bool:
         """
         仅支持插件名
         """
         return name in self.__plugin
 
-    def GetPluginList(self) -> Set[str]:
+    def GetPluginNameList(self) -> Set[str]:
         return self.__plugin.keys()
 
     def GetPluginName(self, name: str) -> Optional[str]:
         return self.__plugin_aliases.get(name)
+
+    def GetPluginList(self) -> Set[Plugin]:
+        return self.__plugin.values()
 
     async def CleanGroup(self, group_list: Union[List[int], Set[int]]) -> None:
         group_list = set(group_list)
@@ -209,6 +237,9 @@ class PluginManager:
         if plugin_name not in self.__plugin:
             return
         self.__plugin[plugin_name].SetUsage(usage=usage)
+
+    def SetPluginType(self, plugin_name: str, type: PluginType):
+        self.__plugin[plugin_name].SetPluginType(type=type)
 
     async def Add(
         self,
@@ -235,13 +266,13 @@ class PluginManager:
                 "author": author,
                 "version": version,
             },
-            _file_path / f"{plugin_name}.json",
+            self.__file_path / f"{plugin_name}.json",
         )
         self.__plugin[plugin_name] = PluginManager.Plugin(
-            plugin_name=plugin_name, usage=usage
+            file=self.__file_path / f"{plugin_name}.json", usage=usage
         )
 
     async def Remove(self, plugin_name: set) -> None:
         if plugin_name in self.__plugin:
             del self.__plugin[plugin_name]
-            (_file_path / f"{plugin_name}.json").unlink()
+            (self.__file_path / f"{plugin_name}.json").unlink()

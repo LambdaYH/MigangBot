@@ -38,6 +38,7 @@ class GroupManager:
         self.__data: Dict[str, Dict] = {}
         self.__group: Dict[int, GroupManager.Group] = {}
         self.__file: Path = Path(file) if isinstance(file, str) else file
+        self.__dirty_data: bool = False
 
         # 交由他俩检测插件是否允许，本类仅仅管理群本身权限与bot启用情况
         self.__plugin_manager = plugin_manager
@@ -54,49 +55,118 @@ class GroupManager:
         for group in self.__data:
             self.__group[int(group)] = GroupManager.Group(self.__data[group])
 
-    def CheckGroupPluginStatus(self, plugin_name: str, group_id: int):
-        return (group_id not in self.__group) or (
-            self.__group[group_id].bot_status
-            and self.__plugin_manager.CheckGroupStatus(
-                plugin_name=plugin_name,
-                group_id=group_id,
-                group_permission=self.__group[group_id].permission,
-            )
-        )
-
     async def Save(self):
-        await AsyncSaveData(self.__data, self.__file)
+        if self.__dirty_data:
+            await AsyncSaveData(self.__data, self.__file)
+            self.__dirty_data = False
 
-    def CheckGroupTaskStatus(self, plugin_name: str, group_id: int):
-        return (group_id not in self.__group) or (
-            self.__group[group_id].bot_status
-            and self.__task_manager.CheckGroupStatus(
-                plugin_name=plugin_name,
-                group_id=group_id,
-                group_permission=self.__group[group_id].permission,
-            )
+    def __get_group(self, group_id: int):
+        group = self.__group.get(group_id)
+        if not group:
+            self.__data[group_id] = {
+                "permission": NORMAL,
+                "bot_status": True,
+            }
+            group = self.__group[group_id] = GroupManager.Group(self.__data[group_id])
+            self.__dirty_data = True
+        return group
+
+    def CheckGroupPluginStatus(self, plugin_name: str, group_id: int):
+        group = self.__get_group(group_id=group_id)
+        return group.bot_status and self.__plugin_manager.CheckGroupStatus(
+            plugin_name=plugin_name,
+            group_id=group_id,
+            group_permission=group.permission,
         )
 
-    async def EnableBot(self, group_id: int):
-        self.__group[group_id].SetBotEnable()
-        await self.Save()
+    def CheckGroupTaskStatus(self, task_name: str, group_id: int):
+        group = self.__get_group(group_id=group_id)
+        return group.bot_status and self.__task_manager.CheckGroupStatus(
+            plugin_name=task_name,
+            group_id=group_id,
+            group_permission=group.permission,
+        )
 
-    async def DisableBot(self, group_id: int):
-        self.__group[group_id].SetBotDisable()
-        await self.Save()
+    def CheckPluginPermission(self, plugin_name: str, group_id: int):
+        group = self.__get_group(group_id=group_id)
+        return self.__plugin_manager.CheckPluginPermission(
+            plugin_name=plugin_name, permission=group.permission
+        )
 
-    async def AddGroup(self, group_id: int, auto_save=True):
-        if group_id in self.__group:
-            return
-        self.__data[str(group_id)] = {
-            "permission": NORMAL,
-            "bot_status": True,
-        }
-        self.__group[group_id] = GroupManager.Group(self.__data[str(group_id)])
+    def CheckTaskPermission(self, plugin_name: str, group_id: int):
+        group = self.__get_group(group_id=group_id)
+        return self.__plugin_manager.CheckTaskPermission(
+            plugin_name=plugin_name, group_permission=group.permission
+        )
+
+    async def SetPluginEnable(
+        self, plugin_name: str, group_id: int, auto_save: bool = True
+    ):
+        group = self.__get_group(group_id=group_id)
+        if self.__plugin_manager.CheckPluginPermission(
+            plugin_name=plugin_name, permission=group.permission
+        ):
+            if await self.__plugin_manager.SetGroupEnable(
+                plugin_name=plugin_name, group_id=group_id, auto_save=auto_save
+            ):
+                return True
+        return False
+
+    async def SetPluginDisable(
+        self, plugin_name: str, group_id: int, auto_save: bool = True
+    ):
+        group = self.__get_group(group_id=group_id)
+        if self.__plugin_manager.CheckPluginPermission(
+            plugin_name=plugin_name, permission=group.permission
+        ):
+            await self.__plugin_manager.SetGroupDisable(
+                plugin_name=plugin_name, group_id=group_id, auto_save=auto_save
+            )
+            return True
+        return False
+
+    async def SetTaskEnable(
+        self, plugin_name: str, group_id: int, auto_save: bool = True
+    ):
+        group = self.__get_group(group_id=group_id)
+        if self.__task_manager.CheckPluginPermission(
+            plugin_name=plugin_name, permission=group.permission
+        ):
+            if await self.__task_manager.SetGroupEnable(
+                plugin_name=plugin_name, group_id=group_id, auto_save=auto_save
+            ):
+                return True
+        return False
+
+    async def SetTaskDisable(
+        self, plugin_name: str, group_id: int, auto_save: bool = True
+    ):
+        group = self.__get_group(group_id=group_id)
+        if self.__task_manager.CheckPluginPermission(
+            plugin_name=plugin_name, permission=group.permission
+        ):
+            await self.__task_manager.SetGroupDisable(
+                plugin_name=plugin_name, group_id=group_id, auto_save=auto_save
+            )
+            return True
+        return False
+
+    def EnableBot(self, group_id: int):
+        group = self.__get_group(group_id=group_id)
+        group.SetBotEnable()
+        self.__dirty_data = True
+
+    def DisableBot(self, group_id: int):
+        group = self.__get_group(group_id=group_id)
+        group.SetBotDisable()
+        self.__dirty_data = True
+
+    async def Add(self, group_id: int, auto_save=True):
+        self.__get_group(group_id=group_id)
         if auto_save:
             await self.Save()
 
-    async def RemoveGroup(self, group_id: int, auto_save=True):
+    async def Remove(self, group_id: int, auto_save=True):
         if group_id in self.__group:
             del self.__data[str(group_id)]
             del self.__group[group_id]

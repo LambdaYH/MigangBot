@@ -1,7 +1,7 @@
 from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
 from migangbot.core import CountPeriod
-from migangbot.core.manager import count_manager
+from migangbot.core.manager import Save
 
 require("nonebot_plugin_apscheduler")
 
@@ -32,7 +32,7 @@ async def _():
     count_manager.Reset(CountPeriod.year)
 
 
-# 自动保存插件计数
+# 自动保存
 @scheduler.scheduled_job("interval", minutes=15, jitter=120)
 async def _():
-    await count_manager.Save()
+    await Save()
