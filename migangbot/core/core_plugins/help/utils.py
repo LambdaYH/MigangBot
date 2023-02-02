@@ -2,8 +2,6 @@ import os
 import random
 from typing import Dict, List, Optional
 
-import aiofiles
-
 from migangbot.core.decorator.singleton import Singleton
 from migangbot.core.path import DATA_PATH, TEMPLATE_PATH
 from migangbot.core.manager import (
@@ -61,16 +59,9 @@ class HelpImageBuild:
     async def BuildImage(
         self, group_id: Optional[int], user_id: Optional[int], super: bool
     ):
-        help_image = (
-            GROUP_HELP_PATH / f"{group_id}.png"
-            if group_id
-            else USER_HELP_PATH / f"{user_id}.png"
-        )
         byt = await self.__BuildHTMLImage(
             group_id=group_id, user_id=user_id, super=super
         )
-        async with aiofiles.open(help_image, "wb") as f:
-            await f.write(byt)
         return byt
 
     async def __BuildHTMLImage(

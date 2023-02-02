@@ -9,6 +9,7 @@ from nonebot.adapters.onebot.v11 import (
     PrivateMessageEvent,
     MessageSegment,
 )
+import aiofiles
 
 from .data_source import CreateHelpImage
 from .utils import GROUP_HELP_PATH, USER_HELP_PATH
@@ -31,13 +32,12 @@ async def _(bot: Bot, event: MessageEvent):
         user_id = event.user_id
         image_file = USER_HELP_PATH / f"{user_id }.png"
     if image_file.exists():
-        await simple_help.finish(MessageSegment(image_file))
-    await simple_help.finish(
-        MessageSegment.image(
-            await CreateHelpImage(
-                group_id=group_id,
-                user_id=user_id,
-                super=user_id in bot.config.superusers,
-            )
-        )
+        await simple_help.finish(MessageSegment.image(image_file))
+    img = await CreateHelpImage(
+        group_id=group_id,
+        user_id=user_id,
+        super=user_id in bot.config.superusers,
     )
+    await simple_help.send(MessageSegment.image(img))
+    async with aiofiles.open(image_file, "wb") as f:
+        await f.write(img)
