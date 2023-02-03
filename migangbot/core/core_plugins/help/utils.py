@@ -16,11 +16,15 @@ from .data_class import Item, PluginStatus
 
 USER_HELP_PATH = DATA_PATH / "core" / "help" / "user_help_image"
 GROUP_HELP_PATH = DATA_PATH / "core" / "help" / "group_help_image"
+GROUP_TASK_PATH = DATA_PATH / "core" / "help" / "group_task_image"
 USER_HELP_PATH.mkdir(exist_ok=True, parents=True)
 GROUP_HELP_PATH.mkdir(exist_ok=True, parents=True)
+GROUP_TASK_PATH.mkdir(exist_ok=True, parents=True)
 for img in GROUP_HELP_PATH.iterdir():
     img.unlink()
 for img in USER_HELP_PATH.iterdir():
+    img.unlink()
+for img in GROUP_TASK_PATH.iterdir():
     img.unlink()
 
 LOGO_PATH = TEMPLATE_PATH / "menu" / "res" / "logo"
@@ -52,6 +56,8 @@ class HelpImageBuild:
         """
         if not self.__sort_data:
             for plugin in plugin_manager.GetPluginList():
+                if plugin.hidden:
+                    continue
                 if not self.__sort_data.get(plugin.category):
                     self.__sort_data[plugin.category] = []
                 self.__sort_data[plugin.category].append(plugin)

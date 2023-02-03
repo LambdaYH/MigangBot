@@ -17,7 +17,7 @@ from migangbot.core.manager import (
     count_manager,
 )
 
-_ignore_plugins = set([])
+_ignore_plugins = set(["switch_bot"])
 
 
 @run_preprocessor

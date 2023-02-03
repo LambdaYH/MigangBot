@@ -60,7 +60,7 @@ class UserManager:
 
     def CheckPluginPermission(self, plugin_name: str, user_id: int):
         user = self.__get_user(user_id=user_id)
-        return self.__plugin_manager.CheckPluginPermission(
+        return self.__plugin_manager.CheckPermission(
             plugin_name=plugin_name, permission=user.permission
         )
 
@@ -68,6 +68,8 @@ class UserManager:
         self.__get_user(user_id=user_id)
         if auto_save:
             await self.Save()
+        else:
+            self.__dirty_data = True
 
     async def Remove(self, user_id: int, auto_save=True):
         if user_id in self.__user:
@@ -75,3 +77,5 @@ class UserManager:
             del self.__user[user_id]
             if auto_save:
                 await self.Save()
+            else:
+                self.__dirty_data = True
