@@ -56,7 +56,11 @@ class CDManager:
                 self.__cd = cd_item.cd
                 self.hint = cd_item.hint
                 self.__last_called: Dict[int, float] = {}
+                """该检测器最后的调用时间，{id: time}
+                """
                 self.__func: Callable = self.__CheckUserPrivate
+                """实际的检测函数
+                """
                 limit_type, check_type = cd_item.limit_type, cd_item.check_type
                 if limit_type == LimitType.user and check_type == CheckType.private:
                     self.__func = self.__CheckUserPrivate
@@ -150,6 +154,9 @@ class CDManager:
             Args:
                 cd_items (Union[List[CDItem], CDItem]): 该插件中的CD控制项
             """
+            self.__cd_checkers: List[CDManager.PluginCD.CDChecker]
+            """保存该插件中的各CD检测器
+            """
             if type(cd_items) is list:
                 self.__cd_checkers: List[CDManager.PluginCD.CDChecker] = [
                     CDManager.PluginCD.CDChecker(cd_item=cd_item)
@@ -180,6 +187,8 @@ class CDManager:
     def __init__(self) -> None:
         """CDManager构造函数，由于CD配置不固化到硬盘，因此每次程序启动时都重新加载"""
         self.__plugin_cd: Dict[str, CDManager.PluginCD] = {}
+        """{plugin_name: PluginCD}，以plugin_name为名的插件调用PluginCD检测调用次数
+        """
 
     def Add(self, plugin_name: str, cd_items: Union[List[CDItem], CDItem]):
         """添加插件以及其对应的__plugin_cd__配置项（若有）进CDManager

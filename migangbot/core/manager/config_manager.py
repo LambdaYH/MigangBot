@@ -46,6 +46,8 @@ class ConfigManager:
     def __init__(self) -> None:
         """仅初始化配置项默认值，当所需配置值时从文件加载并加入缓存"""
         self.__default_value: Dict[str, Dict[str, Any]] = {}
+        """{plugin_name: {"key": value}}
+        """
 
     async def AddConfig(self, plugin_name: str, config: ConfigItem) -> None:
         """添加单个配置项
