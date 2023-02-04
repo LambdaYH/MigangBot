@@ -1,3 +1,6 @@
+"""关闭或启用Bot
+"""
+
 from nonebot.log import logger
 from nonebot import on_fullmatch
 from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER, GroupMessageEvent

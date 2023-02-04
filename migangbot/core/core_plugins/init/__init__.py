@@ -1,3 +1,6 @@
+"""初始化插件各数据
+"""
+
 import asyncio
 from nonebot import Driver, get_driver
 

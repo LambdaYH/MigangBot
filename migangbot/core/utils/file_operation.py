@@ -16,6 +16,18 @@ T = TypeVar("T")
 
 
 def LoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
+    """同步加载.json或.yaml数据
+
+    Args:
+        file (Union[Path, str]): 文件路径
+
+    Raises:
+        FileTypeError: 文件类型错误
+        FileParseError: 文件解析失败
+
+    Returns:
+        Union[Dict, CommentedMap]: 若json返回Dict，若yaml返回CommentedMap
+    """
     data: Union[Dict, CommentedMap, None] = None
     if isinstance(file, str):
         file = Path(file)
@@ -39,7 +51,13 @@ def LoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     return data
 
 
-def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]):
+def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str])->None:
+    """同步保存数据
+
+    Args:
+        obj (Union[Dict[str, Any], CommentedMap]): 对象
+        file (Union[Path, str]): 文件路径
+    """
     if isinstance(file, str):
         file = Path(file)
     with open(file, "w", encoding="utf-8") as f:
@@ -50,6 +68,18 @@ def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]):
 
 
 async def AsyncLoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
+    """异步加载.json或.yaml数据
+
+    Args:
+        file (Union[Path, str]): 文件路径
+
+    Raises:
+        FileTypeError: 文件类型错误
+        FileParseError: 文件解析失败
+
+    Returns:
+        Union[Dict, CommentedMap]: 若json返回Dict，若yaml返回CommentedMap
+    """
     data: Union[Dict, CommentedMap, None] = None
     if isinstance(file, str):
         file = Path(file)
@@ -76,7 +106,13 @@ async def AsyncLoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
 
 async def AsyncSaveData(
     obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]
-):
+)->None:
+    """异步保存数据
+
+    Args:
+        obj (Union[Dict[str, Any], CommentedMap]): 对象
+        file (Union[Path, str]): 文件路径
+    """
     if isinstance(file, str):
         file = Path(file)
     async with aiofiles.open(file, "w", encoding="utf-8") as f:

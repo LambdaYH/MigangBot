@@ -1,3 +1,6 @@
+"""核心定时任务
+"""
+
 from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
 from migangbot.core import CountPeriod

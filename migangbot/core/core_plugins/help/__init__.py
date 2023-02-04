@@ -1,3 +1,6 @@
+"""获取帮助图片、插件帮助、群被动状态
+"""
+
 from pathlib import Path
 
 from nonebot import on_command, require
@@ -22,10 +25,8 @@ require("nonebot_plugin_htmlrender")
 require("nonebot_plugin_imageutils")
 
 
-simple_help = on_command("帮助", aliases={"功能"}, priority=5, block=True, rule=to_me())
-task_help = on_command(
-    "群被动状态", priority=5, block=True, permission=GROUP
-)
+simple_help = on_command("帮助", aliases={"功能"}, priority=1, block=True, rule=to_me())
+task_help = on_command("群被动状态", priority=1, block=True, permission=GROUP)
 
 
 @simple_help.handle()
