@@ -1,6 +1,7 @@
 from tortoise import Tortoise, fields, run_async
 from tortoise.models import Model
 
+
 async def run():
     await Tortoise.init(db_url="sqlite://:memory:", modules={"models": ["__main__"]})
     await Tortoise.generate_schemas()

@@ -1,7 +1,6 @@
 # from zhenxun_bot
 class Singleton:
-    """单例模式装饰器
-    """
+    """单例模式装饰器"""
 
     def __init__(self, cls):
         self._cls = cls

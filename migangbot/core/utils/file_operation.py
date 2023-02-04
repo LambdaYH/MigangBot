@@ -51,7 +51,7 @@ def LoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     return data
 
 
-def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str])->None:
+def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]) -> None:
     """同步保存数据
 
     Args:
@@ -106,7 +106,7 @@ async def AsyncLoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
 
 async def AsyncSaveData(
     obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]
-)->None:
+) -> None:
     """异步保存数据
 
     Args:

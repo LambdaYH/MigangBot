@@ -124,7 +124,7 @@ class UserManager:
             plugin_name=plugin_name, permission=user.permission
         )
 
-    async def Add(self, user_id: int, auto_save:bool=True) -> None:
+    async def Add(self, user_id: int, auto_save: bool = True) -> None:
         """添加新用户
 
         Args:
@@ -137,7 +137,7 @@ class UserManager:
         else:
             self.__dirty_data = True
 
-    async def Remove(self, user_id: int, auto_save:bool=True) -> None:
+    async def Remove(self, user_id: int, auto_save: bool = True) -> None:
         """移除用户
 
         Args:

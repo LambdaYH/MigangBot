@@ -40,11 +40,11 @@ class TaskItem:
 
 
 class TaskManager:
-    """管理全部任务
-    """
+    """管理全部任务"""
+
     class Task:
-        """管理单个任务
-        """
+        """管理单个任务"""
+
         def __init__(self, file: Path, usage: str = None) -> None:
             """Task构造函数，管理单个任务
 
@@ -68,8 +68,7 @@ class TaskManager:
             self.__disabled_group: List[int]
 
         async def Init(self) -> None:
-            """异步初始化Task类
-            """
+            """异步初始化Task类"""
             self.__data = await AsyncLoadData(self.__file)
             self.name: str = self.__data["name"]
             self.__permission: int = self.__data["permission"]
@@ -84,8 +83,7 @@ class TaskManager:
             self.__disabled_group: List[int] = self.__data["disbled_group"]
 
         async def Save(self) -> None:
-            """保存数据进文件
-            """
+            """保存数据进文件"""
             await AsyncSaveData(self.__data, self.__file)
 
         @property
@@ -106,13 +104,11 @@ class TaskManager:
             self.usage = usage
 
         def Enable(self):
-            """全局启用
-            """
+            """全局启用"""
             self.__data["global_status"] = self.__global_status = True
 
         def Disable(self):
-            """全局禁用
-            """
+            """全局禁用"""
             self.__data["global_status"] = self.__global_status = False
 
         def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
