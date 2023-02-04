@@ -93,7 +93,15 @@ async def Broadcast(
     msg: Union[List[Message], Message],
     forward: bool = False,
     bot: Optional[Bot] = None,
-):
+) -> None:
+    """将消息推送到task_name启用的所有群
+
+    Args:
+        task_name (str): 任务名
+        msg (Union[List[Message], Message]): 消息
+        forward (bool, optional): 若以转发模式，则True. Defaults to False.
+        bot (Optional[Bot], optional): 选定的bot. Defaults to None.
+    """
     if not bot:
         bot = get_bot()
     group_list = await bot.get_group_list()
