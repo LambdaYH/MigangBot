@@ -238,7 +238,7 @@ class PluginManager:
         self.__file_path = file_path
         self.__file_path.mkdir(exist_ok=True, parents=True)
         self.__plugin: Dict[str, PluginManager.Plugin] = {}
-        """获取插件plugin_name对应的插件名
+        """获取插件plugin_name对应的Plugin类
         """
         self.__plugin_aliases: Dict[str, str] = {}
         """建立插件别名到plugin_name的映射
@@ -252,7 +252,7 @@ class PluginManager:
                 )
 
     async def Init(self) -> List[Optional[str]]:
-        """异步初始化所有插件
+        """异步初始化所有Plugin类
 
         Returns:
             List[Optional[str]]: List中项为None时表示无异常，反之为表示异常的字符串
@@ -485,7 +485,7 @@ class PluginManager:
         permission: int = NORMAL,
         plugin_type: PluginType = PluginType.All,
     ) -> None:
-        """添加插件进plugin_manager
+        """添加插件进PluginManager
 
         Args:
             plugin_name (str): 插件名
