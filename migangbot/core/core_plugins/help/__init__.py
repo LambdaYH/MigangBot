@@ -45,7 +45,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         img = await GetHelpImage(
             group_id=group_id,
             user_id=user_id,
-            super=SUPERUSER(bot, event),
+            super=await SUPERUSER(bot, event),
         )
         await simple_help.send(MessageSegment.image(img))
         async with aiofiles.open(image_file, "wb") as f:

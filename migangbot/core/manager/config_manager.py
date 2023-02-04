@@ -12,6 +12,8 @@ _config_path.mkdir(parents=True, exist_ok=True)
 
 
 class ConfigItem:
+    """__plugin_config__属性为List[ConfigItem]或ConfigItem"""
+
     def __init__(
         self,
         key: str,
@@ -20,6 +22,15 @@ class ConfigItem:
         description: Optional[str] = None,
         config_name: Optional[str] = None,
     ) -> None:
+        """ConfigItem构造函数
+
+        Args:
+            key (str): 配置项键值
+            initial_value (Optional[Any], optional): 配置项初始值，生成配置文件时应用该值. Defaults to None.
+            default_value (Optional[Any], optional): 配置项默认值，当键值对应配置值为空时，应用该值. Defaults to None.
+            description (Optional[str], optional): 配置项说明，在配置文件中以注释的形式存在. Defaults to None.
+            config_name (Optional[str], optional): 配置项所在配置文件名，为空时则默认使用插件名. Defaults to None.
+        """
         self.key = key
         self.initial_value = initial_value
         self.default_value = default_value
@@ -28,10 +39,21 @@ class ConfigItem:
 
 
 class ConfigManager:
+    """
+    管理插件的配置
+    """
+
     def __init__(self) -> None:
+        """仅初始化配置项默认值，当所需配置值时从文件加载并加入缓存"""
         self.__default_value: Dict[str, Dict[str, Any]] = {}
 
     async def AddConfig(self, plugin_name: str, config: ConfigItem) -> None:
+        """添加单个配置项
+
+        Args:
+            plugin_name (str): 插件名或配置文件名
+            config (ConfigItem): 配置项
+        """
         if config.config_name:
             plugin_name = config.config_name
         file_name = _config_path / f"{plugin_name}.yaml"
@@ -48,6 +70,12 @@ class ConfigManager:
         await AsyncSaveData(data, file_name)
 
     async def AddConfigs(self, plugin_name: str, configs: List[ConfigItem]) -> None:
+        """添加多个配置项
+
+        Args:
+            plugin_name (str): 插件名或配置文件名
+            configs (List[ConfigItem]): 配置项
+        """
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
         file_name = _config_path / f"{plugin_name}.yaml"
@@ -66,12 +94,30 @@ class ConfigManager:
         await AsyncSaveData(data, file_name)
 
     @alru_cache(maxsize=128)
-    async def __GetConfig(self, plugin_name: str):
-        data: CommentedMap = await AsyncLoadData(_config_path / f"{plugin_name}.yaml")
-        return data
+    async def __GetConfig(self, plugin_name: str) -> CommentedMap:
+        """读取插件名对应的配置名
+        Args:
+            plugin_name (str): 插件名或配置文件名
+
+        Returns:
+            CommentedMap: 配置，类Dict结构
+        """
+        return await AsyncLoadData(_config_path / f"{plugin_name}.yaml")
 
     @alru_cache(maxsize=256)
-    async def GetConfigItem(self, plugin_name: str, plugin_config: str):
+    async def GetConfigItem(self, plugin_name: str, plugin_config: str) -> Any:
+        """获取plugin_name对应的键值为plugin_config的配置值
+
+        Args:
+            plugin_name (str): 插件名或配置文件名
+            plugin_config (str): 配置项键值
+
+        Raises:
+            ConfigNoExistError: 若不存在plugin_name中plugin_config对应的配置文件，则抛出异常
+
+        Returns:
+            Any: 配置值
+        """
         data = await self.__GetConfig(plugin_name)
         if plugin_config not in data:
             raise ConfigNoExistError(f"插件 {plugin_name} 的配置项 {plugin_config} 不存在！")

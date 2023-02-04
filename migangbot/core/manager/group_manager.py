@@ -145,7 +145,7 @@ class GroupManager:
         self, task_name: str, group_id: int
     ):
         group = self.__get_group(group_id=group_id)
-        if self.__task_name.CheckPermission(
+        if self.__task_manager.CheckPermission(
             task_name=task_name, permission=group.permission
         ):
             await self.__task_manager.SetGroupDisable(
