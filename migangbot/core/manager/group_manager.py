@@ -22,7 +22,7 @@ class GroupManager:
             """Group构造函数
 
             Args:
-                data (Dict): 改群对应的在Dict中的部分数据
+                data (Dict): 该群对应的在Dict中的部分数据
             """
             self.__data = data
             self.permission: int = data["permission"]
@@ -302,7 +302,7 @@ class GroupManager:
             return True
         return False
 
-    async def Add(self, group_id: int, auto_save=True) -> None:
+    async def Add(self, group_id: int, auto_save: bool = True) -> None:
         """添加新群
 
         Args:
@@ -315,8 +315,8 @@ class GroupManager:
         else:
             self.__dirty_data = True
 
-    async def Remove(self, group_id: int, auto_save=True) -> None:
-        """移除
+    async def Remove(self, group_id: int, auto_save: bool = True) -> None:
+        """移除群
 
         Args:
             group_id (int): 群号
