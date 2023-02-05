@@ -1,31 +1,21 @@
 from pathlib import Path
 
-from tortoise import Tortoise, run_async
-
+from tortoise import Tortoise
+from tortoise import Tortoise
+from tortoise.connection import connections
 from migangbot.core.utils.file_operation import async_load_data
+
+from migangbot.core.models import *
+from migangbot.models import *
 
 
 async def _load_config(path: Path):
     data = await async_load_data(path)
     ret = {
-        "connections": {
-            # Dict format for connection
-            "default": {
-                "engine": "tortoise.backends.asyncpg",
-                "credentials": {
-                    "host": "localhost",
-                    "port": "5432",
-                    "user": "tortoise",
-                    "password": "qwerty123",
-                    "database": "test",
-                },
-            },
-            # Using a DB_URL string
-            "default": "postgres://postgres:qwerty123@localhost:5432/test",
-        },
+        "connections": {},
         "apps": {
-            "my_app": {
-                "models": ["__main__"],
+            "migangbot": {
+                "models": ["migangbot.core.database"],
                 # If no default_connection specified, defaults to 'default'
                 "default_connection": "default",
             }
@@ -36,8 +26,8 @@ async def _load_config(path: Path):
     if data.get("db_url"):
         ret["connections"]["default"] = data["db_url"]
     elif "db_type" not in data or str(data["db_type"]).lower() == "sqlite":
-        db_path = Path() / "data" / "database.db"
-        db_path.mkdir(exist_ok=True, parents=True)
+        db_path = Path() / "data" / "sqlite" / "database.db"
+        db_path.parent.mkdir(exist_ok=True, parents=True)
         ret["connections"]["default"] = f"sqlite://{db_path}"
     elif (
         "host" in data
@@ -48,7 +38,7 @@ async def _load_config(path: Path):
     ):
         engine: str
         if str(data["db_type"]).lower() == "mysql":
-            engine = "asyncmy"
+            engine = "mysql"
         elif str(data["db_type"]).lower() == "postgresql":
             engine = "asyncpg"
         ret["connections"]["default"] = {
@@ -61,9 +51,18 @@ async def _load_config(path: Path):
                 "database": data["database"],
             },
         }
+    else:
+        raise Exception("数据库配置文件未正确填写，请填写db_config.yaml")
     return ret
 
 
 async def init_db():
-    await Tortoise.init(config=await _load_config(Path() / "db_config.yaml"))
-    await Tortoise.generate_schemas()
+    try:
+        await Tortoise.init(config=await _load_config(Path() / "db_config.yaml"))
+    except Exception as e:
+        raise Exception(f"数据库连接失败：{e}")
+    await Tortoise.generate_schemas(safe=True)
+
+
+async def close_db():
+    await connections.close_all(discard=True)
