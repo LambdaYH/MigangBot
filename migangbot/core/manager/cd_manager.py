@@ -130,7 +130,9 @@ class CDManager:
                     return True
                 return False
 
-            def __check_group(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
+            def __check_group(
+                self, event: Union[MessageEvent, PokeNotifyEvent]
+            ) -> bool:
                 """limit_type为group，check_type只能是group时的具体检测函数
 
                 Args:

@@ -113,7 +113,9 @@ async def _(
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭被动":
-            await group_manager.set_task_disable(task_name=name, group_id=event.group_id)
+            await group_manager.set_task_disable(
+                task_name=name, group_id=event.group_id
+            )
         clean_group_task_image(event.group_id)
         await switch.finish(f"已{cmd}群被动：{param}")
     if name := plugin_manager.get_plugin_name(param):
@@ -133,7 +135,9 @@ async def _(
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭":
-            await group_manager.set_task_disable(task_name=name, group_id=event.group_id)
+            await group_manager.set_task_disable(
+                task_name=name, group_id=event.group_id
+            )
         clean_group_task_image(event.group_id)
         await switch.finish(f"已{cmd}群被动：{param}")
     else:
