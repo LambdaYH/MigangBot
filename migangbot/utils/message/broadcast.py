@@ -60,7 +60,7 @@ class SendManager:
             )
             await asyncio.sleep(self.retry_interval)
 
-    async def Do(self):
+    async def do(self):
         if self.forward:
             for group in self.group_list:
                 await asyncio.sleep(random() + 0.3)
@@ -88,7 +88,7 @@ class SendManager:
             await self.retry()
 
 
-async def Broadcast(
+async def broadcast(
     task_name: str,
     msg: Union[List[Message], Message],
     forward: bool = False,
@@ -108,6 +108,6 @@ async def Broadcast(
     group_list = [
         group
         for group in group_list
-        if group_manager.CheckGroupTaskStatus(task_name=task_name, group_id=group)
+        if group_manager.check_group_task_status(task_name=task_name, group_id=group)
     ]
-    await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).Do()
+    await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()

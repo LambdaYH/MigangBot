@@ -49,33 +49,33 @@ class HelpImageBuild:
     def __init__(self):
         self.__sort_data: Dict[str, List[PluginManager.Plugin]] = {}
 
-    def __SortType(self):
+    def __sort_type(self):
         """
         说明:
             对插件按照菜单类型分类
         """
         if not self.__sort_data:
-            for plugin in plugin_manager.GetPluginList():
+            for plugin in plugin_manager.get_plugin_list():
                 if plugin.hidden:
                     continue
                 if not self.__sort_data.get(plugin.category):
                     self.__sort_data[plugin.category] = []
                 self.__sort_data[plugin.category].append(plugin)
 
-    async def BuildImage(
+    async def build_image(
         self, group_id: Optional[int], user_id: Optional[int], super: bool
     ):
-        byt = await self.__BuildHTMLImage(
+        byt = await self.__build_html_image(
             group_id=group_id, user_id=user_id, super=super
         )
         return byt
 
-    async def __BuildHTMLImage(
+    async def __build_html_image(
         self, group_id: Optional[int], user_id: Optional[int], super: bool = False
     ) -> bytes:
         from nonebot_plugin_htmlrender import template_to_pic
 
-        self.__SortType()
+        self.__sort_type()
         classify = {}
         for menu, plugins in self.__sort_data.items():
             for plugin in plugins:
@@ -84,20 +84,20 @@ class HelpImageBuild:
                     status = PluginStatus.group_disabled
                 else:
                     if group_id:
-                        if not group_manager.CheckPluginPermission(
+                        if not group_manager.check_plugin_permission(
                             plugin_name=plugin.plugin_name, group_id=group_id
                         ):
                             status = PluginStatus.not_authorized
                         else:
                             status = (
                                 PluginStatus.enabled
-                                if group_manager.CheckGroupPluginStatus(
+                                if group_manager.check_group_plugin_status(
                                     plugin_name=plugin.plugin_name, group_id=group_id
                                 )
                                 else PluginStatus.disabled
                             )
                     elif user_id:
-                        if not user_manager.CheckPluginPermission(
+                        if not user_manager.check_plugin_permission(
                             plugin_name=plugin.plugin_name, user_id=user_id
                         ):
                             status = PluginStatus.not_authorized

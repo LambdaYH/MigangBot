@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union, Dict, Set, List, Optional, Any
 
 from migangbot.core.permission import NORMAL
-from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
+from migangbot.core.utils.file_operation import async_load_data, async_save_data
 
 
 class TaskItem:
@@ -67,9 +67,9 @@ class TaskManager:
             self.__enabled_group: List[int]
             self.__disabled_group: List[int]
 
-        async def Init(self) -> None:
+        async def init(self) -> None:
             """异步初始化Task类"""
-            self.__data = await AsyncLoadData(self.__file)
+            self.__data = await async_load_data(self.__file)
             self.name: str = self.__data["name"]
             self.__permission: int = self.__data["permission"]
             self.__global_status: bool = self.__data["global_status"]
@@ -82,9 +82,9 @@ class TaskManager:
             self.__enabled_group: List[int] = self.__data["enabled_group"]
             self.__disabled_group: List[int] = self.__data["disbled_group"]
 
-        async def Save(self) -> None:
+        async def save(self) -> None:
             """保存数据进文件"""
-            await AsyncSaveData(self.__data, self.__file)
+            await async_save_data(self.__data, self.__file)
 
         @property
         def global_status(self) -> bool:
@@ -95,7 +95,7 @@ class TaskManager:
             """
             return self.__global_status
 
-        def SetUsage(self, usage: Optional[str]) -> None:
+        def set_usage(self, usage: Optional[str]) -> None:
             """设置用法
 
             Args:
@@ -103,15 +103,15 @@ class TaskManager:
             """
             self.usage = usage
 
-        def Enable(self):
+        def enable(self):
             """全局启用"""
             self.__data["global_status"] = self.__global_status = True
 
-        def Disable(self):
+        def disable(self):
             """全局禁用"""
             self.__data["global_status"] = self.__global_status = False
 
-        def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
+        def check_group_status(self, group_id: int, group_permission: int) -> bool:
             """检测群是否能调用该任务
 
             Args:
@@ -127,7 +127,7 @@ class TaskManager:
                 and (self.__default_status ^ (group_id in self.__non_default_group))
             )
 
-        def CheckPermission(self, permission: int) -> bool:
+        def check_permission(self, permission: int) -> bool:
             """检测权限
 
             Args:
@@ -138,7 +138,7 @@ class TaskManager:
             """
             return permission >= self.__permission
 
-        def SetGroupEnable(self, group_id: int) -> bool:
+        def set_group_enable(self, group_id: int) -> bool:
             """在群group_id中启用该任务
 
             Args:
@@ -163,7 +163,7 @@ class TaskManager:
                     self.__disabled_group.remove(group_id)
             return True
 
-        def SetGroupDisable(self, group_id: int) -> bool:
+        def set_group_disable(self, group_id: int) -> bool:
             """在群group_id中禁用该任务
 
             Args:
@@ -186,7 +186,7 @@ class TaskManager:
                     self.__disabled_group.append(group_id)
             return True
 
-        def CleanGroup(self, group_set: Set[int]) -> None:
+        def clean_group(self, group_set: Set[int]) -> None:
             """清理配置文件中冗余的群
 
             Args:
@@ -222,21 +222,21 @@ class TaskManager:
                     file=task_file
                 )
 
-    async def Init(self) -> List[Optional[str]]:
+    async def init(self) -> List[Optional[str]]:
         """异步初始化所有Task类
 
         Returns:
             List[Optional[str]]: List中项为None时表示无异常，反之为表示异常的字符串
         """
         ret = await asyncio.gather(
-            *[task.Init() for task in self.__task.values()],
+            *[task.init() for task in self.__task.values()],
             return_exceptions=True,
         )
         for task in self.__task.values():
             self.__names[task.name] = task.task_name
         return ret
 
-    def CheckGroupStatus(
+    def check_group_status(
         self, task_name: str, group_id: int, group_permission: int
     ) -> bool:
         """检测任务task_name是否响应该群，由group_manager调用
@@ -249,11 +249,11 @@ class TaskManager:
         Returns:
             bool: 若响应，返回True
         """
-        return (not (task := self.__task.get(task_name))) or task.CheckGroupStatus(
+        return (not (task := self.__task.get(task_name))) or task.check_group_status(
             group_id=group_id, group_permission=group_permission
         )
 
-    def CheckPermission(self, task_name: str, permission: int) -> bool:
+    def check_permission(self, task_name: str, permission: int) -> bool:
         """检测permission的权限能否调用task_name插件
 
         Args:
@@ -263,11 +263,11 @@ class TaskManager:
         Returns:
             bool: 若权限足够返回True
         """
-        return (not (task := self.__task.get(task_name))) or task.CheckPermission(
+        return (not (task := self.__task.get(task_name))) or task.check_permission(
             permission=permission
         )
 
-    async def SetGroupEnable(self, task_name: str, group_id: int) -> bool:
+    async def set_group_enable(self, task_name: str, group_id: int) -> bool:
         """启用group_id中的task_name任务
 
         Args:
@@ -277,12 +277,12 @@ class TaskManager:
         Returns:
             bool: 若返回False则表示已被全局禁用，反之返回True
         """
-        if (task := self.__task.get(task_name)) and task.SetGroupEnable(group_id):
-            await task.Save()
+        if (task := self.__task.get(task_name)) and task.set_group_enable(group_id):
+            await task.save()
             return True
         return False
 
-    async def SetGroupDisable(self, task_name: str, group_id: int) -> bool:
+    async def set_group_disable(self, task_name: str, group_id: int) -> bool:
         """禁用group_id中的task_name任务
 
         Args:
@@ -292,12 +292,12 @@ class TaskManager:
         Returns:
             bool: 返回True
         """
-        if (task := self.__task.get(task_name)) and task.SetGroupDisable(group_id):
-            await task.Save()
+        if (task := self.__task.get(task_name)) and task.set_group_disable(group_id):
+            await task.save()
             return True
         return False
 
-    def CheckTask(self, name: str) -> bool:
+    def check_task(self, name: str) -> bool:
         """检测是否存在task_name的任务
 
         Args:
@@ -308,7 +308,7 @@ class TaskManager:
         """
         return name in self.__task
 
-    def GetTaskNameList(self) -> Set[str]:
+    def get_task_name_list(self) -> Set[str]:
         """获取任务名列表
 
         Returns:
@@ -316,7 +316,7 @@ class TaskManager:
         """
         return self.__task.keys()
 
-    def GetTaskName(self, name: str) -> Optional[str]:
+    def get_task_name(self, name: str) -> Optional[str]:
         """由任务名或别名获取插件名（task_name）
 
         Args:
@@ -329,7 +329,7 @@ class TaskManager:
             return name
         return self.__names.get(name)
 
-    def GetTaskList(self) -> Set[Task]:
+    def get_task_list(self) -> Set[Task]:
         """获取管理任务的Task类们
 
         Returns:
@@ -337,7 +337,7 @@ class TaskManager:
         """
         return self.__task.values()
 
-    def GetTaskUsage(self, name: str) -> Optional[str]:
+    def get_task_usage(self, name: str) -> Optional[str]:
         """获取任务帮助，支持task_name与别名
 
         Args:
@@ -352,7 +352,7 @@ class TaskManager:
             name = self.__names[name]
         return self.__task[name].usage
 
-    async def CleanGroup(self, group_list: Union[List[int], Set[int]]) -> None:
+    async def clean_group(self, group_list: Union[List[int], Set[int]]) -> None:
         """清理配置文件中冗余的群
 
         Args:
@@ -360,10 +360,10 @@ class TaskManager:
         """
         group_list = set(group_list)
         for task in self.__task.values():
-            task.CleanGroup(group_list)
-        await asyncio.gather(*[task.Save() for task in self.__task.values()])
+            task.clean_group(group_list)
+        await asyncio.gather(*[task.save() for task in self.__task.values()])
 
-    async def EnableTask(self, task_name: str):
+    async def enable_task(self, task_name: str):
         """全局启用任务task_name
 
         Args:
@@ -372,10 +372,10 @@ class TaskManager:
         task = self.__task.get(task_name)
         if not task:
             return
-        task.Enable()
-        await task.Save()
+        task.enable()
+        await task.save()
 
-    async def DisableTask(self, task_name: str):
+    async def disable_task(self, task_name: str):
         """全局禁用任务task_name
 
         Args:
@@ -384,10 +384,10 @@ class TaskManager:
         task = self.__task.get(task_name)
         if not task:
             return
-        task.Disable()
-        await task.Save()
+        task.disable()
+        await task.save()
 
-    def SetTaskUsage(self, task_name: str, usage: Optional[str]):
+    def set_task_usage(self, task_name: str, usage: Optional[str]):
         """设定插件task_name的用法
 
         Args:
@@ -396,9 +396,9 @@ class TaskManager:
         """
         if task_name not in self.__task:
             return
-        self.__task[task_name].SetUsage(usage=usage)
+        self.__task[task_name].set_usage(usage=usage)
 
-    async def Add(self, task_items: Union[TaskItem, List[TaskItem]]) -> None:
+    async def add(self, task_items: Union[TaskItem, List[TaskItem]]) -> None:
         """添加任务进TaskManager
 
         Args:
@@ -408,7 +408,7 @@ class TaskManager:
             task_items: List[TaskItem] = [task_items]
         for item in task_items:
             if item.task_name not in self.__task:
-                await AsyncSaveData(
+                await async_save_data(
                     {
                         "name": item.name,
                         "permission": item.permission,
@@ -424,9 +424,9 @@ class TaskManager:
                     file=self.__file_path / f"{item.task_name}.json", usage=item.usage
                 )
             else:
-                self.__task[item.task_name].SetUsage(usage=item.usage)
+                self.__task[item.task_name].set_usage(usage=item.usage)
 
-    async def Remove(self, task_name: str) -> None:
+    async def remove(self, task_name: str) -> None:
         """从TaskManager中移除插件
 
         Args:

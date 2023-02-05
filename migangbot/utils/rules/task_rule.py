@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import Event, GroupMessageEvent, PokeNotifyEven
 from migangbot.core.manager import group_manager
 
 
-def GroupTaskChecker(task_name: str) -> Callable:
+def group_task_checker(task_name: str) -> Callable:
     """返回一个参数为event的任务检测器，检测任务是否能够响应该事件
 
     Args:
@@ -15,12 +15,12 @@ def GroupTaskChecker(task_name: str) -> Callable:
     Returns:
         Callable: 参数为event的任务检测器
     """
-    return partial(_GroupTaskChecker, task_name=task_name)
+    return partial(_group_task_checker, task_name=task_name)
 
 
-def _GroupTaskChecker(event: Event, task_name: str) -> bool:
+def _group_task_checker(event: Event, task_name: str) -> bool:
     if type(event) not in (GroupMessageEvent, PokeNotifyEvent):
         return False
-    return group_manager.CheckGroupTaskStatus(
+    return group_manager.check_group_task_status(
         task_name=task_name, group_id=event.group_id
     )

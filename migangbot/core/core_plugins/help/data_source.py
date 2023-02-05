@@ -23,17 +23,17 @@ async def _():
     await add_font("yz.ttf", FONT_PATH / "yz.ttf")
 
 
-async def GetHelpImage(group_id: Optional[int], user_id: Optional[int], super: bool):
+async def get_help_image(group_id: Optional[int], user_id: Optional[int], super: bool):
     """
     说明:
         生成帮助图片
     参数:
         :param group_id: 群号
     """
-    return await HelpImageBuild().BuildImage(group_id, user_id, super)
+    return await HelpImageBuild().build_image(group_id, user_id, super)
 
 
-def GetPluginHelp(name: str) -> Optional[MessageSegment]:
+def get_plugin_help(name: str) -> Optional[MessageSegment]:
     """
     说明:
         获取功能的帮助信息
@@ -41,8 +41,8 @@ def GetPluginHelp(name: str) -> Optional[MessageSegment]:
         :param msg: 功能cmd
         :param is_super: 是否为超级用户
     """
-    if usage := plugin_manager.GetPluginUsage(name) or (
-        usage := task_manager.GetTaskUsage(name)
+    if usage := plugin_manager.get_plugin_usage(name) or (
+        usage := task_manager.get_task_usage(name)
     ):
         width = 0
         for x in usage.split("\n"):
@@ -69,16 +69,16 @@ class Item(BaseModel):
     global_status: bool = False
 
 
-async def GetTaskImage(group_id):
+async def get_task_image(group_id):
     task_list = []
-    for task in task_manager.GetTaskList():
+    for task in task_manager.get_task_list():
         item = Item(
             name=task.name,
-            group_status=group_manager.CheckGroupTaskStatus(
+            group_status=group_manager.check_group_task_status(
                 task_name=task.task_name, group_id=group_id
             ),
             global_status=task.global_status
-            and group_manager.CheckTaskPermission(
+            and group_manager.check_task_permission(
                 task_name=task.task_name, group_id=group_id
             ),
         )

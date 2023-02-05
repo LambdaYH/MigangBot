@@ -15,7 +15,7 @@ _file_suffixes = [".json", ".yaml", ".yml"]
 T = TypeVar("T")
 
 
-def LoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
+def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     """同步加载.json或.yaml数据
 
     Args:
@@ -51,7 +51,7 @@ def LoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     return data
 
 
-def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]) -> None:
+def save_data(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]) -> None:
     """同步保存数据
 
     Args:
@@ -67,7 +67,7 @@ def SaveData(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]) -
             _yaml.dump(obj, f)
 
 
-async def AsyncLoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
+async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     """异步加载.json或.yaml数据
 
     Args:
@@ -104,7 +104,7 @@ async def AsyncLoadData(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     return data
 
 
-async def AsyncSaveData(
+async def async_save_data(
     obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]
 ) -> None:
     """异步保存数据

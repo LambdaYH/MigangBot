@@ -5,7 +5,7 @@ from typing import Union, Dict
 from migangbot.core.permission import NORMAL
 from migangbot.core.manager import PluginManager, TaskManager
 from migangbot.core.exception import FileTypeError
-from migangbot.core.utils.file_operation import AsyncSaveData
+from migangbot.core.utils.file_operation import async_save_data
 
 
 class GroupManager:
@@ -28,7 +28,7 @@ class GroupManager:
             self.permission: int = data["permission"]
             self.bot_status: bool = data["bot_status"]
 
-        def SetBotEnable(self) -> bool:
+        def set_bot_enable(self) -> bool:
             """启用群机器人
 
             Returns:
@@ -39,7 +39,7 @@ class GroupManager:
             self.__data["bot_status"] = self.bot_status = True
             return True
 
-        def SetBotDisable(self) -> bool:
+        def set_bot_disable(self) -> bool:
             """禁用群机器人
 
             Returns:
@@ -50,7 +50,7 @@ class GroupManager:
             self.__data["bot_status"] = self.bot_status = False
             return True
 
-        def SetPermission(self, permission: int):
+        def set_permission(self, permission: int):
             """设定群权限
 
             Args:
@@ -103,10 +103,10 @@ class GroupManager:
         for group in self.__data:
             self.__group[int(group)] = GroupManager.Group(self.__data[group])
 
-    async def Save(self) -> None:
+    async def save(self) -> None:
         """保存进文件"""
         if self.__dirty_data:
-            await AsyncSaveData(self.__data, self.__file)
+            await async_save_data(self.__data, self.__file)
             self.__dirty_data = False
 
     def __get_group(self, group_id: int) -> Group:
@@ -128,7 +128,7 @@ class GroupManager:
             self.__dirty_data = True
         return group
 
-    def CheckGroupPluginStatus(self, plugin_name: str, group_id: int) -> bool:
+    def check_group_plugin_status(self, plugin_name: str, group_id: int) -> bool:
         """检测群group_id是否能调用plugin_name插件，若能，返回True
 
         Args:
@@ -139,13 +139,13 @@ class GroupManager:
             bool: 若能调用，返回True
         """
         group = self.__get_group(group_id=group_id)
-        return group.bot_status and self.__plugin_manager.CheckGroupStatus(
+        return group.bot_status and self.__plugin_manager.check_group_status(
             plugin_name=plugin_name,
             group_id=group_id,
             group_permission=group.permission,
         )
 
-    def CheckGroupTaskStatus(self, task_name: str, group_id: int) -> bool:
+    def check_group_task_status(self, task_name: str, group_id: int) -> bool:
         """检测群group_id是否能调用task_name任务，若能，返回True
 
         Args:
@@ -156,13 +156,13 @@ class GroupManager:
             bool: 若能调用，返回True
         """
         group = self.__get_group(group_id=group_id)
-        return group.bot_status and self.__task_manager.CheckGroupStatus(
+        return group.bot_status and self.__task_manager.check_group_status(
             task_name=task_name,
             group_id=group_id,
             group_permission=group.permission,
         )
 
-    def CheckPluginPermission(self, plugin_name: str, group_id: int) -> bool:
+    def check_plugin_permission(self, plugin_name: str, group_id: int) -> bool:
         """检测群group_id是否有插件plugin_name的调用权限
 
         Args:
@@ -173,11 +173,11 @@ class GroupManager:
             bool: 若有权限，返回True
         """
         group = self.__get_group(group_id=group_id)
-        return self.__plugin_manager.CheckPermission(
+        return self.__plugin_manager.check_permission(
             plugin_name=plugin_name, permission=group.permission
         )
 
-    def CheckTaskPermission(self, task_name: str, group_id: int) -> bool:
+    def check_task_permission(self, task_name: str, group_id: int) -> bool:
         """检测群group_id是否有任务task_name的调用权限
 
         Args:
@@ -188,11 +188,11 @@ class GroupManager:
             bool: 若有权限，返回True
         """
         group = self.__get_group(group_id=group_id)
-        return self.__task_manager.CheckPermission(
+        return self.__task_manager.check_permission(
             task_name=task_name, permission=group.permission
         )
 
-    async def SetPluginEnable(self, plugin_name: str, group_id: int) -> bool:
+    async def set_plugin_enable(self, plugin_name: str, group_id: int) -> bool:
         """启用群group_id的plugin_name插件
 
         Args:
@@ -203,16 +203,16 @@ class GroupManager:
             bool: 若启用成功，返回True
         """
         group = self.__get_group(group_id=group_id)
-        if self.__plugin_manager.CheckPermission(
+        if self.__plugin_manager.check_permission(
             plugin_name=plugin_name, permission=group.permission
         ):
-            if await self.__plugin_manager.SetGroupEnable(
+            if await self.__plugin_manager.set_group_enable(
                 plugin_name=plugin_name, group_id=group_id
             ):
                 return True
         return False
 
-    async def SetPluginDisable(self, plugin_name: str, group_id: int) -> bool:
+    async def set_plugin_disable(self, plugin_name: str, group_id: int) -> bool:
         """禁用群group_id的plugin_name插件
 
         Args:
@@ -223,16 +223,16 @@ class GroupManager:
             bool: 若禁用成功，返回True
         """
         group = self.__get_group(group_id=group_id)
-        if self.__plugin_manager.CheckPermission(
+        if self.__plugin_manager.check_permission(
             plugin_name=plugin_name, permission=group.permission
         ):
-            await self.__plugin_manager.SetGroupDisable(
+            await self.__plugin_manager.set_group_disable(
                 plugin_name=plugin_name, group_id=group_id
             )
             return True
         return False
 
-    async def SetTaskEnable(self, task_name: str, group_id: int):
+    async def set_task_enable(self, task_name: str, group_id: int):
         """启用群group_id的task_name任务
 
         Args:
@@ -243,16 +243,16 @@ class GroupManager:
             _type_: 若启用成功，返回True
         """
         group = self.__get_group(group_id=group_id)
-        if self.__task_manager.CheckPermission(
+        if self.__task_manager.check_permission(
             task_name=task_name, permission=group.permission
         ):
-            if await self.__task_manager.SetGroupEnable(
+            if await self.__task_manager.set_group_enable(
                 task_name=task_name, group_id=group_id
             ):
                 return True
         return False
 
-    async def SetTaskDisable(self, task_name: str, group_id: int):
+    async def set_task_disable(self, task_name: str, group_id: int):
         """禁用群group_id的task_name任务
 
         Args:
@@ -263,16 +263,16 @@ class GroupManager:
             _type_: 若禁用成功，返回True
         """
         group = self.__get_group(group_id=group_id)
-        if self.__task_manager.CheckPermission(
+        if self.__task_manager.check_permission(
             task_name=task_name, permission=group.permission
         ):
-            await self.__task_manager.SetGroupDisable(
+            await self.__task_manager.set_group_disable(
                 task_name=task_name, group_id=group_id
             )
             return True
         return False
 
-    def EnableBot(self, group_id: int) -> bool:
+    def enable_bot(self, group_id: int) -> bool:
         """启用群group_id的机器人
 
         Args:
@@ -282,12 +282,12 @@ class GroupManager:
             bool: 若启用成功，返回True，反之表示已启用
         """
         group = self.__get_group(group_id=group_id)
-        if group.SetBotEnable():
+        if group.set_bot_enable():
             self.__dirty_data = True
             return True
         return False
 
-    def DisableBot(self, group_id: int) -> bool:
+    def disable_bot(self, group_id: int) -> bool:
         """禁用群group_id的机器人
 
         Args:
@@ -297,12 +297,12 @@ class GroupManager:
             bool: 若禁用成功，返回True，反之表示已禁用
         """
         group = self.__get_group(group_id=group_id)
-        if group.SetBotDisable():
+        if group.set_bot_disable():
             self.__dirty_data = True
             return True
         return False
 
-    async def Add(self, group_id: int, auto_save: bool = True) -> None:
+    async def add(self, group_id: int, auto_save: bool = True) -> None:
         """添加新群
 
         Args:
@@ -311,11 +311,11 @@ class GroupManager:
         """
         self.__get_group(group_id=group_id)
         if auto_save:
-            await self.Save()
+            await self.save()
         else:
             self.__dirty_data = True
 
-    async def Remove(self, group_id: int, auto_save: bool = True) -> None:
+    async def remove(self, group_id: int, auto_save: bool = True) -> None:
         """移除群
 
         Args:
@@ -326,6 +326,6 @@ class GroupManager:
             del self.__data[str(group_id)]
             del self.__group[group_id]
             if auto_save:
-                await self.Save()
+                await self.save()
             else:
                 self.__dirty_data = True

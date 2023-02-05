@@ -15,7 +15,7 @@ core_data_path = Path() / "data" / "core"
 plugin_manager: PluginManager = PluginManager(core_data_path / "plugin_manager")
 """插件运行前检查，控制整个插件的状态，实现整个插件的启闭
 """
-# task_manager是推送前检查，更精确控制消息发送
+
 task_manager: TaskManager = TaskManager(core_data_path / "task_manager")
 """更小粒度的控制，能够在matcher中使用rule检测或直接在业务代码中检测
 """
@@ -48,10 +48,10 @@ count_manager: CountManager = CountManager()
 """
 
 
-async def Save():
+async def save():
     """保存各管理器需要保存的文件"""
     import asyncio
 
     await asyncio.gather(
-        *[group_manager.Save(), user_manager.Save(), count_manager.Save()]
+        *[group_manager.save(), user_manager.save(), count_manager.save()]
     )

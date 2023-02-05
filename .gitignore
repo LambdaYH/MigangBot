@@ -148,3 +148,4 @@ configs/
 migangbot/plugins/*
 .env.dev
 .env
+db_config.yaml

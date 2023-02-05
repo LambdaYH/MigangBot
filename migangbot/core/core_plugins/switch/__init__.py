@@ -37,24 +37,24 @@ GROUP_HELP_PATH = DATA_PATH / "core" / "help" / "group_help_image"
 GROUP_TASK_PATH = DATA_PATH / "core" / "help" / "group_task_image"
 
 
-def CleanAllHelpImage():
+def clean_all_help_image():
     for img in GROUP_HELP_PATH.iterdir():
         img.unlink()
     for img in USER_HELP_PATH.iterdir():
         img.unlink()
 
 
-def CleanAllTaskImage():
+def clean_all_task_image():
     for img in GROUP_TASK_PATH.iterdir():
         img.unlink()
 
 
-def CleanGroupHelpImage(group_id: int):
+def clean_group_help_image(group_id: int):
     if (file := GROUP_HELP_PATH / f"{group_id}.png").exists():
         file.unlink()
 
 
-def CleanGroupTaskImage(group_id: int):
+def clean_group_task_image(group_id: int):
     if (file := GROUP_TASK_PATH / f"{group_id}.png").exists():
         file.unlink()
 
@@ -72,18 +72,18 @@ async def _(
     if param == "全部插件":
         count = 0
         if cmd == "开启":
-            for plugin in plugin_manager.GetPluginNameList():
-                if not await group_manager.SetPluginEnable(
+            for plugin in plugin_manager.get_plugin_name_list():
+                if not await group_manager.set_plugin_enable(
                     plugin_name=plugin, group_id=event.group_id
                 ):
                     count += 1
         else:
-            for plugin in plugin_manager.GetPluginNameList():
-                if not await group_manager.SetPluginDisable(
+            for plugin in plugin_manager.get_plugin_name_list():
+                if not await group_manager.set_plugin_disable(
                     plugin_name=plugin, group_id=event.group_id
                 ):
                     count += 1
-        CleanGroupHelpImage(event.group_id)
+        clean_group_help_image(event.group_id)
         await switch.finish(
             f"已{cmd}全部插件"
             + (f"，不包括{count}个全局禁用与无权限插件" if "cmd" == "开启" and count != 0 else "")
@@ -91,50 +91,50 @@ async def _(
     elif param == "全部被动":
         count = 0
         if cmd == "开启":
-            for task in task_manager.GetTaskNameList():
-                if not await group_manager.SetTaskEnable(
+            for task in task_manager.get_task_name_list():
+                if not await group_manager.set_task_enable(
                     task_name=task, group_id=event.group_id
                 ):
                     count += 1
         else:
-            for task in task_manager.GetTaskNameList():
-                if not await group_manager.SetTaskDisable(
+            for task in task_manager.get_task_name_list():
+                if not await group_manager.set_task_disable(
                     task_name=task, group_id=event.group_id
                 ):
                     count += 1
-        CleanGroupTaskImage(event.group_id)
+        clean_group_task_image(event.group_id)
         await switch.finish(
             f"已{cmd}全部被动"
             + (f"，不包括{count}个全局禁用与无权限被动" if "cmd" == "开启" and count != 0 else "")
         )
-    if cmd in ("开启被动", "关闭被动") and (name := task_manager.GetTaskName(param)):
-        if cmd == "开启被动" and not await group_manager.SetTaskEnable(
+    if cmd in ("开启被动", "关闭被动") and (name := task_manager.get_task_name(param)):
+        if cmd == "开启被动" and not await group_manager.set_task_enable(
             task_name=name, group_id=event.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭被动":
-            await group_manager.SetTaskDisable(task_name=name, group_id=event.group_id)
-        CleanGroupTaskImage(event.group_id)
+            await group_manager.set_task_disable(task_name=name, group_id=event.group_id)
+        clean_group_task_image(event.group_id)
         await switch.finish(f"已{cmd}群被动：{param}")
-    if name := plugin_manager.GetPluginName(param):
-        if cmd == "开启" and not await group_manager.SetPluginEnable(
+    if name := plugin_manager.get_plugin_name(param):
+        if cmd == "开启" and not await group_manager.set_plugin_enable(
             plugin_name=name, group_id=event.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭":
-            await group_manager.SetPluginDisable(
+            await group_manager.set_plugin_disable(
                 plugin_name=name, group_id=event.group_id
             )
-        CleanGroupHelpImage(event.group_id)
+        clean_group_help_image(event.group_id)
         await switch.finish(f"已{cmd}插件：{param}")
-    elif name := task_manager.GetTaskName(param):
-        if cmd == "开启" and not await group_manager.SetTaskEnable(
+    elif name := task_manager.get_task_name(param):
+        if cmd == "开启" and not await group_manager.set_task_enable(
             task_name=name, group_id=event.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭":
-            await group_manager.SetTaskDisable(task_name=name, group_id=event.group_id)
-        CleanGroupTaskImage(event.group_id)
+            await group_manager.set_task_disable(task_name=name, group_id=event.group_id)
+        clean_group_task_image(event.group_id)
         await switch.finish(f"已{cmd}群被动：{param}")
     else:
         await switch.finish(f"插件或群被动 {param} 不存在")
@@ -151,43 +151,43 @@ async def _(
         await switch.finish()
     if param == "全部插件":
         if cmd == "全局开启":
-            for plugin in plugin_manager.GetPluginNameList():
-                await plugin_manager.EnablePlugin(plugin_name=plugin)
+            for plugin in plugin_manager.get_plugin_name_list():
+                await plugin_manager.enable_plugin(plugin_name=plugin)
         else:
-            for plugin in plugin_manager.GetPluginNameList():
-                await plugin_manager.DisablePlugin(plugin_name=plugin)
-        CleanAllHelpImage()
+            for plugin in plugin_manager.get_plugin_name_list():
+                await plugin_manager.disable_plugin(plugin_name=plugin)
+        clean_all_help_image()
         await switch.finish(f"已{cmd}全部插件")
     elif param == "全部被动":
         if cmd == "全局开启":
-            for task in task_manager.GetTaskNameList():
-                await task_manager.EnableTask(task_name=task)
+            for task in task_manager.get_task_name_list():
+                await task_manager.enable_task(task_name=task)
         else:
-            for task in task_manager.GetTaskNameList():
-                await task_manager.DisableTask(task_name=task)
-        CleanAllTaskImage()
+            for task in task_manager.get_task_name_list():
+                await task_manager.disable_task(task_name=task)
+        clean_all_task_image()
         await switch.finish(f"已{cmd}全部被动")
 
-    if cmd in ("全局开启被动", "全局关闭被动") and (name := task_manager.GetTaskName(param)):
+    if cmd in ("全局开启被动", "全局关闭被动") and (name := task_manager.get_task_name(param)):
         if cmd == "全局开启被动":
-            await task_manager.EnableTask(task_name=name)
+            await task_manager.enable_task(task_name=name)
         elif cmd == "全局关闭被动":
-            await task_manager.DisableTask(task_name=name)
-        CleanAllTaskImage()
+            await task_manager.disable_task(task_name=name)
+        clean_all_task_image()
         await switch.finish(f"已{cmd}群被动：{param}")
-    if name := plugin_manager.GetPluginName(param):
+    if name := plugin_manager.get_plugin_name(param):
         if cmd == "全局开启":
-            await plugin_manager.EnablePlugin(plugin_name=name)
+            await plugin_manager.enable_plugin(plugin_name=name)
         elif cmd == "全局关闭":
-            await plugin_manager.DisablePlugin(plugin_name=name)
-        CleanAllHelpImage()
+            await plugin_manager.disable_plugin(plugin_name=name)
+        clean_all_help_image()
         await switch.finish(f"已{cmd}插件：{param}")
-    elif name := task_manager.GetTaskName(param):
+    elif name := task_manager.get_task_name(param):
         if cmd == "全局开启":
-            await task_manager.EnableTask(task_name=name)
+            await task_manager.enable_task(task_name=name)
         elif cmd == "全局关闭":
-            await task_manager.DisableTask(task_name=name)
-        CleanAllTaskImage()
+            await task_manager.disable_task(task_name=name)
+        clean_all_task_image()
         await switch.finish(f"已{cmd}群被动：{param}")
     else:
         await switch.finish(f"插件或群被动 {param} 不存在")

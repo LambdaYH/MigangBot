@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional, List
 from ruamel.yaml import CommentedMap
 from async_lru import alru_cache
 
-from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
+from migangbot.core.utils.file_operation import async_load_data, async_save_data
 from migangbot.core.exception import ConfigNoExistError
 
 _config_path = Path() / "configs"
@@ -49,7 +49,7 @@ class ConfigManager:
         """{plugin_name: {"key": value}}
         """
 
-    async def AddConfig(self, plugin_name: str, config: ConfigItem) -> None:
+    async def add_config(self, plugin_name: str, config: ConfigItem) -> None:
         """添加单个配置项
 
         Args:
@@ -59,7 +59,7 @@ class ConfigManager:
         if config.config_name:
             plugin_name = config.config_name
         file_name = _config_path / f"{plugin_name}.yaml"
-        data: CommentedMap = await AsyncLoadData(file_name)
+        data: CommentedMap = await async_load_data(file_name)
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
         self.__default_value[plugin_name][config.key] = config.default_value
@@ -69,9 +69,9 @@ class ConfigManager:
         data.yaml_set_comment_before_after_key(
             key=config.key, before=config.description
         )
-        await AsyncSaveData(data, file_name)
+        await async_save_data(data, file_name)
 
-    async def AddConfigs(self, plugin_name: str, configs: List[ConfigItem]) -> None:
+    async def add_configs(self, plugin_name: str, configs: List[ConfigItem]) -> None:
         """添加多个配置项
 
         Args:
@@ -81,10 +81,10 @@ class ConfigManager:
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
         file_name = _config_path / f"{plugin_name}.yaml"
-        data: CommentedMap = await AsyncLoadData(file_name)
+        data: CommentedMap = await async_load_data(file_name)
         for config in configs:
             if config.config_name:
-                await self.AddConfig(plugin_name, config)
+                await self.add_config(plugin_name, config)
                 continue
             self.__default_value[plugin_name][config.key] = config.default_value
             if config.key in data:
@@ -93,10 +93,10 @@ class ConfigManager:
             data.yaml_set_comment_before_after_key(
                 key=config.key, before=config.description
             )
-        await AsyncSaveData(data, file_name)
+        await async_save_data(data, file_name)
 
     @alru_cache(maxsize=128)
-    async def __GetConfig(self, plugin_name: str) -> CommentedMap:
+    async def __get_config(self, plugin_name: str) -> CommentedMap:
         """读取插件名对应的配置名
         Args:
             plugin_name (str): 插件名或配置文件名
@@ -104,10 +104,10 @@ class ConfigManager:
         Returns:
             CommentedMap: 配置，类Dict结构
         """
-        return await AsyncLoadData(_config_path / f"{plugin_name}.yaml")
+        return await async_load_data(_config_path / f"{plugin_name}.yaml")
 
     @alru_cache(maxsize=256)
-    async def GetConfigItem(self, plugin_name: str, plugin_config: str) -> Any:
+    async def get_config_item(self, plugin_name: str, plugin_config: str) -> Any:
         """获取plugin_name对应的键值为plugin_config的配置值
 
         Args:
@@ -120,7 +120,7 @@ class ConfigManager:
         Returns:
             Any: 配置值
         """
-        data = await self.__GetConfig(plugin_name)
+        data = await self.__get_config(plugin_name)
         if plugin_config not in data:
             raise ConfigNoExistError(f"插件 {plugin_name} 的配置项 {plugin_config} 不存在！")
         return (

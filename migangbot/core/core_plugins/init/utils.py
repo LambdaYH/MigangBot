@@ -10,7 +10,7 @@ _ignore_plugin = set(
 )
 
 
-def GetPluginList():
+def get_plugin_list():
     plugins = get_loaded_plugins()
     return [
         plugin

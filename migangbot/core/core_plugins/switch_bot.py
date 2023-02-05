@@ -26,7 +26,7 @@ switch_bot_sleep = on_fullmatch(
 async def _(
     event: GroupMessageEvent,
 ):
-    if group_manager.EnableBot(group_id=event.group_id):
+    if group_manager.enable_bot(group_id=event.group_id):
         logger.info(f"群 {event.group_id} 唤醒了Bot")
         await switch_bot_wakeup.finish("呜..醒来了...")
     await switch_bot_wakeup.send("我一直醒着呢！")
@@ -34,7 +34,7 @@ async def _(
 
 @switch_bot_sleep.handle()
 async def _(event: GroupMessageEvent):
-    if group_manager.DisableBot(group_id=event.group_id):
+    if group_manager.disable_bot(group_id=event.group_id):
         logger.info(f"群 {event.group_id} 的Bot下班了")
         await switch_bot_sleep.finish("那我去睡觉了哦~")
     await switch_bot_sleep.send("zzzzzz......")

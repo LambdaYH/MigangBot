@@ -4,15 +4,15 @@ from nonebot.log import logger
 
 from migangbot.core.manager import count_manager
 
-from .utils import GetPluginList
+from .utils import get_plugin_list
 
 
 async def init_plugin_count():
-    plugins = GetPluginList()
+    plugins = get_plugin_list()
     count = 0
     add_ret = await asyncio.gather(
         *[
-            count_manager.Add(
+            count_manager.add(
                 plugin_name=plugin.name,
                 count_items=plugin.module.__getattribute__("__plugin_count__"),
             )

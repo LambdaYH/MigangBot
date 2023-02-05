@@ -3,7 +3,6 @@ from nonebot.message import run_preprocessor
 from nonebot.exception import IgnoredException
 from nonebot.adapters.onebot.v11 import (
     Event,
-    Bot,
     MessageEvent,
     PokeNotifyEvent,
     GroupMessageEvent,
@@ -21,11 +20,11 @@ _ignore_plugins = set(["switch_bot"])
 
 
 @run_preprocessor
-async def _(bot: Bot, matcher: Matcher, event: Event):
+async def _(matcher: Matcher, event: Event):
     if matcher.plugin_name in _ignore_plugins:
         return
     # 检测群插件启用情况
-    if type(event) is GroupMessageEvent and not group_manager.CheckGroupPluginStatus(
+    if type(event) is GroupMessageEvent and not group_manager.check_group_plugin_status(
         plugin_name=matcher.plugin_name, group_id=event.group_id
     ):
         raise IgnoredException("群插件不可用")
@@ -36,13 +35,13 @@ async def _(bot: Bot, matcher: Matcher, event: Event):
     if isinstance(event, MessageEvent) or type(event) is PokeNotifyEvent:
         # 检测插件CD
         if (
-            ret := cd_manager.Check(plugin_name=matcher.plugin_name, event=event)
+            ret := cd_manager.check(plugin_name=matcher.plugin_name, event=event)
         ) != True:
             await matcher.send(ret)
             raise IgnoredException("cd...")
         # 检查插件次数限制
         if (
-            ret := count_manager.Check(plugin_name=matcher.plugin_name, event=event)
+            ret := count_manager.check(plugin_name=matcher.plugin_name, event=event)
         ) != True:
             await matcher.send(ret)
             raise IgnoredException("count...")

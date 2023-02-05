@@ -5,7 +5,7 @@ from typing import Union, Dict
 from migangbot.core.permission import NORMAL
 from migangbot.core.manager.plugin_manager import PluginManager
 from migangbot.core.exception import FileTypeError
-from migangbot.core.utils.file_operation import AsyncSaveData
+from migangbot.core.utils.file_operation import async_save_data
 
 
 class UserManager:
@@ -27,7 +27,7 @@ class UserManager:
             self.__data = data
             self.permission: int = data["permission"]
 
-        def SetPermission(self, permission: int):
+        def set_permission(self, permission: int):
             """设定用户权限
 
             Args:
@@ -72,10 +72,10 @@ class UserManager:
         for user in self.__data:
             self.__user[int(user)] = UserManager.User(self.__data[user])
 
-    async def Save(self) -> None:
+    async def save(self) -> None:
         """保存进文件"""
         if self.__dirty_data:
-            await AsyncSaveData(self.__data, self.__file)
+            await async_save_data(self.__data, self.__file)
             self.__dirty_data = False
 
     def __get_user(self, user_id: int) -> User:
@@ -105,11 +105,11 @@ class UserManager:
             bool: 若能调用，返回True
         """
         user = self.__get_user(user_id=user_id)
-        return self.__plugin_manager.CheckUserStatus(
+        return self.__plugin_manager.check_user_status(
             plugin_name=plugin_name, user_permission=user.permission
         )
 
-    def CheckPluginPermission(self, plugin_name: str, user_id: int) -> bool:
+    def check_plugin_permission(self, plugin_name: str, user_id: int) -> bool:
         """检测用户user_id是否有插件plugin_name的调用权限
 
         Args:
@@ -120,11 +120,11 @@ class UserManager:
             bool: 若有权限，返回True
         """
         user = self.__get_user(user_id=user_id)
-        return self.__plugin_manager.CheckPermission(
+        return self.__plugin_manager.check_permission(
             plugin_name=plugin_name, permission=user.permission
         )
 
-    async def Add(self, user_id: int, auto_save: bool = True) -> None:
+    async def add(self, user_id: int, auto_save: bool = True) -> None:
         """添加新用户
 
         Args:
@@ -133,11 +133,11 @@ class UserManager:
         """
         self.__get_user(user_id=user_id)
         if auto_save:
-            await self.Save()
+            await self.save()
         else:
             self.__dirty_data = True
 
-    async def Remove(self, user_id: int, auto_save: bool = True) -> None:
+    async def remove(self, user_id: int, auto_save: bool = True) -> None:
         """移除用户
 
         Args:
@@ -148,6 +148,6 @@ class UserManager:
             del self.__data[str(user_id)]
             del self.__user[user_id]
             if auto_save:
-                await self.Save()
+                await self.save()
             else:
                 self.__dirty_data = True

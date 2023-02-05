@@ -4,7 +4,7 @@
 from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
 from migangbot.core import CountPeriod
-from migangbot.core.manager import Save, count_manager
+from migangbot.core.manager import save, count_manager
 
 require("nonebot_plugin_apscheduler")
 
@@ -12,30 +12,30 @@ require("nonebot_plugin_apscheduler")
 # 重置插件限制
 @scheduler.scheduled_job("cron", minute=0)
 async def _():
-    count_manager.Reset(CountPeriod.hour)
+    count_manager.reset(CountPeriod.hour)
 
 
 @scheduler.scheduled_job("cron", minute=0, hour=0)
 async def _():
-    count_manager.Reset(CountPeriod.day)
+    count_manager.reset(CountPeriod.day)
 
 
 @scheduler.scheduled_job("cron", minute=0, hour=0, day_of_week="mon")
 async def _():
-    count_manager.Reset(CountPeriod.week)
+    count_manager.reset(CountPeriod.week)
 
 
 @scheduler.scheduled_job("cron", minute=0, hour=0, day=1)
 async def _():
-    count_manager.Reset(CountPeriod.month)
+    count_manager.reset(CountPeriod.month)
 
 
 @scheduler.scheduled_job("cron", minute=0, hour=0, day=1, month=1)
 async def _():
-    count_manager.Reset(CountPeriod.year)
+    count_manager.reset(CountPeriod.year)
 
 
 # 自动保存
 @scheduler.scheduled_job("interval", minutes=15, jitter=120)
 async def _():
-    await Save()
+    await save()

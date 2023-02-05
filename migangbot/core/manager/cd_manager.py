@@ -58,20 +58,20 @@ class CDManager:
                 self.__last_called: Dict[int, float] = {}
                 """该检测器最后的调用时间，{id: time}
                 """
-                self.__func: Callable = self.__CheckUserPrivate
+                self.__func: Callable = self.__check_user_private
                 """实际的检测函数
                 """
                 limit_type, check_type = cd_item.limit_type, cd_item.check_type
                 if limit_type == LimitType.user and check_type == CheckType.private:
-                    self.__func = self.__CheckUserPrivate
+                    self.__func = self.__check_user_private
                 elif limit_type == LimitType.user and check_type == CheckType.group:
-                    self.__func = self.__CheckUserGroup
+                    self.__func = self.__check_user_group
                 elif limit_type == LimitType.user and check_type == CheckType.all:
-                    self.__func = self.__CheckUserAll
+                    self.__func = self.__check_user_all
                 else:
-                    self.__func = self.__CheckGroup
+                    self.__func = self.__check_group
 
-            def Check(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
+            def check(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
                 """外部可调用的检测函数
 
                 Args:
@@ -82,7 +82,7 @@ class CDManager:
                 """
                 return self.__func(event)
 
-            def __CheckUserPrivate(
+            def __check_user_private(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
             ) -> bool:
                 """limit_type为user，check_type为private时的具体检测函数
@@ -94,10 +94,10 @@ class CDManager:
                     bool: 若CD不在冷却期，返回True
                 """
                 if type(event) is PokeNotifyEvent or event.message_type[0] == "p":
-                    return self.__CheckUserAll(event)
+                    return self.__check_user_all(event)
                 return True
 
-            def __CheckUserGroup(
+            def __check_user_group(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
             ) -> bool:
                 """limit_type为user，check_type为group时的具体检测函数
@@ -109,10 +109,10 @@ class CDManager:
                     bool: 若CD不在冷却期，返回True
                 """
                 if type(event) is PokeNotifyEvent or event.message_type[0] == "g":
-                    return self.__CheckUserAll(event)
+                    return self.__check_user_all(event)
                 return True
 
-            def __CheckUserAll(
+            def __check_user_all(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
             ) -> bool:
                 """limit_type为user，check_type为all时的具体检测函数
@@ -130,7 +130,7 @@ class CDManager:
                     return True
                 return False
 
-            def __CheckGroup(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
+            def __check_group(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
                 """limit_type为group，check_type只能是group时的具体检测函数
 
                 Args:
@@ -167,7 +167,7 @@ class CDManager:
                     CDManager.PluginCD.CDChecker(cd_item=cd_items)
                 ]
 
-        def Check(
+        def check(
             self, event: Union[MessageEvent, PokeNotifyEvent]
         ) -> Union[str, bool, None]:
             """
@@ -180,7 +180,7 @@ class CDManager:
                 Union[str, bool, None]: 若CD不在冷却期，返回True，反之返回提示语
             """
             for checker in self.__cd_checkers:
-                if not checker.Check(event):
+                if not checker.check(event):
                     return checker.hint
             return True
 
@@ -190,7 +190,7 @@ class CDManager:
         """{plugin_name: PluginCD}，以plugin_name为名的插件调用PluginCD检测调用次数
         """
 
-    def Add(self, plugin_name: str, cd_items: Union[List[CDItem], CDItem]):
+    def add(self, plugin_name: str, cd_items: Union[List[CDItem], CDItem]):
         """添加插件以及其对应的__plugin_cd__配置项（若有）进CDManager
 
         Args:
@@ -199,7 +199,7 @@ class CDManager:
         """
         self.__plugin_cd[plugin_name] = CDManager.PluginCD(cd_items=cd_items)
 
-    def Check(
+    def check(
         self, plugin_name: str, event: Union[MessageEvent, PokeNotifyEvent]
     ) -> Union[str, bool, None]:
         """检测plugin_name 的 CD，若CD不在冷却期，返回True，反之返回提示语
@@ -212,6 +212,6 @@ class CDManager:
             Union[str, bool, None]: 若CD不在冷却期，返回True，反之返回提示语
         """
         if plugin_cd := self.__plugin_cd.get(plugin_name):
-            if (ret := plugin_cd.Check(event=event)) != True:
+            if (ret := plugin_cd.check(event=event)) != True:
                 return ret
         return True

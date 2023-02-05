@@ -4,7 +4,7 @@ from typing import Union, Dict, Set, List, Optional, Any
 
 from migangbot.core.manager.data_class import PluginType
 from migangbot.core.permission import NORMAL
-from migangbot.core.utils.file_operation import AsyncLoadData, AsyncSaveData
+from migangbot.core.utils.file_operation import async_load_data, async_save_data
 
 
 class PluginManager:
@@ -64,9 +64,9 @@ class PluginManager:
             self.__enabled_group: List[int]
             self.__disabled_group: List[int]
 
-        async def Init(self) -> None:
+        async def init(self) -> None:
             """异步初始化插件"""
-            self.__data = await AsyncLoadData(self.__file)
+            self.__data = await async_load_data(self.__file)
             self.name = self.__data["name"]
             self.all_name: Set[str] = set(self.__data["aliases"])
             self.all_name.add(self.name)
@@ -84,11 +84,11 @@ class PluginManager:
             self.__enabled_group: List[int] = self.__data["enabled_group"]
             self.__disabled_group: List[int] = self.__data["disbled_group"]
 
-        async def Save(self) -> None:
+        async def save(self) -> None:
             """将插件数据存储到硬盘"""
-            await AsyncSaveData(self.__data, self.__file)
+            await async_save_data(self.__data, self.__file)
 
-        def SetPluginType(self, type: PluginType):
+        def set_plugin_type(self, type: PluginType):
             """设置插件类型
 
             Args:
@@ -105,15 +105,15 @@ class PluginManager:
             """
             return self.__global_status
 
-        def Enable(self) -> None:
+        def enable(self) -> None:
             """全局启用"""
             self.__data["global_status"] = self.__global_status = True
 
-        def Disable(self) -> None:
+        def disable(self) -> None:
             """全局禁用"""
             self.__data["global_status"] = self.__global_status = False
 
-        def CheckGroupStatus(self, group_id: int, group_permission: int) -> bool:
+        def check_group_status(self, group_id: int, group_permission: int) -> bool:
             """检测群是否能调用该插件
 
             Args:
@@ -129,7 +129,7 @@ class PluginManager:
                 and (self.__default_status ^ (group_id in self.__non_default_group))
             )
 
-        def CheckUserStatus(self, user_permission: int) -> bool:
+        def check_user_status(self, user_permission: int) -> bool:
             """检测用户是否能调用该插件
 
             Args:
@@ -140,7 +140,7 @@ class PluginManager:
             """
             return self.__global_status and user_permission >= self.__permission
 
-        def CheckPermission(self, permission: int) -> bool:
+        def check_permission(self, permission: int) -> bool:
             """检测权限
 
             Args:
@@ -151,7 +151,7 @@ class PluginManager:
             """
             return permission >= self.__permission
 
-        def SetGroupEnable(self, group_id: int) -> bool:
+        def set_group_enable(self, group_id: int) -> bool:
             """在群group_id中启用该插件
 
             Args:
@@ -176,7 +176,7 @@ class PluginManager:
                     self.__disabled_group.remove(group_id)
             return True
 
-        def SetGroupDisable(self, group_id: int) -> bool:
+        def set_group_disable(self, group_id: int) -> bool:
             """在群group_id中禁用该插件
 
             Args:
@@ -199,7 +199,7 @@ class PluginManager:
                     self.__disabled_group.append(group_id)
             return True
 
-        def SetUsage(self, usage: Optional[str]) -> None:
+        def set_usage(self, usage: Optional[str]) -> None:
             """设置插件用法
 
             Args:
@@ -207,7 +207,7 @@ class PluginManager:
             """
             self.usage = usage
 
-        def SetHidden(self, hidden: bool) -> None:
+        def set_hidden(self, hidden: bool) -> None:
             """设置插件隐藏状态
 
             Args:
@@ -215,7 +215,7 @@ class PluginManager:
             """
             self.hidden = hidden
 
-        def CleanGroup(self, group_set: Set[int]) -> None:
+        def clean_group(self, group_set: Set[int]) -> None:
             """清理配置文件中冗余的群
 
             Args:
@@ -251,14 +251,14 @@ class PluginManager:
                     file=plugin_file
                 )
 
-    async def Init(self) -> List[Optional[str]]:
+    async def init(self) -> List[Optional[str]]:
         """异步初始化所有Plugin类
 
         Returns:
             List[Optional[str]]: List中项为None时表示无异常，反之为表示异常的字符串
         """
         ret = await asyncio.gather(
-            *[plugin.Init() for plugin in self.__plugin.values()],
+            *[plugin.init() for plugin in self.__plugin.values()],
             return_exceptions=True,
         )
         for i, plugin in enumerate(self.__plugin.values()):
@@ -267,7 +267,7 @@ class PluginManager:
                     self.__plugin_aliases[alias] = plugin.plugin_name
         return ret
 
-    def CheckGroupStatus(
+    def check_group_status(
         self, plugin_name: str, group_id: int, group_permission: int
     ) -> bool:
         """检测插件plugin_name是否响应该群，由group_manager调用
@@ -282,11 +282,11 @@ class PluginManager:
         """
         return (
             not (plugin := self.__plugin.get(plugin_name))
-        ) or plugin.CheckGroupStatus(
+        ) or plugin.check_group_status(
             group_id=group_id, group_permission=group_permission
         )
 
-    def CheckUserStatus(self, plugin_name: str, user_permission: int) -> bool:
+    def check_user_status(self, plugin_name: str, user_permission: int) -> bool:
         """检测插件plugin_name是否响应用户，由user_manager调用
 
         Args:
@@ -298,9 +298,9 @@ class PluginManager:
         """
         return (
             not (plugin := self.__plugin.get(plugin_name))
-        ) or plugin.CheckUserStatus(user_permission=user_permission)
+        ) or plugin.check_user_status(user_permission=user_permission)
 
-    def CheckPermission(self, plugin_name: str, permission: int) -> bool:
+    def check_permission(self, plugin_name: str, permission: int) -> bool:
         """检测permission的权限能否调用plugin_name插件
 
         Args:
@@ -312,9 +312,9 @@ class PluginManager:
         """
         return (
             not (plugin := self.__plugin.get(plugin_name))
-        ) or plugin.CheckPermission(permission=permission)
+        ) or plugin.check_permission(permission=permission)
 
-    async def SetGroupEnable(self, plugin_name: str, group_id: int) -> bool:
+    async def set_group_enable(self, plugin_name: str, group_id: int) -> bool:
         """启用group_id中的plugin_name插件
 
         Args:
@@ -324,14 +324,14 @@ class PluginManager:
         Returns:
             bool: 若返回False则表示已被全局禁用，反之返回True
         """
-        if (plugin := self.__plugin.get(plugin_name)) and plugin.SetGroupEnable(
+        if (plugin := self.__plugin.get(plugin_name)) and plugin.set_group_enable(
             group_id
         ):
-            await plugin.Save()
+            await plugin.save()
             return True
         return False
 
-    async def SetGroupDisable(self, plugin_name: str, group_id: int) -> bool:
+    async def set_group_disable(self, plugin_name: str, group_id: int) -> bool:
         """禁用group_id中的plugin_name插件
 
         Args:
@@ -341,14 +341,14 @@ class PluginManager:
         Returns:
             bool: 返回True
         """
-        if (plugin := self.__plugin.get(plugin_name)) and plugin.SetGroupDisable(
+        if (plugin := self.__plugin.get(plugin_name)) and plugin.set_group_disable(
             group_id
         ):
-            await plugin.Save()
+            await plugin.save()
             return True
         return False
 
-    def GetPluginUsage(self, name: str) -> Optional[str]:
+    def get_plugin_usage(self, name: str) -> Optional[str]:
         """获取插件帮助，支持plugin_name与别名
 
         Args:
@@ -363,7 +363,7 @@ class PluginManager:
             name = self.__plugin_aliases[name]
         return self.__plugin[name].usage
 
-    def CheckPlugin(self, name: str) -> bool:
+    def check_plugin(self, name: str) -> bool:
         """检测是否存在plugin_name的插件
 
         Args:
@@ -374,7 +374,7 @@ class PluginManager:
         """
         return name in self.__plugin
 
-    def GetPluginNameList(self) -> Set[str]:
+    def get_plugin_name_list(self) -> Set[str]:
         """获取插件名列表
 
         Returns:
@@ -382,7 +382,7 @@ class PluginManager:
         """
         return self.__plugin.keys()
 
-    def GetPluginName(self, name: str) -> Optional[str]:
+    def get_plugin_name(self, name: str) -> Optional[str]:
         """由插件名或别名获取插件名（plugin_name）
 
         Args:
@@ -395,7 +395,7 @@ class PluginManager:
             return name
         return self.__plugin_aliases.get(name)
 
-    def GetPluginList(self) -> Set[Plugin]:
+    def get_plugin_list(self) -> Set[Plugin]:
         """获取管理插件的Plugin类们
 
         Returns:
@@ -403,7 +403,7 @@ class PluginManager:
         """
         return self.__plugin.values()
 
-    async def CleanGroup(self, group_list: Union[List[int], Set[int]]) -> None:
+    async def clean_group(self, group_list: Union[List[int], Set[int]]) -> None:
         """清理配置文件中冗余的群
 
         Args:
@@ -411,10 +411,10 @@ class PluginManager:
         """
         group_list = set(group_list)
         for plugin in self.__plugin.values():
-            plugin.CleanGroup(group_list)
-        await asyncio.gather(*[plugin.Save() for plugin in self.__plugin.values()])
+            plugin.clean_group(group_list)
+        await asyncio.gather(*[plugin.save() for plugin in self.__plugin.values()])
 
-    def SetPluginUsage(self, plugin_name: str, usage: Optional[str]):
+    def set_plugin_usage(self, plugin_name: str, usage: Optional[str]):
         """设定插件plugin_name的用法
 
         Args:
@@ -423,9 +423,9 @@ class PluginManager:
         """
         if plugin_name not in self.__plugin:
             return
-        self.__plugin[plugin_name].SetUsage(usage=usage)
+        self.__plugin[plugin_name].set_usage(usage=usage)
 
-    def SetPluginHidden(self, plugin_name: str, hidden: bool) -> None:
+    def set_plugin_hidden(self, plugin_name: str, hidden: bool) -> None:
         """设定插件plugin_name的隐藏状态
 
         Args:
@@ -434,9 +434,9 @@ class PluginManager:
         """
         if plugin_name not in self.__plugin:
             return
-        self.__plugin[plugin_name].SetHidden(hidden=hidden)
+        self.__plugin[plugin_name].set_hidden(hidden=hidden)
 
-    def SetPluginType(self, plugin_name: str, plugin_type: PluginType) -> None:
+    def set_plugin_type(self, plugin_name: str, plugin_type: PluginType) -> None:
         """设定插件plugin_name的类型
 
         Args:
@@ -445,9 +445,9 @@ class PluginManager:
         """
         if plugin_name not in self.__plugin:
             return
-        self.__plugin[plugin_name].SetPluginType(type=plugin_type)
+        self.__plugin[plugin_name].set_plugin_type(type=plugin_type)
 
-    async def EnablePlugin(self, plugin_name: str):
+    async def enable_plugin(self, plugin_name: str):
         """全局启用插件plugin_name
 
         Args:
@@ -456,10 +456,10 @@ class PluginManager:
         plugin = self.__plugin.get(plugin_name)
         if not plugin:
             return
-        plugin.Enable()
-        await plugin.Save()
+        plugin.enable()
+        await plugin.save()
 
-    async def DisablePlugin(self, plugin_name: str):
+    async def disable_plugin(self, plugin_name: str):
         """全局禁用插件
 
         Args:
@@ -468,10 +468,10 @@ class PluginManager:
         plugin = self.__plugin.get(plugin_name)
         if not plugin:
             return
-        plugin.Disable()
-        await plugin.Save()
+        plugin.disable()
+        await plugin.save()
 
-    async def Add(
+    async def add(
         self,
         plugin_name: str,
         name: str,
@@ -500,7 +500,7 @@ class PluginManager:
             permission (int, optional): 所需权限. Defaults to NORMAL.
             plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
         """
-        await AsyncSaveData(
+        await async_save_data(
             {
                 "name": name,
                 "aliases": aliases,
@@ -522,7 +522,7 @@ class PluginManager:
             plugin_type=plugin_type,
         )
 
-    async def Remove(self, plugin_name: set) -> None:
+    async def remove(self, plugin_name: set) -> None:
         """从PluginManager中移除插件
 
         Args:

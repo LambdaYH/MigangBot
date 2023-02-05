@@ -2,16 +2,16 @@ from nonebot.log import logger
 
 from migangbot.core.manager import cd_manager
 
-from .utils import GetPluginList
+from .utils import get_plugin_list
 
 
 def init_plugin_cd():
-    plugins = GetPluginList()
+    plugins = get_plugin_list()
     count = 0
     for plugin in plugins:
         if hasattr(plugin.module, "__plugin_cd__"):
             try:
-                cd_manager.Add(
+                cd_manager.add(
                     plugin_name=plugin.name,
                     cd_items=plugin.module.__getattribute__("__plugin_cd__"),
                 )

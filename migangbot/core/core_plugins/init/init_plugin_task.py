@@ -5,11 +5,11 @@ from nonebot.log import logger
 from migangbot.core.manager import task_manager, TaskItem
 from migangbot.core.permission import NORMAL
 
-from .utils import GetPluginList
+from .utils import get_plugin_list
 
 
 async def init_plugin_task():
-    plugins = GetPluginList()
+    plugins = get_plugin_list()
     count = 0
     for plugin in plugins:
         if not hasattr(plugin.module, "__plugin_task__"):
@@ -26,12 +26,12 @@ async def init_plugin_task():
             for item in task_items:
                 if item.permission is None:
                     item.permission = permission
-            await task_manager.Add(task_items)
+            await task_manager.add(task_items)
         except Exception as e:
-            logger.error(f"无法将插件 {plugin.name} 中的被动加入被动控制：{e}")
-    for i, e in enumerate(await task_manager.Init()):
+            logger.error(f"无法将插件 {plugin.name} 中的任务加入任务控制：{e}")
+    for i, e in enumerate(await task_manager.init()):
         if e:
-            logger.error(f"无法将插件 {plugins[i].name} 中的被动加入被动控制：{e}")
+            logger.error(f"无法将插件 {plugins[i].name} 中的任务加入任务控制：{e}")
         else:
             count += 1
-    logger.info(f"已成功将 {len(task_manager.GetTaskNameList())} 个被动加入被动控制")
+    logger.info(f"已成功将 {len(task_manager.get_task_name_list())} 个任务加入任务控制")

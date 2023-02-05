@@ -3,11 +3,11 @@ from nonebot.log import logger
 from migangbot.core.manager import plugin_manager, PluginType
 from migangbot.core.permission import NORMAL
 
-from .utils import GetPluginList
+from .utils import get_plugin_list
 
 
 async def init_plugin_info():
-    plugins = GetPluginList()
+    plugins = get_plugin_list()
     count = 0
     for plugin in plugins:
         plugin_name = plugin.name
@@ -55,8 +55,8 @@ async def init_plugin_info():
             if hasattr(plugin.module, "__plugin_hidden__")
             else False
         )
-        if not plugin_manager.CheckPlugin(plugin_name):
-            await plugin_manager.Add(
+        if not plugin_manager.check_plugin(plugin_name):
+            await plugin_manager.add(
                 plugin_name=plugin_name,
                 name=name,
                 aliases=plugin.module.__getattribute__("__plugin_aliases__")
@@ -79,15 +79,15 @@ async def init_plugin_info():
             )
             logger.info(f"已将插件 {plugin_name} 加入插件控制")
         else:
-            plugin_manager.SetPluginUsage(plugin_name=plugin_name, usage=usage)
-            plugin_manager.SetPluginHidden(
+            plugin_manager.set_plugin_usage(plugin_name=plugin_name, usage=usage)
+            plugin_manager.set_plugin_hidden(
                 plugin_name=plugin_name,
                 hidden=hidden,
             )
-            plugin_manager.SetPluginType(
+            plugin_manager.set_plugin_type(
                 plugin_name=plugin_name, plugin_type=plugin_type
             )
-    for i, e in enumerate(await plugin_manager.Init()):
+    for i, e in enumerate(await plugin_manager.init()):
         if e:
             logger.error(f"无法将插件 {plugins[i].name} 加入插件控制：{e}")
         else:

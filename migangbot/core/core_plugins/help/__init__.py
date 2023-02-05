@@ -18,7 +18,7 @@ from nonebot.adapters.onebot.v11 import (
 from nonebot.permission import SUPERUSER
 import aiofiles
 
-from .data_source import GetHelpImage, GetPluginHelp, GetTaskImage
+from .data_source import get_help_image, get_plugin_help, get_task_image
 from .utils import GROUP_HELP_PATH, USER_HELP_PATH, GROUP_TASK_PATH
 
 require("nonebot_plugin_htmlrender")
@@ -43,7 +43,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             image_file = USER_HELP_PATH / f"{user_id }.png"
         if image_file.exists():
             await simple_help.finish(MessageSegment.image(image_file))
-        img = await GetHelpImage(
+        img = await get_help_image(
             group_id=group_id,
             user_id=user_id,
             super=await SUPERUSER(bot, event),
@@ -52,7 +52,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         async with aiofiles.open(image_file, "wb") as f:
             await f.write(img)
     else:
-        if help := GetPluginHelp(args):
+        if help := get_plugin_help(args):
             await simple_help.send(help)
         else:
             await simple_help.send(f"没有该插件的帮助信息")
@@ -63,7 +63,7 @@ async def _(event: GroupMessageEvent):
     image_file = GROUP_TASK_PATH / f"{event.group_id}.png"
     if image_file.exists():
         await task_help.finish(MessageSegment.image(image_file))
-    img = await GetTaskImage(event.group_id)
+    img = await get_task_image(event.group_id)
     await task_help.send(MessageSegment.image(img))
     async with aiofiles.open(image_file, "wb") as f:
         await f.write(img)
