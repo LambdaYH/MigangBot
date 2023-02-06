@@ -3,8 +3,13 @@ from typing import Dict, Any, Optional, List
 
 from ruamel.yaml import CommentedMap
 from async_lru import alru_cache
+from cachetools import cached, LRUCache
 
-from migangbot.core.utils.file_operation import async_load_data, async_save_data
+from migangbot.core.utils.file_operation import (
+    async_load_data,
+    async_save_data,
+    load_data,
+)
 from migangbot.core.exception import ConfigNoExistError
 
 _config_path = Path() / "configs"
@@ -96,7 +101,7 @@ class ConfigManager:
         await async_save_data(data, file_name)
 
     @alru_cache(maxsize=128)
-    async def __get_config(self, plugin_name: str) -> CommentedMap:
+    async def __async_get_config(self, plugin_name: str) -> CommentedMap:
         """读取插件名对应的配置名
         Args:
             plugin_name (str): 插件名或配置文件名
@@ -107,7 +112,7 @@ class ConfigManager:
         return await async_load_data(_config_path / f"{plugin_name}.yaml")
 
     @alru_cache(maxsize=256)
-    async def get_config_item(self, plugin_name: str, plugin_config: str) -> Any:
+    async def async_get_config_item(self, plugin_name: str, plugin_config: str) -> Any:
         """获取plugin_name对应的键值为plugin_config的配置值
 
         Args:
@@ -120,7 +125,34 @@ class ConfigManager:
         Returns:
             Any: 配置值
         """
-        data = await self.__get_config(plugin_name)
+        data = await self.__async_get_config(plugin_name)
+        if plugin_config not in data:
+            raise ConfigNoExistError(f"插件 {plugin_name} 的配置项 {plugin_config} 不存在！")
+        return (
+            data[plugin_config]
+            if data[plugin_config]
+            else self.__default_value[plugin_name][plugin_config]
+        )
+
+    @cached(cache=LRUCache(maxsize=128))
+    def __sync_get_config(self, plugin_name: str) -> CommentedMap:
+        return load_data(_config_path / f"{plugin_name}.yaml")
+
+    @cached(cache=LRUCache(maxsize=256))
+    def sync_get_config_item(self, plugin_name: str, plugin_config: str) -> Any:
+        """获取plugin_name对应的键值为plugin_config的配置值
+
+        Args:
+            plugin_name (str): 插件名或配置文件名
+            plugin_config (str): 配置项键值
+
+        Raises:
+            ConfigNoExistError: 若不存在plugin_name中plugin_config对应的配置文件，则抛出异常
+
+        Returns:
+            Any: 配置值
+        """
+        data = self.__sync_get_config(plugin_name)
         if plugin_config not in data:
             raise ConfigNoExistError(f"插件 {plugin_name} 的配置项 {plugin_config} 不存在！")
         return (

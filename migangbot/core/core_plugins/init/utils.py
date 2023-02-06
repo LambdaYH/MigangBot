@@ -1,11 +1,22 @@
 from nonebot.plugin import get_loaded_plugins
 
 
-_ignore_plugin = set(
+_ignore_plugins = set(
     [
         "nonebot_plugin_imageutils",
         "nonebot_plugin_apscheduler",
         "nonebot_plugin_htmlrender",
+    ]
+)
+
+_ignore_modules = set(
+    [
+        "migangbot.core.core_plugins.help",
+        "migangbot.core.core_plugins.hooks",
+        "migangbot.core.core_plugins.init",
+        "migangbot.core.core_plugins.switch",
+        "migangbot.core.core_plugins.schedule",
+        "migangbot.core.core_plugins.switch_bot",
     ]
 )
 
@@ -15,6 +26,6 @@ def get_plugin_list():
     return [
         plugin
         for plugin in plugins
-        if (not plugin.module_name.startswith("migangbot.core"))
-        and (plugin.name not in _ignore_plugin)
+        if (plugin.module_name not in _ignore_modules)
+        and (plugin.name not in _ignore_plugins)
     ]

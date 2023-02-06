@@ -2,13 +2,27 @@ import asyncio
 from pathlib import Path
 from typing import Union, Dict, Set, List, Optional, Any
 
+import aiofiles
+from pydantic import BaseModel
+
 from migangbot.core.manager.data_class import PluginType
 from migangbot.core.permission import NORMAL
-from migangbot.core.utils.file_operation import async_load_data, async_save_data
 
 
 class PluginManager:
     """管理全部插件"""
+
+    class PluginAttr(BaseModel):
+        name: str
+        aliases: Set[str]
+        permission: int
+        global_status: bool
+        default_status: bool
+        enabled_group: Set[int]
+        disabled_group: Set[int]
+        category: str
+        author: str
+        version: str
 
     class Plugin:
         """
@@ -31,7 +45,7 @@ class PluginManager:
                 plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
             """
             # 数据
-            self.__data: Dict[str, Any]
+            self.__data: PluginManager.PluginAttr
             self.__file = file
 
             # 属性
@@ -60,33 +74,30 @@ class PluginManager:
             self.__non_default_group: Set[int]
             """用于快速查找
             """
-            # 保存入配置文件用，修改时需要2倍修改量
-            self.__enabled_group: List[int]
-            self.__disabled_group: List[int]
 
         async def init(self) -> None:
             """异步初始化插件"""
-            self.__data = await async_load_data(self.__file)
-            self.name = self.__data["name"]
-            self.all_name: Set[str] = set(self.__data["aliases"])
+            async with aiofiles.open(self.__file, "r") as f:
+                self.__data = PluginManager.PluginAttr.parse_raw(await f.read())
+            self.name = self.__data.name
+            self.all_name: Set[str] = self.__data.aliases
             self.all_name.add(self.name)
-            self.__permission: int = self.__data["permission"]
-            self.category: Optional[str] = self.__data["category"]
-            self.author: str = self.__data["author"]
-            self.version: str = self.__data["version"]
-            self.__global_status: bool = self.__data["global_status"]
-            self.__default_status: bool = self.__data["default_status"]
+            self.__permission: int = self.__data.permission
+            self.category: Optional[str] = self.__data.category
+            self.author: str = self.__data.author
+            self.version: str = self.__data.version
+            self.__global_status: bool = self.__data.global_status
+            self.__default_status: bool = self.__data.default_status
             self.__non_default_group: Set[int] = (
-                set(self.__data["disbled_group"])
+                self.__data.disabled_group
                 if self.__default_status
-                else set(self.__data["enabled_group"])
+                else self.__data.enabled_group
             )
-            self.__enabled_group: List[int] = self.__data["enabled_group"]
-            self.__disabled_group: List[int] = self.__data["disbled_group"]
 
         async def save(self) -> None:
             """将插件数据存储到硬盘"""
-            await async_save_data(self.__data, self.__file)
+            async with aiofiles.open(self.__file, "w") as f:
+                await f.write(self.__data.json(ensure_ascii=False, indent=4))
 
         def set_plugin_type(self, type: PluginType):
             """设置插件类型
@@ -107,11 +118,11 @@ class PluginManager:
 
         def enable(self) -> None:
             """全局启用"""
-            self.__data["global_status"] = self.__global_status = True
+            self.__data.global_status = self.__global_status = True
 
         def disable(self) -> None:
             """全局禁用"""
-            self.__data["global_status"] = self.__global_status = False
+            self.__data.global_status = self.__global_status = False
 
         def check_group_status(self, group_id: int, group_permission: int) -> bool:
             """检测群是否能调用该插件
@@ -165,15 +176,13 @@ class PluginManager:
             if self.__default_status:
                 if group_id in self.__non_default_group:
                     self.__non_default_group.remove(group_id)
-                    self.__disabled_group.remove(group_id)
-                if group_id not in self.__enabled_group:
-                    self.__enabled_group.append(group_id)
+                if group_id not in self.__data.enabled_group:
+                    self.__data.enabled_group.add(group_id)
             else:
                 if group_id not in self.__non_default_group:
                     self.__non_default_group.add(group_id)
-                    self.__enabled_group.append(group_id)
-                if group_id in self.__disabled_group:
-                    self.__disabled_group.remove(group_id)
+                if group_id in self.__data.disabled_group:
+                    self.__data.disabled_group.add(group_id)
             return True
 
         def set_group_disable(self, group_id: int) -> bool:
@@ -188,15 +197,13 @@ class PluginManager:
             if self.__default_status:
                 if group_id not in self.__non_default_group:
                     self.__non_default_group.add(group_id)
-                    self.__disabled_group.append(group_id)
-                if group_id in self.__enabled_group:
-                    self.__enabled_group.remove(group_id)
+                if group_id in self.__data.enabled_group:
+                    self.__data.enabled_group.remove(group_id)
             else:
                 if group_id in self.__non_default_group:
                     self.__non_default_group.remove(group_id)
-                    self.__enabled_group.remove(group_id)
-                if group_id not in self.__disabled_group:
-                    self.__disabled_group.append(group_id)
+                if group_id not in self.__data.disabled_group:
+                    self.__data.disabled_group.addd(group_id)
             return True
 
         def set_usage(self, usage: Optional[str]) -> None:
@@ -222,12 +229,6 @@ class PluginManager:
                 group_set (Set[int]): 当前有效的群
             """
             self.__non_default_group &= group_set
-            if self.__default_status:
-                self.__disabled_group.clear()
-                self.__disabled_group += list(self.__non_default_group)
-            else:
-                self.__enabled_group.clear()
-                self.__enabled_group += list(self.__non_default_group)
 
     def __init__(self, file_path: Path) -> None:
         """PluginManager构造函数，管理全部插件
@@ -500,21 +501,22 @@ class PluginManager:
             permission (int, optional): 所需权限. Defaults to NORMAL.
             plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
         """
-        await async_save_data(
-            {
-                "name": name,
-                "aliases": aliases,
-                "permission": permission,
-                "global_status": True,
-                "default_status": default_status,
-                "enabled_group": [],
-                "disbled_group": [],
-                "category": category,
-                "author": author,
-                "version": version,
-            },
-            self.__file_path / f"{plugin_name}.json",
-        )
+        async with aiofiles.open(self.__file_path / f"{plugin_name}.json", "w") as f:
+            await f.write(
+                PluginManager.PluginAttr(
+                    name=name,
+                    aliases=aliases,
+                    permission=permission,
+                    global_status=True,
+                    default_status=default_status,
+                    enabled_group=set(),
+                    disabled_group=set(),
+                    category=category,
+                    author=author,
+                    version=version,
+                ).json(ensure_ascii=False, indent=4)
+            )
+
         self.__plugin[plugin_name] = PluginManager.Plugin(
             file=self.__file_path / f"{plugin_name}.json",
             usage=usage,
