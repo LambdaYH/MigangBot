@@ -416,8 +416,7 @@ class TaskManager:
                             default_status=item.default_status,
                             enabled_group=set(),
                             disabled_group=set(),
-                            description=item.description
-                            
+                            description=item.description,
                         ).json(ensure_ascii=False, indent=4)
                     )
                 self.__task[item.task_name] = TaskManager.Task(

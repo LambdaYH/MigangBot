@@ -14,6 +14,7 @@ class UserManager:
     Raises:
         FileTypeError: 找不到记录文件
     """
+
     class User:
         """管理单个用户，记录用户权限"""
 
