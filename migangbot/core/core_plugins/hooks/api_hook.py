@@ -16,4 +16,3 @@ async def handle_api_result(
     # 将群成员昵称用昵称系统替换，保留群员卡片
     if api == "get_group_member_info":
         pass
-        
