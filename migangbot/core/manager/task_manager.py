@@ -2,6 +2,9 @@ import asyncio
 from pathlib import Path
 from typing import Union, Dict, Set, List, Optional, Any
 
+import aiofiles
+from pydantic import BaseModel
+
 from migangbot.core.permission import NORMAL
 from migangbot.core.utils.file_operation import async_load_data, async_save_data
 
@@ -42,6 +45,15 @@ class TaskItem:
 class TaskManager:
     """管理全部任务"""
 
+    class TaskAttr(BaseModel):
+        name: str
+        permission: int
+        global_status: bool
+        default_status: bool
+        enabled_group: Set[int]
+        disabled_group: Set[int]
+        description: str
+
     class Task:
         """管理单个任务"""
 
@@ -52,7 +64,7 @@ class TaskManager:
                 file (Path): 任务对应的配置文件
                 usage (str, optional): 用法. Defaults to None.
             """
-            self.__data: Dict[str, Any]
+            self.__data: TaskManager.TaskAttr
             self.__file = file
 
             self.task_name: str = self.__file.name.removesuffix(".json")
@@ -63,28 +75,24 @@ class TaskManager:
             self.__default_status: bool
             self.__non_default_group: Set[int]
 
-            # 保存入配置文件用，修改时需要2倍修改量
-            self.__enabled_group: List[int]
-            self.__disabled_group: List[int]
-
         async def init(self) -> None:
             """异步初始化Task类"""
-            self.__data = await async_load_data(self.__file)
-            self.name: str = self.__data["name"]
-            self.__permission: int = self.__data["permission"]
-            self.__global_status: bool = self.__data["global_status"]
-            self.__default_status: bool = self.__data["default_status"]
+            async with aiofiles.open(self.__file, "r") as f:
+                self.__data = TaskManager.TaskAttr.parse_raw(await f.read())
+            self.name: str = self.__data.name
+            self.__permission: int = self.__data.permission
+            self.__global_status: bool = self.__data.global_status
+            self.__default_status: bool = self.__data.default_status
             self.__non_default_group: Set[int] = (
-                set(self.__data["disbled_group"])
+                self.__data.disabled_group
                 if self.__default_status
-                else set(self.__data["enabled_group"])
+                else self.__data.enabled_group
             )
-            self.__enabled_group: List[int] = self.__data["enabled_group"]
-            self.__disabled_group: List[int] = self.__data["disbled_group"]
 
         async def save(self) -> None:
             """保存数据进文件"""
-            await async_save_data(self.__data, self.__file)
+            async with aiofiles.open(self.__file, "w") as f:
+                await f.write(self.__data.json(ensure_ascii=False, indent=4))
 
         @property
         def global_status(self) -> bool:
@@ -105,11 +113,11 @@ class TaskManager:
 
         def enable(self):
             """全局启用"""
-            self.__data["global_status"] = self.__global_status = True
+            self.__data.global_status = self.__global_status = True
 
         def disable(self):
             """全局禁用"""
-            self.__data["global_status"] = self.__global_status = False
+            self.__data.global_status = self.__global_status = False
 
         def check_group_status(self, group_id: int, group_permission: int) -> bool:
             """检测群是否能调用该任务
@@ -152,15 +160,13 @@ class TaskManager:
             if self.__default_status:
                 if group_id in self.__non_default_group:
                     self.__non_default_group.remove(group_id)
-                    self.__disabled_group.remove(group_id)
-                if group_id not in self.__enabled_group:
-                    self.__enabled_group.append(group_id)
+                if group_id not in self.__data.enabled_group:
+                    self.__data.enabled_group.add(group_id)
             else:
                 if group_id not in self.__non_default_group:
                     self.__non_default_group.add(group_id)
-                    self.__enabled_group.append(group_id)
-                if group_id in self.__disabled_group:
-                    self.__disabled_group.remove(group_id)
+                if group_id in self.__data.disabled_group:
+                    self.__data.disabled_group.remove(group_id)
             return True
 
         def set_group_disable(self, group_id: int) -> bool:
@@ -175,15 +181,13 @@ class TaskManager:
             if self.__default_status:
                 if group_id not in self.__non_default_group:
                     self.__non_default_group.add(group_id)
-                    self.__disabled_group.append(group_id)
-                if group_id in self.__enabled_group:
-                    self.__enabled_group.remove(group_id)
+                if group_id in self.__data.enabled_group:
+                    self.__data.enabled_group.remove(group_id)
             else:
                 if group_id in self.__non_default_group:
                     self.__non_default_group.remove(group_id)
-                    self.__enabled_group.remove(group_id)
-                if group_id not in self.__disabled_group:
-                    self.__disabled_group.append(group_id)
+                if group_id not in self.__data.disabled_group:
+                    self.__data.disabled_group.add(group_id)
             return True
 
         def clean_group(self, group_set: Set[int]) -> None:
@@ -193,12 +197,6 @@ class TaskManager:
                 group_set (Set[int]): 当前有效的群
             """
             self.__non_default_group &= group_set
-            if self.__default_status:
-                self.__disabled_group.clear()
-                self.__disabled_group += list(self.__non_default_group)
-            else:
-                self.__enabled_group.clear()
-                self.__enabled_group += list(self.__non_default_group)
 
     def __init__(self, file_path: Path) -> None:
         """TaskManager构造函数，管理全部插件
@@ -408,18 +406,21 @@ class TaskManager:
             task_items: List[TaskItem] = [task_items]
         for item in task_items:
             if item.task_name not in self.__task:
-                await async_save_data(
-                    {
-                        "name": item.name,
-                        "permission": item.permission,
-                        "global_status": True,
-                        "default_status": item.default_status,
-                        "enabled_group": [],
-                        "disbled_group": [],
-                        "_description": item.description,
-                    },
-                    self.__file_path / f"{item.task_name}.json",
-                )
+                async with aiofiles.open(
+                    self.__file_path / f"{item.task_name}.json", "w"
+                ) as f:
+                    await f.write(
+                        TaskManager.TaskAttr(
+                            name=item.name,
+                            permission=item.permission,
+                            global_status=True,
+                            default_status=item.default_status,
+                            enabled_group=set(),
+                            disabled_group=set(),
+                            description=item.description
+                            
+                        ).json(ensure_ascii=False, indent=4)
+                    )
                 self.__task[item.task_name] = TaskManager.Task(
                     file=self.__file_path / f"{item.task_name}.json", usage=item.usage
                 )

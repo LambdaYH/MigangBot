@@ -182,7 +182,7 @@ class PluginManager:
                 if group_id not in self.__non_default_group:
                     self.__non_default_group.add(group_id)
                 if group_id in self.__data.disabled_group:
-                    self.__data.disabled_group.add(group_id)
+                    self.__data.disabled_group.remove(group_id)
             return True
 
         def set_group_disable(self, group_id: int) -> bool:
@@ -203,7 +203,7 @@ class PluginManager:
                 if group_id in self.__non_default_group:
                     self.__non_default_group.remove(group_id)
                 if group_id not in self.__data.disabled_group:
-                    self.__data.disabled_group.addd(group_id)
+                    self.__data.disabled_group.add(group_id)
             return True
 
         def set_usage(self, usage: Optional[str]) -> None:
