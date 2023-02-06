@@ -1,1 +1,1 @@
-from .task_rule import group_task_checker
+from .task_rule import GroupTaskChecker

@@ -3,5 +3,5 @@ from tortoise.models import Model
 
 
 class NickName(Model):
-    id = fields.BigIntField(pk=True)
-    name = fields.TextField()
+    user_id = fields.BigIntField(pk=True)
+    nickname = fields.TextField(null=False)

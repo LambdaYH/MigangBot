@@ -26,6 +26,7 @@ class ConfigItem:
         default_value: Optional[Any] = None,
         description: Optional[str] = None,
         config_name: Optional[str] = None,
+        env: bool = False,
     ) -> None:
         """ConfigItem构造函数
 
@@ -35,12 +36,14 @@ class ConfigItem:
             default_value (Optional[Any], optional): 配置项默认值，当键值对应配置值为空时，应用该值. Defaults to None.
             description (Optional[str], optional): 配置项说明，在配置文件中以注释的形式存在. Defaults to None.
             config_name (Optional[str], optional): 配置项所在配置文件名，为空时则默认使用插件名. Defaults to None.
+            env (bool, optional): 是否将配置项写入.env文件，主要用于兼容nonebot的metadata. Defaults to False.
         """
         self.key = key
         self.initial_value = initial_value
         self.default_value = default_value
         self.description = description
         self.config_name = config_name
+        self.env = env
 
 
 class ConfigManager:
