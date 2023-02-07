@@ -150,5 +150,5 @@ configs/
 db_config.yaml
 
 # developing
-migangbot/plugins/*
+migang/plugins/*
 nickname

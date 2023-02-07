@@ -1,8 +1,8 @@
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter
 
-from migangbot.core.manager import save
-from migangbot.core.database import init_db, close_db
+from migang.core.manager import save
+from migang.core.database import init_db, close_db
 
 
 nonebot.init()
@@ -18,10 +18,10 @@ driver.on_shutdown(save)
 nonebot.load_plugin("nonebot_plugin_apscheduler")
 nonebot.load_plugin("nonebot_plugin_htmlrender")
 nonebot.load_plugin("nonebot_plugin_imageutils")
-nonebot.load_plugins("migangbot/core/core_plugins")
+nonebot.load_plugins("migang/core/core_plugins")
 
 # plugins
-nonebot.load_plugins("migangbot/plugins")
+nonebot.load_plugins("migang/plugins")
 
 if __name__ == "__main__":
     nonebot.run()
