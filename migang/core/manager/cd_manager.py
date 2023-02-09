@@ -17,7 +17,7 @@ class CDItem:
     def __init__(
         self,
         cd: Union[int, float],
-        hint: Union[str, Message, None],
+        hint: Union[str, Message, None] = None,
         limit_type: LimitType = LimitType.user,
         check_type: CheckType = CheckType.all,
     ) -> None:
@@ -25,7 +25,7 @@ class CDItem:
 
         Args:
             cd (Union[int, float]): 插件CD
-            hint (Union[str, Message, None]): 当还在CD冷却期时，发送的提示语
+            hint (Union[str, Message, None]): 当还在CD冷却期时，发送的提示语. Defaults to None.
             limit_type (LimitType, optional): 限制检测CD的对象为用户或群. Defaults to LimitType.user.
             check_type (CheckType, optional): 限制检测CD的会话为私聊或群聊或全部. Defaults to CheckType.all.
         """
@@ -189,7 +189,13 @@ class CDManager:
             """
             for checker in self.__cd_checkers:
                 if (ret := checker.check(event)) != True:
-                    return checker.hint.replace("[_剩余时间_]", f"{ret:.2f}")
+                    if checker.hint != None:
+                        if isinstance(checker.hint, Message):
+                            return Message(
+                                str(checker.hint).replace("&#91;_剩余时间_&#93;", f"{ret:.2f}")
+                            )
+                        return checker.hint.replace("[_剩余时间_]", f"{ret:.2f}")
+                    return None
             return True
 
     def __init__(self) -> None:
@@ -198,13 +204,15 @@ class CDManager:
         """{plugin_name: PluginCD}，以plugin_name为名的插件调用PluginCD检测调用次数
         """
 
-    def add(self, plugin_name: str, cd_items: Union[List[CDItem], CDItem]):
+    def add(self, plugin_name: str, cd_items: Union[List[CDItem], CDItem, int, float]):
         """添加插件以及其对应的__plugin_cd__配置项（若有）进CDManager
 
         Args:
             plugin_name (str): 插件名（plugin.name）
-            cd_items (Union[List[CDItem], CDItem]): __plugin_cd__内容
+            cd_items (Union[List[CDItem], CDItem, int, float]): __plugin_cd__内容
         """
+        if isinstance(cd_items, int) or isinstance(cd_items, float):
+            cd_items = CDItem(cd_items)
         self.__plugin_cd[plugin_name] = CDManager.PluginCD(cd_items=cd_items)
 
     def check(

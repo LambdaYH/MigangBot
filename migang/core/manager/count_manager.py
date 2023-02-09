@@ -24,7 +24,7 @@ class CountItem:
     def __init__(
         self,
         count: int,
-        hint: Union[str, Message, None],
+        hint: Union[str, Message, None] = None,
         limit_type: LimitType = LimitType.user,
         check_type: CheckType = CheckType.all,
         count_period: CountPeriod = CountPeriod.day,
@@ -33,7 +33,7 @@ class CountItem:
 
         Args:
             count (int): 插件调用次数限制
-            hint (Union[str, Message, None]): 当插件达到调用次数上限后，发送的提示语
+            hint (Union[str, Message, None]): 当插件达到调用次数上限后，发送的提示语. Defaults to None.
             limit_type (LimitType, optional): 限制检测的对象为用户或群. Defaults to LimitType.user.
             check_type (CheckType, optional): 限制检测的会话为私聊或群聊或全部. Defaults to CheckType.all.
             count_period (CountPeriod, optional): 计数周期. Defaults to CountPeriod.day.
@@ -243,17 +243,19 @@ class CountManager:
         self.__plugin_count: Dict[str, CountManager.PluginCount] = {}
 
     async def add(
-        self, plugin_name: str, count_items: Union[List[CountItem], CountItem]
+        self, plugin_name: str, count_items: Union[List[CountItem], CountItem, int]
     ) -> None:
         """添加plugin_name对应的插件中的调用次数限制配置，由CountManager接手调用次数限制
 
         Args:
             plugin_name (str): _description_
-            count_items (Union[List[CountItem], CountItem]): _description_
+            count_items (Union[List[CountItem], CountItem, int]): _description_
         """
         self.__plugin_count[plugin_name] = CountManager.PluginCount(
             plugin_name=plugin_name
         )
+        if isinstance(count_items, int):
+            count_items = CountItem(count_items)
         await self.__plugin_count[plugin_name].init(count_items=count_items)
 
     def check(

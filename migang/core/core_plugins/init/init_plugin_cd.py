@@ -1,6 +1,6 @@
 from nonebot.log import logger
 
-from migang.core.manager import cd_manager
+from migang.core.manager import cd_manager, CDItem
 
 from .utils import get_plugin_list
 
