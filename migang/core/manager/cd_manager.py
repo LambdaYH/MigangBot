@@ -192,7 +192,9 @@ class CDManager:
                     if checker.hint != None:
                         if isinstance(checker.hint, Message):
                             return Message(
-                                str(checker.hint).replace("&#91;_剩余时间_&#93;", f"{ret:.2f}")
+                                str(checker.hint).replace(
+                                    "&#91;_剩余时间_&#93;", f"{ret:.2f}"
+                                )
                             )
                         return checker.hint.replace("[_剩余时间_]", f"{ret:.2f}")
                     return None
