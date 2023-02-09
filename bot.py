@@ -21,7 +21,7 @@ nonebot.load_plugin("nonebot_plugin_imageutils")
 nonebot.load_plugins("migang/core/core_plugins")
 
 # plugins
-nonebot.load_plugins("migang/plugins")
+nonebot.load_from_toml("pyproject.toml")
 
 if __name__ == "__main__":
     nonebot.run()

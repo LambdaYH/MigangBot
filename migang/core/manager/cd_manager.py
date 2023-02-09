@@ -71,27 +71,29 @@ class CDManager:
                 else:
                     self.__func = self.__check_group
 
-            def check(self, event: Union[MessageEvent, PokeNotifyEvent]) -> bool:
+            def check(
+                self, event: Union[MessageEvent, PokeNotifyEvent]
+            ) -> Union[bool, float]:
                 """外部可调用的检测函数
 
                 Args:
                     event (Union[MessageEvent, PokeNotifyEvent]): 事件
 
                 Returns:
-                    bool: 若CD不在冷却期，返回True
+                    Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
                 return self.__func(event)
 
             def __check_user_private(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            ) -> Union[bool, float]:
                 """limit_type为user，check_type为private时的具体检测函数
 
                 Args:
                     event (Union[MessageEvent, PokeNotifyEvent]): 事件
 
                 Returns:
-                    bool: 若CD不在冷却期，返回True
+                    Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
                 if type(event) is PokeNotifyEvent or event.message_type[0] == "p":
                     return self.__check_user_all(event)
@@ -99,14 +101,14 @@ class CDManager:
 
             def __check_user_group(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            ) -> Union[bool, float]:
                 """limit_type为user，check_type为group时的具体检测函数
 
                 Args:
                     event (Union[MessageEvent, PokeNotifyEvent]): 事件
 
                 Returns:
-                    bool: 若CD不在冷却期，返回True
+                    Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
                 if type(event) is PokeNotifyEvent or event.message_type[0] == "g":
                     return self.__check_user_all(event)
@@ -114,32 +116,33 @@ class CDManager:
 
             def __check_user_all(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            ) -> Union[bool, float]:
                 """limit_type为user，check_type为all时的具体检测函数
 
                 Args:
                     event (Union[MessageEvent, PokeNotifyEvent]): 事件
 
                 Returns:
-                    bool: 若CD不在冷却期，返回True
+                    Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
                 if (
                     (now := time()) - self.__last_called.get(event.user_id, 0)
                 ) > self.__cd:
                     self.__last_called[event.user_id] = now
                     return True
-                return False
+                else:
+                    return self.__cd - (now - self.__last_called.get(event.user_id, 0))
 
             def __check_group(
                 self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            ) -> Union[bool, float]:
                 """limit_type为group，check_type只能是group时的具体检测函数
 
                 Args:
                     event (Union[MessageEvent, PokeNotifyEvent]): 事件
 
                 Returns:
-                    bool: 若CD不在冷却期，返回True
+                    Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
                 if type(event) is GroupMessageEvent or type(event) is PokeNotifyEvent:
                     if (
@@ -147,7 +150,10 @@ class CDManager:
                     ) > self.__cd:
                         self.__last_called[event.group_id] = now
                         return True
-                    return False
+                    else:
+                        return self.__cd - (
+                            now - self.__last_called.get(event.group_id, 0)
+                        )
                 return True
 
         def __init__(self, cd_items: Union[List[CDItem], CDItem]) -> None:
@@ -182,8 +188,8 @@ class CDManager:
                 Union[str, bool, None]: 若CD不在冷却期，返回True，反之返回提示语
             """
             for checker in self.__cd_checkers:
-                if not checker.check(event):
-                    return checker.hint
+                if (ret := checker.check(event)) != True:
+                    return checker.hint.replace("[_剩余时间_]", f"{ret:.2f}")
             return True
 
     def __init__(self) -> None:

@@ -45,15 +45,6 @@ class CountItem:
         self.count_period = count_period
 
 
-_period_to_int = {
-    CountPeriod.day: 0,
-    CountPeriod.hour: 1,
-    CountPeriod.week: 2,
-    CountPeriod.month: 3,
-    CountPeriod.year: 4,
-}
-
-
 def _default():
     return [0] * 5
 
@@ -87,7 +78,7 @@ class CountManager:
                 self.__data: DefaultDict[int, List[int]] = (
                     data.user if limit_type == LimitType.user else data.group
                 )
-                self.__idx: int = _period_to_int[count_item.count_period]
+                self.__idx: int = count_item.count_period._value_
                 self.__func: Callable = self.__check_user_private
                 if limit_type == LimitType.user and check_type == CheckType.private:
                     self.__func = self.__check_user_private
@@ -241,11 +232,10 @@ class CountManager:
             Args:
                 period (CountPeriod): 所需重置的对应周期
             """
-            p_int = _period_to_int[period]
             for counts in self.__count_data.group.values():
-                counts[p_int] = 0
+                counts[period._value_] = 0
             for counts in self.__count_data.user.values():
-                counts[p_int] = 0
+                counts[period._value_] = 0
             self.__dirty_data = True
 
     def __init__(self) -> None:

@@ -690,6 +690,46 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "ali"
 
 [[package]]
+name = "nonebot-plugin-memes"
+version = "0.3.10"
+description = "Nonebot2 plugin for making memes"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[package.dependencies]
+httpx = ">=0.19.0"
+nonebot-adapter-onebot = ">=2.0.0-beta.1,<3.0.0"
+nonebot-plugin-imageutils = ">=0.1.13,<0.2.0"
+nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
+Pillow = ">=9.0.0,<10.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "ali"
+
+[[package]]
+name = "nonebot-plugin-petpet"
+version = "0.3.20"
+description = "Nonebot2 plugin for making fun pictures"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[package.dependencies]
+httpx = ">=0.19.0"
+nonebot-adapter-onebot = ">=2.1.1,<3.0.0"
+nonebot-plugin-imageutils = ">=0.1.13.2,<0.2.0.0"
+nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
+Pillow = ">=9.0.0,<10.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "ali"
+
+[[package]]
 name = "nonebot2"
 version = "2.0.0rc3"
 description = "An asynchronous python bot framework."
@@ -1431,7 +1471,7 @@ reference = "ali"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "091038bfa0aab3ec57615b497127bd23ee8c972f9555e689331fca6bad4c8f51"
+content-hash = "7c1263d4f73264d0f2d3ed9c1a63e6cb6a07aee0b0ed24262d3e648dbc43c5b0"
 
 [metadata.files]
 aiofiles = [
@@ -2112,6 +2152,14 @@ nonebot-plugin-htmlrender = [
 nonebot-plugin-imageutils = [
     {file = "nonebot_plugin_imageutils-0.1.14-py3-none-any.whl", hash = "sha256:6726fa9dff9ee301fdf71ba7680c176f4f680bcede500cc59bdf82f37d75ca06"},
     {file = "nonebot_plugin_imageutils-0.1.14.tar.gz", hash = "sha256:5f12b7a2c0ec2417b72bfe20d1398f6586939a74974eef3dbeca1fa5153c4fcb"},
+]
+nonebot-plugin-memes = [
+    {file = "nonebot_plugin_memes-0.3.10-py3-none-any.whl", hash = "sha256:1d13adc368ac59c92ae1b29909e7c29238995907d0e68b63566f1cc56108f16d"},
+    {file = "nonebot_plugin_memes-0.3.10.tar.gz", hash = "sha256:a9f385c968089fcd6b0675f9add51e11bddc067496e02d717af860237b2f81a0"},
+]
+nonebot-plugin-petpet = [
+    {file = "nonebot_plugin_petpet-0.3.20-py3-none-any.whl", hash = "sha256:4b5ea9ed8daddcfdf31a246e5c54a3cd4317f0337aa95a0d6425d9af76c36511"},
+    {file = "nonebot_plugin_petpet-0.3.20.tar.gz", hash = "sha256:b6189e524cfce86113c28be0ce1b3feaf976926318c10685e0a832c427a6c72a"},
 ]
 nonebot2 = [
     {file = "nonebot2-2.0.0rc3-py3-none-any.whl", hash = "sha256:6596e9837e95e99a6cfa7c4e21d75a54a5f3529d34f30454136ebfef6aa374f4"},

@@ -1,7 +1,15 @@
+from typing import Union
+
 from nonebot.matcher import Matcher
 from nonebot.message import run_preprocessor
 from nonebot.exception import IgnoredException
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import (
+    PrivateMessageEvent,
+    FriendAddNoticeEvent,
+    FriendRecallNoticeEvent,
+    FriendRequestEvent,
+    GroupRequestEvent,
+)
 
 from migang.core.manager import (
     user_manager,
@@ -12,7 +20,16 @@ from migang.core.models import NickName
 
 
 @run_preprocessor
-async def _(matcher: Matcher, event: PrivateMessageEvent):
+async def _(
+    matcher: Matcher,
+    event: Union[
+        PrivateMessageEvent,
+        FriendAddNoticeEvent,
+        FriendRecallNoticeEvent,
+        FriendRequestEvent,
+        GroupRequestEvent,
+    ],
+):
     if not user_manager.CheckUserPluginStatus(
         plugin_name=matcher.plugin_name, user_id=event.user_id
     ):
