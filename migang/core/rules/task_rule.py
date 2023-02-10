@@ -19,7 +19,7 @@ def GroupTaskChecker(task_name: str) -> Callable:
 
 
 def _group_task_checker(event: Event, task_name: str) -> bool:
-    if type(event) not in (GroupMessageEvent, PokeNotifyEvent):
+    if not hasattr(event, "group_id"):
         return False
     return group_manager.check_group_task_status(
         task_name=task_name, group_id=event.group_id

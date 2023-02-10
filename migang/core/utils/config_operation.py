@@ -6,7 +6,7 @@ from migang.core.manager import config_manager
 
 
 async def get_config(key: str, plugin_name: Optional[str] = None) -> Any:
-    """异步获取插件配置，当plugin_name不指定且当前插件位于以plugins结尾的文件夹中时，插件名将默认为当前插件
+    """异步获取插件配置，当plugin_name不指定且当前插件位于以plugins结尾的文件夹中时，插件名将默认为当前插件，最好不要在插件未完全加载时载入插件配置，否则无法读取默认值
 
     Args:
         key (str): 配置项键值
@@ -27,7 +27,7 @@ async def get_config(key: str, plugin_name: Optional[str] = None) -> Any:
 
 
 def sync_get_config(key: str, plugin_name: Optional[str] = None) -> Any:
-    """同步获取插件配置，当plugin_name不指定且当前插件位于以plugins结尾的文件夹中时，插件名将默认为当前插件
+    """同步获取插件配置，当plugin_name不指定且当前插件位于以plugins结尾的文件夹中时，插件名将默认为当前插件，最好不要在插件未完全加载时载入插件配置，否则无法读取默认值
 
     Args:
         key (str): 配置项键值

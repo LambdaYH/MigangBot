@@ -133,8 +133,12 @@ class ConfigManager:
             raise ConfigNoExistError(f"插件 {plugin_name} 的配置项 {plugin_config} 不存在！")
         return (
             data[plugin_config]
-            if data[plugin_config]
-            else self.__default_value[plugin_name][plugin_config]
+            if data[plugin_config] is not None
+            else (
+                self.__default_value[plugin_name].get(plugin_config)
+                if plugin_name in self.__default_value
+                else None
+            )
         )
 
     @cached(cache=LRUCache(maxsize=128))
@@ -160,6 +164,10 @@ class ConfigManager:
             raise ConfigNoExistError(f"插件 {plugin_name} 的配置项 {plugin_config} 不存在！")
         return (
             data[plugin_config]
-            if data[plugin_config]
-            else self.__default_value[plugin_name][plugin_config]
+            if data[plugin_config] is not None
+            else (
+                self.__default_value[plugin_name].get(plugin_config)
+                if plugin_name in self.__default_value
+                else None
+            )
         )

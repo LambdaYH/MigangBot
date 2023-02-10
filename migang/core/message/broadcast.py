@@ -1,5 +1,5 @@
 import asyncio
-from random import random
+from random import random, shuffle
 from typing import Union, Dict, List, Optional
 
 from nonebot import get_bot
@@ -110,4 +110,5 @@ async def broadcast(
         for group in group_list
         if group_manager.check_group_task_status(task_name=task_name, group_id=group)
     ]
+    shuffle(group_list)
     await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()
