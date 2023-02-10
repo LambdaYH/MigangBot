@@ -167,8 +167,6 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                 elif isinstance(dep.call, KeywordsRule):
                     add_to_commands(type="关键词匹配", cmds=dep.call.keywords)
 
-
-        print(commands)
         cmd_text = [f"插件 {name} 可用指令如下，加粗指令表示需要@Bot"]
         for perm, cmds in commands.items():
             if not cmds:
