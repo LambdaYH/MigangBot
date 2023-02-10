@@ -154,7 +154,6 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     commands[perm][type].add(cmd_text)
 
             for dep in matcher.rule.checkers:
-                print(dep.call)
                 if isinstance(dep.call, FullmatchRule):
                     add_to_commands(type="完全匹配", cmds=dep.call.msg)
                 elif isinstance(dep.call, CommandRule):
