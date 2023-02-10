@@ -11,6 +11,7 @@ from migang.core.utils.file_operation import (
     load_data,
 )
 from migang.core.exception import ConfigNoExistError
+from migang.core.path import DATA_PATH
 
 _config_path = Path() / "configs"
 _config_path.mkdir(parents=True, exist_ok=True)
@@ -53,9 +54,16 @@ class ConfigManager:
 
     def __init__(self) -> None:
         """仅初始化配置项默认值，当所需配置值时从文件加载并加入缓存"""
-        self.__default_value: Dict[str, Dict[str, Any]] = {}
+        self.__default_value: Dict[str, Dict[str, Any]] = load_data(
+            DATA_PATH / "core" / "default_value_cache.json"
+        )
         """{plugin_name: {"key": value}}
         """
+
+    async def save_default_value(self):
+        await async_save_data(
+            self.__default_value, DATA_PATH / "core" / "default_value_cache.json"
+        )
 
     async def add_config(self, plugin_name: str, config: ConfigItem) -> None:
         """添加单个配置项

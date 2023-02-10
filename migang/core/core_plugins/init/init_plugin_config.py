@@ -92,3 +92,5 @@ async def init_plugin_config():
         await f.write(env_str)
     if modified:
         logger.warning(f"检测到env文件中变量已更新，建议重新启动Bot以使得插件能获取到最新的配置文件")
+    # 保存最新的默认值进文件
+    await config_manager.save_default_value()
