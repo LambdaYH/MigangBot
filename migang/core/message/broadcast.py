@@ -106,9 +106,11 @@ async def broadcast(
         bot = get_bot()
     group_list = await bot.get_group_list()
     group_list = [
-        group
+        group["group_id"]
         for group in group_list
-        if group_manager.check_group_task_status(task_name=task_name, group_id=group)
+        if group_manager.check_group_task_status(
+            task_name=task_name, group_id=group["group_id"]
+        )
     ]
     shuffle(group_list)
     await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()
