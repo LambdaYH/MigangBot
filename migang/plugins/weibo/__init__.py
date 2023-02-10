@@ -166,16 +166,16 @@ __plugin_config__ = [
         },
         default_value={},
         description="""
-        微博推送组的配置
-        单个组的键值对应task名
-        description对应群被动状态中任务名
-        format为当前组的模式，若无该项则默认为全局配置
-        users为当前推送组的用户，其中：
-        user_id为https://weibo.com/u/xxxxx的xxxx
-        format为当前用户的模式，若无该项则默认为外层配置
-        filter_retweet为是否过滤转发的微博
-        filter_words为过滤词，包含过滤词的微博不推送
-        """.strip(),
+微博推送组的配置
+单个组的键值对应task名
+description对应群被动状态中任务名
+format为当前组的模式，若无该项则默认为全局配置
+users为当前推送组的用户，其中：
+user_id为https://weibo.com/u/xxxxx的xxxx
+format为当前用户的模式，若无该项则默认为外层配置
+filter_retweet为是否过滤转发的微博
+filter_words为过滤词，包含过滤词的微博不推送
+""".strip(),
     ),
 ]
 

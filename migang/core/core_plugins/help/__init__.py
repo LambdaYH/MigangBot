@@ -138,7 +138,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
 
             def add_to_commands(type: str, cmds: Union[str, List[str]]):
                 for perm in matcher_permissions:
-                    if type not in commands:
+                    if type not in commands[perm]:
                         commands[perm][type] = set()
                 if isinstance(cmds, str):
                     cmds = [cmds]
@@ -167,6 +167,8 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                 elif isinstance(dep.call, KeywordsRule):
                     add_to_commands(type="关键词匹配", cmds=dep.call.keywords)
 
+
+        print(commands)
         cmd_text = [f"插件 {name} 可用指令如下，加粗指令表示需要@Bot"]
         for perm, cmds in commands.items():
             if not cmds:
