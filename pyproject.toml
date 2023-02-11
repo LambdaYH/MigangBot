@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "migangbot"
 version = "0.1.0"
-description = "基于Nonebot2的机器人"
+description = "基于Nonebot2与go-cqhttp的机器人"
 authors = ["LambdaYH"]
 license = "MIT"
 readme = "README.md"

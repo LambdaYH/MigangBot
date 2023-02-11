@@ -3,7 +3,7 @@ db_type: mysql
 host: localhost
 port: 3306
 user: migangbot_user
-password: migangbot_db
-database: migangbot_db_password
+password: migangbot_db_password
+database: migangbot_db
 
 db_url:
