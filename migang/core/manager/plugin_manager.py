@@ -26,8 +26,8 @@ class PluginManager:
         enabled_group: Set[int]
         disabled_group: Set[int]
         category: str
-        author: str
-        version: str
+        author: Optional[str]
+        version: Union[str, int, None]
 
     class Plugin:
         """

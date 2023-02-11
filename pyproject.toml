@@ -28,6 +28,7 @@ nonebot-plugin-petpet = "^0.3.20"
 nonebot-plugin-memes = "^0.3.10"
 aiohttp = "^3.8.3"
 lxml = "^4.9.2"
+nonebot-plugin-word-bank2 = "^0.1.6"
 
 [tool.poetry.group.dev.dependencies]
 black = {version = "^23.1a1", allow-prereleases = true}
@@ -35,7 +36,8 @@ black = {version = "^23.1a1", allow-prereleases = true}
 [tool.nonebot]
 plugins = [
     "nonebot_plugin_petpet", 
-    "nonebot_plugin_memes"
+    "nonebot_plugin_memes",
+    "nonebot_plugin_word_bank2",
 ]
 plugin_dirs = ["migang/plugins"]
 

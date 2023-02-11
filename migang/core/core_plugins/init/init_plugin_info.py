@@ -1,6 +1,6 @@
 from nonebot.log import logger
 
-from migang.core.manager import plugin_manager, PluginType
+from migang.core.manager import plugin_manager, PluginType, core_data_path
 from migang.core.permission import NORMAL
 
 from .utils import get_plugin_list
@@ -19,8 +19,12 @@ async def init_plugin_info():
                 else plugin.module.__getattribute__("__plugin_name__")
             )
         except AttributeError:
-            logger.info(f"未将 {plugin_name} 加入插件控制")
-            continue
+            # logger.info(f"未将 {plugin_name} 加入插件控制")
+            if not (core_data_path / "plugin_manager" / f"{plugin_name}.json").exists():
+                logger.warning(
+                    f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
+                )
+            name = plugin_name
         version, author, usage = None, None, None
         if metadata := plugin.metadata:
             version = metadata.extra.get("version")
