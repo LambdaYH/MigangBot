@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from nonebot import get_driver, Driver
 from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot_plugin_imageutils import BuildImage
+from nonebot_plugin_imageutils import BuildImage, text2image
 from nonebot_plugin_imageutils.fonts import add_font
 from nonebot_plugin_htmlrender import template_to_pic
 
