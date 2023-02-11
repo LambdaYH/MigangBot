@@ -10,4 +10,4 @@ class EorzeanZhanbu(Model):
     dye = fields.TextField(null=False)
     append_msg = fields.TextField(null=False)
     basemap = fields.TextField(NULL=False)
-    zhanbu_time_last = fields.DatetimeField(null=False)
+    zhanbu_time_last = fields.DatetimeField(null=False, auto_now=True)
