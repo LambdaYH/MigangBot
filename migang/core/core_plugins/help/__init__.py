@@ -149,7 +149,9 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     for c in cmd:
                         cmd_set.add(c)
 
-                cmd_text = "/".join([f"[b]{cmd}[/b]" if to_me else cmd for cmd in cmd_set])
+                cmd_text = "/".join(
+                    [f"[b]{cmd}[/b]" if to_me else cmd for cmd in cmd_set]
+                )
                 for perm in matcher_permissions:
                     commands[perm][type].add(cmd_text)
 
@@ -171,9 +173,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         for perm_text, cmds in commands.items():
             if not cmds:
                 continue
-            text = (
-                f"[align=center][size=30][color=#a3c9eb]{perm_text}[/color][/size][/align]"
-            )
+            text = f"[align=center][size=30][color=#a3c9eb]{perm_text}[/color][/size][/align]"
             for k, v in cmds.items():
                 text += f"\n[size=25][color=#FA876F]{k}[/color][/size]\n" + "\n".join(
                     [f"[size=20]{s}[/size]" for s in v]
