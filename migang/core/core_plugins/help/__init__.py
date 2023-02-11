@@ -142,14 +142,14 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                         commands[perm][type] = set()
                 if isinstance(cmds, str):
                     cmds = [cmds]
-                cs = set()
+                cmd_set = set()
                 for cmd in cmds:
                     if isinstance(cmd, str):
                         cmd = [cmd]
                     for c in cmd:
-                        cs.add(c)
+                        cmd_set.add(c)
 
-                cmd_text = "/".join([f"[b]{c}[/b]" if to_me else c for c in cs])
+                cmd_text = "/".join([f"[b]{cmd}[/b]" if to_me else cmd for cmd in cmd_set])
                 for perm in matcher_permissions:
                     commands[perm][type].add(cmd_text)
 
@@ -168,11 +168,11 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     add_to_commands(type="关键词匹配", cmds=dep.call.keywords)
 
         cmd_text = [f"插件 {name} 可用指令如下，加粗指令表示需要@Bot"]
-        for perm, cmds in commands.items():
+        for perm_text, cmds in commands.items():
             if not cmds:
                 continue
             text = (
-                f"[align=center][size=30][color=#a3c9eb]{perm}[/color][/size][/align]"
+                f"[align=center][size=30][color=#a3c9eb]{perm_text}[/color][/size][/align]"
             )
             for k, v in cmds.items():
                 text += f"\n[size=25][color=#FA876F]{k}[/color][/size]\n" + "\n".join(

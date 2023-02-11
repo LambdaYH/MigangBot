@@ -8,6 +8,11 @@ from pydantic import BaseModel
 from migang.core.manager.data_class import PluginType
 from migang.core.permission import NORMAL
 
+CUSTOM_USAGE_PATH = Path() / "data" / "core" / "custom_usage"
+"""若在此路径下存在插件名.txt，则插件用法以该文件为主
+"""
+CUSTOM_USAGE_PATH.mkdir(exist_ok=True, parents=True)
+
 
 class PluginManager:
     """管理全部插件"""
@@ -31,7 +36,7 @@ class PluginManager:
 
         def __init__(
             self,
-            file,
+            file: Path,
             usage: Optional[str] = None,
             hidden: bool = False,
             plugin_type: PluginType = PluginType.All,
@@ -39,14 +44,14 @@ class PluginManager:
             """Plugin构造函数
 
             Args:
-                file (_type_): 插件所对应的配置文件名
+                file (Path): 插件所对应的配置文件名
                 usage (Optional[str], optional): 插件用法. Defaults to None.
                 hidden (bool, optional): 插件是否隐藏. Defaults to False.
                 plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
             """
             # 数据
             self.__data: PluginManager.PluginAttr
-            self.__file = file
+            self.__file: Path = file
 
             # 属性
             self.plugin_name = self.__file.name.removesuffix(".json")
@@ -79,8 +84,13 @@ class PluginManager:
             """异步初始化插件"""
             async with aiofiles.open(self.__file, "r") as f:
                 self.__data = PluginManager.PluginAttr.parse_raw(await f.read())
+            if (CUSTOM_USAGE_PATH / f"{self.plugin_name}.txt").exists():
+                async with aiofiles.open(
+                    CUSTOM_USAGE_PATH / f"{self.plugin_name}.txt", "r", encoding="utf-8"
+                ) as f:
+                    self.usage = await f.read()
             self.name = self.__data.name
-            self.all_name: Set[str] = self.__data.aliases
+            self.all_name: Set[str] = self.__data.aliases | set((self.name,))
             self.all_name.add(self.name)
             self.__permission: int = self.__data.permission
             self.category: Optional[str] = self.__data.category
@@ -207,11 +217,13 @@ class PluginManager:
             return True
 
         def set_usage(self, usage: Optional[str]) -> None:
-            """设置插件用法
+            """设置插件用法，如果在插件配置文件中设置了，则选用配置文件的usage
 
             Args:
                 usage (Optional[str]): 用法
             """
+            if self.usage:
+                return
             self.usage = usage
 
         def set_hidden(self, hidden: bool) -> None:
