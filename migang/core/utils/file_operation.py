@@ -1,6 +1,6 @@
 from io import StringIO
 from pathlib import Path
-from typing import TypeVar, Union, Dict, Any
+from typing import TypeVar, Union, Dict, Any, List
 
 import aiofiles
 import ujson as json
@@ -15,7 +15,7 @@ _file_suffixes = [".json", ".yaml", ".yml"]
 T = TypeVar("T")
 
 
-def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
+def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, List]:
     """同步加载.json或.yaml数据
 
     Args:
@@ -26,7 +26,7 @@ def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
         FileParseError: 文件解析失败
 
     Returns:
-        Union[Dict, CommentedMap]: 若json返回Dict，若yaml返回CommentedMap
+        Union[Dict, CommentedMap, List]: 若json返回Dict或List，若yaml返回CommentedMap
     """
     data: Union[Dict, CommentedMap, None] = None
     if isinstance(file, str):
@@ -51,7 +51,9 @@ def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
     return data
 
 
-def save_data(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]) -> None:
+def save_data(
+    obj: Union[Dict[str, Any], List[Any], CommentedMap], file: Union[Path, str]
+) -> None:
     """同步保存数据
 
     Args:
@@ -67,7 +69,7 @@ def save_data(obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]) 
             _yaml.dump(obj, f)
 
 
-async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
+async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, List]:
     """异步加载.json或.yaml数据
 
     Args:
@@ -78,7 +80,7 @@ async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
         FileParseError: 文件解析失败
 
     Returns:
-        Union[Dict, CommentedMap]: 若json返回Dict，若yaml返回CommentedMap
+        Union[Dict, CommentedMap, List]: 若json返回Dict或List，若yaml返回CommentedMap
     """
     data: Union[Dict, CommentedMap, None] = None
     if isinstance(file, str):
@@ -105,12 +107,12 @@ async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap]:
 
 
 async def async_save_data(
-    obj: Union[Dict[str, Any], CommentedMap], file: Union[Path, str]
+    obj: Union[Dict[str, Any], List[Any], CommentedMap], file: Union[Path, str]
 ) -> None:
     """异步保存数据
 
     Args:
-        obj (Union[Dict[str, Any], CommentedMap]): 对象
+        obj (Union[Dict[str, Any], List[Any], CommentedMap]): 对象
         file (Union[Path, str]): 文件路径
     """
     if isinstance(file, str):

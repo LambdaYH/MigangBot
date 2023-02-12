@@ -1,23 +1,20 @@
 import random
 import sys
-import aiohttp
 import asyncio
 import time
 from urllib.parse import unquote
+from typing import List
 
 from lxml import etree
 import aiohttp
 from nonebot.log import logger
 
 from migang.core import DATA_PATH, get_config
+from migang.utils.file import async_save_data, async_load_data
 
 from .exception import *
 from ._utils import sinaimgtvax
 
-try:
-    import ujson as json
-except:
-    import json
 
 api_url = f"https://m.weibo.cn/api/container/getIndex"
 PATH = DATA_PATH / "weibo"
@@ -36,7 +33,6 @@ class WeiboSpider(object):
         self.user_id_int: int = int(self.user_id)
         self.filter_words = config["filter_words"]
         self.format = config["format"]
-        self.received_weibo_ids = []
         self.headers = {
             "referer": f"https://m.weibo.cn/u/{self.user_id}",
             "MWeibo-Pwa": "1",
@@ -47,18 +43,7 @@ class WeiboSpider(object):
         self.__init = False
         self.record_file_path = weibo_record_path / f"{self.user_id}.json"
         self.user_name = self.user_id
-        try:
-            with open(self.record_file_path, "r", encoding="UTF-8") as f:
-                self.received_weibo_ids = json.load(f)
-        except FileNotFoundError:
-            pass
-        try:
-            with open(weibo_id_name_file, "r", encoding="UTF-8") as f:
-                id_name_map = json.load(f)
-            if self.user_id in id_name_map:
-                self.user_name = id_name_map[self.user_id]
-        except FileNotFoundError:
-            pass
+        self.received_weibo_ids: List[str]
 
     async def get_json(self, url, params=None):
         """
@@ -84,6 +69,10 @@ class WeiboSpider(object):
         self.__init = True
         if cookie := await get_config(key="cookie"):
             self.headers["cookie"] = cookie
+        id_name_map = await async_load_data(weibo_id_name_file)
+        if self.user_id in id_name_map:
+            self.user_name = id_name_map[self.user_id]
+        self.received_weibo_ids = await async_load_data(self.record_file_path)
         if not self.record_file_path.exists():
             await self.get_latest_weibos()
         self.__init = False
@@ -122,18 +111,17 @@ class WeiboSpider(object):
         """
         return self.format
 
-    def save(self):
-        with open(self.record_file_path, "w", encoding="utf8") as f:
-            json.dump(self.received_weibo_ids, f, indent=4, ensure_ascii=False)
+    async def save(self):
+        await async_save_data(self.received_weibo_ids, self.record_file_path)
 
-    def clear_buffer(self):
+    async def clear_buffer(self):
         """
         如果清理缓存前一分钟，该微博账号瞬间发送了 20 条微博
         然后清理缓存仅仅保留后 10 条的微博id，因此可能会重复推送前 10 条微博
         当然这种情况通常不会发生
         """
         self.received_weibo_ids = self.received_weibo_ids[-20:]
-        self.save()
+        await self.save()
 
     def validate_config(self, config):
         """验证配置是否正确"""
@@ -385,7 +373,7 @@ class WeiboSpider(object):
                                 self.received_weibo_ids.append(wb["bid"])
                                 # self.print_weibo(wb)
             if latest_weibos:
-                self.save()
+                await self.save()
             return latest_weibos
         except Exception as e:
             logger.exception(e)

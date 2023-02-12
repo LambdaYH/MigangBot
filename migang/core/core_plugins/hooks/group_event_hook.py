@@ -11,7 +11,6 @@ from nonebot.adapters.onebot.v11 import (
     GroupDecreaseNoticeEvent,
     GroupIncreaseNoticeEvent,
     GroupRecallNoticeEvent,
-    GroupRequestEvent,
 )
 
 from migang.core.manager import (

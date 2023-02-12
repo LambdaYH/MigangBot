@@ -2,25 +2,25 @@ from time import strftime, localtime
 from typing import Dict
 from asyncio import gather
 
-import ujson as json
 from tenacity import retry, wait_random, stop_after_attempt, RetryError
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, GROUP
-from nonebot import on_command
+from nonebot import on_fullmatch
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
-from nonebot import Driver, get_driver, get_bot
+from nonebot import get_driver, get_bot
 
 from nonebot_plugin_imageutils import text2image
 from nonebot_plugin_htmlrender import get_new_page
 from nonebot_plugin_apscheduler import scheduler
 
 from migang.core import sync_get_config, ConfigItem, TaskItem, broadcast, check_task
+from migang.utils.image import pic_to_bytes
+from migang.utils.file import async_load_data, async_save_data
 
 from .weibo_spider import WeiboSpider, weibo_record_path, weibo_id_name_file
 from ._utils import get_image_cqcode
-from migang.utils.image import pic_to_bytes
 
 tasks_dict = {}
 
@@ -94,19 +94,6 @@ __plugin_config__ = [
     ConfigItem(
         key="WeiboSubs",
         initial_value={
-            "weibo-pcr": {
-                "desciption": "公主连接微博推送",
-                "enable_on_default": False,
-                "format": 1,
-                "users": [
-                    {
-                        "user_id": "6603867494",
-                        "nickname": "公主连接官微",
-                        "filter_retweet": False,
-                        "filter_words": [],
-                    }
-                ],
-            },
             "weibo-ff14": {
                 "desciption": "最终幻想14微博推送",
                 "enable_on_default": False,
@@ -127,18 +114,6 @@ __plugin_config__ = [
                         "filter_retweet": False,
                         "filter_words": [],
                     },
-                ],
-            },
-            "weibo-ff14nga": {
-                "desciption": "最终幻想14nga微博推送",
-                "enable_on_default": False,
-                "format": 1,
-                "users": [
-                    {
-                        "user_id": "6969245713",
-                        "filter_retweet": True,
-                        "filter_words": [],
-                    }
                 ],
             },
             "weibo-ShiningNikki": {
@@ -187,16 +162,15 @@ try:
 except Exception as e:
     logger.warning(f"微博推送加载异常，若初次加载微博推送，请等待配置文件生成完成并按需修改后重新启动")
 
-weibo_list = on_command(
-    "可订阅微博列表",
-    aliases={"weibo-list"},
+weibo_list = on_fullmatch(
+    ("可订阅微博列表", "weibo-list"),
     rule=to_me(),
     permission=GROUP,
     priority=5,
     block=True,
 )
 
-weibo_update_username = on_command(
+weibo_update_username = on_fullmatch(
     "更新微博用户名",
     rule=to_me(),
     permission=SUPERUSER,
@@ -204,10 +178,8 @@ weibo_update_username = on_command(
     block=True,
 )
 
-driver: Driver = get_driver()
 
-
-@driver.on_startup
+@get_driver().on_startup
 async def _():
     tasks = []
     for spiders in tasks_dict.values():
@@ -331,7 +303,12 @@ async def process_wb(format: int, wb: Dict):
     return await wb_to_text(wb)
 
 
-@scheduler.scheduled_job("interval", seconds=120, jitter=10)
+interval = 0
+for spiders in tasks_dict.values():
+    interval += 26 * len(spiders)
+
+
+@scheduler.scheduled_job("interval", seconds=interval, jitter=10)
 async def _():
     for task, spiders in tasks_dict.items():
         weibos = []
@@ -364,23 +341,18 @@ async def _():
 @scheduler.scheduled_job("cron", second="0", minute="0", hour="5")
 async def clear_spider_buffer():
     logger.info("Cleaning weibo spider buffer...")
-    for _, spiders in tasks_dict.items():
-        for spider in spiders:
-            spider.clear_buffer()
+    tasks = []
+    for spiders in tasks_dict.values():
+        tasks += [spider.clear_buffer() for spider in spiders]
+    await gather(*tasks)
 
 
 @scheduler.scheduled_job("cron", second="0", minute="0", hour="4")
 async def update_user_name():
     logger.info("Updating weibo user_name...")
-    id_name_map = {}
-    try:
-        with open(weibo_id_name_file, "r", encoding="UTF-8") as f:
-            id_name_map = json.load(f)
-    except FileNotFoundError:
-        pass
+    id_name_map = await async_load_data(weibo_id_name_file)
     for _, spiders in tasks_dict.items():
         for spider in spiders:
             if uname := await spider.update_username():
                 id_name_map[spider.get_userid()] = uname
-    with open(weibo_id_name_file, "w", encoding="utf8") as f:
-        json.dump(id_name_map, f, indent=4, ensure_ascii=False)
+    await async_save_data(id_name_map, weibo_id_name_file)
