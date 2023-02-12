@@ -150,6 +150,8 @@ configs/
 .env
 db_config.yaml
 
+# The downloaded resources
+resources/image/shiningnikki_image
+
 # developing
 migang/plugins/about*
-nickname

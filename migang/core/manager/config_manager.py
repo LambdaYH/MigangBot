@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Dict, Any, Optional, List
+from functools import lru_cache
+from typing import Dict, Any, Optional, Iterable
 
 from ruamel.yaml import CommentedMap
 from async_lru import alru_cache
-from cachetools import cached, LRUCache
 
 from migang.core.utils.file_operation import (
     async_load_data,
@@ -18,7 +18,7 @@ _config_path.mkdir(parents=True, exist_ok=True)
 
 
 class ConfigItem:
-    """__plugin_config__属性为List[ConfigItem]或ConfigItem"""
+    """__plugin_config__属性为Iterable[ConfigItem]或ConfigItem"""
 
     def __init__(
         self,
@@ -87,12 +87,12 @@ class ConfigManager:
         )
         await async_save_data(data, file_name)
 
-    async def add_configs(self, plugin_name: str, configs: List[ConfigItem]) -> None:
+    async def add_configs(self, plugin_name: str, configs: Iterable[ConfigItem]) -> None:
         """添加多个配置项
 
         Args:
             plugin_name (str): 插件名或配置文件名
-            configs (List[ConfigItem]): 配置项
+            configs (Iterable[ConfigItem]): 配置项
         """
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
@@ -149,11 +149,11 @@ class ConfigManager:
             )
         )
 
-    @cached(cache=LRUCache(maxsize=128))
+    @lru_cache(maxsize=128)
     def __sync_get_config(self, plugin_name: str) -> CommentedMap:
         return load_data(_config_path / f"{plugin_name}.yaml")
 
-    @cached(cache=LRUCache(maxsize=256))
+    @lru_cache(maxsize=256)
     def sync_get_config_item(self, plugin_name: str, plugin_config: str) -> Any:
         """获取plugin_name对应的键值为plugin_config的配置值
 

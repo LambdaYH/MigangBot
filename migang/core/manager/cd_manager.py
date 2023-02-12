@@ -1,4 +1,4 @@
-from typing import Dict, Union, Callable, List
+from typing import Dict, Union, Callable, List, Iterable
 from time import time
 
 from nonebot.adapters.onebot.v11 import (
@@ -12,7 +12,7 @@ from .data_class import LimitType, CheckType
 
 
 class CDItem:
-    """__plugin_cd__属性为List[CDItem]或CDItem"""
+    """__plugin_cd__属性为Iterable[CDItem]或CDItem"""
 
     def __init__(
         self,
@@ -156,11 +156,11 @@ class CDManager:
                         )
                 return True
 
-        def __init__(self, cd_items: Union[List[CDItem], CDItem]) -> None:
+        def __init__(self, cd_items: Union[Iterable[CDItem], CDItem]) -> None:
             """PluginCD的构造函数，获取插件中的所有CD控制项，创建对应的CDChecker并接手该插件CD的管理
 
             Args:
-                cd_items (Union[List[CDItem], CDItem]): 该插件中的CD控制项
+                cd_items (Union[Iterable[CDItem], CDItem]): 该插件中的CD控制项
             """
             self.__cd_checkers: List[CDManager.PluginCD.CDChecker]
             """保存该插件中的各CD检测器
@@ -206,12 +206,12 @@ class CDManager:
         """{plugin_name: PluginCD}，以plugin_name为名的插件调用PluginCD检测调用次数
         """
 
-    def add(self, plugin_name: str, cd_items: Union[List[CDItem], CDItem, int, float]):
+    def add(self, plugin_name: str, cd_items: Union[Iterable[CDItem], CDItem, int, float]):
         """添加插件以及其对应的__plugin_cd__配置项（若有）进CDManager
 
         Args:
             plugin_name (str): 插件名（plugin.name）
-            cd_items (Union[List[CDItem], CDItem, int, float]): __plugin_cd__内容
+            cd_items (Union[Iterable[CDItem], CDItem, int, float]): __plugin_cd__内容
         """
         if isinstance(cd_items, int) or isinstance(cd_items, float):
             cd_items = CDItem(cd_items)

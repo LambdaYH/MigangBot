@@ -3,7 +3,7 @@ import aiofiles
 import asyncio
 from pathlib import Path
 from collections import defaultdict
-from typing import List, Union, Dict, Callable, DefaultDict
+from typing import List, Union, Dict, Callable, DefaultDict, Iterable
 
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -19,7 +19,7 @@ _file_path.mkdir(parents=True, exist_ok=True)
 
 
 class CountItem:
-    """__plugin_count__属性为List[CountItem]或CountItem"""
+    """__plugin_count__属性为Iterable[CountItem]或CountItem"""
 
     def __init__(
         self,
@@ -176,17 +176,17 @@ class CountManager:
             self.__count_checkers: List[CountManager.PluginCount.CountChecker] = []
             self.__dirty_data: bool = False
 
-        async def init(self, count_items: Union[CountItem, List[CountItem]]):
+        async def init(self, count_items: Union[CountItem, Iterable[CountItem]]):
             """异步初始化，从文件中读取调用计数记录并加载到内存，同时载入调用次数配置
 
             Args:
-                count_items (Union[CountItem, List[CountItem]]): 调用次数配置项
+                count_items (Union[CountItem, Iterable[CountItem]]): 调用次数配置项
             """
             if self.__file.exists():
                 async with aiofiles.open(self.__file, "rb") as f:
                     data = await f.read()
                     self.__count_data = pickle.loads(data)
-            if type(count_items) is list:
+            if type(count_items) is not CountItem:
                 unique_period = set()
                 for count_item in count_items:
                     if count_item.count_period in unique_period:
@@ -196,7 +196,6 @@ class CountManager:
                             self.__count_data, count_item=count_item
                         )
                     )
-
             else:
                 self.__count_checkers.append(
                     CountManager.PluginCount.CountChecker(
@@ -243,13 +242,13 @@ class CountManager:
         self.__plugin_count: Dict[str, CountManager.PluginCount] = {}
 
     async def add(
-        self, plugin_name: str, count_items: Union[List[CountItem], CountItem, int]
+        self, plugin_name: str, count_items: Union[Iterable[CountItem], CountItem, int]
     ) -> None:
         """添加plugin_name对应的插件中的调用次数限制配置，由CountManager接手调用次数限制
 
         Args:
-            plugin_name (str): _description_
-            count_items (Union[List[CountItem], CountItem, int]): _description_
+            plugin_name (str): 插件名
+            count_items (Union[Iterable[CountItem], CountItem, int]): 插件计数配置们
         """
         self.__plugin_count[plugin_name] = CountManager.PluginCount(
             plugin_name=plugin_name

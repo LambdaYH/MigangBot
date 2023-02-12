@@ -108,7 +108,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         plugin = get_plugin(plugin_name)
         matchers = plugin.matcher
         commands = {
-            "通用指令": {},
+            "私聊可用指令": {},
             "群员可用指令": {},
             "群管理员可用指令": {},
             "群主可用指令": {},
@@ -128,8 +128,10 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                         matcher_permissions.add("群管理员可用指令")
                     elif perm.call.__name__ == "_group_owner":
                         matcher_permissions.add("群主可用指令")
+                    elif perm.call.__name__ == "_private_friend":
+                        matcher_permissions.add("私聊可用指令")
             if not matcher_permissions:
-                matcher_permissions.add("通用指令")
+                matcher_permissions = set(["群员可用指令", "群管理员可用指令", "群主可用指令", "私聊可用指令"])
             to_me = False
             for dep in matcher.rule.checkers:
                 if isinstance(dep.call, ToMeRule):
@@ -183,4 +185,4 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         cmd_img = text2image(text="\n".join(cmd_text))
         with BytesIO() as buf:
             cmd_img.save(buf, format="PNG")
-            await command_list.send(MessageSegment.image(buf.getvalue()))
+            await command_list.send(MessageSegment.image(buf))

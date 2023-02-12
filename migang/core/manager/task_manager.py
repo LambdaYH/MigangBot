@@ -1,6 +1,6 @@
 import asyncio
 from pathlib import Path
-from typing import Union, Dict, Set, List, Optional
+from typing import Union, Dict, Set, List, Optional, Iterable
 
 import aiofiles
 from pydantic import BaseModel
@@ -9,7 +9,7 @@ from migang.core.permission import NORMAL
 
 
 class TaskItem:
-    """__plugin_task__属性为List[TaskItem]或TaskItem"""
+    """__plugin_task__属性为Iterable[TaskItem]或TaskItem"""
 
     def __init__(
         self,
@@ -21,7 +21,7 @@ class TaskItem:
         description: str = "",
         permission: int = NORMAL,
     ) -> None:
-        """TaskItem构造函数，__plugin_task__属性为List[TaskItem]或TaskItem
+        """TaskItem构造函数，__plugin_task__属性为Iterable[TaskItem]或TaskItem
 
         Args:
             task_name (str): 任务名
@@ -395,11 +395,11 @@ class TaskManager:
             return
         self.__task[task_name].set_usage(usage=usage)
 
-    async def add(self, task_items: Union[TaskItem, List[TaskItem]]) -> None:
+    async def add(self, task_items: Union[TaskItem, Iterable[TaskItem]]) -> None:
         """添加任务进TaskManager
 
         Args:
-            task_items (Union[TaskItem, List[TaskItem]]): __plugin_task__的值
+            task_items (Union[TaskItem, LIterable[TaskItem]]): __plugin_task__的值
         """
         if type(task_items) is TaskItem:
             task_items: List[TaskItem] = [task_items]

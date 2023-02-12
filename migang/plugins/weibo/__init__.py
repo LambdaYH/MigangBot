@@ -1,8 +1,9 @@
 from time import strftime, localtime
 from typing import Dict
-from asyncio import sleep, gather
+from asyncio import gather
 
 import ujson as json
+from tenacity import retry, wait_random, stop_after_attempt, RetryError
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, GROUP
@@ -278,45 +279,45 @@ async def wb_to_image(wb: Dict) -> bytes:
     msg = f"{wb['screen_name']}'s Weibo:\n"
     url = f"https://m.weibo.cn/detail/{wb['bid']}"
     time = wb["created_at"]
-    for _ in range(3):
-        try:
-            async with get_new_page(
-                is_mobile=True, viewport={"width": 2048, "height": 2732}
-            ) as page:
-                await page.goto(
-                    url,
-                    wait_until="networkidle",
+
+    @retry(wait=wait_random(min=1, max=2), stop=stop_after_attempt(3))
+    async def get_screenshot():
+        async with get_new_page(
+            is_mobile=True, viewport={"width": 2048, "height": 2732}
+        ) as page:
+            await page.goto(
+                url,
+                wait_until="networkidle",
+            )
+            # await page.wait_for_selector(".ad-wrap", state="attached", timeout=8 * 1000)
+            # await page.eval_on_selector(
+            #     selector=".ad-wrap",
+            #     expression="(el) => el.style.display = 'none'",
+            # )
+            # 去除“小程序看微博热搜”横幅
+            try:
+                await page.wait_for_selector(".wrap", state="attached", timeout=30)
+                await page.eval_on_selector(
+                    selector=".wrap",
+                    expression="(el) => el.style.display = 'none'",
                 )
-                # await page.wait_for_selector(".ad-wrap", state="attached", timeout=8 * 1000)
-                # await page.eval_on_selector(
-                #     selector=".ad-wrap",
-                #     expression="(el) => el.style.display = 'none'",
-                # )
-                # 去除“小程序看微博热搜”横幅
-                try:
-                    await page.wait_for_selector(".wrap", state="attached", timeout=30)
-                    await page.eval_on_selector(
-                        selector=".wrap",
-                        expression="(el) => el.style.display = 'none'",
-                    )
-                except:
-                    pass
-                card = await page.wait_for_selector(
-                    f"xpath=//div[@class='card m-panel card9 f-weibo']",
-                    timeout=6 * 1000,
-                )
-                img = await card.screenshot()
-                return (
-                    msg
-                    + MessageSegment.image(img)
-                    + f"\n{url}\n时间: {strftime('%Y-%m-%d %H:%M', localtime(time))}"
-                )
-        except Exception as e:
-            logger.warning(f"截取微博主页失败: {e}")
-            sleep(1.1)
-        finally:
-            if page:
-                await page.close()
+            except Exception:
+                pass
+            card = await page.wait_for_selector(
+                f"xpath=//div[@class='card m-panel card9 f-weibo']",
+                timeout=6 * 1000,
+            )
+            img = await card.screenshot()
+            return (
+                msg
+                + MessageSegment.image(img)
+                + f"\n{url}\n时间: {strftime('%Y-%m-%d %H:%M', localtime(time))}"
+            )
+
+    try:
+        return await get_screenshot()
+    except RetryError:
+        logger.warning(f"截取微博 {url} 图片失败，将尝试以文字形式发送")
     return None
 
 
@@ -338,8 +339,8 @@ async def _():
             latest_weibos = await spider.get_latest_weibos()
             format = spider.get_format()
             formatted_weibos = [(await process_wb(format, wb)) for wb in latest_weibos]
-            if l := len(formatted_weibos):
-                logger.info(f"成功获取@{spider.get_username()}的新微博{l}条")
+            if weibo_num := len(formatted_weibos):
+                logger.info(f"成功获取@{spider.get_username()}的新微博{weibo_num}条")
             else:
                 logger.info(f"未检测到@{spider.get_username()}的新微博")
             weibos += formatted_weibos

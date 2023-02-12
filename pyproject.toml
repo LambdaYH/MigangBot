@@ -21,7 +21,6 @@ ujson = "^5.7.0"
 ruamel-yaml = "^0.17.21"
 nonebot-plugin-imageutils = "^0.1.14"
 nonebot-plugin-htmlrender = "^0.2.0.1"
-cachetools = "^5.3.0"
 async-lru = "^1.0.3"
 tortoise-orm = {extras = ["accel", "asyncmy", "asyncpg"], version = "^0.19.3"}
 nonebot-plugin-petpet = "^0.3.20"
@@ -29,9 +28,12 @@ nonebot-plugin-memes = "^0.3.10"
 aiohttp = "^3.8.3"
 lxml = "^4.9.2"
 nonebot-plugin-word-bank2 = "^0.1.6"
+tenacity = "^8.2.1"
+fake-useragent = "^1.1.1"
+aiocache = "^0.12.0"
 
 [tool.poetry.group.dev.dependencies]
-black = {version = "^23.1a1", allow-prereleases = true}
+black = {version = "^23.1.0", allow-prereleases = true}
 
 [tool.nonebot]
 plugins = [
