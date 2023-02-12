@@ -87,7 +87,9 @@ class ConfigManager:
         )
         await async_save_data(data, file_name)
 
-    async def add_configs(self, plugin_name: str, configs: Iterable[ConfigItem]) -> None:
+    async def add_configs(
+        self, plugin_name: str, configs: Iterable[ConfigItem]
+    ) -> None:
         """添加多个配置项
 
         Args:

@@ -105,4 +105,3 @@ async def _():
 async def _():
     logger.info(f"正在检测闪暖套装图片更新...")
     asyncio.create_task(update_suits_img())
-    

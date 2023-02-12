@@ -82,6 +82,7 @@ async def async_download_files(
                 async for data in r.content.iter_chunked(10240):
                     await f.write(data)
         logger.info(f"{url} 已下载至 {file}")
+
     count = 0
     async with aiohttp.ClientSession() as client:
         for i, e in enumerate(

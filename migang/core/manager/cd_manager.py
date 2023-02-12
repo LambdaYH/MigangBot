@@ -206,7 +206,9 @@ class CDManager:
         """{plugin_name: PluginCD}，以plugin_name为名的插件调用PluginCD检测调用次数
         """
 
-    def add(self, plugin_name: str, cd_items: Union[Iterable[CDItem], CDItem, int, float]):
+    def add(
+        self, plugin_name: str, cd_items: Union[Iterable[CDItem], CDItem, int, float]
+    ):
         """添加插件以及其对应的__plugin_cd__配置项（若有）进CDManager
 
         Args:
