@@ -254,7 +254,9 @@ async def get_zhanbu_result(user_id: int) -> Tuple[int, str, str, str, str, str]
 
     return luck, luck_yi, luck_ji, luck_dye, append_msg, luck_occupation
 
+
 TIMEDELTA = datetime.now() - datetime.utcnow()
+
 
 async def get_eorzean_zhanbu(user_id: str) -> BytesIO:
     try:
@@ -267,10 +269,7 @@ async def get_eorzean_zhanbu(user_id: str) -> BytesIO:
                     .select_for_update()
                     .first()
                 )
-            ) or (
-                (user.zhanbu_time_last + TIMEDELTA).date()
-                < datetime.now().date()
-            ):
+            ) or ((user.zhanbu_time_last + TIMEDELTA).date() < datetime.now().date()):
                 luck, yi, ji, dye, append_msg, occupation = await get_zhanbu_result(
                     user_id=user_id
                 )
