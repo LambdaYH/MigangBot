@@ -181,8 +181,10 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     [f"[size=20]{s}[/size]" for s in v]
                 )
             cmd_text.append(text)
-
-        cmd_img = text2image(text="\n".join(cmd_text))
+        if len(cmd_text) == 1:
+            cmd_img = text2image(text="该插件无可用指令")
+        else:
+            cmd_img = text2image(text="\n".join(cmd_text))
         with BytesIO() as buf:
             cmd_img.save(buf, format="PNG")
             await command_list.send(MessageSegment.image(buf))

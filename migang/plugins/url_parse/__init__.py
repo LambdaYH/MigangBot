@@ -139,7 +139,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent):
     if tasks:
         matcher.stop_propagation()
     else:
-        await url_parse.finish()
+        return
     ret: List[Union[Tuple[Message, str], str]] = await asyncio.gather(
         *tasks, return_exceptions=True
     )
@@ -162,10 +162,13 @@ async def _(matcher: Matcher, event: GroupMessageEvent, id: str = RegexMatched()
         await matcher.finish()
     if (func := get_function(url=url)) is not None:
         matcher.stop_propagation()
-        msg, link = await func(url)
-        if cache.add(group_id=event.group_id, url=link):
-            try:
-                await matcher.send(msg)
-                cache.add(group_id=event.group_id, url=link)
-            except ActionFailed:
-                logger.warning(f"发送消息 {msg[0]} 失败")
+        try:
+            msg, link = await func(url)
+            if cache.add(group_id=event.group_id, url=link):
+                try:
+                    await matcher.send(msg)
+                    cache.add(group_id=event.group_id, url=link)
+                except ActionFailed:
+                    logger.warning(f"发送消息 {msg[0]} 失败")
+        except Exception as e:
+            logger.warning(f"链接解析失败：{url}：{e}")
