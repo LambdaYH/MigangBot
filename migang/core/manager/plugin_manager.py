@@ -256,7 +256,9 @@ class PluginManager:
         self.__plugin_aliases: Dict[str, str] = {}
         """建立插件别名到plugin_name的映射
         """
-        self.__files: Optional[Set[str]] = set([file.name for file in self.__file_path.iterdir()])
+        self.__files: Optional[Set[str]] = set(
+            [file.name for file in self.__file_path.iterdir()]
+        )
         """初始化后就销毁，添加新插件时减少系统调用
         """
 
