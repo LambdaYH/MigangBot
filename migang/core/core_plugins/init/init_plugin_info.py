@@ -59,38 +59,28 @@ async def init_plugin_info():
             if hasattr(plugin.module, "__plugin_hidden__")
             else False
         )
-        if not plugin_manager.check_plugin(plugin_name):
-            await plugin_manager.add(
-                plugin_name=plugin_name,
-                name=name,
-                aliases=plugin.module.__getattribute__("__plugin_aliases__")
-                if hasattr(plugin.module, "__plugin_aliases__")
-                else [],
-                author=author,
-                version=version,
-                category=plugin.module.__getattribute__("__plugin_category__")
-                if hasattr(plugin.module, "__plugin_category__")
-                else "通用",
-                usage=usage,
-                default_status=plugin.module.__getattribute__("__default_status__")
-                if hasattr(plugin.module, "__default_status__")
-                else True,
-                hidden=hidden,
-                permission=plugin.module.__getattribute__("__plugin_perm__")
-                if hasattr(plugin.module, "__plugin_perm__")
-                else NORMAL,
-                plugin_type=plugin_type,
-            )
+        if await plugin_manager.add(
+            plugin_name=plugin_name,
+            name=name,
+            aliases=plugin.module.__getattribute__("__plugin_aliases__")
+            if hasattr(plugin.module, "__plugin_aliases__")
+            else [],
+            author=author,
+            version=version,
+            category=plugin.module.__getattribute__("__plugin_category__")
+            if hasattr(plugin.module, "__plugin_category__")
+            else "通用",
+            usage=usage,
+            default_status=plugin.module.__getattribute__("__default_status__")
+            if hasattr(plugin.module, "__default_status__")
+            else True,
+            hidden=hidden,
+            permission=plugin.module.__getattribute__("__plugin_perm__")
+            if hasattr(plugin.module, "__plugin_perm__")
+            else NORMAL,
+            plugin_type=plugin_type,
+        ):
             logger.info(f"已将插件 {plugin_name} 加入插件控制")
-        else:
-            plugin_manager.set_plugin_usage(plugin_name=plugin_name, usage=usage)
-            plugin_manager.set_plugin_hidden(
-                plugin_name=plugin_name,
-                hidden=hidden,
-            )
-            plugin_manager.set_plugin_type(
-                plugin_name=plugin_name, plugin_type=plugin_type
-            )
     for i, e in enumerate(await plugin_manager.init()):
         if e:
             logger.error(f"无法将插件 {plugins[i].name} 加入插件控制：{e}")

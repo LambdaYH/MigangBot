@@ -211,13 +211,11 @@ class TaskManager:
         self.__names: Dict[str, str] = {}
         """建立任务别名到task_name的映射
         """
-        task_files = self.__file_path.iterdir()
-        for task_file in task_files:
-            if task_file.suffix == ".json":
-                task_name = task_file.name.removesuffix(".json")
-                self.__task[task_name]: TaskManager.Task = TaskManager.Task(
-                    file=task_file
-                )
+        self.__files: Optional[Set[str]] = set(
+            [file.name for file in self.__file_path.iterdir()]
+        )
+        """初始化后就销毁，添加新插件时减少系统调用
+        """
 
     async def init(self) -> List[Optional[str]]:
         """异步初始化所有Task类
@@ -225,6 +223,7 @@ class TaskManager:
         Returns:
             List[Optional[str]]: List中项为None时表示无异常，反之为表示异常的字符串
         """
+        self.__files = None
         ret = await asyncio.gather(
             *[task.init() for task in self.__task.values()],
             return_exceptions=True,
@@ -396,7 +395,7 @@ class TaskManager:
         self.__task[task_name].set_usage(usage=usage)
 
     async def add(self, task_items: Union[TaskItem, Iterable[TaskItem]]) -> None:
-        """添加任务进TaskManager
+        """添加任务进TaskManager，当task_name.json存在时，仅usage会根据最新确定
 
         Args:
             task_items (Union[TaskItem, LIterable[TaskItem]]): __plugin_task__的值
@@ -404,10 +403,9 @@ class TaskManager:
         if type(task_items) is TaskItem:
             task_items: List[TaskItem] = [task_items]
         for item in task_items:
-            if item.task_name not in self.__task:
-                async with aiofiles.open(
-                    self.__file_path / f"{item.task_name}.json", "w"
-                ) as f:
+            file_name = f"{item.task_name}.json"
+            if file_name not in self.__files:
+                async with aiofiles.open(self.__file_path / file_name, "w") as f:
                     await f.write(
                         TaskManager.TaskAttr(
                             name=item.name,
@@ -419,11 +417,9 @@ class TaskManager:
                             description=item.description,
                         ).json(ensure_ascii=False, indent=4)
                     )
-                self.__task[item.task_name] = TaskManager.Task(
-                    file=self.__file_path / f"{item.task_name}.json", usage=item.usage
-                )
-            else:
-                self.__task[item.task_name].set_usage(usage=item.usage)
+            self.__task[item.task_name] = TaskManager.Task(
+                file=self.__file_path / file_name, usage=item.usage
+            )
 
     async def remove(self, task_name: str) -> None:
         """从TaskManager中移除插件

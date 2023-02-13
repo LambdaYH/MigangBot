@@ -256,13 +256,9 @@ class PluginManager:
         self.__plugin_aliases: Dict[str, str] = {}
         """建立插件别名到plugin_name的映射
         """
-        plugin_files = self.__file_path.iterdir()
-        for plugin_file in plugin_files:
-            if plugin_file.suffix == ".json":
-                plugin_name = plugin_file.name.removesuffix(".json")
-                self.__plugin[plugin_name]: PluginManager.Plugin = PluginManager.Plugin(
-                    file=plugin_file
-                )
+        self.__files: Optional[Set[str]] = set([file.name for file in self.__file_path.iterdir()])
+        """初始化后就销毁，添加新插件时减少系统调用
+        """
 
     async def init(self) -> List[Optional[str]]:
         """异步初始化所有Plugin类
@@ -270,6 +266,7 @@ class PluginManager:
         Returns:
             List[Optional[str]]: List中项为None时表示无异常，反之为表示异常的字符串
         """
+        self.__files = None
         ret = await asyncio.gather(
             *[plugin.init() for plugin in self.__plugin.values()],
             return_exceptions=True,
@@ -434,9 +431,8 @@ class PluginManager:
             plugin_name (str): 插件名
             usage (Optional[str]): 用法
         """
-        if plugin_name not in self.__plugin:
-            return
-        self.__plugin[plugin_name].set_usage(usage=usage)
+        if plugin := self.__plugin.get(plugin_name):
+            plugin.set_usage(usage=usage)
 
     def set_plugin_hidden(self, plugin_name: str, hidden: bool) -> None:
         """设定插件plugin_name的隐藏状态
@@ -445,9 +441,8 @@ class PluginManager:
             plugin_name (str): 插件名
             hidden (bool): 隐藏状态
         """
-        if plugin_name not in self.__plugin:
-            return
-        self.__plugin[plugin_name].set_hidden(hidden=hidden)
+        if plugin := self.__plugin.get(plugin_name):
+            plugin.set_hidden(hidden=hidden)
 
     def set_plugin_type(self, plugin_name: str, plugin_type: PluginType) -> None:
         """设定插件plugin_name的类型
@@ -456,9 +451,28 @@ class PluginManager:
             plugin_name (str): 插件名
             plugin_type (PluginType): 插件类型
         """
-        if plugin_name not in self.__plugin:
-            return
-        self.__plugin[plugin_name].set_plugin_type(type=plugin_type)
+        if plugin := self.__plugin.get(plugin_name):
+            plugin.set_plugin_type(type=plugin_type)
+
+    def set_plugin_attributes(
+        self,
+        plugin_name: str,
+        usage: Optional[str],
+        hidden: bool,
+        plugin_type: PluginType,
+    ) -> None:
+        """设定插件plugin_name的usage，hidden与类型
+
+        Args:
+            plugin_name (str): 插件名
+            usage (Optional[str]): 用法
+            hidden (bool): 隐藏状态
+            plugin_type (PluginType): 插件类型
+        """
+        if plugin := self.__plugin.get(plugin_name):
+            plugin.set_usage(usage=usage)
+            plugin.set_hidden(hidden=hidden)
+            plugin.set_plugin_type(type=plugin_type)
 
     async def enable_plugin(self, plugin_name: str):
         """全局启用插件plugin_name
@@ -497,8 +511,8 @@ class PluginManager:
         default_status: bool = True,
         permission: int = NORMAL,
         plugin_type: PluginType = PluginType.All,
-    ) -> None:
-        """添加插件进PluginManager
+    ) -> bool:
+        """添加插件进PluginManager，若插件此前已添加，则除了plugin_type, usage, hidden外都以plugin_name.json为主
 
         Args:
             plugin_name (str): 插件名
@@ -512,29 +526,35 @@ class PluginManager:
             default_status (bool, optional): 默认状态. Defaults to True.
             permission (int, optional): 所需权限. Defaults to NORMAL.
             plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
-        """
-        async with aiofiles.open(self.__file_path / f"{plugin_name}.json", "w") as f:
-            await f.write(
-                PluginManager.PluginAttr(
-                    name=name,
-                    aliases=aliases,
-                    permission=permission,
-                    global_status=True,
-                    default_status=default_status,
-                    enabled_group=set(),
-                    disabled_group=set(),
-                    category=category,
-                    author=author,
-                    version=version,
-                ).json(ensure_ascii=False, indent=4)
-            )
 
+        Returns:
+            bool: 若新添加插件，返回True
+        """
+        file_name = f"{plugin_name}.json"
+        new_plugin = file_name not in self.__files
+        if new_plugin:
+            async with aiofiles.open(self.__file_path / file_name, "w") as f:
+                await f.write(
+                    PluginManager.PluginAttr(
+                        name=name,
+                        aliases=aliases,
+                        permission=permission,
+                        global_status=True,
+                        default_status=default_status,
+                        enabled_group=set(),
+                        disabled_group=set(),
+                        category=category,
+                        author=author,
+                        version=version,
+                    ).json(ensure_ascii=False, indent=4)
+                )
         self.__plugin[plugin_name] = PluginManager.Plugin(
-            file=self.__file_path / f"{plugin_name}.json",
+            file=self.__file_path / file_name,
             usage=usage,
             hidden=hidden,
             plugin_type=plugin_type,
         )
+        return new_plugin
 
     async def remove(self, plugin_name: set) -> None:
         """从PluginManager中移除插件

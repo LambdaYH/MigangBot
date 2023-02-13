@@ -17,6 +17,7 @@ _ignore_modules = set(
         "migang.core.core_plugins.switch",
         "migang.core.core_plugins.schedule",
         "migang.core.core_plugins.switch_bot",
+        "migang.core.core_plugins.group_friend_handle"
     ]
 )
 

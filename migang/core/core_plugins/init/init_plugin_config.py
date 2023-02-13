@@ -71,22 +71,36 @@ async def init_plugin_config():
     env_file = Path() / f".env.{get_driver().env}"
     env_values = dotenv_values(env_file)
     modified = False
+
     # 会让缓存提前热身......
+    async def check_env_config(plugin_name: str, config: ConfigItem):
+        nonlocal modified, env_values
+        # 检测配置项更新
+        value = await config_manager.async_get_config_item(
+            plugin_name=plugin_name, plugin_config=config.key
+        )
+        if (
+            config.key not in env_values
+            and _parse_value(value) != _parse_value(config.default_value)
+        ) or (
+            config.key in env_values and _parse_value(value) != env_values[config.key]
+        ):
+            env_values[config.key] = _parse_value(value)
+            modified = True
+
+        # 去除和默认值一样的配置项
+        if config.key in env_values and env_values[config.key] == _parse_value(
+            config.default_value
+        ):
+            del env_values[config.key]
+            modified = True
+
+    tasks = []
     for k, v in all_configs.items():
-        for config in v:
-            if config.env:
-                value = await config_manager.async_get_config_item(
-                    plugin_name=k, plugin_config=config.key
-                )
-                if (
-                    config.key not in env_values
-                    and _parse_value(value) != _parse_value(config.default_value)
-                ) or (
-                    config.key in env_values
-                    and _parse_value(value) != env_values[config.key]
-                ):
-                    env_values[config.key] = _parse_value(value)
-                    modified = True
+        tasks += [
+            check_env_config(plugin_name=k, config=config) for config in v if config.env
+        ]
+    await asyncio.gather(*tasks)
     env_str = "\n".join(f"{k} = {v}" for k, v in env_values.items())
     async with aiofiles.open(env_file, "w") as f:
         await f.write(env_str)

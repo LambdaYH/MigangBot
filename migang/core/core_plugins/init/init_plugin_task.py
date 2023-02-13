@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from nonebot.log import logger
 
@@ -19,9 +19,11 @@ async def init_plugin_task():
             if hasattr(plugin.module, "__plugin_perm__")
             else NORMAL
         )
-        task_items: List[TaskItem] = plugin.module.__getattribute__("__plugin_task__")
+        task_items: Iterable[TaskItem] = plugin.module.__getattribute__(
+            "__plugin_task__"
+        )
         if type(task_items) is TaskItem:
-            task_items = [task_items]
+            task_items = (task_items,)
         try:
             for item in task_items:
                 if item.permission is None:
