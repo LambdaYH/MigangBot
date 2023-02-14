@@ -168,7 +168,7 @@ class GroupManager:
             bool: 若有权限，返回True
         """
         group = self.__get_group(group_id=group_id)
-        return self.__plugin_manager.check(
+        return self.__plugin_manager.check_group_permission(
             plugin_name=plugin_name, permission=group.permission
         )
 
@@ -218,7 +218,7 @@ class GroupManager:
             bool: 若禁用成功，返回True
         """
         group = self.__get_group(group_id=group_id)
-        if self.__plugin_manager.check_permission(
+        if self.__plugin_manager.check_group_permission(
             plugin_name=plugin_name, permission=group.permission
         ):
             await self.__plugin_manager.set_group_disable(
