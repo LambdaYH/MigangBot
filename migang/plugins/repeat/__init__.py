@@ -119,5 +119,5 @@ def uniform_message(msg: Message) -> Message:
         elif seg.type == "image":
             msg_ret += seg.data["file"]
         else:
-            pass
+            return None
     return msg_ret
