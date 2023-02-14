@@ -89,7 +89,7 @@ class UserManager:
             self.__dirty_data = True
         return user
 
-    def CheckUserPluginStatus(self, plugin_name: str, user_id: int) -> bool:
+    def check_user_plugin_status(self, plugin_name: str, user_id: int) -> bool:
         """检测用户user_id是否能调用plugin_name插件，若能，返回True
 
         Args:
@@ -115,7 +115,7 @@ class UserManager:
             bool: 若有权限，返回True
         """
         user = self.__get_user(user_id=user_id)
-        return self.__plugin_manager.check_permission(
+        return self.__plugin_manager.check_user_permission(
             plugin_name=plugin_name, permission=user.permission
         )
 

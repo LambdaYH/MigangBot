@@ -20,7 +20,8 @@ class PluginManager:
     class PluginAttr(BaseModel):
         name: str
         aliases: Set[str]
-        permission: Permission
+        group_permission: Permission
+        user_permission: Permission
         global_status: bool
         default_status: bool
         enabled_group: Set[int]
@@ -69,7 +70,8 @@ class PluginManager:
             self.version: str
             self.usage: Optional[str] = usage
             self.hidden: bool = hidden
-            self.__permission: Permission
+            self.__group_permission: Permission
+            self.__user_permission: Permission
             self.__global_status: bool
             """插件全局状态
             """
@@ -92,7 +94,8 @@ class PluginManager:
             self.name = self.__data.name
             self.all_name: Set[str] = self.__data.aliases | set((self.name,))
             self.all_name.add(self.name)
-            self.__permission: Permission = self.__data.permission
+            self.__group_permission: Permission = self.__data.group_permission
+            self.__user_permission: Permission = self.__data.user_permission
             self.category: Optional[str] = self.__data.category
             self.author: str = self.__data.author
             self.version: str = self.__data.version
@@ -148,7 +151,7 @@ class PluginManager:
             """
             return (
                 self.__global_status
-                and (group_permission >= self.__permission)
+                and (group_permission >= self.__group_permission)
                 and (self.__default_status ^ (group_id in self.__non_default_group))
             )
 
@@ -161,10 +164,10 @@ class PluginManager:
             Returns:
                 bool: 若能调用，返回True
             """
-            return self.__global_status and user_permission >= self.__permission
+            return self.__global_status and user_permission >= self.__user_permission
 
-        def check_permission(self, permission: Permission) -> bool:
-            """检测权限
+        def check_group_permission(self, permission: Permission) -> bool:
+            """检测群权限
 
             Args:
                 permission (Permission): 权限
@@ -172,7 +175,18 @@ class PluginManager:
             Returns:
                 bool: 若权限足够，返回True
             """
-            return permission >= self.__permission
+            return permission >= self.__group_permission
+
+        def check_user_permission(self, permission: Permission) -> bool:
+            """检测用户权限
+
+            Args:
+                permission (Permission): 权限
+
+            Returns:
+                bool: 若权限足够，返回True
+            """
+            return permission >= self.__user_permission
 
         def set_group_enable(self, group_id: int) -> bool:
             """在群group_id中启用该插件
@@ -314,8 +328,8 @@ class PluginManager:
             not (plugin := self.__plugin.get(plugin_name))
         ) or plugin.check_user_status(user_permission=user_permission)
 
-    def check_permission(self, plugin_name: str, permission: Permission) -> bool:
-        """检测permission的权限能否调用plugin_name插件
+    def check_group_permission(self, plugin_name: str, permission: Permission) -> bool:
+        """检测用户permission的权限能否调用plugin_name插件
 
         Args:
             plugin_name (str): 插件名
@@ -326,7 +340,21 @@ class PluginManager:
         """
         return (
             not (plugin := self.__plugin.get(plugin_name))
-        ) or plugin.check_permission(permission=permission)
+        ) or plugin.check_group_permission(permission=permission)
+
+    def check_user_permission(self, plugin_name: str, permission: Permission) -> bool:
+        """检测群permission的权限能否调用plugin_name插件
+
+        Args:
+            plugin_name (str): 插件名
+            permission (int): 权限
+
+        Returns:
+            bool: 若权限足够返回True
+        """
+        return (
+            not (plugin := self.__plugin.get(plugin_name))
+        ) or plugin.check_user_permission(permission=permission)
 
     async def set_group_enable(self, plugin_name: str, group_id: int) -> bool:
         """启用group_id中的plugin_name插件
@@ -513,7 +541,8 @@ class PluginManager:
         usage: Optional[str] = None,
         hidden: bool = False,
         default_status: bool = True,
-        permission: Permission = NORMAL,
+        group_permission: Permission = NORMAL,
+        user_permission: Permission = NORMAL,
         plugin_type: PluginType = PluginType.All,
     ) -> bool:
         """添加插件进PluginManager，若插件此前已添加，则除了plugin_type, usage, hidden外都以plugin_name.json为主
@@ -528,7 +557,8 @@ class PluginManager:
             usage (Optional[str], optional): 用法. Defaults to None.
             hidden (bool, optional): 隐藏状态. Defaults to False.
             default_status (bool, optional): 默认状态. Defaults to True.
-            permission (Permission, optional): 所需权限. Defaults to NORMAL.
+            group_permission (Permission, optional): 所需群权限. Defaults to NORMAL.
+            user_permission (Permission, optional): 所需用户权限. Defaults to NORMAL.
             plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
 
         Returns:
@@ -542,7 +572,8 @@ class PluginManager:
                     PluginManager.PluginAttr(
                         name=name,
                         aliases=aliases,
-                        permission=permission,
+                        group_permission=group_permission,
+                        user_permission=user_permission,
                         global_status=True,
                         default_status=default_status,
                         enabled_group=set(),

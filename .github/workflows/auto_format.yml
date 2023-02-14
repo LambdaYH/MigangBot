@@ -10,7 +10,7 @@ jobs:
         with:
           options: "--verbose ."
           src: "."
-          version: "23.1a1"
+          version: "23.1.0"
 
       - name: Commit & Push changes
         uses: actions-js/push@master

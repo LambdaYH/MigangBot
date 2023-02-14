@@ -104,7 +104,7 @@ class HelpImageBuild:
                         else:
                             status = (
                                 PluginStatus.enabled
-                                if user_manager.CheckUserPluginStatus(
+                                if user_manager.check_user_plugin_status(
                                     plugin_name=plugin.plugin_name, user_id=user_id
                                 )
                                 else PluginStatus.disabled

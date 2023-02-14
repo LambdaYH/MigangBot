@@ -145,6 +145,9 @@ data/
 configs/
 .vscode
 
+# conf
+migangbot.conf
+
 # env
 .env.dev
 .env
@@ -155,3 +158,4 @@ resources/image/shiningnikki_image
 
 # developing
 migang/plugins/about*
+group_friend_handle

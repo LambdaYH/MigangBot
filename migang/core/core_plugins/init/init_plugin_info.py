@@ -1,3 +1,7 @@
+from typing import Iterable, Dict, Any, Optional
+
+import aiohttp
+import aiofiles
 from nonebot.log import logger
 
 from migang.core.manager import plugin_manager, PluginType, core_data_path
@@ -6,11 +10,29 @@ from migang.core.permission import NORMAL
 from .utils import get_plugin_list
 
 
+async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
+    async with aiohttp.ClientSession() as client:
+        r = await (
+            await client.get(
+                "https://cdn.jsdelivr.net/gh/nonebot/nonebot2/website/static/plugins.json"
+            )
+        ).json()
+    ret = {}
+    for plugin in r:
+        ret[plugin["module_name"]] = plugin
+    return ret
+
+
 async def init_plugin_info():
     plugins = get_plugin_list()
     count = 0
+    store_plugin_list: Optional[Dict] = None
+    plugin_file_list = set(
+        [file.name for file in (core_data_path / "plugin_manager").iterdir()]
+    )
     for plugin in plugins:
         plugin_name = plugin.name
+        version, author, usage = None, None, None
         # 先填充metadata的数据再用属性
         try:
             name = (
@@ -20,12 +42,32 @@ async def init_plugin_info():
             )
         except AttributeError:
             # logger.info(f"未将 {plugin_name} 加入插件控制")
-            if not (core_data_path / "plugin_manager" / f"{plugin_name}.json").exists():
-                logger.warning(
-                    f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
-                )
             name = plugin_name
-        version, author, usage = None, None, None
+            if f"{plugin_name}.json" not in plugin_file_list:
+                if store_plugin_list is None:
+                    store_plugin_list = await _get_store_plugin_list()
+                # 从商店加载
+                if plugin_name in store_plugin_list:
+                    p = store_plugin_list[plugin_name]
+                    name = p["name"]
+                    usage = p["desc"]
+                    author = p["author"]
+                    async with aiofiles.open(
+                        core_data_path / "custom_usage" / f"{plugin_name}.txt",
+                        "w",
+                        encoding="utf-8",
+                    ) as f:
+                        await f.write(f"usage:\n    {usage}")
+                    async with aiohttp.ClientSession() as client:
+                        r = await client.get(
+                            f"https://pypi.org/pypi/{p['project_link']}/json"
+                        )
+                        r = await r.json()
+                        version = r["info"]["version"]
+                else:
+                    logger.warning(
+                        f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
+                    )
         if metadata := plugin.metadata:
             version = metadata.extra.get("version")
             author = metadata.extra.get("author")
@@ -59,6 +101,18 @@ async def init_plugin_info():
             if hasattr(plugin.module, "__plugin_hidden__")
             else False
         )
+        group_permission = user_permission = NORMAL
+        if hasattr(plugin.module, "__plugin_perm__"):
+            perm = plugin.module.__getattribute__("__plugin_perm__")
+            if isinstance(perm, Iterable):
+                if len(perm) >= 2:
+                    group_permission = perm[0]
+                    user_permission = perm[1]
+                elif len(perm) == 1:
+                    group_permission = perm[0]
+            else:
+                group_permission = perm
+
         if await plugin_manager.add(
             plugin_name=plugin_name,
             name=name,
@@ -75,9 +129,8 @@ async def init_plugin_info():
             if hasattr(plugin.module, "__default_status__")
             else True,
             hidden=hidden,
-            permission=plugin.module.__getattribute__("__plugin_perm__")
-            if hasattr(plugin.module, "__plugin_perm__")
-            else NORMAL,
+            group_permission=group_permission,
+            user_permission=user_permission,
             plugin_type=plugin_type,
         ):
             logger.info(f"已将插件 {plugin_name} 加入插件控制")

@@ -46,7 +46,7 @@ async def _(
     ):
         raise IgnoredException("群插件不可用")
     # 检测个人权限
-    if not user_manager.CheckUserPluginStatus(
+    if not user_manager.check_user_plugin_status(
         plugin_name=matcher.plugin_name, user_id=event.user_id
     ):
         raise IgnoredException("个人权限不足")
