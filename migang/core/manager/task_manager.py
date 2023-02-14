@@ -118,7 +118,9 @@ class TaskManager:
             """全局禁用"""
             self.__data.global_status = self.__global_status = False
 
-        def check_group_status(self, group_id: int, group_permission: Permission) -> bool:
+        def check_group_status(
+            self, group_id: int, group_permission: Permission
+        ) -> bool:
             """检测群是否能调用该任务
 
             Args:
