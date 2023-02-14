@@ -11,7 +11,6 @@ from .init_plugin_count import init_plugin_count
 from .init_plugin_task import init_plugin_task
 
 
-
 @get_driver().on_startup
 async def _():
     await asyncio.gather(

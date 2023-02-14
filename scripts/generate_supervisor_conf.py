@@ -20,5 +20,6 @@ stdout_logfile=/var/log/supervisor/migangbot.out
 stderr_logfile=/var/log/supervisor/migangbot.err""".strip()
         )
 
+
 if __name__ == "__main__":
     generate_supervisor_config()
