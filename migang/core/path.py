@@ -12,12 +12,16 @@ IMAGE_PATH = RESOURCE_PATH / "image"
 FONT_PATH = RESOURCE_PATH / "font"
 """资源字体数据
 """
+TEXT_PATH = RESOURCE_PATH / "text"
+"""资源文本数据
+"""
 TEMPLATE_PATH = RESOURCE_PATH / "template"
 """资源网页模板数据
 """
 
 IMAGE_PATH.mkdir(exist_ok=True, parents=True)
 FONT_PATH.mkdir(exist_ok=True, parents=True)
+TEXT_PATH.mkdir(exist_ok=True, parents=True)
 DATA_PATH.mkdir(exist_ok=True, parents=True)
 RESOURCE_PATH.mkdir(exist_ok=True, parents=True)
 TEMPLATE_PATH.mkdir(exist_ok=True, parents=True)

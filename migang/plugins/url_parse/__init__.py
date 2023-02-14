@@ -69,7 +69,7 @@ ALIAS_DOMAIN = (
     "https://bilibili.com",
 )
 
-url_parse = on_regex(pattern=URL_PATTERN, permission=GROUP, priority=22)
+url_parse = on_regex(pattern=URL_PATTERN, permission=GROUP, priority=22, block=False)
 bilibili_bvid = on_regex(
     pattern=BVID_PATTERN,
     permission=GROUP,
@@ -81,6 +81,7 @@ bilibili_aid = on_regex(
     permission=GROUP,
     priority=24,
     rule=GroupTaskChecker(BILIBILI_TASK),
+    block=False,
 )
 
 func_dict = {

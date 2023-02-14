@@ -17,7 +17,7 @@ bilibili_bangumi_keywords = ("https://www.bilibili.com/bangumi",)
 bilibili_live_keywords = ("https://live.bilibili.com",)
 
 
-@cached(ttl=60)
+@cached(ttl=240)
 async def get_video_detail(url: str) -> Tuple[Message, str]:
     aid = re.search(AID_PATTERN, url)
     bvid = re.search(BVID_PATTERN, url)
@@ -58,7 +58,7 @@ async def get_video_detail(url: str) -> Tuple[Message, str]:
     return msg, link
 
 
-@cached(ttl=60)
+@cached(ttl=240)
 async def get_bangumi_detail(url: str) -> Tuple[Message, str]:
     async with aiohttp.ClientSession() as client:
         text = await (
@@ -110,7 +110,7 @@ async def get_bangumi_detail(url: str) -> Tuple[Message, str]:
     return msg, link
 
 
-@cached(ttl=60)
+@cached(ttl=240)
 async def get_live_summary(url: str) -> Tuple[Message, str]:
     link = re.search(r"(https|http)://live.bilibili.com/\d+", url)
     if link:

@@ -2,15 +2,19 @@ import random
 import sys
 import asyncio
 import time
+from pathlib import Path
 from urllib.parse import unquote
-from typing import List
+from typing import List, Union
 
 from lxml import etree
 import aiohttp
+import aiofiles
+import ujson as json
+from fake_useragent import UserAgent
 from nonebot.log import logger
 
 from migang.core import DATA_PATH, get_config
-from migang.utils.file import async_save_data, async_load_data
+from migang.utils.file import async_save_data
 
 from .exception import *
 from ._utils import sinaimgtvax
@@ -22,6 +26,20 @@ weibo_record_path = PATH / "weibo_records"
 weibo_id_name_file = PATH / "weibo_id_name.json"
 
 user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/108.0.0.0"
+
+
+async def async_load_data(file: Path) -> List:
+    data: List = None
+    file.parent.mkdir(exist_ok=True, parents=True)
+    if file.exists():
+        async with aiofiles.open(file, "r", encoding="utf-8") as f:
+            data_str = await f.read()
+            if file.suffix == ".json":
+                try:
+                    data = json.loads(data_str)
+                except ValueError as e:
+                    raise Exception(f"json文件 {file} 解析失败：{e}")
+    return data if data is not None else []
 
 
 class WeiboSpider(object):
@@ -37,7 +55,7 @@ class WeiboSpider(object):
             "referer": f"https://m.weibo.cn/u/{self.user_id}",
             "MWeibo-Pwa": "1",
             "X-Requested-With": "XMLHttpRequest",
-            "User-Agent": user_agent,
+            "User-Agent": UserAgent(browsers=["chrome", "edge"]).random,
         }
         self.__recent = False
         self.__init = False
@@ -75,6 +93,8 @@ class WeiboSpider(object):
         self.received_weibo_ids = await async_load_data(self.record_file_path)
         if not self.record_file_path.exists():
             await self.get_latest_weibos()
+            if not self.received_weibo_ids:
+                await self.save()
         self.__init = False
 
     async def update_username(self):
