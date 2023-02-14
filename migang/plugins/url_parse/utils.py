@@ -26,18 +26,18 @@ class GroupCache:
             self.__set.add(url)
 
         async def clean(self) -> bool:
-            now = time.time()
-            wait_time = 30
-            while len(self.__deque):
-                item = self.__deque.pop()
-                if now >= item.expired_time:
-                    self.__set.remove(item.url)
-                else:
-                    self.__deque.append(item)
-                    wait_time = item.expired_time - now + 0.5
-                    break
-            await asyncio.sleep(wait_time)
-            await self.clean()
+            while True:
+                now = time.time()
+                wait_time = 30
+                while len(self.__deque):
+                    item = self.__deque.pop()
+                    if now >= item.expired_time:
+                        self.__set.remove(item.url)
+                    else:
+                        self.__deque.append(item)
+                        wait_time = item.expired_time - now + 0.5
+                        break
+                await asyncio.sleep(wait_time)
 
     def __init__(self) -> None:
         self.__data: Dict[int, GroupCache.Group] = defaultdict(
