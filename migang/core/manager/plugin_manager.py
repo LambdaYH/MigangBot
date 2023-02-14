@@ -6,7 +6,7 @@ import aiofiles
 from pydantic import BaseModel
 
 from migang.core.manager.data_class import PluginType
-from migang.core.permission import NORMAL
+from migang.core.permission import NORMAL, Permission
 
 CUSTOM_USAGE_PATH = Path() / "data" / "core" / "custom_usage"
 """若在此路径下存在插件名.txt，则插件用法以该文件为主
@@ -20,7 +20,7 @@ class PluginManager:
     class PluginAttr(BaseModel):
         name: str
         aliases: Set[str]
-        permission: int
+        permission: Permission
         global_status: bool
         default_status: bool
         enabled_group: Set[int]
@@ -69,7 +69,7 @@ class PluginManager:
             self.version: str
             self.usage: Optional[str] = usage
             self.hidden: bool = hidden
-            self.__permission: int
+            self.__permission: Permission
             self.__global_status: bool
             """插件全局状态
             """
@@ -92,7 +92,7 @@ class PluginManager:
             self.name = self.__data.name
             self.all_name: Set[str] = self.__data.aliases | set((self.name,))
             self.all_name.add(self.name)
-            self.__permission: int = self.__data.permission
+            self.__permission: Permission = self.__data.permission
             self.category: Optional[str] = self.__data.category
             self.author: str = self.__data.author
             self.version: str = self.__data.version
@@ -134,12 +134,12 @@ class PluginManager:
             """全局禁用"""
             self.__data.global_status = self.__global_status = False
 
-        def check_group_status(self, group_id: int, group_permission: int) -> bool:
+        def check_group_status(self, group_id: int, group_permission: Permission) -> bool:
             """检测群是否能调用该插件
 
             Args:
                 group_id (int): 群号
-                group_permission (int): 群权限
+                group_permission (Permission): 群权限
 
             Returns:
                 bool: 若能调用，返回True
@@ -150,22 +150,22 @@ class PluginManager:
                 and (self.__default_status ^ (group_id in self.__non_default_group))
             )
 
-        def check_user_status(self, user_permission: int) -> bool:
+        def check_user_status(self, user_permission: Permission) -> bool:
             """检测用户是否能调用该插件
 
             Args:
-                user_permission (int): 用户权限
+                user_permission (Permission): 用户权限
 
             Returns:
                 bool: 若能调用，返回True
             """
             return self.__global_status and user_permission >= self.__permission
 
-        def check_permission(self, permission: int) -> bool:
+        def check_permission(self, permission: Permission) -> bool:
             """检测权限
 
             Args:
-                permission (int): 权限
+                permission (Permission): 权限
 
             Returns:
                 bool: 若权限足够，返回True
@@ -280,14 +280,14 @@ class PluginManager:
         return ret
 
     def check_group_status(
-        self, plugin_name: str, group_id: int, group_permission: int
+        self, plugin_name: str, group_id: int, group_permission: Permission
     ) -> bool:
         """检测插件plugin_name是否响应该群，由group_manager调用
 
         Args:
             plugin_name (str): 插件名
             group_id (int): 群号
-            group_permission (int): 群权限
+            group_permission (Permission): 群权限
 
         Returns:
             bool: 若响应，返回True
@@ -298,7 +298,7 @@ class PluginManager:
             group_id=group_id, group_permission=group_permission
         )
 
-    def check_user_status(self, plugin_name: str, user_permission: int) -> bool:
+    def check_user_status(self, plugin_name: str, user_permission: Permission) -> bool:
         """检测插件plugin_name是否响应用户，由user_manager调用
 
         Args:
@@ -312,7 +312,7 @@ class PluginManager:
             not (plugin := self.__plugin.get(plugin_name))
         ) or plugin.check_user_status(user_permission=user_permission)
 
-    def check_permission(self, plugin_name: str, permission: int) -> bool:
+    def check_permission(self, plugin_name: str, permission: Permission) -> bool:
         """检测permission的权限能否调用plugin_name插件
 
         Args:
@@ -511,7 +511,7 @@ class PluginManager:
         usage: Optional[str] = None,
         hidden: bool = False,
         default_status: bool = True,
-        permission: int = NORMAL,
+        permission: Permission = NORMAL,
         plugin_type: PluginType = PluginType.All,
     ) -> bool:
         """添加插件进PluginManager，若插件此前已添加，则除了plugin_type, usage, hidden外都以plugin_name.json为主
@@ -526,7 +526,7 @@ class PluginManager:
             usage (Optional[str], optional): 用法. Defaults to None.
             hidden (bool, optional): 隐藏状态. Defaults to False.
             default_status (bool, optional): 默认状态. Defaults to True.
-            permission (int, optional): 所需权限. Defaults to NORMAL.
+            permission (Permission, optional): 所需权限. Defaults to NORMAL.
             plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
 
         Returns:

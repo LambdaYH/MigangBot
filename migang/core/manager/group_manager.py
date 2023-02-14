@@ -1,11 +1,12 @@
 from pathlib import Path
-import ujson as json
 from typing import Union, Dict
 
-from migang.core.permission import NORMAL
+import aiofiles
+from pydantic import BaseModel
+
+from migang.core.permission import NORMAL, Permission
 from migang.core.manager import PluginManager, TaskManager
 from migang.core.exception import FileTypeError
-from migang.core.utils.file_operation import async_save_data
 
 
 class GroupManager:
@@ -15,48 +16,44 @@ class GroupManager:
         FileTypeError: 找不到记录文件
     """
 
-    class Group:
-        """管理单个群，记录本群权限以及机器人状态"""
+    class TotalData(BaseModel):
+        class Group(BaseModel):
+            """管理单个群，记录本群权限以及机器人状态"""
 
-        def __init__(self, data: Dict) -> None:
-            """Group构造函数
+            permission: Permission
+            bot_status: bool
 
-            Args:
-                data (Dict): 该群对应的在Dict中的部分数据
-            """
-            self.__data = data
-            self.permission: int = data["permission"]
-            self.bot_status: bool = data["bot_status"]
+            def set_bot_enable(self) -> bool:
+                """启用群机器人
 
-        def set_bot_enable(self) -> bool:
-            """启用群机器人
+                Returns:
+                    bool: 若True，则启用成功，反之则表示处于启用状态
+                """
+                if bot_status:
+                    return False
+                bot_status = True
+                return True
 
-            Returns:
-                bool: 若True，则启用成功，反之则表示处于启用状态
-            """
-            if self.bot_status:
-                return False
-            self.__data["bot_status"] = self.bot_status = True
-            return True
+            def set_bot_disable(self) -> bool:
+                """禁用群机器人
 
-        def set_bot_disable(self) -> bool:
-            """禁用群机器人
+                Returns:
+                    bool: 若True，则禁用成功，反之则表示处于禁用状态
+                """
+                if not bot_status:
+                    return False
+                bot_status = False
+                return True
 
-            Returns:
-                bool: 若True，则禁用成功，反之则表示处于禁用状态
-            """
-            if not self.bot_status:
-                return False
-            self.__data["bot_status"] = self.bot_status = False
-            return True
+            def set_permission(self, permission: Permission):
+                """设定群权限
 
-        def set_permission(self, permission: int):
-            """设定群权限
+                Args:
+                    permission (Permission): 新权限
+                """
+                permission = permission
 
-            Args:
-                permission (int): 新权限
-            """
-            self.__data["permission"] = self.permission = permission
+        data: Dict[int, Group]
 
     def __init__(
         self,
@@ -74,11 +71,11 @@ class GroupManager:
         Raises:
             FileTypeError: 找不到记录文件
         """
-        self.__data: Dict[str, Dict] = {}
-        """总数据，{group_id: {"permission": permission, "bot_status": status}}
+        self.__data: GroupManager.TotalData
+        """保存到文件时候用的
         """
-        self.__group: Dict[int, GroupManager.Group] = {}
-        """记录group_id对应的Group类
+        self.__group: Dict[int, GroupManager.TotalData.Group]
+        """group_id 对应一个group类
         """
         self.__file: Path = Path(file) if isinstance(file, str) else file
         self.__dirty_data: bool = False
@@ -92,24 +89,24 @@ class GroupManager:
         """管理任务
         """
 
-        if file.suffix != ".json":
+        if self.__file.suffix != ".json":
             raise FileTypeError("群管理模块配置文件必须为json格式！")
 
-        file.parent.mkdir(parents=True, exist_ok=True)
-        if file.exists():
-            with open(file, "r", encoding="utf-8") as f:
-                self.__data = json.load(f)
-
-        for group in self.__data:
-            self.__group[int(group)] = GroupManager.Group(self.__data[group])
+        self.__file.parent.mkdir(parents=True, exist_ok=True)
+        if self.__file.exists():
+            self.__data = GroupManager.TotalData.parse_file(self.__file)
+        else:
+            self.__data = GroupManager.TotalData(data={})
+        self.__group = self.__data.data
 
     async def save(self) -> None:
         """保存进文件"""
         if self.__dirty_data:
-            await async_save_data(self.__data, self.__file)
+            async with aiofiles.open(self.__file, "w", encoding="utf-8") as f:
+                await f.write(self.__data.json(ensure_ascii=False, indent=4))
             self.__dirty_data = False
 
-    def __get_group(self, group_id: int) -> Group:
+    def __get_group(self, group_id: int) -> TotalData.Group:
         """获取group_id对应的Group类，若无，则创建
 
         Args:
@@ -120,11 +117,9 @@ class GroupManager:
         """
         group = self.__group.get(group_id)
         if not group:
-            self.__data[group_id] = {
-                "permission": NORMAL,
-                "bot_status": True,
-            }
-            group = self.__group[group_id] = GroupManager.Group(self.__data[group_id])
+            group = self.__group[group_id] = GroupManager.TotalData.Group(
+                permission=NORMAL, bot_status=True
+            )
             self.__dirty_data = True
         return group
 
@@ -323,7 +318,6 @@ class GroupManager:
             auto_save (bool, optional): 是否立刻保存进硬盘. Defaults to True.
         """
         if group_id in self.__group:
-            del self.__data[str(group_id)]
             del self.__group[group_id]
             if auto_save:
                 await self.save()

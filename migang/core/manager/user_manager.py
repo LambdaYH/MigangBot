@@ -1,11 +1,12 @@
 from pathlib import Path
-import ujson as json
 from typing import Union, Dict
 
-from migang.core.permission import NORMAL
+import aiofiles
+from pydantic import BaseModel
+
+from migang.core.permission import NORMAL, Permission
 from migang.core.manager.plugin_manager import PluginManager
 from migang.core.exception import FileTypeError
-from migang.core.utils.file_operation import async_save_data
 
 
 class UserManager:
@@ -15,26 +16,21 @@ class UserManager:
         FileTypeError: 找不到记录文件
     """
 
-    class User:
-        """管理单个用户，记录用户权限"""
+    class TotalData(BaseModel):
+        class User(BaseModel):
+            """管理单个用户，记录用户权限"""
 
-        def __init__(self, data: Dict) -> None:
-            """User构造函数
+            permission: Permission
 
-            Args:
-                data (Dict): 该用户对应的在Dict中的部分数据
-            """
-            self.__data = data
-            self.permission: int = data["permission"]
+            def set_permission(self, permission: Permission):
+                """设定用户权限
 
-        def set_permission(self, permission: int):
-            """设定用户权限
+                Args:
+                    permission (Permission): 新权限
+                """
+                permission = permission
 
-            Args:
-                permission (int): 新权限
-            """
-            self.permission = permission
-            self.__data["permission"] = permission
+        data: Dict[int, User]
 
     def __init__(self, file: Union[Path, str], plugin_manager: PluginManager) -> None:
         """UserManager构造函数，管理用户能否调用插件与任务以及群机器人的状态
@@ -46,10 +42,10 @@ class UserManager:
         Raises:
             FileTypeError: 找不到记录文件
         """
-        self.__data: Dict[str, Dict] = {}
-        """总数据，{user_id: {"permission": permission}}
+        self.__data: UserManager.TotalData
+        """保存到文件时候用的
         """
-        self.__user: Dict[int, UserManager.User] = {}
+        self.__user: Dict[int, UserManager.TotalData.User]
         """记录user_id对应的User类
         """
         self.__file: Path = Path(file) if isinstance(file, str) else file
@@ -61,24 +57,24 @@ class UserManager:
         """管理插件
         """
 
-        if file.suffix != ".json":
+        if self.__file.suffix != ".json":
             raise FileTypeError("用户管理模块配置文件必须为json格式！")
 
-        file.parent.mkdir(parents=True, exist_ok=True)
-        if file.exists():
-            with open(file, "r", encoding="utf-8") as f:
-                self.__data = json.load(f)
-
-        for user in self.__data:
-            self.__user[int(user)] = UserManager.User(self.__data[user])
+        self.__file.parent.mkdir(parents=True, exist_ok=True)
+        if self.__file.exists():
+            self.__data = UserManager.TotalData.parse_file(self.__file)
+        else:
+            self.__data = UserManager.TotalData(data={})
+        self.__user = self.__data.data
 
     async def save(self) -> None:
         """保存进文件"""
         if self.__dirty_data:
-            await async_save_data(self.__data, self.__file)
+            async with aiofiles.open(self.__file, "w", encoding="utf-8") as f:
+                await f.write(self.__data.json(ensure_ascii=False, indent=4))
             self.__dirty_data = False
 
-    def __get_user(self, user_id: int) -> User:
+    def __get_user(self, user_id: int) -> TotalData.User:
         """获取user_id对应的User类，若无，则创建
 
         Args:
@@ -89,8 +85,7 @@ class UserManager:
         """
         user = self.__user.get(user_id)
         if not user:
-            self.__data[user_id] = {"permission": NORMAL}
-            user = self.__user[user_id] = UserManager.User(self.__data[user_id])
+            user = self.__user[user_id] = UserManager.TotalData.User(permission=NORMAL)
             self.__dirty_data = True
         return user
 
@@ -145,7 +140,6 @@ class UserManager:
             auto_save (bool, optional): 是否立刻保存进硬盘. Defaults to True.
         """
         if user_id in self.__user:
-            del self.__data[str(user_id)]
             del self.__user[user_id]
             if auto_save:
                 await self.save()

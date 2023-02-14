@@ -5,7 +5,7 @@ from typing import Union, Dict, Set, List, Optional, Iterable
 import aiofiles
 from pydantic import BaseModel
 
-from migang.core.permission import NORMAL
+from migang.core.permission import NORMAL, Permission
 
 
 class TaskItem:
@@ -19,7 +19,7 @@ class TaskItem:
         global_status: bool = True,
         usage: str = None,
         description: str = "",
-        permission: int = NORMAL,
+        permission: Permission = NORMAL,
     ) -> None:
         """TaskItem构造函数，__plugin_task__属性为Iterable[TaskItem]或TaskItem
 
@@ -30,7 +30,7 @@ class TaskItem:
             global_status (bool, optional): 全局状态. Defaults to True.
             usage (str, optional): 用法. Defaults to None.
             description (str, optional): 任务描述，写在配置文件中免得看不懂. Defaults to "".
-            permission (int, optional): 所需权限. Defaults to NORMAL.
+            permission (Permission, optional): 所需权限. Defaults to NORMAL.
         """
         self.task_name = task_name
         self.name = name
@@ -46,7 +46,7 @@ class TaskManager:
 
     class TaskAttr(BaseModel):
         name: str
-        permission: int
+        permission: Permission
         global_status: bool
         default_status: bool
         enabled_group: Set[int]
@@ -69,7 +69,7 @@ class TaskManager:
             self.task_name: str = self.__file.name.removesuffix(".json")
             self.name: str
             self.usage: str = usage
-            self.__permission: int
+            self.__permission: Permission
             self.__global_status: bool
             self.__default_status: bool
             self.__non_default_group: Set[int]
@@ -79,7 +79,7 @@ class TaskManager:
             async with aiofiles.open(self.__file, "r") as f:
                 self.__data = TaskManager.TaskAttr.parse_raw(await f.read())
             self.name: str = self.__data.name
-            self.__permission: int = self.__data.permission
+            self.__permission: Permission = self.__data.permission
             self.__global_status: bool = self.__data.global_status
             self.__default_status: bool = self.__data.default_status
             self.__non_default_group: Set[int] = (
@@ -118,12 +118,12 @@ class TaskManager:
             """全局禁用"""
             self.__data.global_status = self.__global_status = False
 
-        def check_group_status(self, group_id: int, group_permission: int) -> bool:
+        def check_group_status(self, group_id: int, group_permission: Permission) -> bool:
             """检测群是否能调用该任务
 
             Args:
                 group_id (int): 群号
-                group_permission (int): 群权限
+                group_permission (Permission): 群权限
 
             Returns:
                 bool: 若能调用，返回True
@@ -134,11 +134,11 @@ class TaskManager:
                 and (self.__default_status ^ (group_id in self.__non_default_group))
             )
 
-        def check_permission(self, permission: int) -> bool:
+        def check_permission(self, permission: Permission) -> bool:
             """检测权限
 
             Args:
-                permission (int): 权限
+                permission (Permission): 权限
 
             Returns:
                 bool: 若权限足够，返回True
@@ -233,14 +233,14 @@ class TaskManager:
         return ret
 
     def check_group_status(
-        self, task_name: str, group_id: int, group_permission: int
+        self, task_name: str, group_id: int, group_permission: Permission
     ) -> bool:
         """检测任务task_name是否响应该群，由group_manager调用
 
         Args:
             task_name (str): 任务名
             group_id (int): 群号
-            group_permission (int): 群权限
+            group_permission (Permission): 群权限
 
         Returns:
             bool: 若响应，返回True
@@ -249,12 +249,12 @@ class TaskManager:
             group_id=group_id, group_permission=group_permission
         )
 
-    def check_permission(self, task_name: str, permission: int) -> bool:
+    def check_permission(self, task_name: str, permission: Permission) -> bool:
         """检测permission的权限能否调用task_name插件
 
         Args:
             task_name (str): 任务名
-            permission (int): 权限
+            permission (Permission): 权限
 
         Returns:
             bool: 若权限足够返回True
