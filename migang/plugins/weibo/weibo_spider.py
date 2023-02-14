@@ -73,6 +73,7 @@ class WeiboSpider(object):
         if self.user_id in id_name_map:
             self.user_name = id_name_map[self.user_id]
         self.received_weibo_ids = await async_load_data(self.record_file_path)
+        print(self.received_weibo_ids)
         if not self.record_file_path.exists():
             await self.get_latest_weibos()
         self.__init = False

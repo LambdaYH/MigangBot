@@ -28,7 +28,7 @@ def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, List]:
     Returns:
         Union[Dict, CommentedMap, List]: 若json返回Dict或List，若yaml返回CommentedMap
     """
-    data: Union[Dict, CommentedMap, None] = None
+    data: Union[Dict, CommentedMap, List, None] = None
     if isinstance(file, str):
         file = Path(file)
     if file.suffix not in _file_suffixes:
@@ -46,7 +46,7 @@ def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, List]:
                     data = _yaml.load(f)
                 except ScannerError as e:
                     raise FileParseError(f"yaml文件 {file} 解析失败：{e}")
-    if not data:
+    if data is None:
         return {} if file.suffix == ".json" else CommentedMap()
     return data
 
@@ -82,7 +82,7 @@ async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, L
     Returns:
         Union[Dict, CommentedMap, List]: 若json返回Dict或List，若yaml返回CommentedMap
     """
-    data: Union[Dict, CommentedMap, None] = None
+    data: Union[Dict, CommentedMap, List, None] = None
     if isinstance(file, str):
         file = Path(file)
     if file.suffix not in _file_suffixes:
@@ -101,7 +101,7 @@ async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, L
                     data = _yaml.load(data_str)
                 except ScannerError as e:
                     raise FileParseError(f"yaml文件 {file} 解析失败：{e}")
-    if not data:
+    if data is None:
         return {} if file.suffix == ".json" else CommentedMap()
     return data
 
