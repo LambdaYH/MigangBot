@@ -36,6 +36,7 @@ usage：
     },
 )
 
+__plugin_always_on__ = True
 __plugin_category__ = "基础功能"
 __plugin_config__ = ConfigItem(
     key="black_words",

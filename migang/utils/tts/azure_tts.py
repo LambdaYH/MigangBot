@@ -36,13 +36,11 @@ async def _():
             ConfigItem(
                 key="key",
                 initial_value=None,
-                default_value=None,
                 description="参照下面链接获取\nhttps://learn.microsoft.com/en-us/azure/cognitive-services/cognitive-services-apis-create-account#get-the-keys-for-your-resource",
             ),
             ConfigItem(
                 key="region",
                 initial_value="southeastasia",
-                default_value="southeastasia",
                 description="区域",
             ),
         ),

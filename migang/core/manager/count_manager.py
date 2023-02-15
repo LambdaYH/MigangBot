@@ -1,21 +1,15 @@
-import pickle
 import aiofiles
 import asyncio
 from pathlib import Path
-from collections import defaultdict
-from typing import List, Union, Dict, Callable, DefaultDict, Iterable
+from pydantic import BaseModel
+from typing import List, Union, Dict, Callable, Iterable
 
 from nonebot.adapters.onebot.v11 import (
     Message,
-    MessageEvent,
-    GroupMessageEvent,
-    PokeNotifyEvent,
+    Event,
 )
 
 from .data_class import LimitType, CheckType, CountPeriod
-
-_file_path = Path() / "data" / "core" / "count_manager"
-_file_path.mkdir(parents=True, exist_ok=True)
 
 
 class CountItem:
@@ -45,8 +39,11 @@ class CountItem:
         self.count_period = count_period
 
 
-def _default():
-    return [0] * 5
+class Counter(BaseModel):
+    """存储单个插件计数数据的数据结构"""
+
+    user: Dict[int, List[int]] = {}
+    group: Dict[int, List[int]] = {}
 
 
 class CountManager:
@@ -55,124 +52,155 @@ class CountManager:
     class PluginCount:
         """管理单个插件调用计数"""
 
-        class Counter:
-            """存储单个插件计数数据的数据结构"""
-
-            def __init__(self) -> None:
-                self.user: DefaultDict[int, List[int]] = defaultdict(_default)
-                self.group: DefaultDict[int, List[int]] = defaultdict(_default)
-
         class CountChecker:
             """根据不同的检测对象与会话类型生成对应的调用计数检测器"""
 
-            def __init__(self, data, count_item: CountItem) -> None:
+            def __init__(self, data: Counter, count_item: CountItem) -> None:
                 """CountChecker构造函数，根据不同的检测对象与会话类型生成对应的调用计数检测器
 
                 Args:
-                    data (CountManager.PluginCount.Counter): 插件所属的数据
+                    data (Counter): 插件所属的数据
                     count_item (CountItem): 调用次数配置项
                 """
                 limit_type, check_type = count_item.limit_type, count_item.check_type
                 self.hint = count_item.hint
                 self.__count_limit = count_item.count
-                self.__data: DefaultDict[int, List[int]] = (
+                self.__data: Dict[int, List[int]] = (
                     data.user if limit_type == LimitType.user else data.group
                 )
                 self.__idx: int = count_item.count_period._value_
-                self.__func: Callable = self.__check_user_private
-                if limit_type == LimitType.user and check_type == CheckType.private:
-                    self.__func = self.__check_user_private
-                elif limit_type == LimitType.user and check_type == CheckType.group:
-                    self.__func = self.__check_user_group
-                elif limit_type == LimitType.user and check_type == CheckType.all:
-                    self.__func = self.__check_user_all
+                self.__func: Callable[[Event]]
+                self.__update_func: Callable[[Event]]
+                if limit_type is LimitType.user:
+                    self.__update_func = self.__update_user
+                    if check_type is CheckType.private:
+                        self.__func = self.__check_user_private
+                    elif check_type is CheckType.group:
+                        self.__func = self.__check_user_group
+                    elif check_type is CheckType.all:
+                        self.__func = self.__check_user_all
                 else:
+                    self.__update_func = self.__update_group
                     self.__func = self.__check_group
 
-            def check(self, event) -> bool:
+            def check(self, event: Event) -> bool:
                 """外部可调用的检测函数
 
                 Args:
-                    event (Union[MessageEvent, PokeNotifyEvent]): 事件
+                    event (Event): 事件
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
                 return self.__func(event)
 
-            def __check_user_private(
-                self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            def update(self, event: Event):
+                """更新计数
+
+                Args:
+                    event (Event): 事件
+                """
+                self.__update_func(event)
+
+            def __get_user(self, user_id: int) -> List[int]:
+                user = self.__data.get(user_id)
+                if user is None:
+                    user = self.__data[user_id] = [0] * 5
+                return user
+
+            def __get_group(self, group_id: int) -> List[int]:
+                group = self.__data.get(group_id)
+                if group is None:
+                    group = self.__data[group_id] = [0] * 5
+                return group
+
+            def __update_user(self, event: Event) -> None:
+                """更新用户计数
+
+                Args:
+                    event (Event): 事件
+                """
+                if hasattr(event, "user_id"):
+                    self.__get_user(user_id=event.user_id)[self.__idx] += 1
+
+            def __update_group(self, event: Event) -> None:
+                """更新群计数
+
+                Args:
+                    event (Event): 事件
+                """
+                if hasattr(event, "group_id"):
+                    self.__get_group(group_id=event.group_id)[self.__idx] += 1
+
+            def __check_user_private(self, event: Event) -> bool:
                 """limit_type为user，check_type为private时的具体检测函数
 
                 Args:
-                    event (Union[MessageEvent, PokeNotifyEvent]): 事件
+                    event (Event): 事件
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if type(event) is PokeNotifyEvent or event.message_type[0] == "p":
+                if not hasattr(event, "group_id"):
                     return self.__check_user_all(event)
                 return True
 
-            def __check_user_group(
-                self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            def __check_user_group(self, event: Event) -> bool:
                 """limit_type为user，check_type为group时的具体检测函数
 
                 Args:
-                    event (Union[MessageEvent, PokeNotifyEvent]): 事件
+                    event (Event): 事件
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if type(event) is PokeNotifyEvent or event.message_type[0] == "g":
+                if hasattr(event, "group_id"):
                     return self.__check_user_all(event)
                 return True
 
-            def __check_user_all(
-                self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            def __check_user_all(self, event: Event) -> bool:
                 """limit_type为user，check_type为all时的具体检测函数
 
                 Args:
-                    event (Union[MessageEvent, PokeNotifyEvent]): 事件
+                    event (Event): 事件
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if self.__data[event.user_id][self.__idx] < self.__count_limit:
-                    self.__data[event.user_id][self.__idx] += 1
-                    return True
-                return False
+                if hasattr(event, "user_id"):
+                    if (
+                        self.__get_user(user_id=event.user_id)[self.__idx]
+                        < self.__count_limit
+                    ):
+                        return True
+                    return False
+                return True
 
-            def __check_group(
-                self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> bool:
+            def __check_group(self, event: Event) -> bool:
                 """limit_type为user，check_type只能是group时的具体检测函数数
 
                 Args:
-                    event (Union[MessageEvent, PokeNotifyEvent]): 事件
+                    event (Event): 事件
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if type(event) is GroupMessageEvent or type(event) is PokeNotifyEvent:
-                    if self.__data[event.group_id][self.__idx] < self.__count_limit:
-                        self.__data[event.group_id][self.__idx] += 1
+                if hasattr(event, "group_id"):
+                    if (
+                        self.__get_group(group_id=event.group_id)[self.__idx]
+                        < self.__count_limit
+                    ):
                         return True
                 return True
 
-        def __init__(self, plugin_name: str) -> None:
+        def __init__(self, file: Path) -> None:
             """PluginCount构造函数，管理单插件的调用计数
 
             Args:
                 plugin_name (str): 插件名
             """
-            self.__file = _file_path / plugin_name
-            self.__count_data: CountManager.PluginCount.Counter = (
-                CountManager.PluginCount.Counter()
-            )
+            self.__file = file
+            self.__count_data: Counter
             self.__count_checkers: List[CountManager.PluginCount.CountChecker] = []
             self.__dirty_data: bool = False
 
@@ -183,10 +211,11 @@ class CountManager:
                 count_items (Union[CountItem, Iterable[CountItem]]): 调用次数配置项
             """
             if self.__file.exists():
-                async with aiofiles.open(self.__file, "rb") as f:
-                    data = await f.read()
-                    self.__count_data = pickle.loads(data)
-            if type(count_items) is not CountItem:
+                async with aiofiles.open(self.__file, "r") as f:
+                    self.__count_data = Counter.parse_raw(await f.read())
+            else:
+                self.__count_data = Counter()
+            if isinstance(count_items, Iterable):
                 unique_period = set()
                 for count_item in count_items:
                     if count_item.count_period in unique_period:
@@ -203,11 +232,11 @@ class CountManager:
                     )
                 )
 
-        def check(self, event) -> Union[str, bool, None]:
+        def check(self, event: Event) -> Union[str, bool, None]:
             """检测插件对应的调用次数，若未达到上限，返回True，反之返回提示语
 
             Args:
-                event (_type_): 事件
+                event (Event): 事件
 
             Returns:
                 Union[str, bool, None]: 若未达到调用次数上限，返回True，反之返回提示语
@@ -215,14 +244,17 @@ class CountManager:
             for checker in self.__count_checkers:
                 if not checker.check(event):
                     return checker.hint
-                self.__dirty_data = True
+            # 更新计数
+            for checker in self.__count_checkers:
+                checker.update(event)
+            self.__dirty_data = True
             return True
 
         async def save(self) -> None:
             """将调用次数保存在硬盘"""
             if self.__dirty_data:
-                async with aiofiles.open(self.__file, "wb") as f:
-                    await f.write(pickle.dumps(self.__count_data))
+                async with aiofiles.open(self.__file, "w") as f:
+                    await f.write(self.__count_data.json(ensure_ascii=False, indent=4))
                 self.__dirty_data = False
 
         def reset(self, period: CountPeriod) -> None:
@@ -237,9 +269,11 @@ class CountManager:
                 counts[period._value_] = 0
             self.__dirty_data = True
 
-    def __init__(self) -> None:
+    def __init__(self, path: Path) -> None:
         """CountManager构造函数"""
         self.__plugin_count: Dict[str, CountManager.PluginCount] = {}
+        self.__path: Path = path
+        self.__path.mkdir(exist_ok=True, parents=True)
 
     async def add(
         self, plugin_name: str, count_items: Union[Iterable[CountItem], CountItem, int]
@@ -251,20 +285,18 @@ class CountManager:
             count_items (Union[Iterable[CountItem], CountItem, int]): 插件计数配置们
         """
         self.__plugin_count[plugin_name] = CountManager.PluginCount(
-            plugin_name=plugin_name
+            file=self.__path / f"plugin_name.json"
         )
         if isinstance(count_items, int):
             count_items = CountItem(count_items)
         await self.__plugin_count[plugin_name].init(count_items=count_items)
 
-    def check(
-        self, plugin_name: str, event: Union[MessageEvent, PokeNotifyEvent]
-    ) -> Union[str, bool, None]:
+    def check(self, plugin_name: str, event: Event) -> Union[str, bool, None]:
         """检测插件plugin_name对应的调用次数，若未达到上限，返回True，反之返回提示语
 
         Args:
             plugin_name (str): 插件名
-            event (Union[MessageEvent, PokeNotifyEvent]): 事件
+            event (Event): 事件
 
         Returns:
             Union[str, bool, None]: 若未达到调用次数上限，返回True，反之返回提示语

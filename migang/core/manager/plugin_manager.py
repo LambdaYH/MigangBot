@@ -40,6 +40,7 @@ class PluginManager:
             file: Path,
             usage: Optional[str] = None,
             hidden: bool = False,
+            always_on: bool = False,
             plugin_type: PluginType = PluginType.All,
         ) -> None:
             """Plugin构造函数
@@ -70,6 +71,7 @@ class PluginManager:
             self.version: str
             self.usage: Optional[str] = usage
             self.hidden: bool = hidden
+            self.__always_on: bool = always_on
             self.__group_permission: Permission
             self.__user_permission: Permission
             self.__global_status: bool
@@ -86,11 +88,6 @@ class PluginManager:
             """异步初始化插件"""
             async with aiofiles.open(self.__file, "r") as f:
                 self.__data = PluginManager.PluginAttr.parse_raw(await f.read())
-            if (CUSTOM_USAGE_PATH / f"{self.plugin_name}.txt").exists():
-                async with aiofiles.open(
-                    CUSTOM_USAGE_PATH / f"{self.plugin_name}.txt", "r", encoding="utf-8"
-                ) as f:
-                    self.usage = await f.read()
             self.name = self.__data.name
             self.all_name: Set[str] = self.__data.aliases | set((self.name,))
             self.all_name.add(self.name)
@@ -199,6 +196,8 @@ class PluginManager:
             """
             if not self.__global_status:
                 return False
+            if self.__always_on:
+                return True
             if self.__default_status:
                 if group_id in self.__non_default_group:
                     self.__non_default_group.remove(group_id)
@@ -218,8 +217,10 @@ class PluginManager:
                 group_id (int): 群号
 
             Returns:
-                bool: 返回True
+                bool: 如果插件不可关闭，返回False，反之返回True
             """
+            if self.__always_on:
+                return False
             if self.__default_status:
                 if group_id not in self.__non_default_group:
                     self.__non_default_group.add(group_id)
@@ -249,6 +250,14 @@ class PluginManager:
                 hidden (bool): 隐藏状态
             """
             self.hidden = hidden
+
+        def set_always_on(self, always_on: bool) -> None:
+            """设置插件是否不可关闭，若是，则True
+
+            Args:
+                always_on (bool): _description_
+            """
+            self.__always_on = always_on
 
         def clean_group(self, group_set: Set[int]) -> None:
             """清理配置文件中冗余的群
@@ -456,41 +465,42 @@ class PluginManager:
             plugin.clean_group(group_list)
         await asyncio.gather(*[plugin.save() for plugin in self.__plugin.values()])
 
-    def set_plugin_usage(self, plugin_name: str, usage: Optional[str]):
-        """设定插件plugin_name的用法
+    # def set_plugin_usage(self, plugin_name: str, usage: Optional[str]):
+    #     """设定插件plugin_name的用法
 
-        Args:
-            plugin_name (str): 插件名
-            usage (Optional[str]): 用法
-        """
-        if plugin := self.__plugin.get(plugin_name):
-            plugin.set_usage(usage=usage)
+    #     Args:
+    #         plugin_name (str): 插件名
+    #         usage (Optional[str]): 用法
+    #     """
+    #     if plugin := self.__plugin.get(plugin_name):
+    #         plugin.set_usage(usage=usage)
 
-    def set_plugin_hidden(self, plugin_name: str, hidden: bool) -> None:
-        """设定插件plugin_name的隐藏状态
+    # def set_plugin_hidden(self, plugin_name: str, hidden: bool) -> None:
+    #     """设定插件plugin_name的隐藏状态
 
-        Args:
-            plugin_name (str): 插件名
-            hidden (bool): 隐藏状态
-        """
-        if plugin := self.__plugin.get(plugin_name):
-            plugin.set_hidden(hidden=hidden)
+    #     Args:
+    #         plugin_name (str): 插件名
+    #         hidden (bool): 隐藏状态
+    #     """
+    #     if plugin := self.__plugin.get(plugin_name):
+    #         plugin.set_hidden(hidden=hidden)
 
-    def set_plugin_type(self, plugin_name: str, plugin_type: PluginType) -> None:
-        """设定插件plugin_name的类型
+    # def set_plugin_type(self, plugin_name: str, plugin_type: PluginType) -> None:
+    #     """设定插件plugin_name的类型
 
-        Args:
-            plugin_name (str): 插件名
-            plugin_type (PluginType): 插件类型
-        """
-        if plugin := self.__plugin.get(plugin_name):
-            plugin.set_plugin_type(type=plugin_type)
+    #     Args:
+    #         plugin_name (str): 插件名
+    #         plugin_type (PluginType): 插件类型
+    #     """
+    #     if plugin := self.__plugin.get(plugin_name):
+    #         plugin.set_plugin_type(type=plugin_type)
 
     def set_plugin_attributes(
         self,
         plugin_name: str,
         usage: Optional[str],
         hidden: bool,
+        always_on: bool,
         plugin_type: PluginType,
     ) -> None:
         """设定插件plugin_name的usage，hidden与类型
@@ -504,6 +514,7 @@ class PluginManager:
         if plugin := self.__plugin.get(plugin_name):
             plugin.set_usage(usage=usage)
             plugin.set_hidden(hidden=hidden)
+            plugin.set_always_on(always_on=always_on)
             plugin.set_plugin_type(type=plugin_type)
 
     async def enable_plugin(self, plugin_name: str):
@@ -543,6 +554,7 @@ class PluginManager:
         default_status: bool = True,
         group_permission: Permission = NORMAL,
         user_permission: Permission = NORMAL,
+        always_on: bool = False,
         plugin_type: PluginType = PluginType.All,
     ) -> bool:
         """添加插件进PluginManager，若插件此前已添加，则除了plugin_type, usage, hidden外都以plugin_name.json为主
@@ -559,6 +571,7 @@ class PluginManager:
             default_status (bool, optional): 默认状态. Defaults to True.
             group_permission (Permission, optional): 所需群权限. Defaults to NORMAL.
             user_permission (Permission, optional): 所需用户权限. Defaults to NORMAL.
+            always_on (bool, optional): 插件是否不可关闭，若是，则True. Defaults to False.
             plugin_type (PluginType, optional): 插件类型. Defaults to PluginType.All.
 
         Returns:
@@ -587,6 +600,7 @@ class PluginManager:
             file=self.__file_path / file_name,
             usage=usage,
             hidden=hidden,
+            always_on=always_on,
             plugin_type=plugin_type,
         )
         return new_plugin

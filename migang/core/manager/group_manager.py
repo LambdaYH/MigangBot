@@ -221,10 +221,10 @@ class GroupManager:
         if self.__plugin_manager.check_group_permission(
             plugin_name=plugin_name, permission=group.permission
         ):
-            await self.__plugin_manager.set_group_disable(
+            if await self.__plugin_manager.set_group_disable(
                 plugin_name=plugin_name, group_id=group_id
-            )
-            return True
+            ):
+                return True
         return False
 
     async def set_task_enable(self, task_name: str, group_id: int):

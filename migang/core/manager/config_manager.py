@@ -13,9 +13,6 @@ from migang.core.utils.file_operation import (
 from migang.core.exception import ConfigNoExistError
 from migang.core.path import DATA_PATH
 
-_config_path = Path() / "configs"
-_config_path.mkdir(parents=True, exist_ok=True)
-
 
 class ConfigItem:
     """__plugin_config__属性为Iterable[ConfigItem]或ConfigItem"""
@@ -52,12 +49,16 @@ class ConfigManager:
     管理插件的配置
     """
 
-    def __init__(self) -> None:
+    def __init__(self, path: Path) -> None:
         """仅初始化配置项默认值，当所需配置值时从文件加载并加入缓存"""
         self.__default_value: Dict[str, Dict[str, Any]] = load_data(
             DATA_PATH / "core" / "default_value_cache.json"
         )
         """{plugin_name: {"key": value}}
+        """
+        self.__path: Path = path
+        self.__path.mkdir(exist_ok=True, parents=True)
+        """存储配置的路径
         """
 
     async def save_default_value(self):
@@ -74,7 +75,7 @@ class ConfigManager:
         """
         if config.config_name:
             plugin_name = config.config_name
-        file_name = _config_path / f"{plugin_name}.yaml"
+        file_name = self.__path / f"{plugin_name}.yaml"
         data: CommentedMap = await async_load_data(file_name)
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
@@ -98,7 +99,7 @@ class ConfigManager:
         """
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
-        file_name = _config_path / f"{plugin_name}.yaml"
+        file_name = self.__path / f"{plugin_name}.yaml"
         data: CommentedMap = await async_load_data(file_name)
         for config in configs:
             if config.config_name:
@@ -122,7 +123,7 @@ class ConfigManager:
         Returns:
             CommentedMap: 配置，类Dict结构
         """
-        return await async_load_data(_config_path / f"{plugin_name}.yaml")
+        return await async_load_data(self.__path / f"{plugin_name}.yaml")
 
     @alru_cache(maxsize=256)
     async def async_get_config_item(self, plugin_name: str, plugin_config: str) -> Any:
@@ -153,7 +154,7 @@ class ConfigManager:
 
     @lru_cache(maxsize=128)
     def __sync_get_config(self, plugin_name: str) -> CommentedMap:
-        return load_data(_config_path / f"{plugin_name}.yaml")
+        return load_data(self.__path / f"{plugin_name}.yaml")
 
     @lru_cache(maxsize=256)
     def sync_get_config_item(self, plugin_name: str, plugin_config: str) -> Any:

@@ -123,10 +123,10 @@ async def _(
             plugin_name=name, group_id=event.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
-        elif cmd == "关闭":
-            await group_manager.set_plugin_disable(
-                plugin_name=name, group_id=event.group_id
-            )
+        elif cmd == "关闭" and not await group_manager.set_plugin_disable(
+            plugin_name=name, group_id=event.group_id
+        ):
+            await switch.finish(f"插件 {param} 不可被禁用")
         clean_group_help_image(event.group_id)
         await switch.finish(f"已{cmd}插件：{param}")
     elif name := task_manager.get_task_name(param):

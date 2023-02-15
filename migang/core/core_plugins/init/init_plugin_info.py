@@ -4,6 +4,7 @@ import aiohttp
 import aiofiles
 from nonebot.log import logger
 
+from migang.core.manager.plugin_manager import CUSTOM_USAGE_PATH
 from migang.core.manager import plugin_manager, PluginType, core_data_path
 from migang.core.permission import NORMAL
 
@@ -30,6 +31,7 @@ async def init_plugin_info():
     plugin_file_list = set(
         [file.name for file in (core_data_path / "plugin_manager").iterdir()]
     )
+    usage_file_list = set([file.name for file in CUSTOM_USAGE_PATH.iterdir()])
     for plugin in plugins:
         plugin_name = plugin.name
         version, author, usage = None, None, None
@@ -91,6 +93,12 @@ async def init_plugin_info():
                 if hasattr(plugin.module, "__plugin_version__")
                 else None
             )
+        if f"{plugin_name}.txt" in usage_file_list:
+            async with aiofiles.open(
+                CUSTOM_USAGE_PATH / f"{plugin_name}.txt", "r", encoding="utf-8"
+            ) as f:
+                usage = await f.read()
+
         plugin_type = (
             plugin.module.__getattribute__("__plugin_type__")
             if hasattr(plugin.module, "__plugin_type__")
@@ -99,6 +107,11 @@ async def init_plugin_info():
         hidden = (
             plugin.module.__getattribute__("__plugin_hidden__")
             if hasattr(plugin.module, "__plugin_hidden__")
+            else False
+        )
+        always_on = (
+            plugin.module.__getattribute__("__plugin_always_on__")
+            if hasattr(plugin.module, "__plugin_always_on__")
             else False
         )
         group_permission = user_permission = NORMAL
@@ -131,6 +144,7 @@ async def init_plugin_info():
             hidden=hidden,
             group_permission=group_permission,
             user_permission=user_permission,
+            always_on=always_on,
             plugin_type=plugin_type,
         ):
             logger.info(f"已将插件 {plugin_name} 加入插件控制")

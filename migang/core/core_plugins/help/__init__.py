@@ -4,6 +4,7 @@
 from pathlib import Path
 from typing import Set, Union, List
 from io import BytesIO
+import re
 
 from nonebot.permission import SuperUser, SUPERUSER
 from nonebot_plugin_imageutils import text2image
@@ -144,6 +145,8 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                         commands[perm][type] = set()
                 if isinstance(cmds, str):
                     cmds = [cmds]
+                if isinstance(cmds, re.Pattern):
+                    cmds = [cmds.pattern]
                 cmd_set = set()
                 for cmd in cmds:
                     if isinstance(cmd, str):

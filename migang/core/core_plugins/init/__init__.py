@@ -9,6 +9,7 @@ from .init_plugin_config import init_plugin_config
 from .init_plugin_cd import init_plugin_cd
 from .init_plugin_count import init_plugin_count
 from .init_plugin_task import init_plugin_task
+from .command_check import check_command
 
 
 @get_driver().on_startup
@@ -22,3 +23,4 @@ async def _():
         ]
     )
     init_plugin_cd()
+    await check_command()

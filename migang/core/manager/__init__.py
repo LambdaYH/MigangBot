@@ -11,6 +11,7 @@ from .count_manager import CountManager, CountPeriod, CountItem
 from .data_class import LimitType, CheckType, CountPeriod, PluginType
 
 core_data_path = Path() / "data" / "core"
+config_path = Path() / "configs"
 
 plugin_manager: PluginManager = PluginManager(core_data_path / "plugin_manager")
 """插件运行前检查，控制整个插件的状态，实现整个插件的启闭
@@ -35,7 +36,7 @@ user_manager: UserManager = UserManager(
 """管理用户权限，仅在私聊状态下生效
 """
 
-config_manager: ConfigManager = ConfigManager()
+config_manager: ConfigManager = ConfigManager(config_path)
 """读取插件的__plugin_config__属性并自动生成对应配置文件，同时可用于获取添加进入的配置项，__plugin_config__属性为List[ConfigItem]或ConfigItem
 """
 
@@ -43,7 +44,7 @@ cd_manager: CDManager = CDManager()
 """读取插件的__plugin_cd__属性用于限制插件cd，__plugin_cd__属性为List[CDItem]或CDItem
 """
 
-count_manager: CountManager = CountManager()
+count_manager: CountManager = CountManager(core_data_path / "count_manager")
 """读取插件__plugin_count__属性用于限制插件在一定周期内调用次数，__plugin_count__属性为List[CountItem]或CountItem
 """
 
