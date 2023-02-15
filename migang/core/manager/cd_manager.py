@@ -61,9 +61,7 @@ class CDManager:
                 self.__last_called: Dict[int, float] = {}
                 """该检测器最后的调用时间，{id: time}
                 """
-                self.__func: Callable[
-                    [Event], Union[bool, float]
-                ]
+                self.__func: Callable[[Event], Union[bool, float]]
                 """实际的检测函数
                 """
                 limit_type, check_type = cd_item.limit_type, cd_item.check_type
