@@ -24,7 +24,7 @@ async-lru = "^1.0.3"
 tortoise-orm = {extras = ["accel", "asyncmy", "asyncpg"], version = "^0.19.3"}
 nonebot-plugin-petpet = "^0.3.20"
 nonebot-plugin-memes = "^0.3.10"
-aiohttp = "^3.8.4"
+aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 lxml = "^4.9.2"
 nonebot-plugin-word-bank2 = "^0.1.6"
 tenacity = "^8.2.1"
