@@ -407,7 +407,9 @@ class TaskManager:
         for item in task_items:
             file_name = f"{item.task_name}.json"
             if file_name not in self.__files:
-                async with await anyio.open_file(self.__file_path / file_name, "w") as f:
+                async with await anyio.open_file(
+                    self.__file_path / file_name, "w"
+                ) as f:
                     await f.write(
                         TaskManager.TaskAttr(
                             name=item.name,

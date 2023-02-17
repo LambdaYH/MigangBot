@@ -114,7 +114,9 @@ class RequestManager:
             bool: 如果存在该id返回True
         """
         target = (
-            self.__data.group_request if type_ == "group" else self.__data.friend_request
+            self.__data.group_request
+            if type_ == "group"
+            else self.__data.friend_request
         )
         if id >= len(target):
             return False
@@ -152,7 +154,9 @@ class RequestManager:
             str: _description_
         """
         target = (
-            self.__data.group_request if type_ == "group" else self.__data.friend_request
+            self.__data.group_request
+            if type_ == "group"
+            else self.__data.friend_request
         )
         if id >= len(target):
             return f"请输入 0~{len(target) - 1} 之间的id！"
