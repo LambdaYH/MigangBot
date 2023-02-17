@@ -8,7 +8,7 @@ from typing import List, Union
 
 from lxml import etree
 import aiohttp
-import aiofiles
+import anyio
 import ujson as json
 from fake_useragent import UserAgent
 from nonebot.log import logger
@@ -32,7 +32,7 @@ async def async_load_data(file: Path) -> List:
     data: List = None
     file.parent.mkdir(exist_ok=True, parents=True)
     if file.exists():
-        async with aiofiles.open(file, "r", encoding="utf-8") as f:
+        async with await anyio.open_file(file, "r", encoding="utf-8") as f:
             data_str = await f.read()
             if file.suffix == ".json":
                 try:

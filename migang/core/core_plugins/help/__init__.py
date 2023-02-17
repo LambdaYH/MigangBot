@@ -29,12 +29,18 @@ from nonebot.adapters.onebot.v11 import (
     PrivateMessageEvent,
     MessageSegment,
 )
-import aiofiles
+import anyio
 
 from migang.core.manager import group_manager, plugin_manager, user_manager
 
-from .data_source import get_help_image, get_plugin_help, get_task_image
-from .utils import GROUP_HELP_PATH, USER_HELP_PATH, GROUP_TASK_PATH
+from .data_source import (
+    get_help_image,
+    get_plugin_help,
+    get_task_image,
+    GROUP_HELP_PATH,
+    USER_HELP_PATH,
+    GROUP_TASK_PATH,
+)
 
 require("nonebot_plugin_htmlrender")
 require("nonebot_plugin_imageutils")
@@ -67,11 +73,11 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             super=await SUPERUSER(bot, event),
         )
         await simple_help.send(MessageSegment.image(img))
-        async with aiofiles.open(image_file, "wb") as f:
+        async with await anyio.open_file(image_file, "wb") as f:
             await f.write(img)
     else:
-        if help := get_plugin_help(args):
-            await simple_help.send(help)
+        if help_ := get_plugin_help(args):
+            await simple_help.send(help_)
         else:
             await simple_help.send(f"没有该插件的帮助信息")
 
@@ -83,7 +89,7 @@ async def _(event: GroupMessageEvent):
         await task_help.finish(MessageSegment.image(image_file))
     img = await get_task_image(event.group_id)
     await task_help.send(MessageSegment.image(img))
-    async with aiofiles.open(image_file, "wb") as f:
+    async with await anyio.open_file(image_file, "wb") as f:
         await f.write(img)
 
 

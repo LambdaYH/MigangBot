@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 from typing import Union, Dict, Set, List, Optional
 
-import aiofiles
+import anyio
 from pydantic import BaseModel
 
 from migang.core.manager.data_class import PluginType
@@ -86,7 +86,7 @@ class PluginManager:
 
         async def init(self) -> None:
             """异步初始化插件"""
-            async with aiofiles.open(self.__file, "r") as f:
+            async with await anyio.open_file(self.__file, "r") as f:
                 self.__data = PluginManager.PluginAttr.parse_raw(await f.read())
             self.name = self.__data.name
             self.all_name: Set[str] = self.__data.aliases | set((self.name,))
@@ -106,7 +106,7 @@ class PluginManager:
 
         async def save(self) -> None:
             """将插件数据存储到硬盘"""
-            async with aiofiles.open(self.__file, "w") as f:
+            async with await anyio.open_file(self.__file, "w") as f:
                 await f.write(self.__data.json(ensure_ascii=False, indent=4))
 
         def set_plugin_type(self, type: PluginType):
@@ -580,7 +580,7 @@ class PluginManager:
         file_name = f"{plugin_name}.json"
         new_plugin = file_name not in self.__files
         if new_plugin:
-            async with aiofiles.open(self.__file_path / file_name, "w") as f:
+            async with await anyio.open_file(self.__file_path / file_name, "w") as f:
                 await f.write(
                     PluginManager.PluginAttr(
                         name=name,

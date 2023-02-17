@@ -2,7 +2,7 @@ from io import StringIO
 from pathlib import Path
 from typing import TypeVar, Union, Dict, Any, List
 
-import aiofiles
+import anyio
 import ujson as json
 from ruamel.yaml import CommentedMap
 from ruamel.yaml import YAML
@@ -33,7 +33,6 @@ def load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, List]:
         file = Path(file)
     if file.suffix not in _file_suffixes:
         raise FileTypeError("路径必须为json或yaml格式的文件")
-    file.parent.mkdir(exist_ok=True, parents=True)
     if file.exists():
         with open(file, "r", encoding="utf-8") as f:
             if file.suffix == ".json":
@@ -62,6 +61,7 @@ def save_data(
     """
     if isinstance(file, str):
         file = Path(file)
+    file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w", encoding="utf-8") as f:
         if file.suffix == ".json":
             json.dump(obj, f, ensure_ascii=False, indent=4)
@@ -87,9 +87,8 @@ async def async_load_data(file: Union[Path, str]) -> Union[Dict, CommentedMap, L
         file = Path(file)
     if file.suffix not in _file_suffixes:
         raise FileTypeError("路径必须为json或yaml格式的文件")
-    file.parent.mkdir(exist_ok=True, parents=True)
     if file.exists():
-        async with aiofiles.open(file, "r", encoding="utf-8") as f:
+        async with await anyio.open_file(file, "r", encoding="utf-8") as f:
             data_str = await f.read()
             if file.suffix == ".json":
                 try:
@@ -117,7 +116,8 @@ async def async_save_data(
     """
     if isinstance(file, str):
         file = Path(file)
-    async with aiofiles.open(file, "w", encoding="utf-8") as f:
+    file.parent.mkdir(parents=True, exist_ok=True)
+    async with await anyio.open_file(file, "w", encoding="utf-8") as f:
         if file.suffix == ".json":
             await f.write(json.dumps(obj, ensure_ascii=False, indent=4))
         else:

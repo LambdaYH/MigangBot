@@ -35,7 +35,6 @@ async def _(
         GroupDecreaseNoticeEvent,
         GroupIncreaseNoticeEvent,
         GroupRecallNoticeEvent,
-        GroupRecallNoticeEvent,
     ],
 ):
     if matcher.plugin_name in _ignore_plugins:
@@ -63,5 +62,7 @@ async def _(
             await matcher.send(ret)
         raise IgnoredException("count...")
     # 检查通过后把事件的sender昵称替换为昵称系统昵称
-    if name := await NickName.filter(user_id=event.user_id).first():
+    if hasattr(event, "sender") and (
+        name := await NickName.filter(user_id=event.user_id).first()
+    ):
         event.sender.nickname = name.nickname

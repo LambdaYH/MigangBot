@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 from typing import Union, Iterable, Optional, Dict
 
-import aiofiles
+import anyio
 import aiohttp
 from nonebot.log import logger
 from tenacity import retry, stop_after_attempt, wait_random
@@ -75,7 +75,7 @@ async def async_download_files(
                 timeout=timeout,
                 allow_redirects=True,
             )
-        async with aiofiles.open(file, "wb") as f:
+        async with await anyio.open_file(file, "wb") as f:
             if not stream:
                 await f.write(await r.read())
             else:

@@ -7,7 +7,7 @@ import os
 from io import BytesIO
 from typing import Union, List, Tuple
 from pathlib import Path
-from datetime import datetime, timedelta, date
+from datetime import datetime, date
 
 from . import zhanbu_config
 
@@ -17,16 +17,11 @@ from nonebot_plugin_imageutils import BuildImage
 from tortoise.transactions import in_transaction
 from tortoise.exceptions import OperationalError
 
-from migang.core import IMAGE_PATH, FONT_PATH
+from migang.core import FONT_PATH
 from migang.models import EorzeanZhanbu
 
 
-font_path = {
-    "title": FONT_PATH / "Mamelon.otf",
-    "text": FONT_PATH / "sakura.ttf",
-}
-
-BG_PATH = IMAGE_PATH / "eorzean_zhanbu"
+BG_PATH = Path(__file__).parent / "image"
 
 
 @get_driver().on_startup
@@ -281,6 +276,7 @@ async def get_eorzean_zhanbu(user_id: str) -> BytesIO:
                         user.ji,
                         user.dye,
                         user.append_msg,
+                        user.basemap,
                     ) = (luck, yi, ji, dye, append_msg, basemap)
                     await user.save(using_db=connection)
                 else:

@@ -7,8 +7,7 @@ from typing import List, Dict
 from datetime import datetime
 
 import aiohttp
-import aiofiles
-from tenacity import retry, stop_after_attempt, wait_random
+import anyio
 from PIL import Image
 from nonebot import get_driver
 from fake_useragent import UserAgent
@@ -39,7 +38,7 @@ def get_data():
 
 async def get_nuannuan_image() -> None:
     try:
-        async with get_new_page(viewport={"width": 2560, "height": 1080}) as page:
+        async with get_new_page(viewport={"width": 2560, "height": 2560}) as page:
             await page.goto(url)
             card = await page.wait_for_selector(".operate-board", timeout=60 * 1000)
             img = await card.screenshot()
@@ -50,7 +49,7 @@ async def get_nuannuan_image() -> None:
                 )
                 with BytesIO() as buf:
                     crop_image.save(buf, format="PNG")
-                    async with aiofiles.open(nuannuan_path, "wb") as f:
+                    async with await anyio.open_file(nuannuan_path, "wb") as f:
                         await f.write(buf.getvalue())
     except TimeoutError as e:
         logger.warning(f"获取暖暖图片失败：{e}")

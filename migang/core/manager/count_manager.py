@@ -1,4 +1,4 @@
-import aiofiles
+import anyio
 import asyncio
 from pathlib import Path
 from pydantic import BaseModel
@@ -211,7 +211,7 @@ class CountManager:
                 count_items (Union[CountItem, Iterable[CountItem]]): 调用次数配置项
             """
             if self.__file.exists():
-                async with aiofiles.open(self.__file, "r") as f:
+                async with await anyio.open_file(self.__file, "r") as f:
                     self.__count_data = Counter.parse_raw(await f.read())
             else:
                 self.__count_data = Counter()
@@ -253,8 +253,8 @@ class CountManager:
         async def save(self) -> None:
             """将调用次数保存在硬盘"""
             if self.__dirty_data:
-                async with aiofiles.open(self.__file, "w") as f:
-                    await f.write(self.__count_data.json(ensure_ascii=False, indent=4))
+                async with await anyio.open_file(self.__file, "w") as f:
+                    await f.write(self.__count_data.json(indent=4))
                 self.__dirty_data = False
 
         def reset(self, period: CountPeriod) -> None:

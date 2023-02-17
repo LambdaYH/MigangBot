@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union, Dict
 
-import aiofiles
+import anyio
 from pydantic import BaseModel
 
 from migang.core.permission import NORMAL, Permission
@@ -70,7 +70,7 @@ class UserManager:
     async def save(self) -> None:
         """保存进文件"""
         if self.__dirty_data:
-            async with aiofiles.open(self.__file, "w", encoding="utf-8") as f:
+            async with await anyio.open_file(self.__file, "w", encoding="utf-8") as f:
                 await f.write(self.__data.json(ensure_ascii=False, indent=4))
             self.__dirty_data = False
 

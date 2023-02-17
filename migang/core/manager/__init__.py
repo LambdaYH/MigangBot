@@ -7,6 +7,7 @@ from .user_manager import UserManager
 from .config_manager import ConfigManager, ConfigItem
 from .cd_manager import CDManager, CDItem
 from .count_manager import CountManager, CountPeriod, CountItem
+from .request_manager import RequestManager
 
 from .data_class import LimitType, CheckType, CountPeriod, PluginType
 
@@ -46,6 +47,12 @@ cd_manager: CDManager = CDManager()
 
 count_manager: CountManager = CountManager(core_data_path / "count_manager")
 """读取插件__plugin_count__属性用于限制插件在一定周期内调用次数，__plugin_count__属性为List[CountItem]或CountItem
+"""
+
+request_manager: RequestManager = RequestManager(
+    core_data_path / "request_manager.json"
+)
+"""管理各种请求
 """
 
 

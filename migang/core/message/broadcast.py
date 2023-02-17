@@ -13,7 +13,7 @@ class SendManager:
     def __init__(
         self,
         bot: Bot,
-        group_list,
+        group_list: List[int],
         msg: Union[List[Message], Message],
         forward=False,
         retry_limit: int = 3,

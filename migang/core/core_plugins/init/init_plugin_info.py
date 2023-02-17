@@ -1,7 +1,7 @@
 from typing import Iterable, Dict, Any, Optional
 
 import aiohttp
-import aiofiles
+import anyio
 from nonebot.log import logger
 
 from migang.core.manager.plugin_manager import CUSTOM_USAGE_PATH
@@ -54,7 +54,7 @@ async def init_plugin_info():
                     name = p["name"]
                     usage = p["desc"]
                     author = p["author"]
-                    async with aiofiles.open(
+                    async with await anyio.open_file(
                         core_data_path / "custom_usage" / f"{plugin_name}.txt",
                         "w",
                         encoding="utf-8",
@@ -94,7 +94,7 @@ async def init_plugin_info():
                 else None
             )
         if f"{plugin_name}.txt" in usage_file_list:
-            async with aiofiles.open(
+            async with await anyio.open_file(
                 CUSTOM_USAGE_PATH / f"{plugin_name}.txt", "r", encoding="utf-8"
             ) as f:
                 usage = await f.read()

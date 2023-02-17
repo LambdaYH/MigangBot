@@ -24,10 +24,7 @@ async def _(
     matcher: Matcher,
     event: Union[
         PrivateMessageEvent,
-        FriendAddNoticeEvent,
         FriendRecallNoticeEvent,
-        FriendRequestEvent,
-        GroupRequestEvent,
     ],
 ):
     if not user_manager.check_user_plugin_status(
@@ -47,5 +44,7 @@ async def _(
             await matcher.send(ret)
         raise IgnoredException("count...")
     # 检查通过后把事件的sender昵称替换为昵称系统昵称
-    if name := await NickName.filter(user_id=event.user_id).first():
+    if hasattr(event, "sender") and (
+        name := await NickName.filter(user_id=event.user_id).first()
+    ):
         event.sender.nickname = name.nickname

@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 from typing import Union, Dict, Set, List, Optional, Iterable
 
-import aiofiles
+import anyio
 from pydantic import BaseModel
 
 from migang.core.permission import NORMAL, Permission
@@ -76,7 +76,7 @@ class TaskManager:
 
         async def init(self) -> None:
             """异步初始化Task类"""
-            async with aiofiles.open(self.__file, "r") as f:
+            async with await anyio.open_file(self.__file, "r") as f:
                 self.__data = TaskManager.TaskAttr.parse_raw(await f.read())
             self.name: str = self.__data.name
             self.__permission: Permission = self.__data.permission
@@ -90,7 +90,7 @@ class TaskManager:
 
         async def save(self) -> None:
             """保存数据进文件"""
-            async with aiofiles.open(self.__file, "w") as f:
+            async with await anyio.open_file(self.__file, "w") as f:
                 await f.write(self.__data.json(ensure_ascii=False, indent=4))
 
         @property
@@ -407,7 +407,7 @@ class TaskManager:
         for item in task_items:
             file_name = f"{item.task_name}.json"
             if file_name not in self.__files:
-                async with aiofiles.open(self.__file_path / file_name, "w") as f:
+                async with await anyio.open_file(self.__file_path / file_name, "w") as f:
                     await f.write(
                         TaskManager.TaskAttr(
                             name=item.name,

@@ -44,7 +44,7 @@ def clean_all_help_image():
         img.unlink()
 
 
-def clean_all_task_image():
+def clean_group_help_image():
     for img in GROUP_TASK_PATH.iterdir():
         img.unlink()
 
@@ -169,7 +169,7 @@ async def _(
         else:
             for task in task_manager.get_task_name_list():
                 await task_manager.disable_task(task_name=task)
-        clean_all_task_image()
+        await clean_all_task_image()
         await switch.finish(f"已{cmd}全部被动")
 
     if cmd in ("全局开启被动", "全局关闭被动") and (name := task_manager.get_task_name(param)):
@@ -177,7 +177,7 @@ async def _(
             await task_manager.enable_task(task_name=name)
         elif cmd == "全局关闭被动":
             await task_manager.disable_task(task_name=name)
-        clean_all_task_image()
+        await clean_all_task_image()
         await switch.finish(f"已{cmd}群被动：{param}")
     if name := plugin_manager.get_plugin_name(param):
         if cmd == "全局开启":
@@ -191,7 +191,7 @@ async def _(
             await task_manager.enable_task(task_name=name)
         elif cmd == "全局关闭":
             await task_manager.disable_task(task_name=name)
-        clean_all_task_image()
+        await clean_all_task_image()
         await switch.finish(f"已{cmd}群被动：{param}")
     else:
         await switch.finish(f"插件或群被动 {param} 不存在")
