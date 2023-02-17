@@ -325,14 +325,7 @@ async def _():
             bot = get_bot()
             if forward_mode:
                 weibos = [
-                    {
-                        "type": "node",
-                        "data": {
-                            "name": f"微博威",
-                            "uin": f"{bot.self_id}",
-                            "content": weibo,
-                        },
-                    }
+                    MessageSegment.node_custom(bot.self_id, "微博威", weibo)
                     for weibo in weibos
                 ]
             await broadcast(task_name=task, msg=weibos, forward=forward_mode, bot=bot)

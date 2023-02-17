@@ -160,7 +160,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     for c in cmd:
                         cmd_set.add(c)
 
-                cmd_text = "/".join(
+                cmd_text = " | ".join(
                     [f"[b]{cmd}[/b]" if to_me else cmd for cmd in cmd_set]
                 )
                 for perm in matcher_permissions:
