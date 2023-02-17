@@ -45,7 +45,7 @@ async def _(arg: Message = CommandArg()):
                 timeout=10,
             )
         data = (await r.json())[0]["trans"]
-        msg = f"{episode}可能是【" + '，'.join(data) + "】的缩写"
+        msg = f"{episode}可能是【" + "，".join(data) + "】的缩写"
         await suoxie.send(msg, at_sender=True)
     except:
         await suoxie.send(
