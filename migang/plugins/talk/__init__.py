@@ -9,6 +9,7 @@ from migang.core import CountItem
 from migang.utils.tts import get_azure_tts, azure_tts_status
 from migang.utils.text import filt_message
 
+__plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
     name="说",
     description="Bot说话啦",
@@ -24,6 +25,8 @@ usage：
         "version": 0.1,
     },
 )
+
+__plugin_category__ = "好玩的"
 __plugin_count__ = CountItem(count=5, hint="说不动了...")
 
 talk = on_command("说", aliases={"talk", "讲"}, priority=5, rule=to_me(), block=True)
