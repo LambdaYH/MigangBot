@@ -154,8 +154,10 @@ migangbot.conf
 db_config.yaml
 
 # The downloaded resources
-resources/image/shiningnikki_image
+
 
 # developing
 migang/plugins/about*
+test.py
 group_friend_handle
+command_check.py

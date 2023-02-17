@@ -60,7 +60,7 @@ __plugin_task__ = (
 )
 
 URL_PATTERN = re.compile(
-    r"https?:[//|\\/\\/](?:[a-zA-Z]|[0-9]|[$-_@.&#+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+    r"https?:[/|\\](?:[a-zA-Z]|[0-9]|[$-_@.&#+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
 )
 
 ALIAS_DOMAIN = (

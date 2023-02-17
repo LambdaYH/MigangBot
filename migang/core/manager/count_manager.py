@@ -285,7 +285,7 @@ class CountManager:
             count_items (Union[Iterable[CountItem], CountItem, int]): 插件计数配置们
         """
         self.__plugin_count[plugin_name] = CountManager.PluginCount(
-            file=self.__path / f"plugin_name.json"
+            file=self.__path / f"{plugin_name}.json"
         )
         if isinstance(count_items, int):
             count_items = CountItem(count_items)
