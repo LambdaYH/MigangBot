@@ -36,7 +36,7 @@ usage：
 
 IMG_PATH = Path(__file__).parent / "image"
 
-__plugin_aliases__=["塔罗牌"]
+__plugin_aliases__ = ["塔罗牌"]
 __plugin_category__ = "好玩的"
 __plugin_cd__ = CDItem(cd=3, hint="你的塔罗牌正在抽取...")
 
