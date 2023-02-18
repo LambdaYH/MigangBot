@@ -1,11 +1,15 @@
-from nonebot import on_command, require
-from nonebot.params import CommandArg
+"""移植自https://github.com/lgc2333/nonebot-plugin-picmcstat和MeetWq/mybot和https://github.com/nikissXI/nonebot_plugins/tree/main/nonebot_plugin_mc_server_status
+"""
+from nonebot import on_command, require, on_startswith
+from nonebot.matcher import Matcher
+from nonebot.params import CommandArg, Startswith
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import (
     MessageEvent,
     Message,
     GroupMessageEvent,
     MessageEvent,
+    MessageSegment,
 )
 
 from .data_source import (
@@ -15,13 +19,16 @@ from .data_source import (
     del_server,
     get_server_list,
     get_add_info,
+    get_crafatar,
+    get_mc_uuid,
+    get_mc_model,
 )
 
 require("nonebot_plugin_imageutils")
 
 __plugin_meta__ = PluginMetadata(
-    name="MC服务器状态查询",
-    description="查询MC服务器状态",
+    name="MC查询",
+    description="查询MC各项",
     usage="""
 usage：
     指令：
@@ -31,6 +38,8 @@ usage：
         mcslist/mc服务器列表                   ：
 
         查询mcs ip:<port> je/be
+
+        mc avatar/head/body/skin/cape/model 用户ID 获取MC用户的 头像/头/身体/皮肤/披风/全身动图"
 
     说明：
         je对应Java版，be对应基岩版
@@ -49,18 +58,23 @@ usage：
         查询mcs example.mc.com:1206 be
 
         删除mcs hypixel
+
+        mcavatar A_Pi
+        mcmodel A_Pi
 """.strip(),
     extra={
-        "unique_name": "MCServerStatusQuery",
-        "example": "添加mcs hypixel mc.hypixel.net je\n添加mcs 假的服务器 example.mc.com:1206 be\n查询mcs hypixel\n查询mcs mc.hypixel.net je\n查询mcs example.mc.com:1206 be\n删除mcs hypixel",
+        "unique_name": "migang_mcquery",
+        "example": "添加mcs hypixel mc.hypixel.net je\n添加mcs 假的服务器 example.mc.com:1206 be\n查询mcs hypixel\n查询mcs mc.hypixel.net je\n查询mcs example.mc.com:1206 be\n删除mcs hypixel\nmcavatar A_Pi",
         "author": "migang",
         "version": 0.1,
     },
 )
 
+__plugin_aliases__ = ["mc查询"]
 __plugin_category__ = "一些工具"
 
 query = on_command("查询mcs", aliases={"qmcs"}, priority=5)
+query_mc = on_startswith("mc", priority=5, block=False)
 add_mc = on_command("添加mcs", aliases={"addmcs"}, priority=5)
 del_mc = on_command("删除mcs", aliases={"delmcs"}, priority=5)
 mc_list = on_command("mcslist", aliases={"mc服务器列表", "MC服务器列表"}, priority=5)
@@ -141,3 +155,27 @@ async def _(event: MessageEvent):
         event.user_id,
     )
     await mc_list.send(await get_server_list(group_id=group_id, user_id=user_id))
+
+
+@query_mc.handle()
+async def _(matcher: Matcher, event: MessageEvent, cmd: str = Startswith()):
+    msg = event.get_plaintext().removeprefix(cmd).strip()
+    for t in ["avatar", "head", "body", "skin", "cape", "model"]:
+        if msg.startswith(t):
+            username = msg.replace(t, "", 1).strip()
+            if username:
+                matcher.stop_propagation()
+                uuid = await get_mc_uuid(username)
+                if not uuid:
+                    await query_mc.finish("出错了，请稍后再试")
+                if uuid == "none":
+                    await query_mc.finish("找不到该用户")
+                if t == "model":
+                    await query_mc.send("生成中，请耐心等待。。。")
+                    result = await get_mc_model(uuid)
+                else:
+                    result = await get_crafatar(t, uuid)
+                if result:
+                    await query_mc.finish(MessageSegment.image(result))
+                else:
+                    await query_mc.finish("出错了，请稍后再试")
