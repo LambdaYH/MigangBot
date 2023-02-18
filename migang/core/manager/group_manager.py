@@ -323,7 +323,7 @@ class GroupManager:
                 await self.save()
             else:
                 self.__dirty_data = True
-    
+
     def set_group_permission(self, group_id: int, permission: Permission):
         """设定群权限
 
