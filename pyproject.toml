@@ -7,9 +7,9 @@ license = "MIT"
 readme = "README.md"
 
 [[tool.poetry.source]]
-name = "ali"
+name = "tsinghua"
 default = true
-url = "https://mirrors.aliyun.com/pypi/simple/"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -18,7 +18,7 @@ nonebot-adapter-onebot = "^2.2.1"
 nonebot-plugin-apscheduler = "^0.2.0"
 ujson = "^5.7.0"
 ruamel-yaml = "^0.17.21"
-nonebot-plugin-imageutils = "^0.1.14"
+nonebot-plugin-imageutils = "^0.1.16"
 nonebot-plugin-htmlrender = "^0.2.0.1"
 async-lru = "^1.0.3"
 tortoise-orm = {extras = ["accel", "asyncmy", "asyncpg"], version = "^0.19.3"}
@@ -34,6 +34,7 @@ azure-cognitiveservices-speech = "^1.25.0"
 deep-translator = "^1.10.0"
 pyzbar = "^0.1.9"
 anyio = "^3.6.2"
+mcstatus = "^10.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = {version = "^23.1.0", allow-prereleases = true}
