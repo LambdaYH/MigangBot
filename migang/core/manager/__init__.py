@@ -61,9 +61,9 @@ request_manager: RequestManager = RequestManager(
 async def save():
     """保存各管理器需要保存的文件"""
     import asyncio
+
     logger.info("正在持久化数据...")
     await asyncio.gather(
         *[group_manager.save(), user_manager.save(), count_manager.save()]
     )
     logger.info("数据持久化完成...")
-    
