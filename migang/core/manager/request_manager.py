@@ -175,7 +175,7 @@ class RequestManager:
             del target[id]
             await self.save()
             return f"无法{'同意' if type_== 'group' else '拒绝'}id为{id}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效"
-        await logger.info(
+        logger.info(
             f"已{'同意' if type_== 'group' else '拒绝'}请求：\n{request.json(ensure_ascii=False,indent=4)}"
         )
         del target[id]
@@ -196,7 +196,7 @@ class RequestManager:
         Returns:
             str: 提示语
         """
-        return await self.__handle_request(bot=bot, id=id, type=type_, approve=True)
+        return await self.__handle_request(bot=bot, id=id, type_=type_, approve=True)
 
     async def reject(self, bot: Bot, id: int, type_: str, reason: str = "") -> str:
         """_summary_
@@ -211,7 +211,7 @@ class RequestManager:
             str: 提示语
         """
         return await self.__handle_request(
-            bot=bot, id=id, type=type_, approve=False, reason=reason
+            bot=bot, id=id, type_=type_, approve=False, reason=reason
         )
 
     def get_requests(self) -> Requests:

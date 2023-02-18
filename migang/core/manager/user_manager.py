@@ -145,3 +145,14 @@ class UserManager:
                 await self.save()
             else:
                 self.__dirty_data = True
+
+    def set_user_permission(self, user_id: int, permission: Permission):
+        """设定用户权限
+
+        Args:
+            user_id (int): 用户id
+            permission (Permission): 权限
+        """
+        user = self.__get_user(user_id=user_id)
+        user.set_permission(permission=permission)
+        self.__dirty_data = True

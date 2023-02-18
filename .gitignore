@@ -159,5 +159,4 @@ db_config.yaml
 # developing
 migang/plugins/about*
 test.py
-group_friend_handle
 command_check.py
