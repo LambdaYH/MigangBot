@@ -65,6 +65,7 @@ permission_manager: PermissionManager = PermissionManager(
 """管理权限，设置限时权限
 """
 
+
 async def save():
     """保存各管理器需要保存的文件"""
     import asyncio
