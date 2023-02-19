@@ -90,7 +90,7 @@ class PermissionManager:
         if self.__dirty_data:
             async with await anyio.open_file(self.__file, "w", encoding="utf-8") as f:
                 await f.write(self.__data.json(ensure_ascii=False, indent=4))
-            self.__dirty_data = True
+            self.__dirty_data = False
 
     async def __permission_setting_task(self) -> None:
         """定时检查是否需要把权限改回去的后台任务"""

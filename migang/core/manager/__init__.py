@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from nonebot.log import logger
-from nonebot import get_driver
 
 from .plugin_manager import PluginManager
 from .task_manager import TaskManager, TaskItem
@@ -64,6 +63,7 @@ permission_manager: PermissionManager = PermissionManager(
 )
 """管理权限，设置限时权限
 """
+
 
 async def save():
     """保存各管理器需要保存的文件"""
