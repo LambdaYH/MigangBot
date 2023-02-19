@@ -320,4 +320,3 @@ class CountManager:
         """
         for plugin_count in self.__plugin_count.values():
             plugin_count.reset(period)
-        
