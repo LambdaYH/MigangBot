@@ -23,7 +23,7 @@ class DeeplTranslator(BaseTranslator):
         source: str = "de",
         target: str = "en",
         use_free_api: bool = True,
-        **kwargs
+        **kwargs,
     ):
         """
         @param api_key: your DeeplTranslator api key.
@@ -45,7 +45,7 @@ class DeeplTranslator(BaseTranslator):
             source=source,
             target=target,
             languages=DEEPL_LANGUAGE_TO_CODE,
-            **kwargs
+            **kwargs,
         )
 
     async def translate(self, text: str, **kwargs) -> str:
