@@ -3,11 +3,13 @@ from io import BytesIO
 import base64
 import asyncio
 import traceback
-from typing import Optional, List
+from typing import Optional, List, Union
 
 import anyio
 import aiohttp
 import jinja2
+from sqlalchemy import select
+from nonebot_plugin_datastore import create_session
 from mcstatus import BedrockServer, JavaServer
 from PIL.Image import Image as IMG
 from PIL import Image
@@ -15,7 +17,8 @@ from nonebot_plugin_htmlrender import get_new_page
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import MessageSegment
 
-from .model import ServerDB
+from .model import McServerPrivate, McServerGroup
+
 from .draw import draw_bedrock, draw_java, draw_error, draw_list
 
 data_path = Path() / "data" / "mcquery"
@@ -23,44 +26,78 @@ db_file = data_path / "mcserver.db"
 
 data_path.mkdir(exist_ok=True, parents=True)
 
-mcserverdb = ServerDB(db_file)
+
+async def get_server(
+    group_id: Optional[int], user_id: Optional[int], name: str
+) -> Union[McServerGroup, McServerPrivate, None]:
+    """
+    获取以name命名的服务器
+    """
+    async with create_session() as session:
+        if group_id:
+            server: Optional[McServerGroup] = await session.scalar(
+                statement=select(McServerGroup).where(
+                    McServerGroup.group_id == group_id and McServerGroup.name == name
+                )
+            )
+        else:
+            server: Optional[McServerPrivate] = await session.scalar(
+                statement=select(McServerPrivate).where(
+                    McServerPrivate.user_id == user_id and McServerPrivate.name == name
+                )
+            )
+        return server
 
 
-async def add_server(group_id: int, user_id: int, name: str, host: str, sv_type: str):
-    if await mcserverdb.get_server(group_id=group_id, user_id=user_id, name=name):
+async def add_server(
+    group_id: Optional[int], user_id: Optional[int], name: str, host: str, sv_type: str
+):
+    if await get_server(group_id=group_id, user_id=user_id, name=name):
         return False
     host_port = host.split(":")
     port = None
     if len(host_port) == 2:
         host = host_port[0]
         port = int(host_port[1])
-    await mcserverdb.add_server(
-        group_id=group_id,
-        user_id=user_id,
-        name=name,
-        host=host,
-        port=port,
-        sv_type=sv_type,
-    )
+    async with create_session() as session:
+        server: Union[McServerGroup, McServerPrivate]
+        if group_id:
+            server = McServerGroup(
+                group_id=group_id, name=name, host=host, port=port, sv_type=sv_type
+            )
+        else:
+            server = McServerPrivate(
+                user_id=user_id, name=name, host=host, port=port, sv_type=sv_type
+            )
+        session.add(server)
+        await session.commit()
     return True
 
 
-async def del_server(group_id: int, user_id: int, name: str):
-    if not await mcserverdb.get_server(group_id=group_id, user_id=user_id, name=name):
+async def del_server(group_id: Optional[int], user_id: Optional[int], name: str):
+    if not await get_server(group_id=group_id, user_id=user_id, name=name):
         return False
-    await mcserverdb.del_server(group_id=group_id, user_id=user_id, name=name)
+    async with create_session() as session:
+        if group_id:
+            server: Optional[McServerGroup] = await session.scalar(
+                statement=select(McServerGroup).where(
+                    McServerGroup.group_id == group_id and McServerGroup.name == name
+                )
+            )
+        else:
+            server: Optional[McServerPrivate] = await session.scalar(
+                statement=select(McServerPrivate).where(
+                    McServerPrivate.user_id == user_id and McServerPrivate.name == name
+                )
+            )
+        await session.delete(server)
+        await session.commit()
     return True
 
 
 async def get_server_info(group_id: int, user_id: int, name: str):
-    if detail := await mcserverdb.get_server(
-        group_id=group_id, user_id=user_id, name=name
-    ):
-        return (
-            detail[0],
-            detail[1],
-            detail[2],
-        )
+    if detail := await get_server(group_id=group_id, user_id=user_id, name=name):
+        return (detail.host, detail.port, detail.sv_type)
     return None
 
 
@@ -77,17 +114,32 @@ async def server_status(host: str, port: Optional[int], sv_type: str):
         return MessageSegment.image(draw_error(e=e, sv_type=sv_type))
 
 
-async def get_server_list(group_id: int, user_id: int):
-    servers = await mcserverdb.get_server_list(group_id=group_id, user_id=user_id)
+async def get_server_list(group_id: int, user_id: int) -> MessageSegment:
+    servers: List[Union[McServerGroup, McServerPrivate]]
+    async with create_session() as session:
+        if group_id:
+            servers = await session.exec(
+                statement=select(McServerGroup).where(
+                    McServerGroup.group_id == group_id
+                )
+            )
+        else:
+            servers = await session.exec(
+                statement=select(McServerPrivate).where(
+                    McServerPrivate.user_id == user_id
+                )
+            )
+
     if not servers:
         return MessageSegment.image(draw_list("空"))
     server_text_list = []
     for server in servers:
+        server = server[0]
         server_text_list.append(
-            f"§b{server[0]}§7 "
-            + ("Java版" if server[3] == "je" else "基岩版")
-            + f"\n§f{server[1]}"
-            + (f":{server[2]}" if server[2] else "")
+            f"§b{server.name}§7 "
+            + ("Java版" if server.sv_type == "je" else "基岩版")
+            + f"\n§f{server.host}"
+            + (f":{server.port}" if server.port else "")
         )
     return MessageSegment.image(draw_list("\n".join(server_text_list)))
 
@@ -96,11 +148,11 @@ def get_add_info(name: str, host: str, sv_type: str):
     return MessageSegment.image(
         draw_list(
             f"""
-        §bMC服务器添加成功
-        §7名称: §f{name}
-        §7地址: §f{host}
-        §7类型: §f{"Java版" if sv_type == "je" else "基岩版"}
-        §6可发送 查询mcs {name} 查询服务器状态
+§bMC服务器添加成功
+§7名称: §f{name}
+§7地址: §f{host}
+§7类型: §f{"Java版" if sv_type == "je" else "基岩版"}
+§6可发送 查询mcs {name} 查询服务器状态
     """.strip()
         )
     )

@@ -42,7 +42,6 @@ async def get_content(
     msgs = await asyncio.gather(
         *[sources_func[s](keyword) for s in sources], return_exceptions=True
     )
-    print(msgs)
     msgs = [
         (msg[0], msg[1], msg[2], idx)
         for idx, msg in enumerate(msgs)

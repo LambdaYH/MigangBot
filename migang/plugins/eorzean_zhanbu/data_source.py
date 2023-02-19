@@ -5,20 +5,20 @@ import random
 import aiohttp
 import os
 from io import BytesIO
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Optional
 from pathlib import Path
 from datetime import datetime, date
 
 from . import zhanbu_config
 
 from nonebot import get_driver
+from sqlmodel import select
 from nonebot_plugin_imageutils.fonts import add_font
 from nonebot_plugin_imageutils import BuildImage
-from tortoise.transactions import in_transaction
-from tortoise.exceptions import OperationalError
+from nonebot_plugin_datastore import create_session
 
 from migang.core import FONT_PATH
-from migang.models import EorzeanZhanbu
+from .model import EorzeanZhanbuRecorder
 
 
 BG_PATH = Path(__file__).parent / "image"
@@ -253,53 +253,49 @@ async def get_zhanbu_result(user_id: int) -> Tuple[int, str, str, str, str, str]
 TIMEDELTA = datetime.now() - datetime.utcnow()
 
 
-async def get_eorzean_zhanbu(user_id: str) -> BytesIO:
-    try:
-        async with in_transaction() as connection:
-            if (
-                not (
-                    user := await EorzeanZhanbu.filter(user_id=user_id)
-                    .select_for_update()
-                    .using_db(connection)
-                    .select_for_update()
-                    .first()
-                )
-            ) or ((user.zhanbu_time_last + TIMEDELTA).date() < datetime.now().date()):
-                luck, yi, ji, dye, append_msg, occupation = await get_zhanbu_result(
-                    user_id=user_id
-                )
-                basemap = get_basemap(occupation=occupation)
-                if user:
-                    (
-                        user.luck,
-                        user.yi,
-                        user.ji,
-                        user.dye,
-                        user.append_msg,
-                        user.basemap,
-                    ) = (luck, yi, ji, dye, append_msg, basemap)
-                    await user.save(using_db=connection)
-                else:
-                    await EorzeanZhanbu(
-                        user_id=user_id,
-                        luck=luck,
-                        yi=yi,
-                        ji=ji,
-                        dye=dye,
-                        append_msg=append_msg,
-                        basemap=basemap,
-                    ).save(using_db=connection)
-            else:
-                luck, yi, ji, dye, append_msg, basemap = (
+async def get_eorzean_zhanbu(user_id: int) -> BytesIO:
+    async with create_session() as session:
+        user: Optional[EorzeanZhanbuRecorder] = await session.scalar(
+            statement=select(EorzeanZhanbuRecorder).where(
+                EorzeanZhanbuRecorder.user_id == user_id
+            )
+        )
+        if not user or user.time.date() != datetime.now().date():
+            luck, yi, ji, dye, append_msg, occupation = await get_zhanbu_result(
+                user_id=user_id
+            )
+            basemap = get_basemap(occupation=occupation)
+            if user:
+                (
                     user.luck,
                     user.yi,
                     user.ji,
                     user.dye,
                     user.append_msg,
                     user.basemap,
+                ) = (luck, yi, ji, dye, append_msg, basemap)
+                session.add(user)
+            else:
+                user = EorzeanZhanbuRecorder(
+                    user_id=user_id,
+                    luck=luck,
+                    yi=yi,
+                    ji=ji,
+                    dye=dye,
+                    append_msg=append_msg,
+                    basemap=basemap,
                 )
-    except OperationalError:
-        pass
+                session.add(user)
+            await session.commit()
+        else:
+            luck, yi, ji, dye, append_msg, basemap = (
+                user.luck,
+                user.yi,
+                user.ji,
+                user.dye,
+                user.append_msg,
+                user.basemap,
+            )
     return await asyncio.get_event_loop().run_in_executor(
         None, draw, luck, yi, ji, dye, append_msg, BG_PATH / basemap
     )

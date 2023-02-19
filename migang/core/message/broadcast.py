@@ -4,7 +4,7 @@ from typing import Union, Dict, List, Optional
 
 from nonebot import get_bot
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed
+from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, MessageSegment
 
 from migang.core.manager import group_manager
 
@@ -14,7 +14,7 @@ class SendManager:
         self,
         bot: Bot,
         group_list: List[int],
-        msg: Union[List[Message], Message],
+        msg: Union[List[Message], Message, MessageSegment],
         forward=False,
         retry_limit: int = 3,
         retry_interval: int = 5,
@@ -90,7 +90,7 @@ class SendManager:
 
 async def broadcast(
     task_name: str,
-    msg: Union[List[Message], Message],
+    msg: Union[List[Message], Message, MessageSegment],
     forward: bool = False,
     bot: Optional[Bot] = None,
 ) -> None:
@@ -98,7 +98,7 @@ async def broadcast(
 
     Args:
         task_name (str): 任务名
-        msg (Union[List[Message], Message]): 消息
+        msg (Union[List[Message], Message, MessageSegment]): 消息
         forward (bool, optional): 若以转发模式，则True. Defaults to False.
         bot (Optional[Bot], optional): 选定的bot. Defaults to None.
     """

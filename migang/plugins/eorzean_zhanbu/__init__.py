@@ -9,11 +9,13 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
 )
 from nonebot.log import logger
-from nonebot import on_command
+from nonebot import on_command, require
 from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
 
 from .data_source import get_event_zhanbu, get_eorzean_zhanbu
+
+require("nonebot_plugin_datastore")
 
 __plugin_meta__ = PluginMetadata(
     name="艾欧泽亚占卜",

@@ -448,7 +448,7 @@ def draw_error(e: Exception, sv_type: ServerType) -> BytesIO:
 
     extra_img = format_extra(extra).wrap(MIN_WIDTH - MARGIN * 2) if extra else None
 
-    return build_img(get_header_by_svr_type(svr_type), reason, extra_img)
+    return build_img(get_header_by_svr_type(sv_type), reason, extra_img)
 
 
 def draw_list(list_text: str) -> BytesIO:

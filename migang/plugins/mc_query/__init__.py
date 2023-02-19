@@ -24,7 +24,7 @@ from .data_source import (
     get_mc_model,
 )
 
-require("nonebot_plugin_imageutils")
+require("nonebot_plugin_datastore")
 
 __plugin_meta__ = PluginMetadata(
     name="MC查询",
@@ -94,7 +94,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         if host_port := await get_server_info(
             group_id=group_id, user_id=user_id, name=params[0]
         ):
-            host, port, sv_type = host_port[0], host_port[1], host_port[2]
+            host, port, sv_type = host_port
         else:
             await query.finish(
                 f"名称为 {params[0]} 的服务器未添加，请添加后查询或发送[查询mcs ip:<port> je/be]查询"

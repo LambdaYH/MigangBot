@@ -27,6 +27,7 @@ class PluginManager:
         enabled_group: Set[int]
         disabled_group: Set[int]
         category: str
+        hidden: bool = False
         author: Optional[str]
         version: Union[str, int, None]
 
@@ -39,7 +40,6 @@ class PluginManager:
             self,
             file: Path,
             usage: Optional[str] = None,
-            hidden: bool = False,
             always_on: bool = False,
             plugin_type: PluginType = PluginType.All,
         ) -> None:
@@ -70,7 +70,7 @@ class PluginManager:
             self.author: str
             self.version: str
             self.usage: Optional[str] = usage
-            self.hidden: bool = hidden
+            self.hidden: bool
             self.__always_on: bool = always_on
             self.__group_permission: Permission
             self.__user_permission: Permission
@@ -93,6 +93,7 @@ class PluginManager:
             self.all_name.add(self.name)
             self.__group_permission: Permission = self.__data.group_permission
             self.__user_permission: Permission = self.__data.user_permission
+            self.hidden: bool = self.__data.hidden
             self.category: Optional[str] = self.__data.category
             self.author: str = self.__data.author
             self.version: str = self.__data.version
@@ -242,14 +243,6 @@ class PluginManager:
             if self.usage:
                 return
             self.usage = usage
-
-        def set_hidden(self, hidden: bool) -> None:
-            """设置插件隐藏状态
-
-            Args:
-                hidden (bool): 隐藏状态
-            """
-            self.hidden = hidden
 
         def set_always_on(self, always_on: bool) -> None:
             """设置插件是否不可关闭，若是，则True
@@ -499,7 +492,6 @@ class PluginManager:
         self,
         plugin_name: str,
         usage: Optional[str],
-        hidden: bool,
         always_on: bool,
         plugin_type: PluginType,
     ) -> None:
@@ -513,7 +505,6 @@ class PluginManager:
         """
         if plugin := self.__plugin.get(plugin_name):
             plugin.set_usage(usage=usage)
-            plugin.set_hidden(hidden=hidden)
             plugin.set_always_on(always_on=always_on)
             plugin.set_plugin_type(type=plugin_type)
 
@@ -591,6 +582,7 @@ class PluginManager:
                         default_status=default_status,
                         enabled_group=set(),
                         disabled_group=set(),
+                        hidden=hidden,
                         category=category,
                         author=author,
                         version=version,
@@ -599,7 +591,6 @@ class PluginManager:
         self.__plugin[plugin_name] = PluginManager.Plugin(
             file=self.__file_path / file_name,
             usage=usage,
-            hidden=hidden,
             always_on=always_on,
             plugin_type=plugin_type,
         )
