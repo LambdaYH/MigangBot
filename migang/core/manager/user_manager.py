@@ -157,7 +157,7 @@ class UserManager:
         user.set_permission(permission=permission)
         self.__dirty_data = True
 
-    def get_user_permission(self, user_id: int)->Permission:
+    def get_user_permission(self, user_id: int) -> Permission:
         """获取用户权限
 
         Args:
