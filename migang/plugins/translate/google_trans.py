@@ -26,7 +26,7 @@ class GoogleTranslator(BaseTranslator):
         source: str = "auto",
         target: str = "en",
         proxies: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         @param source: source language to translate from
@@ -40,7 +40,7 @@ class GoogleTranslator(BaseTranslator):
             element_tag="div",
             element_query={"class": "t0"},
             payload_key="q",  # key of text in the url
-            **kwargs
+            **kwargs,
         )
 
         self._alt_element_query = {"class": "result-container"}

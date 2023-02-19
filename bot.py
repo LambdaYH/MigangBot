@@ -1,8 +1,8 @@
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter
 
-from migang.core.manager import save, permission_manager
-from migang.core.database import init_db, close_db
+from migang.core.database import close_db, init_db
+from migang.core.manager import permission_manager, save
 
 nonebot.init()
 
