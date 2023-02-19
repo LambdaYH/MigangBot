@@ -334,3 +334,14 @@ class GroupManager:
         group = self.__get_group(group_id=group_id)
         group.set_permission(permission=permission)
         self.__dirty_data = True
+
+    def get_group_permission(self, group_id: int) -> Permission:
+        """获取群权限
+
+        Args:
+            group_id (int): 群号
+
+        Returns:
+            Permission: 群权限
+        """
+        return self.__get_group(group_id=group_id).permission

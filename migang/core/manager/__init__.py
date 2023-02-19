@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from nonebot.log import logger
+from nonebot import get_driver
 
 from .plugin_manager import PluginManager
 from .task_manager import TaskManager, TaskItem
@@ -10,6 +11,7 @@ from .config_manager import ConfigManager, ConfigItem
 from .cd_manager import CDManager, CDItem
 from .count_manager import CountManager, CountPeriod, CountItem
 from .request_manager import RequestManager
+from .permission_manager import PermissionManager
 
 from .data_class import LimitType, CheckType, CountPeriod, PluginType
 
@@ -57,6 +59,11 @@ request_manager: RequestManager = RequestManager(
 """管理各种请求
 """
 
+permission_manager: PermissionManager = PermissionManager(
+    core_data_path / "permission_manager.json"
+)
+"""管理权限，设置限时权限
+"""
 
 async def save():
     """保存各管理器需要保存的文件"""
@@ -64,6 +71,11 @@ async def save():
 
     logger.debug("正在持久化数据...")
     await asyncio.gather(
-        *[group_manager.save(), user_manager.save(), count_manager.save()]
+        *[
+            group_manager.save(),
+            user_manager.save(),
+            count_manager.save(),
+            permission_manager.save(),
+        ]
     )
     logger.debug("数据持久化完成...")
