@@ -1,22 +1,22 @@
-import re
 import asyncio
-from typing import Coroutine, Optional, Tuple, List, Union, Callable
+import re
+from typing import Callable, Coroutine, List, Optional, Tuple, Union
 
 import aiohttp
 from aiocache import cached
 from nonebot import on_regex
+from nonebot.adapters.onebot.v11 import ActionFailed, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11.permission import GROUP
+from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import RegexMatched
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, ActionFailed
-from nonebot.log import logger
-from nonebot.adapters.onebot.v11.permission import GROUP
 
-from migang.core import TaskItem, check_task, GroupTaskChecker
+from migang.core import GroupTaskChecker, TaskItem, check_task
 
 from .bilibili import (
-    BVID_PATTERN,
     AID_PATTERN,
+    BVID_PATTERN,
     bilibili_bangumi_keywords,
     bilibili_live_keywords,
     bilibili_video_keywords,
@@ -25,8 +25,8 @@ from .bilibili import (
     get_video_detail,
 )
 from .github import get_github_repo_card, github_urls
-from .weibo import get_weibo_info, weibo_urls
 from .utils import cache
+from .weibo import get_weibo_info, weibo_urls
 
 __plugin_meta__ = PluginMetadata(
     name="群内链接解析",

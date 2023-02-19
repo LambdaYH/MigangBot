@@ -1,45 +1,45 @@
 """获取帮助图片、插件帮助、群被动状态
 """
 
-from pathlib import Path
-from typing import Set, Union, List
-from io import BytesIO
 import re
+from io import BytesIO
+from pathlib import Path
+from typing import List, Set, Union
 
-from nonebot.permission import SuperUser, SUPERUSER
-from nonebot_plugin_imageutils import text2image
-from nonebot import on_command, require, get_plugin
-from nonebot.params import CommandArg
-from nonebot.rule import (
-    to_me,
-    ToMeRule,
-    FullmatchRule,
-    CommandRule,
-    StartswithRule,
-    EndswithRule,
-    RegexRule,
-    KeywordsRule,
-)
+import anyio
+from nonebot import get_plugin, on_command, require
 from nonebot.adapters.onebot.v11 import (
-    Bot,
     GROUP,
+    Bot,
+    GroupMessageEvent,
     Message,
     MessageEvent,
-    GroupMessageEvent,
-    PrivateMessageEvent,
     MessageSegment,
+    PrivateMessageEvent,
 )
-import anyio
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER, SuperUser
+from nonebot.rule import (
+    CommandRule,
+    EndswithRule,
+    FullmatchRule,
+    KeywordsRule,
+    RegexRule,
+    StartswithRule,
+    ToMeRule,
+    to_me,
+)
+from nonebot_plugin_imageutils import text2image
 
 from migang.core.manager import group_manager, plugin_manager, user_manager
 
 from .data_source import (
+    GROUP_HELP_PATH,
+    GROUP_TASK_PATH,
+    USER_HELP_PATH,
     get_help_image,
     get_plugin_help,
     get_task_image,
-    GROUP_HELP_PATH,
-    USER_HELP_PATH,
-    GROUP_TASK_PATH,
 )
 
 require("nonebot_plugin_htmlrender")

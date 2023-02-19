@@ -4,13 +4,12 @@
 # ref: https://github.com/observerss/textfilter
 
 import re
-
 from collections import defaultdict
 from typing import Union
+
 from nonebot.adapters.onebot.v11 import Message
 
 from migang.core import TEXT_PATH
-
 
 __all__ = ["NaiveFilter", "BSFilter", "DFAFilter"]
 __author__ = "observer"

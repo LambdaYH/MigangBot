@@ -1,14 +1,14 @@
-import uuid
-import random
 import hashlib
+import random
+import uuid
 
 import aiohttp
 from nonebot import get_driver
 
 from migang.core import get_config
 
-from .google_trans import GoogleTranslator
 from .deepl_trans import DeeplTranslator
+from .google_trans import GoogleTranslator
 
 
 async def get_google_trans(text):

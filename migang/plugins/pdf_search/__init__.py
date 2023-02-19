@@ -1,21 +1,21 @@
 """网络环境可能导致无法访问
 """
-import re
 import os
+import re
 
 import aiohttp
-from fake_useragent import UserAgent
-from nonebot.plugin import PluginMetadata
-from nonebot import on_startswith
-from nonebot.log import logger
 from bs4 import BeautifulSoup
-from nonebot.params import Startswith
+from fake_useragent import UserAgent
+from nonebot import on_startswith
 from nonebot.adapters.onebot.v11 import (
-    MessageSegment,
     Bot,
-    MessageEvent,
     GroupMessageEvent,
+    MessageEvent,
+    MessageSegment,
 )
+from nonebot.log import logger
+from nonebot.params import Startswith
+from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
     name="PDF搜索",

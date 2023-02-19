@@ -52,6 +52,16 @@ nonebot-plugin-hikarisearch = "^0.1.7"
 nonebot-plugin-abstract = "^1.0.6"
 nonebot-plugin-datastore = {extras = ["cli"], version = "^0.5.8"}
 
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310']
+include = '\.pyi?$'
+preview = false
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+
 [tool.poetry.group.dev.dependencies]
 black = {version = "^23.1.0", allow-prereleases = true}
 

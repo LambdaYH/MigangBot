@@ -1,6 +1,6 @@
 import asyncio
 from pathlib import Path
-from typing import Union, Dict, Set, List, Optional
+from typing import Dict, List, Optional, Set, Union
 
 import anyio
 from pydantic import BaseModel

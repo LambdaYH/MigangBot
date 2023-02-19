@@ -1,12 +1,12 @@
 import asyncio
 from pathlib import Path
-from typing import Union, Iterable, Optional, Dict
+from typing import Dict, Iterable, Optional, Union
 
-import anyio
 import aiohttp
+import anyio
+from fake_useragent import UserAgent
 from nonebot.log import logger
 from tenacity import retry, stop_after_attempt, wait_random
-from fake_useragent import UserAgent
 
 
 async def async_download_files(

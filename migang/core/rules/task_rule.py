@@ -1,5 +1,5 @@
-from typing import Callable
 from functools import partial
+from typing import Callable
 
 from nonebot.adapters.onebot.v11 import Event, GroupMessageEvent, PokeNotifyEvent
 

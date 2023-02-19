@@ -1,6 +1,7 @@
 from nonebot.log import logger
 
 from migang.core.manager import cd_manager
+
 from .utils import get_plugin_list
 
 

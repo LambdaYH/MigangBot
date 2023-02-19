@@ -2,14 +2,15 @@
 """
 
 import asyncio
+
 from nonebot import get_driver
 
-from .init_plugin_info import init_plugin_info
-from .init_plugin_config import init_plugin_config
-from .init_plugin_cd import init_plugin_cd
-from .init_plugin_count import init_plugin_count
-from .init_plugin_task import init_plugin_task
 from .command_check import check_command
+from .init_plugin_cd import init_plugin_cd
+from .init_plugin_config import init_plugin_config
+from .init_plugin_count import init_plugin_count
+from .init_plugin_info import init_plugin_info
+from .init_plugin_task import init_plugin_task
 
 
 @get_driver().on_startup

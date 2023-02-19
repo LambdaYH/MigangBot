@@ -1,20 +1,16 @@
 """设定与获取个人昵称
 """
 
-from random import randint, choice
+from random import choice, randint
 
 from nonebot import on_command, on_fullmatch
-from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    Message,
-    MessageEvent,
-)
 
-from migang.core.models import NickName
 from migang.core import ConfigItem, get_config
+from migang.core.models import NickName
 
 __plugin_meta__ = PluginMetadata(
     name="昵称系统",

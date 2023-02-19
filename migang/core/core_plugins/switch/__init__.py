@@ -1,17 +1,17 @@
 from typing import Tuple
 
-from nonebot.params import Command, CommandArg
-from nonebot.permission import SUPERUSER
 from nonebot import Driver, get_driver, on_command
 from nonebot.adapters.onebot.v11 import (
     GROUP_ADMIN,
     GROUP_OWNER,
-    Message,
     GroupMessageEvent,
+    Message,
 )
+from nonebot.params import Command, CommandArg
+from nonebot.permission import SUPERUSER
 
+from migang.core.manager import group_manager, plugin_manager, task_manager
 from migang.core.path import DATA_PATH
-from migang.core.manager import plugin_manager, group_manager, task_manager
 
 driver: Driver = get_driver()
 

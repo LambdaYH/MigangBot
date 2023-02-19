@@ -1,69 +1,44 @@
-from nonebot.plugin import PluginMetadata
 from nonebot import on_message
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent
+from nonebot.adapters.onebot.v11 import GROUP, Bot, GroupMessageEvent, Message
+from nonebot.log import logger
+from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
 
-from configs.config import NICKNAME, Config
-from models.friend_user import FriendUser
-from models.group_member_info import GroupInfoUser
-from services.log import logger
-from utils.utils import get_message_img, get_message_text
+from migang.core import ConfigItem, get_config
 
 from .data_source import get_chat_result, hello, no_result
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
     name="chat_",
-    description="发消息给维护者",
+    description="与Bot进行对话",
     usage="""
 usage：
-    发送消息给维护者
-    指令：
-        .send xxx
+    与Bot普普通通的对话吧！
 """.strip(),
     extra={
-        "unique_name": "migang_feedback",
-        "example": ".send 早上好",
+        "unique_name": "migang_chat",
+        "example": "",
         "author": "migang",
         "version": 0.1,
     },
 )
 
-__zx_plugin_name__ = "AI"
-__plugin_usage__ = f"""
-usage：
-    与{NICKNAME}普普通通的对话吧！
-"""
-__plugin_version__ = 0.1
-__plugin_author__ = "HibiKier"
-__plugin_settings__ = {
-    "level": 5,
-    "cmd": ["Ai", "ai", "AI", "aI"],
-}
-__plugin_configs__ = {
-    "TL_KEY": {"value": [], "help": "图灵Key"},
-    "ALAPI_AI_CHECK": {"value": False, "help": "是否检测青云客骂娘回复", "default_value": False},
-    "TEXT_FILTER": {
-        "value": ["鸡", "口交"],
-        "help": "文本过滤器，将敏感词更改为*",
-        "default_value": [],
-    },
-}
-Config.add_plugin_config(
-    "alapi", "ALAPI_TOKEN", None, help_="在 https://admin.alapi.cn/user/login 登录后获取token"
+__plugin_config__ = (
+    ConfigItem(key="turing_key", description="图灵机器人 key https://www.turingapi.com/"),
+    ConfigItem(
+        key="text_filter",
+        initial_value=["鸡", "口交"],
+        default_value=[],
+        description="回答过滤词，会以*呈现",
+    ),
 )
 
-ai = on_message(rule=to_me(), priority=998)
 
+ai = on_message(rule=to_me(), priority=998, permission=GROUP)
 
-@ai.handle()
-async def _(bot: Bot, event: MessageEvent):
-    msg = get_message_text(event.json())
-    img = get_message_img(event.json())
-    if "CQ:xml" in str(event.get_message()):
-        return
-    # 打招呼
-    if (not msg and not img) or msg in [
+hello_msg = set(
+    [
         "你好啊",
         "你好",
         "在吗",
@@ -72,26 +47,29 @@ async def _(bot: Bot, event: MessageEvent):
         "您好啊",
         "你好",
         "在",
-    ]:
+    ]
+)
+
+
+@ai.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    if "CQ:xml" in str(event.message):
+        return
+    # 打招呼
+    msg = event.get_plaintext()
+    img = [seg.data["url"] for seg in event.message]
+    if msg or msg in hello_msg:
         await ai.finish(hello())
     img = img[0] if img else ""
-    if isinstance(event, GroupMessageEvent):
-        nickname = await GroupInfoUser.get_user_nickname(event.user_id, event.group_id)
-    else:
-        nickname = await FriendUser.get_user_nickname(event.user_id)
-    if not nickname:
-        if isinstance(event, GroupMessageEvent):
-            nickname = event.sender.card or event.sender.nickname
-        else:
-            nickname = event.sender.nickname
+    nickname = event.sender.card or event.sender.nickname
     result = await get_chat_result(msg, img, event.user_id, nickname)
     logger.info(
-        f"USER {event.user_id} GROUP {event.group_id if isinstance(event, GroupMessageEvent) else ''} "
+        f"用户 {event.user_id} 群 {event.group_id if isinstance(event, GroupMessageEvent) else ''} "
         f"问题：{msg} ---- 回答：{result}"
     )
     if result:
         result = str(result)
-        for t in Config.get_config("ai", "TEXT_FILTER"):
+        for t in await get_config("text_filter"):
             result = result.replace(t, "*")
         await ai.finish(Message(result))
     else:

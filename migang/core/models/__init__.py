@@ -1,2 +1,2 @@
-from .nickname import NickName
 from .feedback import FeedBack
+from .nickname import NickName

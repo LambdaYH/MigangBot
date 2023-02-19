@@ -3,30 +3,30 @@
 import asyncio
 from datetime import datetime
 from io import BytesIO
-from typing import Tuple, Union, Dict, Any
+from typing import Any, Dict, Tuple, Union
 
-from nonebot.log import logger
-from nonebot.permission import SUPERUSER
-from nonebot import on_command, on_fullmatch, on_request, on_notice
-from nonebot.plugin import PluginMetadata
-from nonebot.params import CommandArg, Command, Fullmatch
+from nonebot import on_command, on_fullmatch, on_notice, on_request
 from nonebot.adapters.onebot.v11 import (
-    Bot,
-    Message,
-    FriendRequestEvent,
-    GroupRequestEvent,
-    FriendAddNoticeEvent,
     ActionFailed,
-    MessageSegment,
-    GroupMessageEvent,
-    PrivateMessageEvent,
+    Bot,
+    FriendAddNoticeEvent,
+    FriendRequestEvent,
     GroupDecreaseNoticeEvent,
     GroupIncreaseNoticeEvent,
+    GroupMessageEvent,
+    GroupRequestEvent,
+    Message,
+    MessageSegment,
+    PrivateMessageEvent,
 )
+from nonebot.log import logger
+from nonebot.params import Command, CommandArg, Fullmatch
+from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot_plugin_imageutils import BuildImage, text2image
 
-from migang.core.manager import request_manager, group_manager, user_manager
-from migang.core import ConfigItem, get_config, BLACK
+from migang.core import BLACK, ConfigItem, get_config
+from migang.core.manager import group_manager, request_manager, user_manager
 
 from .data_source import build_request_img
 

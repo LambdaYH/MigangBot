@@ -1,25 +1,24 @@
 import asyncio
 import hashlib
-import secrets
-import random
-import aiohttp
 import os
+import random
+import secrets
+from datetime import date, datetime
 from io import BytesIO
-from typing import Union, List, Tuple, Optional
 from pathlib import Path
-from datetime import datetime, date
+from typing import List, Optional, Tuple, Union
 
-from . import zhanbu_config
-
+import aiohttp
 from nonebot import get_driver
-from sqlmodel import select
-from nonebot_plugin_imageutils.fonts import add_font
-from nonebot_plugin_imageutils import BuildImage
 from nonebot_plugin_datastore import create_session
+from nonebot_plugin_imageutils import BuildImage
+from nonebot_plugin_imageutils.fonts import add_font
+from sqlmodel import select
 
 from migang.core import FONT_PATH
-from .model import EorzeanZhanbuRecorder
 
+from . import zhanbu_config
+from .model import EorzeanZhanbuRecorder
 
 BG_PATH = Path(__file__).parent / "image"
 
@@ -248,9 +247,6 @@ async def get_zhanbu_result(user_id: int) -> Tuple[int, str, str, str, str, str]
         append_msg = f'"{await get_hitokoto()}"'
 
     return luck, luck_yi, luck_ji, luck_dye, append_msg, luck_occupation
-
-
-TIMEDELTA = datetime.now() - datetime.utcnow()
 
 
 async def get_eorzean_zhanbu(user_id: int) -> BytesIO:

@@ -1,6 +1,7 @@
+from typing import Tuple
+
 import aiohttp
 from thefuzz import fuzz
-from typing import Tuple
 
 
 async def get_nbnhhsh(keyword: str) -> Tuple[str, str, str]:

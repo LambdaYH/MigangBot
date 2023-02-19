@@ -1,11 +1,11 @@
-from typing import Iterable, Dict, Any, Optional
+from typing import Any, Dict, Iterable, Optional
 
 import aiohttp
 import anyio
 from nonebot.log import logger
 
+from migang.core.manager import PluginType, core_data_path, plugin_manager
 from migang.core.manager.plugin_manager import CUSTOM_USAGE_PATH
-from migang.core.manager import plugin_manager, PluginType, core_data_path
 from migang.core.permission import NORMAL
 
 from .utils import get_plugin_list

@@ -1,7 +1,7 @@
-from typing import Dict, Deque, Set
-from collections import deque, defaultdict
-import time
 import asyncio
+import time
+from collections import defaultdict, deque
+from typing import Deque, Dict, Set
 
 
 class GroupCache:

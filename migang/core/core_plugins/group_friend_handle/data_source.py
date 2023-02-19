@@ -1,17 +1,15 @@
 from io import BytesIO
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 import aiohttp
 from async_lru import alru_cache
 from nonebot import get_driver
 from nonebot.log import logger
-
 from nonebot_plugin_imageutils import BuildImage, text2image
 from nonebot_plugin_imageutils.fonts import add_font
 
-
-from migang.core.manager.request_manager import FriendRequest, GroupRequest
 from migang.core import FONT_PATH
+from migang.core.manager.request_manager import FriendRequest, GroupRequest
 
 
 @get_driver().on_startup

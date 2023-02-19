@@ -1,18 +1,18 @@
 import base64
-import socket
 import random
 import re
+import socket
+from asyncio.exceptions import TimeoutError
 from io import BytesIO
 from pathlib import Path
-from asyncio.exceptions import TimeoutError
-from typing import Literal, Optional, Union, List, TypedDict
 from string import ascii_letters, digits, punctuation
-from PIL.Image import Resampling
+from typing import List, Literal, Optional, TypedDict, Union
 
 from mcstatus.bedrock_status import BedrockStatusResponse
 from mcstatus.pinger import PingResponse
 from nonebot_plugin_imageutils import BuildImage, Text2Image
 from nonebot_plugin_imageutils.fonts import add_font
+from PIL.Image import Resampling
 
 ServerType = Literal["je", "be"]
 

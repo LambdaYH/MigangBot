@@ -1,10 +1,10 @@
 import csv
 from io import StringIO
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 import aiohttp
-from nonebot.log import logger
 from nonebot import Driver, get_driver
+from nonebot.log import logger
 from nonebot_plugin_apscheduler import scheduler
 
 from migang.core import DATA_PATH

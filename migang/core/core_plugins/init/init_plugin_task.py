@@ -2,7 +2,7 @@ from typing import Iterable
 
 from nonebot.log import logger
 
-from migang.core.manager import task_manager, TaskItem
+from migang.core.manager import TaskItem, task_manager
 from migang.core.permission import NORMAL
 
 from .utils import get_plugin_list

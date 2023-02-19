@@ -1,25 +1,24 @@
-from pathlib import Path
-from io import BytesIO
-import base64
 import asyncio
+import base64
 import traceback
-from typing import Optional, List, Union
+from io import BytesIO
+from pathlib import Path
+from typing import List, Optional, Union
 
-import anyio
 import aiohttp
+import anyio
 import jinja2
-from sqlalchemy import select
-from nonebot_plugin_datastore import create_session
 from mcstatus import BedrockServer, JavaServer
-from PIL.Image import Image as IMG
-from PIL import Image
-from nonebot_plugin_htmlrender import get_new_page
-from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot.log import logger
+from nonebot_plugin_datastore import create_session
+from nonebot_plugin_htmlrender import get_new_page
+from PIL import Image
+from PIL.Image import Image as IMG
+from sqlalchemy import select
 
-from .model import McServerPrivate, McServerGroup
-
-from .draw import draw_bedrock, draw_java, draw_error, draw_list
+from .draw import draw_bedrock, draw_error, draw_java, draw_list
+from .model import McServerGroup, McServerPrivate
 
 data_path = Path() / "data" / "mcquery"
 db_file = data_path / "mcserver.db"

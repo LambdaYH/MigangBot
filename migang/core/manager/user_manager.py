@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import Union, Dict
+from typing import Dict, Union
 
 import anyio
 from pydantic import BaseModel
 
-from migang.core.permission import NORMAL, Permission
-from migang.core.manager.plugin_manager import PluginManager
 from migang.core.exception import FileTypeError
+from migang.core.manager.plugin_manager import PluginManager
+from migang.core.permission import NORMAL, Permission
 
 
 class UserManager:

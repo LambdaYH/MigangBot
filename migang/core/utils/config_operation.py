@@ -1,6 +1,6 @@
 import sys
-from typing import Optional, Any
 from pathlib import Path
+from typing import Any, Optional
 
 from migang.core.manager import config_manager
 

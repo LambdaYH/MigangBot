@@ -1,13 +1,12 @@
-import re
 import html
+import re
 from typing import Tuple
 
-from lxml import etree
-from aiocache import cached
 import aiohttp
-
+from aiocache import cached
 from fake_useragent import UserAgent
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
+from lxml import etree
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 AID_PATTERN = re.compile(r"(av|AV)\d+")
 BVID_PATTERN = re.compile(r"(BV|bv)([a-zA-Z0-9])+")

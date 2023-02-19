@@ -1,6 +1,5 @@
 from nonebot.plugin import get_loaded_plugins
 
-
 _ignore_plugins = set(
     [
         "nonebot_plugin_imageutils",

@@ -1,10 +1,10 @@
-import re
 import asyncio
+import re
 from typing import Tuple
 
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.log import logger
 from nonebot_plugin_htmlrender.browser import get_new_page
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
 
 weibo_urls = ("https://share.api.weibo.cn", "https://m.weibo.cn", "https://weibo.com")
 

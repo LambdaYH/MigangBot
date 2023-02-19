@@ -2,27 +2,13 @@ import os
 import random
 import re
 
-from configs.config import NICKNAME, Config
-from configs.path_config import DATA_PATH, IMAGE_PATH
-from services.log import logger
-from utils.http_utils import AsyncHttpx
-from utils.message_builder import face, image
+import ujson as json
+
+from migang.core import get_config
 
 from .utils import ai_message_manager
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
-
-
 url = "http://openapi.tuling123.com/openapi/api/v2"
-
-check_url = "https://v2.alapi.cn/api/censor/text"
-
-index = 0
-
-anime_data = json.load(open(DATA_PATH / "anime.json", "r", encoding="utf8"))
 
 
 async def get_chat_result(text: str, img_url: str, user_id: int, nickname: str) -> str:
@@ -40,16 +26,7 @@ async def get_chat_result(text: str, img_url: str, user_id: int, nickname: str) 
     if special_rst:
         ai_message_manager.add_result(user_id, special_rst)
         return special_rst
-    if index == 5:
-        index = 0
-    if len(text) < 6 and random.random() < 0.6:
-        keys = anime_data.keys()
-        for key in keys:
-            if text.find(key) != -1:
-                return random.choice(anime_data[key]).replace("你", nickname)
     rst = await tu_ling(text, img_url, user_id)
-    if not rst:
-        rst = await xie_ai(text)
     if not rst:
         return no_result()
     if nickname:
@@ -74,7 +51,7 @@ async def tu_ling(text: str, img_url: str, user_id: int) -> str:
     :return: 图灵回复
     """
     global index
-    TL_KEY = Config.get_config("ai", "TL_KEY")
+    TL_KEY = await get_config("turing_key")
     req = None
     if not TL_KEY:
         return ""
@@ -117,52 +94,6 @@ async def tu_ling(text: str, img_url: str, user_id: int) -> str:
                 if "请求次数超过" in text:
                     text = ""
     return text
-
-
-# 屑 AI
-async def xie_ai(text: str) -> str:
-    """
-    获取青云客回复
-    :param text: 问题
-    :return: 青云可回复
-    """
-    res = await AsyncHttpx.get(
-        f"http://api.qingyunke.com/api.php?key=free&appid=0&msg={text}"
-    )
-    content = ""
-    try:
-        data = json.loads(res.text)
-        if data["result"] == 0:
-            content = data["content"]
-            if "菲菲" in content:
-                content = content.replace("菲菲", NICKNAME)
-            if "艳儿" in content:
-                content = content.replace("艳儿", NICKNAME)
-            if "公众号" in content:
-                content = ""
-            if "{br}" in content:
-                content = content.replace("{br}", "\n")
-            if "提示" in content:
-                content = content[: content.find("提示")]
-            if "淘宝" in content or "taobao.com" in content:
-                return ""
-            while True:
-                r = re.search("{face:(.*)}", content)
-                if r:
-                    id_ = r.group(1)
-                    content = content.replace(
-                        "{" + f"face:{id_}" + "}", str(face(int(id_)))
-                    )
-                else:
-                    break
-        return (
-            content
-            if not content and not Config.get_config("ai", "ALAPI_AI_CHECK")
-            else await check_text(content)
-        )
-    except Exception as e:
-        logger.error(f"Ai xie_ai 发生错误 {type(e)}：{e}")
-        return ""
 
 
 def hello() -> str:

@@ -1,18 +1,18 @@
 import random
 
-from nonebot.plugin import PluginMetadata
 from nonebot import on_message
 from nonebot.adapters.onebot.v11 import (
-    GroupMessageEvent,
-    MessageSegment,
     GROUP,
+    GroupMessageEvent,
     Message,
+    MessageSegment,
 )
+from nonebot.plugin import PluginMetadata
 
-from migang.core.exception import ConfigNoExistError
 from migang.core import ConfigItem, sync_get_config
-from migang.utils.tts import get_azure_tts, azure_tts_status
+from migang.core.exception import ConfigNoExistError
 from migang.utils.text import filt_message
+from migang.utils.tts import azure_tts_status, get_azure_tts
 
 __plugin_meta__ = PluginMetadata(
     name="复读",

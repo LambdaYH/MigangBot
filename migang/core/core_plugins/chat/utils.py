@@ -1,9 +1,10 @@
-from utils.manager import StaticData
-from configs.config import NICKNAME
-from models.ban_user import BanUser
-from typing import Optional
 import random
 import time
+from typing import Optional
+
+from configs.config import NICKNAME
+from models.ban_user import BanUser
+from utils.manager import StaticData
 
 
 class AiMessageManager(StaticData):

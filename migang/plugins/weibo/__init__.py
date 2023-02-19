@@ -1,26 +1,24 @@
-from time import strftime, localtime
-from typing import Dict
 from asyncio import gather
+from time import localtime, strftime
+from typing import Dict
 
-from tenacity import retry, wait_random, stop_after_attempt, RetryError
+from nonebot import get_bot, get_driver, on_fullmatch
+from nonebot.adapters.onebot.v11 import GROUP, GroupMessageEvent, MessageSegment
 from nonebot.log import logger
-from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, GROUP
-from nonebot import on_fullmatch
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
-from nonebot import get_driver, get_bot
-
-from nonebot_plugin_imageutils import text2image
-from nonebot_plugin_htmlrender import get_new_page
 from nonebot_plugin_apscheduler import scheduler
+from nonebot_plugin_htmlrender import get_new_page
+from nonebot_plugin_imageutils import text2image
+from tenacity import RetryError, retry, stop_after_attempt, wait_random
 
-from migang.core import sync_get_config, ConfigItem, TaskItem, broadcast, check_task
-from migang.utils.image import pic_to_bytes
+from migang.core import ConfigItem, TaskItem, broadcast, check_task, sync_get_config
 from migang.utils.file import async_load_data, async_save_data
+from migang.utils.image import pic_to_bytes
 
-from .weibo_spider import WeiboSpider, weibo_record_path, weibo_id_name_file
 from ._utils import get_image_cqcode
+from .weibo_spider import WeiboSpider, weibo_id_name_file, weibo_record_path
 
 tasks_dict = {}
 

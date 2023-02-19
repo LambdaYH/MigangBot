@@ -1,5 +1,5 @@
-from typing import Union, List, Dict, Literal, Optional
 from pathlib import Path
+from typing import Dict, List, Literal, Optional, Union
 
 from nonebot.log import logger
 from nonebot_plugin_htmlrender import get_new_page

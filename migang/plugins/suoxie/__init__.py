@@ -1,9 +1,9 @@
 import aiohttp
 from fake_useragent import UserAgent
-from nonebot.plugin import PluginMetadata
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
     name="缩写查询",

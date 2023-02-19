@@ -1,6 +1,7 @@
+from typing import Tuple
+
 import httpx
 from thefuzz import fuzz
-from typing import Tuple
 
 url = "https://api.jikipedia.com/go/search_entities"
 header = {

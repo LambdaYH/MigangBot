@@ -2,10 +2,10 @@
 """
 import re
 
-from nonebot import on_keyword, on_command
-from nonebot.plugin import PluginMetadata
-from nonebot.params import CommandArg, EventPlainText
+from nonebot import on_command, on_keyword
 from nonebot.adapters.onebot.v11 import Message
+from nonebot.params import CommandArg, EventPlainText
+from nonebot.plugin import PluginMetadata
 
 from .data_source import get_content
 

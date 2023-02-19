@@ -5,7 +5,6 @@ from migang.core import DATA_PATH
 from migang.utils.file import async_load_data, async_save_data
 from migang.utils.http import async_download_files
 
-
 DATA_PATH = DATA_PATH / "shiningnikki_image"
 DATA_PATH.mkdir(exist_ok=True, parents=True)
 

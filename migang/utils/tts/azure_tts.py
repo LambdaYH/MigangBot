@@ -1,16 +1,16 @@
 from typing import Optional
-
-from nonebot import get_driver
 from xml.etree.ElementTree import Element, SubElement, tostring
+
 from azure.cognitiveservices.speech import (
     AudioDataStream,
     SpeechConfig,
-    SpeechSynthesizer,
     SpeechSynthesisOutputFormat,
+    SpeechSynthesizer,
 )
+from nonebot import get_driver
 
 from migang.core import get_config
-from migang.core.manager import config_manager, ConfigItem
+from migang.core.manager import ConfigItem, config_manager
 
 speech_config: Optional[SpeechConfig] = None
 synthesizer: Optional[SpeechSynthesizer] = None

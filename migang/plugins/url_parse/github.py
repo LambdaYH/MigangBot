@@ -1,7 +1,7 @@
 import secrets
 from typing import Tuple
 
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 github_urls = ("https://github.com",)
 

@@ -1,10 +1,10 @@
 import asyncio
 from random import random, shuffle
-from typing import Union, Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from nonebot import get_bot
+from nonebot.adapters.onebot.v11 import ActionFailed, Bot, Message, MessageSegment
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, MessageSegment
 
 from migang.core.manager import group_manager
 

@@ -3,7 +3,7 @@ import asyncio
 from aiohttp import ClientResponse, ClientSession
 from nonebot.log import logger
 
-from .model import AirApi, NowApi, DailyApi, WarningApi
+from .model import AirApi, DailyApi, NowApi, WarningApi
 
 
 class APIError(Exception):

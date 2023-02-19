@@ -2,6 +2,7 @@
 """
 import time
 from typing import Optional
+
 from . import eorzean_weather_data
 
 

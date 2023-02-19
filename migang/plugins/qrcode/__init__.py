@@ -1,18 +1,18 @@
 from io import BytesIO
 
 import aiohttp
-from pyzbar import pyzbar
-from PIL import Image, ImageEnhance
+from nonebot import on_command
 from nonebot.adapters.onebot.v11 import (
-    Message,
-    MessageEvent,
     Bot,
     GroupMessageEvent,
+    Message,
+    MessageEvent,
     MessageSegment,
 )
-from nonebot import on_command
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
+from PIL import Image, ImageEnhance
+from pyzbar import pyzbar
 
 __plugin_meta__ = PluginMetadata(
     name="二维码转链接",

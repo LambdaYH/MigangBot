@@ -1,18 +1,18 @@
 import asyncio
 
 import aiohttp
+from nonebot import get_driver, on_command
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent
-from nonebot import on_command, get_driver
-from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 
 from migang.core import ConfigItem, get_config
 
 from .data_source import (
     get_azure_trans,
-    get_deepl_trans,
     get_baidu_trans,
+    get_deepl_trans,
     get_google_trans,
     get_youdao_trans,
 )

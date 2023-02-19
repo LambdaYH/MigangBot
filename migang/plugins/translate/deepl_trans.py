@@ -1,8 +1,7 @@
 __copyright__ = "Copyright (C) 2020 Nidhal Baccouri"
-from typing import Optional, List
+from typing import List, Optional
 
 import httpx
-
 from deep_translator.base import BaseTranslator
 from deep_translator.constants import BASE_URLS, DEEPL_LANGUAGE_TO_CODE
 from deep_translator.exceptions import (

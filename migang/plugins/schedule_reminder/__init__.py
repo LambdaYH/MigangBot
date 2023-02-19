@@ -1,40 +1,38 @@
 """上古代码，以后一定重写（
 """
-from typing import Union
 from datetime import datetime
+from typing import Union
 
 from apscheduler.triggers.cron import CronTrigger
-from nonebot import get_bot
+from nonebot import get_bot, get_driver, on_command
 from nonebot.adapters.onebot.v11 import (
+    Bot,
+    GroupMessageEvent,
     Message,
-    unescape,
     MessageEvent,
     MessageSegment,
-    GroupMessageEvent,
     PrivateMessageEvent,
-    Bot,
+    unescape,
 )
+from nonebot.log import logger
+from nonebot.params import ArgStr, CommandArg
+from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_imageutils import text2image
-from nonebot import on_command, get_driver
-from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import Message
-from nonebot.params import CommandArg, ArgStr
-from nonebot.typing import T_State
-from nonebot.log import logger
+
+from migang.core import DATA_PATH, ConfigItem, get_config
+from migang.utils.file import async_load_data, async_save_data
+from migang.utils.image import pic_to_bytes
 
 from .data_source import (
     cronParse,
-    intervalParse,
     dateParse,
-    upload_image,
     get_CQ_image,
     get_image_url,
+    intervalParse,
+    upload_image,
 )
-
-from migang.core import ConfigItem, DATA_PATH, get_config
-from migang.utils.file import async_load_data, async_save_data
-from migang.utils.image import pic_to_bytes
 
 __plugin_meta__ = PluginMetadata(
     name="简易自定义定时消息",
