@@ -159,4 +159,3 @@ db_config.yaml
 # developing
 migang/plugins/about*
 test.py
-command_check.py
