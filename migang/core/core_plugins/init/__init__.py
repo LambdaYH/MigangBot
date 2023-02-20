@@ -24,4 +24,4 @@ async def _():
         ]
     )
     init_plugin_cd()
-    await check_command()
+    check_command()
