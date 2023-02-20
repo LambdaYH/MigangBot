@@ -1,23 +1,19 @@
 """
 检测指令冲突
 """
-from typing import Union, Dict, DefaultDict, Tuple
-from collections import defaultdict
-
 import re
-
+from collections import defaultdict
+from typing import DefaultDict, Dict, Tuple, Union
 
 from nonebot.log import logger
-
 from nonebot.plugin import Plugin
-
 from nonebot.rule import (
-    FullmatchRule,
     CommandRule,
-    StartswithRule,
     EndswithRule,
-    RegexRule,
+    FullmatchRule,
     KeywordsRule,
+    RegexRule,
+    StartswithRule,
 )
 
 from .utils import get_plugin_list
