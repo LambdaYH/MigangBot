@@ -1,8 +1,8 @@
 from typing import Any, Dict, Iterable, Optional
 
 import aiohttp
-import ujson
 import anyio
+import ujson
 from nonebot.log import logger
 
 from migang.core.manager import PluginType, core_data_path, plugin_manager

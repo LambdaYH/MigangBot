@@ -1,6 +1,6 @@
 import aiohttp
-from fake_useragent import UserAgent
 import ujson
+from fake_useragent import UserAgent
 
 from migang.core import DATA_PATH
 from migang.utils.file import async_load_data, async_save_data

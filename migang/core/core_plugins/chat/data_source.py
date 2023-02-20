@@ -1,12 +1,12 @@
 import random
+from asyncio.exceptions import TimeoutError
 from pathlib import Path
 from typing import Optional
 
 import aiohttp
 import ujson
-from asyncio.exceptions import TimeoutError
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
 
 from migang.core import get_config
 

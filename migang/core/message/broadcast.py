@@ -1,6 +1,6 @@
 import asyncio
 from random import random, shuffle
-from typing import Dict, List, Optional, Union, Iterable
+from typing import Dict, Iterable, List, Optional, Union
 
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import ActionFailed, Bot, Message, MessageSegment

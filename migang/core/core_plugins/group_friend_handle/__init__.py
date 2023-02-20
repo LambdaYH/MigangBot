@@ -26,7 +26,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot_plugin_imageutils import BuildImage, text2image
 
 from migang.core import BLACK, ConfigItem, get_config
-from migang.core.manager import request_manager, permission_manager
+from migang.core.manager import permission_manager, request_manager
 
 from .data_source import build_request_img
 

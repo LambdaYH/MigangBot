@@ -161,7 +161,9 @@ def get_add_info(name: str, host: str, sv_type: str):
 async def get_mc_uuid(username: str) -> str:
     url = f"https://api.mojang.com/users/profiles/minecraft/{username}"
     try:
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(10),json_serialize=ujson.dumps) as client:
+        async with aiohttp.ClientSession(
+            timeout=aiohttp.ClientTimeout(10), json_serialize=ujson.dumps
+        ) as client:
             resp = await client.get(url)
             result = await resp.json(content_type=None)
         if not result:
@@ -188,7 +190,9 @@ async def get_crafatar(type_: str, uuid: str) -> Optional[bytes]:
     url = f"https://crafatar.com/{path}/{uuid}?overlay"
 
     try:
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(10),json_serialize=ujson.dumps) as client:
+        async with aiohttp.ClientSession(
+            timeout=aiohttp.ClientTimeout(10), json_serialize=ujson.dumps
+        ) as client:
             resp = await client.get(url)
             result = await resp.read()
         return result

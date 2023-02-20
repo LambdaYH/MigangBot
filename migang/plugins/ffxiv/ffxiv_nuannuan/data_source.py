@@ -6,9 +6,9 @@ from io import BytesIO
 from typing import Dict, List
 
 import aiohttp
-import ujson
 import anyio
 import pytz
+import ujson
 from fake_useragent import UserAgent
 from nonebot import get_driver
 from nonebot.log import logger

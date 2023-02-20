@@ -1,7 +1,7 @@
 import random
 import time
 from asyncio import iscoroutinefunction
-from typing import Dict, Union, List, Callable, Coroutine, Tuple, Any
+from typing import Any, Callable, Coroutine, Dict, List, Tuple, Union
 
 from nonebot.adapters.onebot.v11 import Message
 
