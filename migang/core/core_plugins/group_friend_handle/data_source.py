@@ -2,6 +2,7 @@ from io import BytesIO
 from typing import List, Optional, Union
 
 import aiohttp
+import ujson
 from async_lru import alru_cache
 from nonebot import get_driver
 from nonebot.log import logger
@@ -23,7 +24,7 @@ async def _():
 @alru_cache(maxsize=16)
 async def get_user_avatar(qq: int) -> Optional[bytes]:
     try:
-        async with aiohttp.ClientSession() as client:
+        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
             return await (
                 await client.get(f"http://q1.qlogo.cn/g?b=qq&nk={qq}&s=160")
             ).read()

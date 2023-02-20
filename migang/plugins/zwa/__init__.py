@@ -3,6 +3,7 @@ from pathlib import Path
 from time import time
 
 import aiohttp
+import ujson
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
@@ -51,11 +52,11 @@ async def get_moring_message() -> str:
     for i in range(3):
         try:
             # 获得不同的问候语
-            async with aiohttp.ClientSession() as client:
+            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
                 r = await client.get(
                     f"https://timor.tech/api/holiday/tts?t={int(time())}", timeout=7
                 )
-            rjson = await r.json()
+                rjson = await r.json()
             if rjson["code"] == 0:
                 return f"{random.choice(MORNING)}\n{rjson['tts']}"
         except Exception as e:

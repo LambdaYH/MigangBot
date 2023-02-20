@@ -66,7 +66,7 @@ class WeiboSpider(object):
         """
         获取网页中json数据
         """
-        async with aiohttp.ClientSession() as client:
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as client:
             for i in range(5):
                 try:
                     r = await client.get(

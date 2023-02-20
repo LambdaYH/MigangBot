@@ -1,4 +1,5 @@
 import aiohttp
+import ujson
 from fake_useragent import UserAgent
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message
@@ -34,7 +35,7 @@ async def _(arg: Message = CommandArg()):
         if not episode:
             await suoxie.finish("你想知道哪个拼音缩写的全称呢？请发送[缩写 xxx]查看哦", at_sender=True)
         body = {"text": episode}
-        async with aiohttp.ClientSession() as client:
+        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
             r = await client.post(
                 url=url,
                 json=body,
@@ -44,7 +45,7 @@ async def _(arg: Message = CommandArg()):
                 },
                 timeout=10,
             )
-        data = (await r.json())[0]["trans"]
+            data = (await r.json())[0]["trans"]
         msg = f"{episode}可能是【" + "，".join(data) + "】的缩写"
         await suoxie.send(msg, at_sender=True)
     except:

@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import aiohttp
+import ujson
 from thefuzz import fuzz
 
 
@@ -8,7 +9,7 @@ async def get_nbnhhsh(keyword: str) -> Tuple[str, str, str]:
     url = "https://lab.magiconch.com/api/nbnhhsh/guess"
     headers = {"referer": "https://lab.magiconch.com/nbnhhsh/"}
     data = {"text": keyword}
-    async with aiohttp.ClientSession() as client:
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
         resp = await client.post(url=url, headers=headers, data=data, timeout=5)
         res = await resp.json()
     title = ""

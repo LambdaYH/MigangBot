@@ -1,6 +1,7 @@
 from typing import Any, Dict, Iterable, Optional
 
 import aiohttp
+import ujson
 import anyio
 from nonebot.log import logger
 
@@ -12,7 +13,7 @@ from .utils import get_plugin_list
 
 
 async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
-    async with aiohttp.ClientSession() as client:
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
         r = await (
             await client.get(
                 "https://cdn.jsdelivr.net/gh/nonebot/nonebot2/website/static/plugins.json"
@@ -60,12 +61,14 @@ async def init_plugin_info():
                         encoding="utf-8",
                     ) as f:
                         await f.write(f"usage:\n    {usage}")
-                    async with aiohttp.ClientSession() as client:
-                        r = await client.get(
+                    async with aiohttp.ClientSession(
+                        json_serialize=ujson.dumps
+                    ) as client:
+                        async with await client.get(
                             f"https://pypi.org/pypi/{p['project_link']}/json"
-                        )
-                        r = await r.json()
-                        version = r["info"]["version"]
+                        ) as r:
+                            r = await r.json()
+                            version = r["info"]["version"]
                 else:
                     logger.warning(
                         f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"

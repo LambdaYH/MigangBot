@@ -3,7 +3,7 @@
 import asyncio
 from datetime import datetime
 from io import BytesIO
-from typing import Any, Dict, Tuple, Union
+from typing import Tuple, Union
 
 from nonebot import on_command, on_fullmatch, on_notice, on_request
 from nonebot.adapters.onebot.v11 import (
@@ -26,7 +26,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot_plugin_imageutils import BuildImage, text2image
 
 from migang.core import BLACK, ConfigItem, get_config
-from migang.core.manager import group_manager, request_manager, user_manager
+from migang.core.manager import request_manager, permission_manager
 
 from .data_source import build_request_img
 
@@ -424,8 +424,8 @@ async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
         )
         if event.group_id in allowed_group:
             allowed_group.remove(event.group_id)
-        group_manager.set_group_permission(event.group_id, permission=BLACK)
-        user_manager.set_user_permission(event.user_id, permission=BLACK)
+        permission_manager.set_group_perm(event.group_id, permission=BLACK)
+        permission_manager.set_user_perm(event.user_id, permission=BLACK)
         logger.info(f"已拉黑用户 {operator_name}({operator_id}) 与群 {group_name}({group_id})")
 
 

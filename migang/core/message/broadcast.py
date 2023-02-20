@@ -1,6 +1,6 @@
 import asyncio
 from random import random, shuffle
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Iterable
 
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import ActionFailed, Bot, Message, MessageSegment
@@ -14,7 +14,7 @@ class SendManager:
         self,
         bot: Bot,
         group_list: List[int],
-        msg: Union[List[Message], Message, MessageSegment],
+        msg: Iterable[Union[Message, MessageSegment]],
         forward=False,
         retry_limit: int = 3,
         retry_interval: int = 5,
@@ -73,10 +73,10 @@ class SendManager:
                     self.failed_dict[group] = True
         else:
             for group in self.group_list:
-                for i, weibo in enumerate(self.msg):
+                for i, m in enumerate(self.msg):
                     await asyncio.sleep(random() + 0.3)
                     try:
-                        await self.bot.send_group_msg(group_id=group, message=weibo)
+                        await self.bot.send_group_msg(group_id=group, message=m)
                     except ActionFailed as e:
                         logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
                         if group not in self.failed_dict:
@@ -90,7 +90,7 @@ class SendManager:
 
 async def broadcast(
     task_name: str,
-    msg: Union[List[Message], Message, MessageSegment],
+    msg: Union[Iterable[Union[Message, MessageSegment]], Message, MessageSegment],
     forward: bool = False,
     bot: Optional[Bot] = None,
 ) -> None:
@@ -98,7 +98,7 @@ async def broadcast(
 
     Args:
         task_name (str): 任务名
-        msg (Union[List[Message], Message, MessageSegment]): 消息
+        msg (Union[Iterable[Union[Message, MessageSegment]], Message, MessageSegment]): 消息
         forward (bool, optional): 若以转发模式，则True. Defaults to False.
         bot (Optional[Bot], optional): 选定的bot. Defaults to None.
     """
@@ -113,4 +113,6 @@ async def broadcast(
         )
     ]
     shuffle(group_list)
+    if not isinstance(msg, Iterable):
+        msg = (msg,)
     await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()

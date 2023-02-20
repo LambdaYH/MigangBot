@@ -2,6 +2,7 @@ import re
 from typing import List, Tuple
 
 import aiohttp
+import ujson
 from nonebot.log import logger
 
 GARLAND = "https://ffxiv.cyanclay.xyz"
@@ -46,7 +47,7 @@ async def gt_core(key: str, lang: str):
     global GT_CORE_DATA_CN, GT_CORE_DATA_GLOBAL
     if lang == "chs":
         if GT_CORE_DATA_CN is None:
-            async with aiohttp.ClientSession() as client:
+            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
                 GT_CORE_DATA_CN = await client.get(
                     craft_garland_url("core", "data", "chs"), timeout=3
                 )
@@ -54,7 +55,7 @@ async def gt_core(key: str, lang: str):
         GT_CORE_DATA = GT_CORE_DATA_CN
     else:
         if GT_CORE_DATA_GLOBAL is None:
-            async with aiohttp.ClientSession() as client:
+            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
                 GT_CORE_DATA_GLOBAL = await client.get(
                     craft_garland_url("core", "data", "en"), timeout=3
                 )
@@ -71,7 +72,7 @@ async def parse_item_garland(item_id, name_lang):
         name_lang = "chs"
     img_urls = []
 
-    async with aiohttp.ClientSession() as client:
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
         j = await client.get(craft_garland_url("item", item_id, name_lang), timeout=3)
         j = await j.json(content_type=None)
 
@@ -394,7 +395,7 @@ async def get_xivapi_item(item_name, name_lang=""):
     url = api_base + "/search?indexes=Item&string=" + item_name
     if name_lang:
         url = url + "&language=" + name_lang
-    async with aiohttp.ClientSession() as client:
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
         r = await client.get(url, timeout=3)
         j = await r.json(content_type=None)
     return j, url

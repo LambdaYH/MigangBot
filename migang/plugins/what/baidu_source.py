@@ -28,7 +28,7 @@ async def get_baidu(keyword: str) -> Tuple[str, str, str]:
                 headers={"User-Agent": UserAgent(browsers=["chrome", "edge"]).random},
                 timeout=5,
             )
-        dom = etree.HTML(await r.text(), etree.HTMLParser())
+            dom = etree.HTML(await r.text(), etree.HTMLParser())
         content = dom.xpath("//div[@class='lemma-summary']")
         if not content:
             return "", "", ""

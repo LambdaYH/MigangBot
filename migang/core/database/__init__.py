@@ -47,7 +47,7 @@ async def _load_config(path: Path) -> Dict[str, Any]:
         engine: str
         if str(data["db_type"]).lower() == "mysql":
             engine = "mysql"
-        elif str(data["db_type"]).lower() == "postgres":
+        elif str(data["db_type"]).lower() == "postgresql":
             engine = "asyncpg"
         ret["connections"]["default"] = {
             "engine": f"tortoise.backends.{engine}",
@@ -101,17 +101,18 @@ async def init_db() -> None:
                 db = re.match(r"(\S+)://(\S+:\S+@\S+:\d+/\S+)", db_str)
                 db_type = db.group(1)
                 if db_type == "mysql":
-                    db_url = f"mysql+asyncmy:///{db.group(2)}"
+                    db_url = f"mysql+asyncmy://{db.group(2)}"
                 elif db_type == "postgres":
-                    db_url = f"postgres+asyncpg:///{db.group(2)}"
+                    db_url = f"postgresql+asyncpg://{db.group(2)}"
         elif isinstance(config["connections"]["default"], dict):
             db_dict = config["connections"]["default"]
             engine = str(db_dict["engine"]).split(".")[-1]
             if engine == "mysql":
                 db_url = "mysql+asyncmy"
             elif engine == "asyncpg":
-                db_url = "postgres+asyncpg"
-            db_url = f"{db_url}:///{db_dict['user']}:{db_dict['password']}@{db_dict['host']}:{db_dict['port']}/{db_dict['database']}"
+                db_url = "postgresql+asyncpg"
+            db_dict = db_dict["credentials"]
+            db_url = f"{db_url}://{db_dict['user']}:{db_dict['password']}@{db_dict['host']}:{db_dict['port']}/{db_dict['database']}"
 
         env_file = Path() / f".env.{get_driver().env}"
         env_values = dotenv_values(env_file)

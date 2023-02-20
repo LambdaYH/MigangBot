@@ -1,12 +1,18 @@
 from nonebot import on_message
-from nonebot.adapters.onebot.v11 import GROUP, Bot, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11 import (
+    GROUP,
+    Bot,
+    GroupMessageEvent,
+)
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
+from nonebot.adapters.onebot.v11 import Message
 
 from migang.core import ConfigItem, get_config
 
-from .data_source import get_chat_result, hello, no_result
+from .data_source import get_turing, hello, no_result
+from .message_manager import MessageManager
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
@@ -25,7 +31,12 @@ usage：
 )
 
 __plugin_config__ = (
-    ConfigItem(key="turing_key", description="图灵机器人 key https://www.turingapi.com/"),
+    ConfigItem(
+        key="turing_keys",
+        initial_value=["key1", "key2"],
+        default_value=[],
+        description="图灵机器人 key https://www.turingapi.com/",
+    ),
     ConfigItem(
         key="text_filter",
         initial_value=["鸡", "口交"],
@@ -35,42 +46,26 @@ __plugin_config__ = (
 )
 
 
-ai = on_message(rule=to_me(), priority=998, permission=GROUP)
-
-hello_msg = set(
-    [
-        "你好啊",
-        "你好",
-        "在吗",
-        "在不在",
-        "您好",
-        "您好啊",
-        "你好",
-        "在",
-    ]
-)
+chat = on_message(rule=to_me(), priority=998, permission=GROUP)
+message_manager = MessageManager(hello, get_turing, no_result)
 
 
-@ai.handle()
+@chat.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    if "CQ:xml" in str(event.message):
+    if "CQ:xml" in str(event.message) or event.get_plaintext().startswith("/"):
         return
-    # 打招呼
-    msg = event.get_plaintext()
-    img = [seg.data["url"] for seg in event.message]
-    if msg or msg in hello_msg:
-        await ai.finish(hello())
-    img = img[0] if img else ""
-    nickname = event.sender.card or event.sender.nickname
-    result = await get_chat_result(msg, img, event.user_id, nickname)
+    user_name = event.sender.card or event.sender.nickname
+    reply = await message_manager.reply(
+        user_id=event.user_id,
+        nickname=list(bot.config.nickname)[0],
+        user_name=user_name,
+        msg=event.message,
+    )
     logger.info(
         f"用户 {event.user_id} 群 {event.group_id if isinstance(event, GroupMessageEvent) else ''} "
-        f"问题：{msg} ---- 回答：{result}"
+        f"问题：{event.message} ---- 回答：{reply}"
     )
-    if result:
-        result = str(result)
-        for t in await get_config("text_filter"):
-            result = result.replace(t, "*")
-        await ai.finish(Message(result))
-    else:
-        await ai.finish(no_result())
+    reply = str(reply)
+    for t in await get_config("text_filter"):
+        reply = reply.replace(t, "*")
+    await chat.send(Message(reply))

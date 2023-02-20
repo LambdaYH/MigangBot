@@ -3,6 +3,7 @@ import random
 import uuid
 
 import aiohttp
+import ujson
 from nonebot import get_driver
 
 from migang.core import get_config
@@ -38,11 +39,11 @@ async def _():
 
 async def get_azure_trans(text):
     try:
-        async with aiohttp.ClientSession() as client:
+        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
             r = await client.post(
                 constructed_url, headers=headers, json=[{"text": text}]
             )
-        return f"[微软机翻]\n> {(await r.json())[0]['translations'][0]['text']}"
+            return f"[微软机翻]\n> {(await r.json())[0]['translations'][0]['text']}"
     except:
         return "[微软机翻]\n> 出错了~"
 
@@ -61,13 +62,13 @@ async def get_baidu_trans(text):
             "salt": salt,
             "sign": sign,
         }
-        async with aiohttp.ClientSession() as client:
+        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
             r = await client.get(
                 "https://api.fanyi.baidu.com/api/trans/vip/translate",
                 params=params,
                 timeout=10,
             )
-        return f"[百度机翻]\n> {(await r.json())['trans_result'][0]['dst']}"
+            return f"[百度机翻]\n> {(await r.json())['trans_result'][0]['dst']}"
     except:
         return "[百度机翻]\n> 出错了~"
 
@@ -94,7 +95,7 @@ async def get_youdao_trans(text):
         "typoResult": "true",
     }
     try:
-        async with aiohttp.ClientSession() as client:
+        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
             data = await (await client.post(url, data=data)).json()
         if data["errorCode"] == 0:
             return f"[有道机翻]\n> {data['translateResult'][0][0]['tgt']}"

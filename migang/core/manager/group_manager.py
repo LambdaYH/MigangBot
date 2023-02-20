@@ -5,7 +5,8 @@ import anyio
 from pydantic import BaseModel
 
 from migang.core.exception import FileTypeError
-from migang.core.manager import PluginManager, TaskManager
+from migang.core.manager.plugin_manager import PluginManager
+from migang.core.manager.task_manager import TaskManager
 from migang.core.permission import NORMAL, Permission
 
 

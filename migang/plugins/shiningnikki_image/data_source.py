@@ -1,5 +1,6 @@
 import aiohttp
 from fake_useragent import UserAgent
+import ujson
 
 from migang.core import DATA_PATH
 from migang.utils.file import async_load_data, async_save_data
@@ -11,7 +12,7 @@ DATA_PATH.mkdir(exist_ok=True, parents=True)
 
 async def update_suits_img():
     headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
-    async with aiohttp.ClientSession() as client:
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
         r = await client.head(
             "https://nikki4.papegames.cn/audiovisual?utm_source=official&utm_medium=home_nav",
             headers=headers,
