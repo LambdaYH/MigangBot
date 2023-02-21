@@ -4,7 +4,7 @@ import asyncio
 import heapq
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 import anyio
 from pydantic import BaseModel
@@ -172,11 +172,11 @@ class PermissionManager:
                 )
                 self.__user_data[user_id] = item
                 self.__data.push(item)
-            self.__event.set()
-            self.__dirty_data = True
             self.__user_manager.set_user_permission(
                 user_id=user_id, permission=permission
             )
+            self.__event.set()
+            self.__dirty_data = True
         # 若已有记录，立刻清除记录
         else:
             if user_id in self.__user_data:
@@ -220,11 +220,11 @@ class PermissionManager:
                 )
                 self.__group_data[group_id] = item
                 self.__data.push(item)
-            self.__event.set()  # 唤醒
-            self.__dirty_data = True
             self.__group_manager.set_group_permission(
                 group_id=group_id, permission=permission
             )
+            self.__event.set()  # 唤醒
+            self.__dirty_data = True
         else:
             if group_id in self.__group_data:
                 group = self.__group_data[group_id]
