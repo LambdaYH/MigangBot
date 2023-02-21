@@ -50,7 +50,7 @@ class MessageManager:
         if count := self.__check_repeat(user_id=user_id, msg=msg_str):
             if count >= 3:
                 permission_manager.set_user_perm(
-                    user_id=user_id, permission=BLACK, duration=5 * 60
+                    user_id=user_id, permission=BLACK, duration=1 * 60
                 )
                 return f"生气了！不和你说话了（5min）"
             return (

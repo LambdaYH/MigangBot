@@ -113,11 +113,12 @@ async def get_nuannuan_text() -> None:
         phase = re.search(r"【FF14/时尚品鉴】第(\d+)期[\S\s]*", res_data["title"]).group(1)
         theme_s = res_data["content"].find("主题：")
         cur_phase = str(
-            math.ceil(
+            math.floor(
                 (
                     datetime.now(pytz.timezone("Asia/Shanghai")) - nuannuan_start_time
                 ).days
                 / 7
+                + 1
             )
         )
         msg = [

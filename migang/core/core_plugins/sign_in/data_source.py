@@ -34,14 +34,16 @@ async def _():
     await add_font("yz.ttf", FONT_PATH / "yz.ttf")
 
 
+TIMEDELTA = datetime.now() - datetime.utcnow()
+
+
 async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
-    user_next_effect, user_next_effect_params = None, None
     async with in_transaction() as connection:
         user = await SignIn.filter(user_id=user_id).using_db(connection).first()
         user_prop = (
             await UserProperty.filter(user_id=user_id).using_db(connection).first()
         )
-        if user and user.time.date() == datetime.now().date():
+        if user and (user.time + TIMEDELTA).date() == datetime.now().date():
             pass
         else:
             if not user:
