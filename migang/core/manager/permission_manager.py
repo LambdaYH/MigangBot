@@ -4,7 +4,7 @@ import asyncio
 import heapq
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 import anyio
 from pydantic import BaseModel
@@ -182,7 +182,9 @@ class PermissionManager:
             self.__data.heapify()
             self.__event.set()
         else:
-            self.__user_manager.set_user_permission(user_id=user_id, permission=permission)
+            self.__user_manager.set_user_permission(
+                user_id=user_id, permission=permission
+            )
 
     def set_group_perm(
         self,
