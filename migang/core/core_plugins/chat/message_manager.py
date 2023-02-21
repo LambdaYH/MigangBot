@@ -5,6 +5,9 @@ from typing import Any, Callable, Coroutine, Dict, List, Tuple, Union
 
 from nonebot.adapters.onebot.v11 import Message
 
+from migang.core.manager import permission_manager
+from migang.core.permission import BLACK
+
 
 class MessageManager:
     def __init__(
@@ -45,6 +48,11 @@ class MessageManager:
     ) -> Message:
         msg_str = str(msg)
         if count := self.__check_repeat(user_id=user_id, msg=msg_str):
+            if count >= 3:
+                permission_manager.set_user_perm(
+                    user_id=user_id, permission=BLACK, duration=5 * 60
+                )
+                return f"生气了！不和你说话了（5min）"
             return (
                 random.choice(self.__same_ret)
                 .replace("[_count_]", str(count + 1))

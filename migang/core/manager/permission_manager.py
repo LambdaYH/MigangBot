@@ -8,8 +8,10 @@ from typing import List, Union
 
 import anyio
 from pydantic import BaseModel
+import asyncio
 
-from migang.core.manager import group_manager, user_manager
+from migang.core.manager.user_manager import UserManager
+from migang.core.manager.group_manager import GroupManager
 from migang.core.permission import Permission
 
 
@@ -71,13 +73,17 @@ class TinyPriorityQueue(BaseModel):
 class PermissionManager:
     """管理权限，可用于设定限时权限"""
 
-    def __init__(self, file: Path) -> None:
+    def __init__(
+        self, file: Path, user_manager: UserManager, group_manager: GroupManager
+    ) -> None:
         self.__file: Path = file
         if file.exists():
             self.__data: TinyPriorityQueue = TinyPriorityQueue.parse_file(file)
         else:
             self.__data: TinyPriorityQueue = TinyPriorityQueue()
         self.__dirty_data = False
+        self.__user_manager: UserManager = user_manager
+        self.__group_manager: GroupManager = group_manager
         self.__event: asyncio.Event = asyncio.Event()
 
     def init(self) -> None:
@@ -96,7 +102,7 @@ class PermissionManager:
         """定时检查是否需要把权限改回去的后台任务"""
         while True:
             now = datetime.now()
-            while not self.__data.empty() and self.__data.top().expired >= now:
+            while not self.__data.empty() and self.__data.top().expired < now:
                 item = self.__data.pop()
                 if isinstance(item, GroupPermItem):
                     self.set_group_perm(
@@ -110,11 +116,13 @@ class PermissionManager:
             if not self.__data.empty():
                 try:
                     await asyncio.wait_for(
-                        self.__event.wait,
-                        timeout=(self.__data.top().expired - now).total_seconds(),
+                        self.__event.wait(),
+                        timeout=max(
+                            (now - self.__data.top().expired).total_seconds(), 0
+                        ),
                     )
                     # 没超时说明被唤醒了
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     # 超时了就接着去清理
                     pass
             else:
@@ -139,13 +147,15 @@ class PermissionManager:
             self.__data.push(
                 UserPermItem(
                     expired=datetime.now() + duration,
-                    target_perm=user_manager.get_user_permission(user_id=user_id),
+                    target_perm=self.__user_manager.get_user_permission(
+                        user_id=user_id
+                    ),
                     user_id=user_id,
                 )
             )
             self.__dirty_data = True
             self.__event.set()
-        user_manager.set_user_permission(user_id=user_id, permission=permission)
+        self.__user_manager.set_user_permission(user_id=user_id, permission=permission)
 
     def set_group_perm(
         self,
@@ -166,13 +176,17 @@ class PermissionManager:
             self.__data.push(
                 GroupPermItem(
                     expired=datetime.now() + duration,
-                    target_perm=group_manager.get_group_permission(group_id=group_id),
+                    target_perm=self.__group_manager.get_group_permission(
+                        group_id=group_id
+                    ),
                     group_id=group_id,
                 )
             )
             self.__dirty_data = True
             self.__event.set()  # 唤醒
-        group_manager.set_group_permission(group_id=group_id, permission=permission)
+        self.__group_manager.set_group_permission(
+            group_id=group_id, permission=permission
+        )
 
     def get_user_perm(self, user_id: int) -> Permission:
         """获取用户权限
@@ -183,7 +197,7 @@ class PermissionManager:
         Returns:
             Permission: 权限
         """
-        return user_manager.get_user_permission(user_id=user_id)
+        return self.__user_manager.get_user_permission(user_id=user_id)
 
     def get_group_perm(self, group_id: int) -> Permission:
         """获取群权限
@@ -194,4 +208,4 @@ class PermissionManager:
         Returns:
             Permission: 权限
         """
-        return group_manager.get_group_permission(group_id=group_id)
+        return self.__group_manager.get_group_permission(group_id=group_id)

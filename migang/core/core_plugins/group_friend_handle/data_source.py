@@ -1,17 +1,14 @@
 from io import BytesIO
-from typing import List, Optional, Union
+from typing import List, Union
 
-import aiohttp
-import ujson
-from async_lru import alru_cache
 from nonebot import get_driver
-from nonebot.log import logger
+
 from nonebot_plugin_imageutils import BuildImage, text2image
 from nonebot_plugin_imageutils.fonts import add_font
 
 from migang.core import FONT_PATH
 from migang.core.manager.request_manager import FriendRequest, GroupRequest
-
+from migang.core.utils.image import get_user_avatar
 
 @get_driver().on_startup
 async def _():
@@ -19,18 +16,6 @@ async def _():
     await add_font("HYWenHei-85W.ttf", FONT_PATH / "HYWenHei-85W.ttf")
     await add_font("msyh.ttf", FONT_PATH / "msyh.ttf")
     await add_font("yz.ttf", FONT_PATH / "yz.ttf")
-
-
-@alru_cache(maxsize=16)
-async def get_user_avatar(qq: int) -> Optional[bytes]:
-    try:
-        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
-            return await (
-                await client.get(f"http://q1.qlogo.cn/g?b=qq&nk={qq}&s=160")
-            ).read()
-    except Exception as e:
-        logger.warning(f"获取用户头像失败 {e}")
-        return None
 
 
 # zhenxun_bot

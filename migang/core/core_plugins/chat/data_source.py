@@ -104,7 +104,7 @@ def hello(msg: Message, user_id: int) -> Optional[Message]:
     一些打招呼的内容
     """
     text = "".join([seg.data["text"] for seg in msg["text"]])
-    if text not in hello_msg:
+    if text and text not in hello_msg:
         return None
     result = random.choice(
         (

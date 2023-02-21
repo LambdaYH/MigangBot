@@ -113,6 +113,6 @@ async def broadcast(
         )
     ]
     shuffle(group_list)
-    if not isinstance(msg, Iterable):
+    if isinstance(msg, Message) or isinstance(msg, MessageSegment):
         msg = (msg,)
     await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()

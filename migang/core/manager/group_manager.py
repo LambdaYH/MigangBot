@@ -30,9 +30,9 @@ class GroupManager:
                 Returns:
                     bool: 若True，则启用成功，反之则表示处于启用状态
                 """
-                if bot_status:
+                if self.bot_status:
                     return False
-                bot_status = True
+                self.bot_status = True
                 return True
 
             def set_bot_disable(self) -> bool:
@@ -41,9 +41,9 @@ class GroupManager:
                 Returns:
                     bool: 若True，则禁用成功，反之则表示处于禁用状态
                 """
-                if not bot_status:
+                if not self.bot_status:
                     return False
-                bot_status = False
+                self.bot_status = False
                 return True
 
             def set_permission(self, permission: Permission):
@@ -52,7 +52,7 @@ class GroupManager:
                 Args:
                     permission (Permission): 新权限
                 """
-                permission = permission
+                self.permission = permission
 
         data: Dict[int, Group]
 

@@ -28,7 +28,7 @@ class UserManager:
                 Args:
                     permission (Permission): 新权限
                 """
-                permission = permission
+                self.permission = permission
 
         data: Dict[int, User]
 

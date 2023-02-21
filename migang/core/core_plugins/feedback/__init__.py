@@ -7,7 +7,7 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
-from migang.core.models import FeedBack
+from migang.core.models import Feedback
 
 __plugin_meta__ = PluginMetadata(
     name="嘀嘀嘀",
@@ -54,7 +54,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
             except Exception as e:
                 logger.info(f"获取群 {group_id} 名称失败")
 
-            feedback_id = await FeedBack.add_feedback(
+            feedback_id = await Feedback.add_feedback(
                 user_id=user_id, group_id=group_id, content=text
             )
             await bot.send_private_msg(
@@ -62,7 +62,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                 message=f"留言ID[{feedback_id}]|{timeNow}|@(Q){nickname}({user_id})@(群){group_name}({group_id})\n====================\n{text}",
             )
         else:
-            feedback_id = await FeedBack.add_feedback(
+            feedback_id = await Feedback.add_feedback(
                 user_id=user_id, group_id=None, content=text
             )
             await bot.send_private_msg(
@@ -86,10 +86,10 @@ async def _(bot: Bot, arg: Message = CommandArg()):
         msg = str(arg).strip()
         feedback_id = msg.split(" ")[0]
         if feedback_id.isdigit():
-            feedback = await FeedBack.get_feedback(feedback_id=int(feedback_id))
+            feedback = await Feedback.get_feedback(feedback_id=int(feedback_id))
             if not feedback:
                 await reply.send(
-                    f"不存在ID[{feedback_id}]的留言,请输入1-{await FeedBack.get_max_id()}之间的数字",
+                    f"不存在ID[{feedback_id}]的留言,请输入1-{await Feedback.get_max_id()}之间的数字",
                     at_sender=True,
                 )
                 return

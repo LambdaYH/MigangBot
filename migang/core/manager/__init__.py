@@ -58,7 +58,9 @@ request_manager: RequestManager = RequestManager(
 """
 
 permission_manager: PermissionManager = PermissionManager(
-    core_data_path / "permission_manager.json"
+    core_data_path / "permission_manager.json",
+    user_manager=user_manager,
+    group_manager=group_manager,
 )
 """管理权限，设置限时权限
 """
