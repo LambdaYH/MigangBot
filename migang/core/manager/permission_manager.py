@@ -4,7 +4,7 @@ import asyncio
 import heapq
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Dict
 
 import anyio
 from pydantic import BaseModel
@@ -68,6 +68,10 @@ class TinyPriorityQueue(BaseModel):
     def empty(self) -> bool:
         return len(self.data) == 0
 
+    def heapify(self):
+        """O(n)"""
+        heapq.heapify(self.data)
+
 
 class PermissionManager:
     """管理权限，可用于设定限时权限"""
@@ -80,6 +84,16 @@ class PermissionManager:
             self.__data: TinyPriorityQueue = TinyPriorityQueue.parse_file(file)
         else:
             self.__data: TinyPriorityQueue = TinyPriorityQueue()
+        self.__group_data: Dict[int, GroupPermItem] = {}
+        self.__user_data: Dict[int, UserPermItem] = {}
+        """用来检测有没有重复添加
+        """
+        for item in self.__data.data:
+            if isinstance(item, GroupPermItem):
+                self.__group_data[item.group_id] = GroupPermItem
+            else:
+                self.__user_data[item.user_id] = UserPermItem
+
         self.__dirty_data = False
         self.__user_manager: UserManager = user_manager
         self.__group_manager: GroupManager = group_manager
@@ -104,10 +118,12 @@ class PermissionManager:
             while not self.__data.empty() and self.__data.top().expired < now:
                 item = self.__data.pop()
                 if isinstance(item, GroupPermItem):
+                    del self.__group_data[item.group_id]
                     self.set_group_perm(
                         group_id=item.group_id, permission=item.target_perm
                     )
                 else:
+                    del self.__user_data[item.user_id]
                     self.set_user_perm(
                         user_id=item.user_id, permission=item.target_perm
                     )
@@ -143,18 +159,30 @@ class PermissionManager:
         if duration is not None:
             if isinstance(duration, int):
                 duration = timedelta(seconds=duration)
-            self.__data.push(
-                UserPermItem(
-                    expired=datetime.now() + duration,
-                    target_perm=self.__user_manager.get_user_permission(
-                        user_id=user_id
-                    ),
-                    user_id=user_id,
+            if user_id in self.__user_data:
+                self.__user_data[user_id].expired = datetime.now() + duration
+                self.__data.heapify()
+            else:
+                self.__data.push(
+                    UserPermItem(
+                        expired=datetime.now() + duration,
+                        target_perm=self.__user_manager.get_user_permission(
+                            user_id=user_id
+                        ),
+                        user_id=user_id,
+                    )
                 )
-            )
             self.__dirty_data = True
             self.__event.set()
-        self.__user_manager.set_user_permission(user_id=user_id, permission=permission)
+        # 若已有记录，立刻清除记录
+        if user_id in self.__user_data:
+            user = self.__user_data[user_id]
+            user.expired = datetime.now()
+            user.target_perm = permission
+            self.__data.heapify()
+            self.__event.set()
+        else:
+            self.__user_manager.set_user_permission(user_id=user_id, permission=permission)
 
     def set_group_perm(
         self,
@@ -172,20 +200,31 @@ class PermissionManager:
         if duration is not None:
             if isinstance(duration, int):
                 duration = timedelta(seconds=duration)
-            self.__data.push(
-                GroupPermItem(
-                    expired=datetime.now() + duration,
-                    target_perm=self.__group_manager.get_group_permission(
-                        group_id=group_id
-                    ),
-                    group_id=group_id,
+            if group_id in self.__group_data:
+                self.__group_data[group_id].expired = datetime.now() + duration
+                self.__data.heapify()
+            else:
+                self.__data.push(
+                    GroupPermItem(
+                        expired=datetime.now() + duration,
+                        target_perm=self.__group_manager.get_group_permission(
+                            group_id=group_id
+                        ),
+                        group_id=group_id,
+                    )
                 )
-            )
             self.__dirty_data = True
             self.__event.set()  # 唤醒
-        self.__group_manager.set_group_permission(
-            group_id=group_id, permission=permission
-        )
+        if group_id in self.__group_data:
+            group = self.__group_data[group_id]
+            group.expired = datetime.now()
+            group.target_perm = permission
+            self.__data.heapify()
+            self.__event.set()
+        else:
+            self.__group_manager.set_group_permission(
+                group_id=group_id, permission=permission
+            )
 
     def get_user_perm(self, user_id: int) -> Permission:
         """获取用户权限
