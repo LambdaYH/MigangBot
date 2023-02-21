@@ -8,10 +8,9 @@ from typing import List, Union
 
 import anyio
 from pydantic import BaseModel
-import asyncio
 
-from migang.core.manager.user_manager import UserManager
 from migang.core.manager.group_manager import GroupManager
+from migang.core.manager.user_manager import UserManager
 from migang.core.permission import Permission
 
 

@@ -1,6 +1,6 @@
-from typing import Callable, Any, List, Union, Coroutine, Optional, Tuple, Dict
-from asyncio import iscoroutinefunction
 import random
+from asyncio import iscoroutinefunction
+from typing import Any, Callable, Coroutine, Dict, List, Optional, Tuple, Union
 
 from nonebot.log import logger
 

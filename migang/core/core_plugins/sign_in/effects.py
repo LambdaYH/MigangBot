@@ -1,8 +1,8 @@
-from migang.core.decorator import sign_in_effect
-from migang.core.models import UserProperty, SignIn
-
-from decimal import Decimal
 import random
+from decimal import Decimal
+
+from migang.core.decorator import sign_in_effect
+from migang.core.models import SignIn, UserProperty
 
 
 @sign_in_effect(weight=5, name="什么事都没发生")
