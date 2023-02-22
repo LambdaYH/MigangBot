@@ -17,9 +17,9 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
     PrivateMessageEvent,
 )
-from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER, SuperUser
+from nonebot.plugin import PluginMetadata
 from nonebot.rule import (
     CommandRule,
     EndswithRule,
