@@ -1,9 +1,9 @@
 import asyncio
 import time
+from collections import defaultdict, deque
+from typing import DefaultDict, Deque, Set
 
 from nonebot import get_driver
-from collections import defaultdict, deque
-from typing import Deque, Set, DefaultDict
 
 # 5min
 DEFAULT_CACHE_TIME = 30
