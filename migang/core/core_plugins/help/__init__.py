@@ -17,6 +17,7 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
     PrivateMessageEvent,
 )
+from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER, SuperUser
 from nonebot.rule import (
@@ -45,6 +46,24 @@ from .data_source import (
 require("nonebot_plugin_htmlrender")
 require("nonebot_plugin_imageutils")
 
+__plugin_meta__ = PluginMetadata(
+    name="帮助",
+    description="显示各种帮助信息",
+    usage="""
+usage：
+    所有指令都需要at
+    指令：
+        显示功能列表：帮助
+        显示插件帮助：帮助[xxx] 
+        显示插件指令：指令帮助[xxx]
+""".strip(),
+    extra={
+        "unique_name": "migang_sign_in",
+        "example": "签到",
+        "author": "migang",
+        "version": 0.1,
+    },
+)
 
 simple_help = on_command("帮助", aliases={"功能"}, priority=1, block=True, rule=to_me())
 task_help = on_command("群被动状态", priority=1, block=True, permission=GROUP)
