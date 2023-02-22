@@ -58,8 +58,8 @@ usage：
         显示插件指令：指令帮助[xxx]
 """.strip(),
     extra={
-        "unique_name": "migang_sign_in",
-        "example": "签到",
+        "unique_name": "migang_help",
+        "example": "帮助",
         "author": "migang",
         "version": 0.1,
     },

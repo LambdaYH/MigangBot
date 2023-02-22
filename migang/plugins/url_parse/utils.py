@@ -1,48 +1,46 @@
 import asyncio
 import time
+
+from nonebot import get_driver
 from collections import defaultdict, deque
-from typing import Deque, Dict, Set
+from typing import Deque, Set, DefaultDict
+
+# 5min
+DEFAULT_CACHE_TIME = 30
+
+
+class CacheItem:
+    def __init__(self, url: str, group_id: int) -> None:
+        self.expired: float = time.time() + DEFAULT_CACHE_TIME
+        self.cached_url: str = url
+        self.group_id: int = group_id
 
 
 class GroupCache:
-    class CacheItem:
-        def __init__(self, url: str, expired_time: int) -> None:
-            self.url = url
-            self.expired_time = expired_time
-
-    class Group:
-        def __init__(self) -> None:
-            self.__deque: Deque[GroupCache.CacheItem] = deque()
-            self.__set: Set[str] = set()
-            asyncio.create_task(self.clean())
-
-        def check(self, url: str) -> bool:
-            return url in self.__set
-
-        def add(self, url: str) -> bool:
-            self.__deque.appendleft(
-                GroupCache.CacheItem(url=url, expired_time=time.time() + 5 * 60)
-            )
-            self.__set.add(url)
-
-        async def clean(self) -> bool:
-            while True:
-                now = time.time()
-                wait_time = 30
-                while len(self.__deque):
-                    item = self.__deque.pop()
-                    if now >= item.expired_time:
-                        self.__set.remove(item.url)
-                    else:
-                        self.__deque.append(item)
-                        wait_time = item.expired_time - now + 0.5
-                        break
-                await asyncio.sleep(wait_time)
-
     def __init__(self) -> None:
-        self.__data: Dict[int, GroupCache.Group] = defaultdict(
-            lambda: GroupCache.Group()
-        )
+        self.__groups: DefaultDict[int, Set[str]] = defaultdict(lambda: set())
+        self.__deque: Deque[CacheItem] = deque()
+        self.__event: asyncio.Event = asyncio.Event()
+
+    def init(self) -> None:
+        asyncio.create_task(self.__clean_task())
+
+    async def __clean_task(self):
+        while True:
+            now = time.time()
+            if len(self.__deque) != 0 and self.__deque[-1].expired < now:
+                item = self.__deque.pop()
+                self.__groups[item.group_id].remove(item.cached_url)
+            self.__event.clear()
+            if len(self.__deque) != 0:
+                try:
+                    await asyncio.wait_for(
+                        self.__event.wait(), timeout=self.__deque[-1].expired - now
+                    )
+                except asyncio.TimeoutError:
+                    pass
+            else:
+                await self.__event.wait()
 
     def check(self, group_id: int, url: str) -> bool:
         """如果URL在里面，返回True
@@ -54,13 +52,20 @@ class GroupCache:
         Returns:
             bool: 如果URL在里面，返回True
         """
-        return self.__data[group_id].check(url)
+        return url in self.__groups[group_id]
 
     def add(self, group_id: int, url: str) -> bool:
-        if not self.__data[group_id].check(url):
-            self.__data[group_id].add(url)
+        if url not in self.__groups[group_id]:
+            self.__groups[group_id].add(url)
+            self.__deque.appendleft(CacheItem(url=url, group_id=group_id))
+            self.__event.set()
             return True
         return False
 
 
 cache = GroupCache()
+
+
+@get_driver().on_startup
+async def _():
+    cache.init()

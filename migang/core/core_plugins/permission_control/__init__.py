@@ -20,8 +20,8 @@ usage：
         设置群权限 群 等级 时长（可选）
 """.strip(),
     extra={
-        "unique_name": "migang_sign_in",
-        "example": "签到",
+        "unique_name": "migang_permission_control",
+        "example": "设置用户/群权限",
         "author": "migang",
         "version": 0.1,
     },

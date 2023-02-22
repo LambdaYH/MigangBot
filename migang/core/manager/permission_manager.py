@@ -110,7 +110,7 @@ class PermissionManager:
             async with await anyio.open_file(self.__file, "w", encoding="utf-8") as f:
                 await f.write(self.__data.json(ensure_ascii=False, indent=4))
             self.__dirty_data = False
-
+    
     async def __permission_setting_task(self) -> None:
         """定时检查是否需要把权限改回去的后台任务"""
         while True:
@@ -133,7 +133,7 @@ class PermissionManager:
                     await asyncio.wait_for(
                         self.__event.wait(),
                         timeout=max(
-                            (now - self.__data.top().expired).total_seconds(), 0
+                            (self.__data.top().expired - now).total_seconds(), 0.1
                         ),
                     )
                     # 没超时说明被唤醒了
