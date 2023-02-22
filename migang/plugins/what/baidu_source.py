@@ -2,8 +2,8 @@ import re
 from typing import Tuple
 
 import aiohttp
-from fake_useragent import UserAgent
 from lxml import etree
+from fake_useragent import UserAgent
 
 
 async def get_baidu(keyword: str) -> Tuple[str, str, str]:

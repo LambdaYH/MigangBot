@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Extra
+from pydantic import Extra, BaseModel
 
 
 class Now(BaseModel, extra=Extra.allow):

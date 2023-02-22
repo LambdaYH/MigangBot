@@ -7,8 +7,8 @@ from nonebot.params import RegexGroup
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
-from migang.core.manager import permission_manager
 from migang.core.permission import Permission
+from migang.core.manager import permission_manager
 
 __plugin_meta__ = PluginMetadata(
     name="权限控制",

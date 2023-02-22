@@ -1,12 +1,12 @@
-import random
 import time
+import random
 from asyncio import iscoroutinefunction
-from typing import Any, Callable, Coroutine, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, Callable, Coroutine
 
 from nonebot.adapters.onebot.v11 import Message
 
-from migang.core.manager import permission_manager
 from migang.core.permission import BLACK
+from migang.core.manager import permission_manager
 
 
 class MessageManager:

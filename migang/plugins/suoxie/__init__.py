@@ -1,10 +1,10 @@
-import aiohttp
 import ujson
-from fake_useragent import UserAgent
+import aiohttp
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message
+from fake_useragent import UserAgent
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import Message
 
 __plugin_meta__ = PluginMetadata(
     name="缩写查询",

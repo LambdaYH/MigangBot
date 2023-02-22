@@ -1,20 +1,20 @@
 from typing import Union
 
-from nonebot.adapters.onebot.v11 import (
-    GroupAdminNoticeEvent,
-    GroupBanNoticeEvent,
-    GroupDecreaseNoticeEvent,
-    GroupIncreaseNoticeEvent,
-    GroupMessageEvent,
-    GroupRecallNoticeEvent,
-    PokeNotifyEvent,
-)
-from nonebot.exception import IgnoredException
 from nonebot.matcher import Matcher
 from nonebot.message import run_preprocessor
+from nonebot.exception import IgnoredException
+from nonebot.adapters.onebot.v11 import (
+    PokeNotifyEvent,
+    GroupMessageEvent,
+    GroupBanNoticeEvent,
+    GroupAdminNoticeEvent,
+    GroupRecallNoticeEvent,
+    GroupDecreaseNoticeEvent,
+    GroupIncreaseNoticeEvent,
+)
 
-from migang.core.manager import cd_manager, count_manager, group_manager, user_manager
 from migang.core.models import NickName
+from migang.core.manager import cd_manager, user_manager, count_manager, group_manager
 
 _ignore_plugins = set(["switch_bot"])
 

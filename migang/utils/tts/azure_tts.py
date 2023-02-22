@@ -1,13 +1,13 @@
 from typing import Optional
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from azure.cognitiveservices.speech import (
-    AudioDataStream,
-    SpeechConfig,
-    SpeechSynthesisOutputFormat,
-    SpeechSynthesizer,
-)
 from nonebot import get_driver
+from azure.cognitiveservices.speech import (
+    SpeechConfig,
+    AudioDataStream,
+    SpeechSynthesizer,
+    SpeechSynthesisOutputFormat,
+)
 
 from migang.core import get_config
 from migang.core.manager import ConfigItem, config_manager

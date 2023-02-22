@@ -5,17 +5,17 @@ import re
 
 import aiohttp
 from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
-from nonebot import on_startswith
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    GroupMessageEvent,
-    MessageEvent,
-    MessageSegment,
-)
 from nonebot.log import logger
+from nonebot import on_startswith
+from fake_useragent import UserAgent
 from nonebot.params import Startswith
 from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    MessageEvent,
+    MessageSegment,
+    GroupMessageEvent,
+)
 
 __plugin_meta__ = PluginMetadata(
     name="PDF搜索",

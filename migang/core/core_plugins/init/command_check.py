@@ -3,16 +3,16 @@
 """
 import re
 from collections import defaultdict
-from typing import DefaultDict, Dict, Tuple, Union
+from typing import Dict, Tuple, Union, DefaultDict
 
 from nonebot.log import logger
 from nonebot.plugin import Plugin
 from nonebot.rule import (
+    RegexRule,
     CommandRule,
     EndswithRule,
-    FullmatchRule,
     KeywordsRule,
-    RegexRule,
+    FullmatchRule,
     StartswithRule,
 )
 

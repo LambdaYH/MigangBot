@@ -1,5 +1,5 @@
-import getpass
 import sys
+import getpass
 from pathlib import Path
 
 

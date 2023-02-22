@@ -1,8 +1,8 @@
 import re
 from typing import List, Tuple
 
-import aiohttp
 import ujson
+import aiohttp
 from nonebot.log import logger
 
 GARLAND = "https://ffxiv.cyanclay.xyz"

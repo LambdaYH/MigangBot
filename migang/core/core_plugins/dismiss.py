@@ -1,8 +1,8 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
-from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11.permission import GROUP
+from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 
 from migang.core import ConfigItem, get_config
 

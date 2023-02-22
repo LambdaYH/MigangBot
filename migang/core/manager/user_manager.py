@@ -5,8 +5,8 @@ import anyio
 from pydantic import BaseModel
 
 from migang.core.exception import FileTypeError
-from migang.core.manager.plugin_manager import PluginManager
 from migang.core.permission import NORMAL, Permission
+from migang.core.manager.plugin_manager import PluginManager
 
 
 class UserManager:

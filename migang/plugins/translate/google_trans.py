@@ -8,12 +8,12 @@ import httpx
 from bs4 import BeautifulSoup
 from deep_translator.base import BaseTranslator
 from deep_translator.constants import BASE_URLS
+from deep_translator.validate import is_empty, is_input_valid
 from deep_translator.exceptions import (
     RequestError,
     TooManyRequests,
     TranslationNotFound,
 )
-from deep_translator.validate import is_empty, is_input_valid
 
 
 class GoogleTranslator(BaseTranslator):

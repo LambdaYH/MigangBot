@@ -1,12 +1,12 @@
-import html
 import re
+import html
 from typing import Tuple
 
-import aiohttp
 import ujson
+import aiohttp
+from lxml import etree
 from aiocache import cached
 from fake_useragent import UserAgent
-from lxml import etree
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 AID_PATTERN = re.compile(r"(av|AV)\d+")

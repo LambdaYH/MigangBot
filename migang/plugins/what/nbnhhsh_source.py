@@ -1,7 +1,7 @@
 from typing import Tuple
 
-import aiohttp
 import ujson
+import aiohttp
 from thefuzz import fuzz
 
 

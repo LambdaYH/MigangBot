@@ -1,13 +1,13 @@
 from nonebot import on_message
-from nonebot.adapters.onebot.v11 import GROUP, Bot, GroupMessageEvent, Message
 from nonebot.log import logger
-from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import GROUP, Bot, Message, GroupMessageEvent
 
 from migang.core import ConfigItem, get_config
 
-from .data_source import get_turing, hello, no_result
 from .message_manager import MessageManager
+from .data_source import hello, no_result, get_turing
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(

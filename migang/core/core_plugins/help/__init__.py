@@ -4,43 +4,43 @@
 import re
 from io import BytesIO
 from pathlib import Path
-from typing import List, Set, Union
+from typing import Set, List, Union
 
 import anyio
-from nonebot import get_plugin, on_command, require
+from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
+from nonebot_plugin_imageutils import text2image
+from nonebot import require, get_plugin, on_command
+from nonebot.permission import SUPERUSER, SuperUser
+from nonebot.rule import (
+    ToMeRule,
+    RegexRule,
+    CommandRule,
+    EndswithRule,
+    KeywordsRule,
+    FullmatchRule,
+    StartswithRule,
+    to_me,
+)
 from nonebot.adapters.onebot.v11 import (
     GROUP,
     Bot,
-    GroupMessageEvent,
     Message,
     MessageEvent,
     MessageSegment,
+    GroupMessageEvent,
     PrivateMessageEvent,
 )
-from nonebot.params import CommandArg
-from nonebot.permission import SUPERUSER, SuperUser
-from nonebot.plugin import PluginMetadata
-from nonebot.rule import (
-    CommandRule,
-    EndswithRule,
-    FullmatchRule,
-    KeywordsRule,
-    RegexRule,
-    StartswithRule,
-    ToMeRule,
-    to_me,
-)
-from nonebot_plugin_imageutils import text2image
 
-from migang.core.manager import group_manager, plugin_manager, user_manager
+from migang.core.manager import user_manager, group_manager, plugin_manager
 
 from .data_source import (
+    USER_HELP_PATH,
     GROUP_HELP_PATH,
     GROUP_TASK_PATH,
-    USER_HELP_PATH,
     get_help_image,
-    get_plugin_help,
     get_task_image,
+    get_plugin_help,
 )
 
 require("nonebot_plugin_htmlrender")

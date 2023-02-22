@@ -4,8 +4,8 @@
 # ref: https://github.com/observerss/textfilter
 
 import re
-from collections import defaultdict
 from typing import Union
+from collections import defaultdict
 
 from nonebot.adapters.onebot.v11 import Message
 

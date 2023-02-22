@@ -1,32 +1,32 @@
 """处理和群还有好友相关的一些邀请，退群事件
 """
 import asyncio
-from datetime import datetime
 from io import BytesIO
+from datetime import datetime
 from typing import Tuple, Union
 
-from nonebot import on_command, on_fullmatch, on_notice, on_request
-from nonebot.adapters.onebot.v11 import (
-    ActionFailed,
-    Bot,
-    FriendAddNoticeEvent,
-    FriendRequestEvent,
-    GroupDecreaseNoticeEvent,
-    GroupIncreaseNoticeEvent,
-    GroupMessageEvent,
-    GroupRequestEvent,
-    Message,
-    MessageSegment,
-    PrivateMessageEvent,
-)
 from nonebot.log import logger
-from nonebot.params import Command, CommandArg, Fullmatch
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from nonebot.params import Command, Fullmatch, CommandArg
 from nonebot_plugin_imageutils import BuildImage, text2image
+from nonebot import on_notice, on_command, on_request, on_fullmatch
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    Message,
+    ActionFailed,
+    MessageSegment,
+    GroupMessageEvent,
+    GroupRequestEvent,
+    FriendRequestEvent,
+    PrivateMessageEvent,
+    FriendAddNoticeEvent,
+    GroupDecreaseNoticeEvent,
+    GroupIncreaseNoticeEvent,
+)
 
 from migang.core import BLACK, ConfigItem, get_config
-from migang.core.manager import permission_manager, request_manager
+from migang.core.manager import request_manager, permission_manager
 
 from .data_source import build_request_img
 

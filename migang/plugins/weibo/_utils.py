@@ -1,11 +1,11 @@
-import asyncio
 import re
+import asyncio
 from typing import Optional
 
 import aiohttp
-from nonebot.adapters.onebot.v11 import ActionFailed, Bot, Message, MessageSegment
-from nonebot.log import logger
 from yarl import URL
+from nonebot.log import logger
+from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, MessageSegment
 
 # ref: https://github.com/DIYgod/RSSHub/blob/5c7aff76a3a90d6ac5d5e7e139bc182c9c147cb6/lib/v2/weibo/utils.js#L425
 sinaimgwx_pattern = re.compile(r"(?<=\/\/)wx(?=[1-4]\.sinaimg\.cn\/)", re.I)

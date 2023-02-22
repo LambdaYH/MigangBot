@@ -1,11 +1,13 @@
-from nonebot import on_command, on_fullmatch
-from .data_source import check
+from time import time
+
+import psutil
 from nonebot.rule import to_me
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-import psutil
-from time import time
+from nonebot import on_command, on_fullmatch
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
+
+from .data_source import check
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(

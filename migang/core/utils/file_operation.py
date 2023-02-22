@@ -1,13 +1,13 @@
 from io import StringIO
 from pathlib import Path
-from typing import Any, Dict, List, TypeVar, Union
+from typing import Any, Dict, List, Union, TypeVar
 
 import anyio
 import ujson as json
 from ruamel.yaml import YAML, CommentedMap
 from ruamel.yaml.scanner import ScannerError
 
-from migang.core.exception import FileParseError, FileTypeError
+from migang.core.exception import FileTypeError, FileParseError
 
 _yaml = YAML(typ="rt")
 _file_suffixes = [".json", ".yaml", ".yml"]

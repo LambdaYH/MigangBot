@@ -2,12 +2,12 @@ from io import BytesIO
 from typing import List, Union
 
 from nonebot import get_driver
-from nonebot_plugin_imageutils import BuildImage, text2image
 from nonebot_plugin_imageutils.fonts import add_font
+from nonebot_plugin_imageutils import BuildImage, text2image
 
 from migang.core import FONT_PATH
-from migang.core.manager.request_manager import FriendRequest, GroupRequest
 from migang.core.utils.image import get_user_avatar
+from migang.core.manager.request_manager import GroupRequest, FriendRequest
 
 
 @get_driver().on_startup

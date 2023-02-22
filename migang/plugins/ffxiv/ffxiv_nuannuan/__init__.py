@@ -1,13 +1,13 @@
 from typing import Union
 
 from nonebot import on_fullmatch
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import (
     Bot,
-    GroupMessageEvent,
     MessageSegment,
+    GroupMessageEvent,
     PrivateMessageEvent,
 )
-from nonebot.plugin import PluginMetadata
 
 from .data_source import get_data
 

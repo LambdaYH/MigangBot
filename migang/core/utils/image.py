@@ -1,9 +1,9 @@
 from typing import Optional
 
-import aiohttp
 import ujson
-from async_lru import alru_cache
+import aiohttp
 from nonebot.log import logger
+from async_lru import alru_cache
 
 
 @alru_cache(maxsize=16)

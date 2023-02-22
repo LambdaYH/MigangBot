@@ -1,23 +1,23 @@
-import asyncio
-import random
 import sys
 import time
+import random
+import asyncio
 from pathlib import Path
 from typing import List, Union
 from urllib.parse import unquote
 
-import aiohttp
 import anyio
+import aiohttp
 import ujson as json
-from fake_useragent import UserAgent
 from lxml import etree
 from nonebot.log import logger
+from fake_useragent import UserAgent
 
 from migang.core import DATA_PATH, get_config
 from migang.utils.file import async_save_data
 
-from ._utils import sinaimgtvax
 from .exception import *
+from ._utils import sinaimgtvax
 
 api_url = f"https://m.weibo.cn/api/container/getIndex"
 PATH = DATA_PATH / "weibo"

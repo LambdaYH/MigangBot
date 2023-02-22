@@ -1,24 +1,24 @@
 import random
-from enum import Enum, unique
 from pathlib import Path
+from enum import Enum, unique
 from typing import Dict, List, Optional
 
 from nonebot import get_driver
-from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot_plugin_htmlrender import template_to_pic
-from nonebot_plugin_imageutils import BuildImage, text2image
-from nonebot_plugin_imageutils.fonts import add_font
 from pydantic import BaseModel
+from nonebot_plugin_imageutils.fonts import add_font
+from nonebot_plugin_htmlrender import template_to_pic
+from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot_plugin_imageutils import BuildImage, text2image
 
+from migang.core.path import DATA_PATH, FONT_PATH
 from migang.core.manager import (
-    PluginManager,
     PluginType,
-    group_manager,
-    plugin_manager,
+    PluginManager,
     task_manager,
     user_manager,
+    group_manager,
+    plugin_manager,
 )
-from migang.core.path import DATA_PATH, FONT_PATH
 
 PLUGIN_HELP_BG = Path(__file__).parent / "image" / "plugin_help.png"
 USER_HELP_PATH = DATA_PATH / "core" / "help" / "user_help_image"

@@ -1,12 +1,12 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.rule import to_me
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from nonebot.rule import to_me
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from migang.core import CountItem
 from migang.utils.text import filt_message
-from migang.utils.tts import azure_tts_status, get_azure_tts
+from migang.utils.tts import get_azure_tts, azure_tts_status
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(

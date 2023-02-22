@@ -1,7 +1,7 @@
-import asyncio
 import time
-from collections import defaultdict, deque
-from typing import DefaultDict, Deque, Set
+import asyncio
+from collections import deque, defaultdict
+from typing import Set, Deque, DefaultDict
 
 from nonebot import get_driver
 

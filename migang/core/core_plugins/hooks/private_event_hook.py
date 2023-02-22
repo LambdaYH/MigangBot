@@ -1,18 +1,18 @@
 from typing import Union
 
-from nonebot.adapters.onebot.v11 import (
-    FriendAddNoticeEvent,
-    FriendRecallNoticeEvent,
-    FriendRequestEvent,
-    GroupRequestEvent,
-    PrivateMessageEvent,
-)
-from nonebot.exception import IgnoredException
 from nonebot.matcher import Matcher
 from nonebot.message import run_preprocessor
+from nonebot.exception import IgnoredException
+from nonebot.adapters.onebot.v11 import (
+    GroupRequestEvent,
+    FriendRequestEvent,
+    PrivateMessageEvent,
+    FriendAddNoticeEvent,
+    FriendRecallNoticeEvent,
+)
 
-from migang.core.manager import cd_manager, count_manager, user_manager
 from migang.core.models import NickName
+from migang.core.manager import cd_manager, user_manager, count_manager
 
 
 @run_preprocessor

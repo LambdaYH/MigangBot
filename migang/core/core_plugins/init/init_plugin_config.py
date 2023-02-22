@@ -1,14 +1,14 @@
 import asyncio
-from collections import defaultdict
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, List
+from collections import defaultdict
+from typing import Any, List, Iterable, DefaultDict
 
 import anyio
 import ujson as json
-from dotenv import dotenv_values
 from nonebot import get_driver
 from nonebot.log import logger
 from pydantic import BaseModel
+from dotenv import dotenv_values
 
 from migang.core.manager import ConfigItem, config_manager
 

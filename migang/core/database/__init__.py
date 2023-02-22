@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Any, Dict
 
-from nonebot import get_driver
 from tortoise import Tortoise
+from nonebot import get_driver
 from tortoise.connection import connections
 
 from migang.core.models import *

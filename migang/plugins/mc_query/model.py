@@ -1,7 +1,7 @@
 from typing import Optional
 
-from nonebot_plugin_datastore import get_plugin_data
 from sqlmodel import Field
+from nonebot_plugin_datastore import get_plugin_data
 
 Model = get_plugin_data().Model
 

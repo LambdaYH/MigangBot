@@ -3,14 +3,14 @@ from pathlib import Path
 from typing import Tuple, Union
 
 import jinja2
+from thefuzz import fuzz
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot_plugin_htmlrender import html_to_pic, template_to_pic
-from thefuzz import fuzz
 
-from .baidu_source import get_baidu
-from .ffxivwiki_source import get_ffxivwiki
 from .jiki_source import get_jiki
+from .baidu_source import get_baidu
 from .nbnhhsh_source import get_nbnhhsh
+from .ffxivwiki_source import get_ffxivwiki
 
 template_path = Path(__file__).parent / "template"
 
