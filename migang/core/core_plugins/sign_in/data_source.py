@@ -57,15 +57,15 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             user_prop.impression += Decimal(user.impression_diff)
             user_prop.gold += user.gold_diff
             # 触发上一次效果
-            if user.next_effect is not None:
-                if effect := sign_in_effect.get_effect_by_name(name=user.next_effect):
+            for i, next_effect in enumerate(user.next_effect):
+                if effect := sign_in_effect.get_effect_by_name(name=next_effect):
                     if effect.has_next_effect():
                         try:
                             await effect.next_effect(
                                 user_id=user_id,
                                 user_sign_in=user,
                                 user_prop=user_prop,
-                                **user.next_effect_params,
+                                **user.next_effect_params[i],
                             )
                         except Exception as e:
                             logger.warning(f"执行 {effect.name} 的下一次触发签到效果发生异常：{e}")
@@ -83,22 +83,21 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             if isinstance(effect_ret, str):
                 user.windfall = effect_ret
                 if effect.has_next_effect():
-                    user.next_effect = effect.name
-                    user.next_effect_params = {}
+                    user.next_effect = [effect.name]
+                    user.next_effect_params = [{}]
                 else:
-                    user.next_effect = user.next_effect_params = None
+                    user.next_effect = user.next_effect_params = []
             else:
                 user.windfall, params = effect_ret
                 if effect.has_next_effect():
-                    user.next_effect = effect.name
+                    user.next_effect = [effect.name]
                     if params is None:
-                        params = {}
-                    user.next_effect_params = params
+                        params = [{}]
+                    user.next_effect_params = [params]
                 else:
-                    user.next_effect = user.next_effect_params = None
+                    user.next_effect = user.next_effect_params = []
             await user.save(using_db=connection)
             await user_prop.save(using_db=connection)
-
     avatar = await get_user_avatar(user_id)
     return await anyio.run_sync_in_worker_thread(
         draw,
@@ -124,7 +123,7 @@ def get_level_and_next_impression(impression: float) -> Tuple[int, int, int]:
         Tuple[int, int, int]: 等级，下一等级所需好感度，上一等级所需好感度
     """
     if impression == 0:
-        return lik2level[10], 10, 0
+        return lik2level[0], 12, impression
     lik2level_list = list(lik2level)
     idx = bisect.bisect_left(lik2level_list, impression)
     if idx == len(lik2level):
