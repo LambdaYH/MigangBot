@@ -1,6 +1,7 @@
-from typing import Callable, Union, Tuple, Optional
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
+from typing import Tuple, Union, Callable, Optional
+
 from nonebot.plugin import require
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 
 class ShopRegister(dict):
@@ -109,11 +110,11 @@ class ShopRegister(dict):
     async def load_register(self):
         require("use")
         require("shop_handle")
-        from migang.core.core_plugins.shop.use.data_source import (
-            register_use,
-            func_manager,
-        )
         from migang.core.core_plugins.shop.shop_handle.data_source import register_goods
+        from migang.core.core_plugins.shop.use.data_source import (
+            func_manager,
+            register_use,
+        )
 
         # 统一进行注册
         if self._flag:
