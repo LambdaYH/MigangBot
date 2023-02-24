@@ -26,7 +26,7 @@ usage：
     /占卜 [事件]
 """.strip(),
     extra={
-        "unique_name": "migang_eorzean_占卜",
+        "unique_name": "migang_eorzean_zhanbu",
         "example": "/占卜\n/占卜 今天下雪吗",
         "author": "migang",
         "version": 0.1,
