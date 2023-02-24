@@ -1,12 +1,11 @@
 import random
 from pathlib import Path
 from datetime import datetime
+
+import anyio
+import ujson as json
 from nonebot_plugin_htmlrender import template_to_pic
 from nonebot.adapters.onebot.v11 import MessageSegment
-import anyio
-
-import ujson as json
-
 
 template_path = Path(__file__).parent / "templates"
 

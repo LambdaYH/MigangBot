@@ -1,9 +1,9 @@
-from nonebot import on_command, on_fullmatch
-from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent, Bot
+from nonebot.plugin import PluginMetadata
+from nonebot import on_command, on_fullmatch
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent
 
-from .data_source import get_fabing, get_data
+from .data_source import get_data, get_fabing
 
 __plugin_meta__ = PluginMetadata(
     name="枝网小作文",

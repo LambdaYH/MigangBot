@@ -1,9 +1,10 @@
-from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot.plugin import on_regex, PluginMetadata
-from nonebot.params import RegexGroup
-from typing import Tuple, Any
-from pathlib import Path
 import random
+from pathlib import Path
+from typing import Any, Tuple
+
+from nonebot.params import RegexGroup
+from nonebot.plugin import PluginMetadata, on_regex
+from nonebot.adapters.onebot.v11 import MessageSegment
 
 __plugin_meta__ = PluginMetadata(
     name="今天吃什么",
