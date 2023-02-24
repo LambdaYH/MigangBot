@@ -3,11 +3,9 @@ from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from nonebot.plugin import require
 
 
-class ShopRegister(dict):
-    def __init__(self, *args, **kwargs):
-        super(ShopRegister, self).__init__(*args, **kwargs)
-        self._data = {}
-        self._flag = True
+class ShopRegister:
+    def __init__(self):
+        self.__data = {}
 
     def before_handle(
         self, name: Union[str, Tuple[str, ...]], load_status: bool = True
@@ -23,11 +21,11 @@ class ShopRegister(dict):
         def register_before_handle(name_list: Tuple[str, ...], func: Callable):
             if load_status:
                 for name_ in name_list:
-                    if not self._data[name_]:
-                        self._data[name_] = {}
-                    if not self._data[name_].get("before_handle"):
-                        self._data[name_]["before_handle"] = []
-                    self._data[name]["before_handle"].append(func)
+                    if not self.__data[name_]:
+                        self.__data[name_] = {}
+                    if not self.__data[name_].get("before_handle"):
+                        self.__data[name_]["before_handle"] = []
+                    self.__data[name]["before_handle"].append(func)
 
         _name = (name,) if isinstance(name, str) else name
         return lambda func: register_before_handle(_name, func)
@@ -44,11 +42,11 @@ class ShopRegister(dict):
         def register_after_handle(name_list: Tuple[str, ...], func: Callable):
             if load_status:
                 for name_ in name_list:
-                    if not self._data[name_]:
-                        self._data[name_] = {}
-                    if not self._data[name_].get("after_handle"):
-                        self._data[name_]["after_handle"] = []
-                    self._data[name_]["after_handle"].append(func)
+                    if not self.__data[name_]:
+                        self.__data[name_] = {}
+                    if not self.__data[name_].get("after_handle"):
+                        self.__data[name_]["after_handle"] = []
+                    self.__data[name_]["after_handle"].append(func)
 
         _name = (name,) if isinstance(name, str) else name
         return lambda func: register_after_handle(_name, func)
@@ -67,7 +65,7 @@ class ShopRegister(dict):
         **kwargs,
     ):
         def add_register_item(func: Callable):
-            if name in self._data.keys():
+            if name in self.__data.keys():
                 raise ValueError("该商品已注册，请替换其他名称！")
             for n, p, d, dd, l, s, dl, pa, i in zip(
                 name,
@@ -87,7 +85,7 @@ class ShopRegister(dict):
                             _temp_kwargs[key.split("_", maxsplit=1)[-1]] = value
                         else:
                             _temp_kwargs[key] = value
-                    temp = self._data.get(n, {})
+                    temp = self.__data.get(n, {})
                     temp.update(
                         {
                             "price": p,
@@ -101,7 +99,7 @@ class ShopRegister(dict):
                             "kwargs": _temp_kwargs,
                         }
                     )
-                    self._data[n] = temp
+                    self.__data[n] = temp
             return func
 
         return lambda func: add_register_item(func)
@@ -119,25 +117,25 @@ class ShopRegister(dict):
         if self._flag:
             # 只进行一次注册
             self._flag = False
-            for name in self._data.keys():
+            for name in self.__data.keys():
                 await register_goods(
                     name,
-                    self._data[name]["price"],
-                    self._data[name]["des"],
-                    self._data[name]["discount"],
-                    self._data[name]["limit_time"],
-                    self._data[name]["daily_limit"],
-                    self._data[name]["is_passive"],
-                    self._data[name]["icon"],
+                    self.__data[name]["price"],
+                    self.__data[name]["des"],
+                    self.__data[name]["discount"],
+                    self.__data[name]["limit_time"],
+                    self.__data[name]["daily_limit"],
+                    self.__data[name]["is_passive"],
+                    self.__data[name]["icon"],
                 )
                 register_use(
-                    name, self._data[name]["func"], **self._data[name]["kwargs"]
+                    name, self.__data[name]["func"], **self.__data[name]["kwargs"]
                 )
                 func_manager.register_use_before_handle(
-                    name, self._data[name].get("before_handle", [])
+                    name, self.__data[name].get("before_handle", [])
                 )
                 func_manager.register_use_after_handle(
-                    name, self._data[name].get("after_handle", [])
+                    name, self.__data[name].get("after_handle", [])
                 )
 
     def __call__(
@@ -194,25 +192,25 @@ class ShopRegister(dict):
         )
 
     def __setitem__(self, key, value):
-        self._data[key] = value
+        self.__data[key] = value
 
     def __getitem__(self, key):
-        return self._data[key]
+        return self.__data[key]
 
     def __contains__(self, key):
-        return key in self._data
+        return key in self.__data
 
     def __str__(self):
-        return str(self._data)
+        return str(self.__data)
 
     def keys(self):
-        return self._data.keys()
+        return self.__data.keys()
 
     def values(self):
-        return self._data.values()
+        return self.__data.values()
 
     def items(self):
-        return self._data.items()
+        return self.__data.items()
 
 
 class NotMeetUseConditionsException(Exception):
