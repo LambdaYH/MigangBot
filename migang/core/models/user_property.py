@@ -46,7 +46,7 @@ class UserProperty(Model):
         await user.save(update_fields=["impression"])
 
     @classmethod
-    async def get_gold(cls, user_id:int) -> None:
+    async def get_gold(cls, user_id: int) -> None:
         user = await cls.filter(user_id=user_id).first()
         if not user:
             return 0

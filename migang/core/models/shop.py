@@ -1,7 +1,6 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple, Optional
 
 from tortoise import fields
-
 from tortoise.models import Model
 
 
