@@ -1,13 +1,13 @@
-from typing import Dict, Set, DefaultDict
 from collections import defaultdict
+from typing import Set, Dict, DefaultDict
 import asyncio
 
 from tortoise.transactions import in_transaction
 
+from migang.core.models import GroupStatus
 from migang.core.permission import NORMAL, Permission
 from migang.core.manager.task_manager import TaskManager
 from migang.core.manager.plugin_manager import PluginManager
-from migang.core.models import GroupStatus
 
 
 class GroupManager:

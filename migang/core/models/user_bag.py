@@ -1,6 +1,3 @@
-from typing import List
-from datetime import datetime, timedelta
-
 from tortoise import fields
 from tortoise.models import Model
 

@@ -55,4 +55,9 @@ class TransactionLog(Model):
             .first()
             .values_list("total_earned", "total_spent")
         )
-        return (today_data[0] or 0, today_data[1] or 0, total_date[0] or 0, total_date[1] or 0)
+        return (
+            today_data[0] or 0,
+            today_data[1] or 0,
+            total_date[0] or 0,
+            total_date[1] or 0,
+        )

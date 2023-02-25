@@ -1,12 +1,12 @@
-from pathlib import Path
 import asyncio
+from pathlib import Path
 from typing import Any, Dict, Callable
 
 from tortoise import Tortoise
 from nonebot import get_driver
 from nonebot.log import logger
-from nonebot.utils import is_coroutine_callable, run_sync
 from tortoise.connection import connections
+from nonebot.utils import run_sync, is_coroutine_callable
 
 from migang.core.models import *
 from migang.core.utils.file_operation import async_load_data

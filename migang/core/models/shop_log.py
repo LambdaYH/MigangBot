@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
+
 from tortoise import fields
-from tortoise.functions import Sum
 from tortoise.models import Model
+from tortoise.functions import Sum
 
 TIMEDELTA = datetime.now() - datetime.utcnow()
 

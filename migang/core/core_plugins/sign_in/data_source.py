@@ -15,8 +15,8 @@ from nonebot_plugin_imageutils import BuildImage, text2image
 
 from migang.core.path import FONT_PATH
 from migang.core.decorator import sign_in_effect
-from migang.core.models import SignIn, UserProperty, TransactionLog
 from migang.core.utils.image import get_user_avatar
+from migang.core.models import SignIn, UserProperty, TransactionLog
 
 from .effects import *
 from .const import (
