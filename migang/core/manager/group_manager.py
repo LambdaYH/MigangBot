@@ -1,6 +1,6 @@
+import asyncio
 from collections import defaultdict
 from typing import Set, Dict, DefaultDict
-import asyncio
 
 from tortoise.transactions import in_transaction
 
