@@ -1,16 +1,16 @@
 """
 https://github.com/SonderXiaoming/dailywife
 """
-from nonebot.plugin import PluginMetadata
-from nonebot import on_fullmatch
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP, MessageSegment
 import datetime
 from random import choice
+
+from nonebot import on_fullmatch
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import GROUP, Bot, MessageSegment, GroupMessageEvent
 
 from migang.core import DATA_PATH
 from migang.utils.image import get_user_avatar
 from migang.utils.file import async_load_data, async_save_data
-
 
 __plugin_meta__ = PluginMetadata(
     name="今日老婆",

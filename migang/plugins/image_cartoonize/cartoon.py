@@ -2,8 +2,8 @@ import base64
 from io import BytesIO
 
 import httpx
-from httpx import NetworkError
 from PIL import Image
+from httpx import NetworkError
 
 
 async def cartonization(img_url: str) -> str:
