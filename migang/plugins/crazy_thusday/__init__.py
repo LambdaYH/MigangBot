@@ -2,20 +2,18 @@
 https://github.com/MinatoAquaCrews/nonebot_plugin_crazy_thursday
 """
 import random
-from pathlib import Path
-from nonebot import on_regex
-from nonebot.plugin import PluginMetadata
-from nonebot.matcher import Matcher
-from nonebot.params import Depends,RegexMatched
-from .config import crazy_config
 from typing import List
+from pathlib import Path
+
 import anyio
-import random
-from .config import *
-
-
 import ujson as json
+from nonebot import on_regex
+from nonebot.matcher import Matcher
+from nonebot.plugin import PluginMetadata
+from nonebot.params import Depends, RegexMatched
 
+from .config import *
+from .config import crazy_config
 
 __plugin_meta__ = PluginMetadata(
     name="疯狂星期四",
