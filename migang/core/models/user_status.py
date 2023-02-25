@@ -7,7 +7,6 @@ from migang.core.permission import Permission
 class UserStatus(Model):
     user_id = fields.BigIntField(unique=True)
     permission = fields.IntEnumField(enum_type=Permission)
-    bot_status = fields.BooleanField(default=True)
 
     class Meta:
         table = "user_status"
