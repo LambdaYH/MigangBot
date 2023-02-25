@@ -1,10 +1,10 @@
 import datetime
 from typing import Optional
 
-from .model import Aircon
 from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from .model import Aircon
 
 R = 8.314  # 理想气体常数
 i = 6  # 多分子气体自由度

@@ -1,19 +1,16 @@
 """
 https://github.com/iamwyh2019/aircon
 """
-from nonebot import on_command
 from nonebot.matcher import Matcher
-from nonebot.params import CommandArg
-from nonebot import on_command, require, on_fullmatch
 from nonebot.plugin import PluginMetadata
-from nonebot.params import Depends, Fullmatch
-from nonebot.adapters.onebot.v11.permission import GROUP
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, Bot
 from nonebot_plugin_datastore import get_session
+from nonebot import require, on_command, on_fullmatch
 from sqlmodel.ext.asyncio.session import AsyncSession
+from nonebot.adapters.onebot.v11.permission import GROUP
+from nonebot.params import Depends, Fullmatch, CommandArg
+from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 
-
-from .airconutils import get_aircon, install_aircon, update_aircon, print_aircon
+from .airconutils import get_aircon, print_aircon, update_aircon, install_aircon
 
 require("nonebot_plugin_datastore")
 
