@@ -44,3 +44,10 @@ class UserProperty(Model):
             impression_diff = Decimal(impression_diff)
         user.impression += impression_diff
         await user.save(update_fields=["impression"])
+
+    @classmethod
+    async def get_gold(cls, user_id:int) -> None:
+        user = await cls.filter(user_id=user_id).first()
+        if not user:
+            return 0
+        return user.gold

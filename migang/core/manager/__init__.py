@@ -25,7 +25,6 @@ task_manager: TaskManager = TaskManager(core_data_path / "task_manager")
 """
 
 group_manager: GroupManager = GroupManager(
-    core_data_path / "group_manager.json",
     plugin_manager=plugin_manager,
     task_manager=task_manager,
 )
@@ -66,7 +65,14 @@ permission_manager: PermissionManager = PermissionManager(
 """
 
 
-async def save():
+async def init_managers():
+    import asyncio
+
+    await asyncio.gather(*[group_manager.init()])
+    permission_manager.init()
+
+
+async def save_managers():
     """保存各管理器需要保存的文件"""
     import asyncio
 

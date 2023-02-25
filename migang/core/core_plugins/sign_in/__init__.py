@@ -34,7 +34,6 @@ sign_in = on_fullmatch("签到", priority=5, permission=GROUP, block=True)
 @sign_in.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     nickname = event.sender.card or event.sender.nickname
-    print(nickname)
     await sign_in.send(
         MessageSegment.image(
             await handle_sign_in(

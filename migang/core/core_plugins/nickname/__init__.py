@@ -9,7 +9,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot import on_command, on_fullmatch
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 
-from migang.core.models import NickName
+from migang.core.models import UserProperty
 from migang.core import ConfigItem, get_config
 
 __plugin_meta__ = PluginMetadata(
@@ -83,11 +83,11 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             else:
                 ret += ch
         await set_nickname.finish(f"好哦，以后就叫你{ret}，诶，昵称太长了好像没记住...（昵称不能超过10个字）")
-    if user := await NickName.filter(user_id=event.user_id).first():
+    if user := await UserProperty.filter(user_id=event.user_id).first():
         user.nickname = name
-        await user.save()
+        await user.save(update_fields=["nickname"])
     else:
-        await NickName(user_id=event.user_id, nickname=name).save()
+        await UserProperty(user_id=event.user_id, nickname=name).save()
     await set_nickname.send(
         choice(
             [
@@ -104,16 +104,21 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 @query_nickname.handle()
 async def _(bot: Bot, event: MessageEvent):
     bot_nickname = list(bot.config.nickname)[0]
-    if name := await NickName.filter(user_id=event.user_id).first():
+    if (
+        name := await UserProperty.filter(user_id=event.user_id)
+        .first()
+        .values_list("nickname")
+    ):
+        name = name[0]
         await query_nickname.finish(
             choice(
                 [
-                    f"我肯定记得你啊，你是{name.nickname}啊",
-                    f"我不会忘记你的，你也不要忘记我！{name.nickname}",
-                    f"哼哼，{bot_nickname}记忆力可是很好的，{name.nickname}",
-                    f"嗯？你是失忆了嘛...{name.nickname}..",
-                    f"不要小看{bot_nickname}的记忆力啊！{name.nickname}！",
-                    f"哎？{name.nickname}..怎么了吗..突然这样问..",
+                    f"我肯定记得你啊，你是{name}啊",
+                    f"我不会忘记你的，你也不要忘记我！{name}",
+                    f"哼哼，{bot_nickname}记忆力可是很好的，{name}",
+                    f"嗯？你是失忆了嘛...{name}..",
+                    f"不要小看{bot_nickname}的记忆力啊！{name}！",
+                    f"哎？{name}..怎么了吗..突然这样问..",
                 ]
             ),
             at_sender=True,
@@ -126,20 +131,21 @@ async def _(bot: Bot, event: MessageEvent):
 
 @cancel_nickname.handle()
 async def _(bot: Bot, event: MessageEvent):
-    if not await NickName.filter(user_id=event.user_id):
+    user = await UserProperty.filter(user_id=event.user_id).first()
+    if not user or not user.nickname:
         await cancel_nickname.finish("你还没有起昵称哦~", at_sender=True)
     bot_nickname = list(bot.config.nickname)[0]
-    name = await NickName.get(user_id=event.user_id)
     await cancel_nickname.send(
         choice(
             [
-                f"呜..{bot_nickname}睡一觉就会忘记的..和梦一样..{name.nickname}",
-                f"我知道了..{name.nickname}..",
-                f"是{bot_nickname}哪里做的不好嘛..好吧..晚安{name.nickname}",
-                f"呃，{name.nickname}，下次我绝对绝对绝对不会再忘记你！",
-                f"可..可恶！{name.nickname}！太可恶了！呜",
+                f"呜..{bot_nickname}睡一觉就会忘记的..和梦一样..{user.nickname}",
+                f"我知道了..{user.nickname}..",
+                f"是{bot_nickname}哪里做的不好嘛..好吧..晚安{user.nickname}",
+                f"呃，{user.nickname}，下次我绝对绝对绝对不会再忘记你！",
+                f"可..可恶！{user.nickname}！太可恶了！呜",
             ]
         )
     )
     # 睡一觉
-    await name.delete()
+    user.nickname = None
+    await user.save(update_fields=["nickname"])

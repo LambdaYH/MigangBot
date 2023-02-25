@@ -1,12 +1,26 @@
 from pathlib import Path
-from typing import Any, Dict
+import asyncio
+from typing import Any, Dict, Callable
 
 from tortoise import Tortoise
 from nonebot import get_driver
+from nonebot.log import logger
+from nonebot.utils import is_coroutine_callable, run_sync
 from tortoise.connection import connections
 
 from migang.core.models import *
 from migang.core.utils.file_operation import async_load_data
+
+_post_init_db_func = []
+_pre_close_db_func = []
+
+
+def post_init_db(func: Callable):
+    _post_init_db_func.append(func)
+
+
+def pre_close_db(func: Callable):
+    _pre_close_db_func.append(func)
 
 
 async def _load_config(path: Path) -> Dict[str, Any]:
@@ -124,8 +138,27 @@ async def init_db() -> None:
         async with await anyio.open_file(env_file, "w") as f:
             await f.write("\n".join(f"{k} = {v}" for k, v in env_values.items()))
         raise Exception("数据库配置初次写入.env，请重启")
+    cors = [
+        func() if is_coroutine_callable(func) else run_sync(func)()
+        for func in _post_init_db_func
+    ]
+    if cors:
+        try:
+            await asyncio.gather(*cors)
+        except Exception:
+            logger.error("数据库初始化后执行的函数出错")
+            raise
 
 
 async def close_db() -> None:
     """程序结束时关闭数据库连接"""
+    cors = [
+        func() if is_coroutine_callable(func) else run_sync(func)()
+        for func in _pre_close_db_func
+    ]
+    if cors:
+        try:
+            await asyncio.gather(*cors)
+        except Exception:
+            logger.error("数据库关闭前执行的函数出错")
     await connections.close_all(discard=True)

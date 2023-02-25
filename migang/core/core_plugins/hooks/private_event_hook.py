@@ -11,7 +11,7 @@ from nonebot.adapters.onebot.v11 import (
     FriendRecallNoticeEvent,
 )
 
-from migang.core.models import NickName
+from migang.core.models import UserProperty
 from migang.core.manager import cd_manager, user_manager, count_manager
 
 
@@ -40,7 +40,13 @@ async def _(
             await matcher.send(ret)
         raise IgnoredException("count...")
     # 检查通过后把事件的sender昵称替换为昵称系统昵称
-    if hasattr(event, "sender") and (
-        name := await NickName.filter(user_id=event.user_id).first()
+    if (
+        hasattr(event, "sender")
+        and (
+            name := await UserProperty.filter(user_id=event.user_id)
+            .first()
+            .values_list("nickname")
+        )
+        and (name[0] is not None)
     ):
-        event.sender.nickname = name.nickname
+        event.sender.nickname = name[0]

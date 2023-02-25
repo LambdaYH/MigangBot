@@ -15,7 +15,7 @@ from nonebot_plugin_imageutils import BuildImage, text2image
 
 from migang.core.path import FONT_PATH
 from migang.core.decorator import sign_in_effect
-from migang.core.models import SignIn, UserProperty
+from migang.core.models import SignIn, UserProperty, TransactionLog
 from migang.core.utils.image import get_user_avatar
 
 from .effects import *
@@ -96,6 +96,9 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
                     user.next_effect_params = [params]
                 else:
                     user.next_effect = user.next_effect_params = []
+            await TransactionLog(
+                user_id=user_id, gold_earned=user.gold_diff, description="签到"
+            ).save(using_db=connection)
             await user.save(using_db=connection)
             await user_prop.save(using_db=connection)
     avatar = await get_user_avatar(user_id)

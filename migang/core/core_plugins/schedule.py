@@ -5,7 +5,7 @@ from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
 
 from migang.core import CountPeriod
-from migang.core.manager import save, count_manager
+from migang.core.manager import save_managers, count_manager
 
 require("nonebot_plugin_apscheduler")
 
@@ -39,4 +39,4 @@ async def _():
 # 自动保存
 @scheduler.scheduled_job("interval", minutes=15, jitter=120)
 async def _():
-    await save()
+    await save_managers()

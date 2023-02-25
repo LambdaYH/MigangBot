@@ -1,8 +1,8 @@
-from enum import Enum, unique
+from enum import unique, IntEnum
 
 
 @unique
-class Permission(Enum):
+class Permission(IntEnum):
     """用户与群权限"""
 
     BLACK: int = 1
@@ -10,24 +10,6 @@ class Permission(Enum):
     NORMAL: int = 3
     GOOD: int = 4
     EXCELLENT: int = 5
-
-    def __eq__(self, __o: object) -> bool:
-        return self._value_ == __o._value_
-
-    def __ne__(self, __o: object) -> bool:
-        return self._value_ != __o._value_
-
-    def __gt__(self, __o: object) -> bool:
-        return self._value_ > __o._value_
-
-    def __ge__(self, __o: object) -> bool:
-        return self._value_ >= __o._value_
-
-    def __lt__(self, __o: object) -> bool:
-        return self._value_ < __o._value_
-
-    def __le__(self, __o: object) -> bool:
-        return self._value_ <= __o._value_
 
 
 BLACK = Permission.BLACK

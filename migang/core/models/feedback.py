@@ -35,5 +35,8 @@ class Feedback(Model):
     @classmethod
     async def get_max_id(cls) -> int:
         return (
-            await cls.all().annotate(max_feedback_id=Max("feedback_id")).first()
-        ).feedback_id
+            await cls.all()
+            .annotate(max_feedback_id=Max("feedback_id"))
+            .first()
+            .values_list("max_feedback_id")
+        )[0]

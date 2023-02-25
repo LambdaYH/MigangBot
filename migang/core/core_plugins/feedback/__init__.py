@@ -29,9 +29,9 @@ usage：
 __plugin_category__ = "基础功能"
 __plugin_aliases__ = ["发消息给维护者"]
 
-feedback = on_command(cmd=".send", aliases={"。send"}, priority=5, block=True)
+feedback = on_command(cmd=".send", aliases={"。send"}, priority=1, block=True)
 reply = on_command(
-    cmd=".reply", aliases={"。reply"}, priority=5, block=True, permission=SUPERUSER
+    cmd=".reply", aliases={"。reply"}, priority=1, block=True, permission=SUPERUSER
 )
 
 
