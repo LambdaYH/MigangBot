@@ -2,13 +2,14 @@
 https://github.com/C-Jun-GIT/Oreo
 """
 
-import base64
-from nonebot import on_command
-from nonebot.plugin import PluginMetadata
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
 import os
+import base64
+
 import cv2
+from nonebot import on_command
+from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 __plugin_meta__ = PluginMetadata(
     name="奥利奥",
