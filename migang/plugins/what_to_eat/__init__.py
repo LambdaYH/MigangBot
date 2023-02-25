@@ -25,7 +25,7 @@ usage：
         "version": 0.1,
     },
 )
-
+__plugin_category__ = "好玩的"
 what_eat_drink = on_regex(
     r"^(今|明|后)?(天|日)?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)?(吃|喝)(什么|啥|点啥)$", priority=5
 )

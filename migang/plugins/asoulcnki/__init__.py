@@ -23,6 +23,8 @@ usage：
     },
 )
 
+__plugin_category__ = "好玩的"
+
 article = on_fullmatch("发病小作文", block=True, priority=13)
 fabin = on_command("发病", block=True, priority=13)
 

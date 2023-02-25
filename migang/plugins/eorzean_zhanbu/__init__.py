@@ -33,7 +33,7 @@ usage：
     },
 )
 
-__pluginc_categroy__ = "好玩的"
+__plugin_category__ = "好玩的"
 
 eorzean_zhanbu = on_command(
     cmd="/占卜", aliases={"、占卜", "/zhanbu"}, priority=5, block=True

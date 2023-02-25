@@ -31,7 +31,7 @@ usage：
         "version": 0.1,
     },
 )
-
+__plugin_category__ = "一些工具"
 commands = {"是啥", "是什么", "是谁"}
 what = on_keyword({"是啥", "是什么", "是谁"}, priority=14)
 baike = on_command("百科", block=True, priority=13)

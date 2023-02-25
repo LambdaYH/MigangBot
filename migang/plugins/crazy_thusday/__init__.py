@@ -33,7 +33,7 @@ usage：
     },
 )
 
-
+__plugin_category__ = "好玩的"
 crazy_cn = on_regex(pattern=r"^疯狂星期\S$", priority=15, block=False)
 crazy_jp = on_regex(pattern=r"^狂乱\S曜日$", priority=15, block=False)
 
