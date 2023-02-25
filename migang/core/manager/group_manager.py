@@ -1,5 +1,8 @@
 from typing import Dict, Set, DefaultDict
 from collections import defaultdict
+import asyncio
+
+from tortoise.transactions import in_transaction
 
 from migang.core.permission import NORMAL, Permission
 from migang.core.manager.task_manager import TaskManager
@@ -46,9 +49,15 @@ class GroupManager:
 
     async def save(self) -> None:
         """写进数据库"""
-        for group_status, fields in self.__save_query.items():
-            await group_status.save(update_fields=fields)
-        self.__save_query.clear()
+        if self.__save_query:
+            async with in_transaction() as connection:
+                tasks = []
+                for group_status, fields in self.__save_query.items():
+                    tasks.append(
+                        group_status.save(update_fields=fields, using_db=connection)
+                    )
+                await asyncio.gather(*tasks)
+            self.__save_query.clear()
 
     def __get_group(self, group_id: int) -> GroupStatus:
         """获取group_id对应的Group类，若无，则创建
@@ -64,7 +73,7 @@ class GroupManager:
             group = self.__group[group_id] = GroupStatus(
                 group_id=group_id, permission=NORMAL, bot_status=True
             )
-            self.__save_query[group].update(("group_id", "permission", "bot_status"))
+            self.__save_query[group].update()
         return group
 
     def check_group_plugin_status(self, plugin_name: str, group_id: int) -> bool:

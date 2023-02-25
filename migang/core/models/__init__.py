@@ -6,3 +6,4 @@ from .shop import Shop
 from .user_bag import UserBag
 from .transaction_log import TransactionLog
 from .group_status import GroupStatus
+from .user_status import UserStatus

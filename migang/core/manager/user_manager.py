@@ -1,10 +1,11 @@
-from pathlib import Path
-from typing import Dict, Union
+from typing import Dict,  DefaultDict, Set
+from collections import defaultdict
 
-import anyio
-from pydantic import BaseModel
+import asyncio
 
-from migang.core.exception import FileTypeError
+from tortoise.transactions import in_transaction
+
+from migang.core.models import UserStatus
 from migang.core.permission import NORMAL, Permission
 from migang.core.manager.plugin_manager import PluginManager
 
@@ -16,65 +17,42 @@ class UserManager:
         FileTypeError: 找不到记录文件
     """
 
-    class TotalData(BaseModel):
-        class User(BaseModel):
-            """管理单个用户，记录用户权限"""
-
-            permission: Permission
-
-            def set_permission(self, permission: Permission):
-                """设定用户权限
-
-                Args:
-                    permission (Permission): 新权限
-                """
-                self.permission = permission
-
-        data: Dict[int, User]
-
-    def __init__(self, file: Union[Path, str], plugin_manager: PluginManager) -> None:
+    def __init__(self, plugin_manager: PluginManager) -> None:
         """UserManager构造函数，管理用户能否调用插件与任务以及群机器人的状态
 
         Args:
-            file (Union[Path, str]): 记录文件
             plugin_manager (PluginManager): 插件管理器
-
-        Raises:
-            FileTypeError: 找不到记录文件
         """
-        self.__data: UserManager.TotalData
-        """保存到文件时候用的
-        """
-        self.__user: Dict[int, UserManager.TotalData.User]
+        self.__user: Dict[int, UserManager.TotalData.User] = {}
         """记录user_id对应的User类
-        """
-        self.__file: Path = Path(file) if isinstance(file, str) else file
-        self.__dirty_data: bool = False
-        """若数据被修改了则标记为脏数据
         """
 
         self.__plugin_manager = plugin_manager
         """管理插件
         """
+        self.__save_query: DefaultDict[UserStatus, Set[str]] = defaultdict(
+            lambda: set()
+        )
 
-        if self.__file.suffix != ".json":
-            raise FileTypeError("用户管理模块配置文件必须为json格式！")
-
-        self.__file.parent.mkdir(parents=True, exist_ok=True)
-        if self.__file.exists():
-            self.__data = UserManager.TotalData.parse_file(self.__file)
-        else:
-            self.__data = UserManager.TotalData(data={})
-        self.__user = self.__data.data
+    async def init(self) -> None:
+        """初始化，从数据库中载入"""
+        all_users = await UserStatus.all()
+        for user in all_users:
+            self.__user[user.user_id] = user
 
     async def save(self) -> None:
-        """保存进文件"""
-        if self.__dirty_data:
-            async with await anyio.open_file(self.__file, "w", encoding="utf-8") as f:
-                await f.write(self.__data.json(ensure_ascii=False, indent=4))
-            self.__dirty_data = False
+        """写进数据库"""
+        if self.__save_query:
+            async with in_transaction() as connection:
+                tasks = []
+                for user_status, fields in self.__save_query.items():
+                    tasks.append(
+                        user_status.save(update_fields=fields, using_db=connection)
+                    )
+                await asyncio.gather(*tasks)
+            self.__save_query.clear()
 
-    def __get_user(self, user_id: int) -> TotalData.User:
+    def __get_user(self, user_id: int) -> UserStatus:
         """获取user_id对应的User类，若无，则创建
 
         Args:
@@ -85,8 +63,8 @@ class UserManager:
         """
         user = self.__user.get(user_id)
         if not user:
-            user = self.__user[user_id] = UserManager.TotalData.User(permission=NORMAL)
-            self.__dirty_data = True
+            user = self.__user[user_id] = UserStatus(user_id=user_id, permission=NORMAL)
+            self.__save_query[user].update()
         return user
 
     def check_user_plugin_status(self, plugin_name: str, user_id: int) -> bool:
@@ -119,33 +97,6 @@ class UserManager:
             plugin_name=plugin_name, permission=user.permission
         )
 
-    async def add(self, user_id: int, auto_save: bool = True) -> None:
-        """添加新用户
-
-        Args:
-            user_id (int): 用户ID
-            auto_save (bool, optional): 是否立刻保存进硬盘. Defaults to True.
-        """
-        self.__get_user(user_id=user_id)
-        if auto_save:
-            await self.save()
-        else:
-            self.__dirty_data = True
-
-    async def remove(self, user_id: int, auto_save: bool = True) -> None:
-        """移除用户
-
-        Args:
-            user_id (int): 用户ID
-            auto_save (bool, optional): 是否立刻保存进硬盘. Defaults to True.
-        """
-        if user_id in self.__user:
-            del self.__user[user_id]
-            if auto_save:
-                await self.save()
-            else:
-                self.__dirty_data = True
-
     def set_user_permission(self, user_id: int, permission: Permission):
         """设定用户权限
 
@@ -155,7 +106,7 @@ class UserManager:
         """
         user = self.__get_user(user_id=user_id)
         user.set_permission(permission=permission)
-        self.__dirty_data = True
+        self.__save_query[user].add("permission")
 
     def get_user_permission(self, user_id: int) -> Permission:
         """获取用户权限

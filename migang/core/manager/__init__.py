@@ -32,7 +32,6 @@ group_manager: GroupManager = GroupManager(
 """
 
 user_manager: UserManager = UserManager(
-    core_data_path / "user_manager.json",
     plugin_manager=plugin_manager,
 )
 """管理用户权限，仅在私聊状态下生效
@@ -68,7 +67,7 @@ permission_manager: PermissionManager = PermissionManager(
 async def init_managers():
     import asyncio
 
-    await asyncio.gather(*[group_manager.init()])
+    await asyncio.gather(*[group_manager.init(), user_manager.init()])
     permission_manager.init()
 
 

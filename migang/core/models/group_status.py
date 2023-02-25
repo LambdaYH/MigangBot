@@ -11,7 +11,7 @@ class GroupStatus(Model):
 
     class Meta:
         table = "group_status"
-        table_description = "管理群相关东西"
+        table_description = "管理群相关状态"
 
     def __hash__(self) -> int:
         return hash(self.group_id)
