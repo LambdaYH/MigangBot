@@ -34,7 +34,7 @@ usage：
         添加mcs 服务器名 ip:<port> je/be
         查询mcs 服务器名
         删除mcs 服务器名
-        mcslist/mc服务器列表                   ：
+        mcslist/mc服务器列表                   
 
         查询mcs ip:<port> je/be
 

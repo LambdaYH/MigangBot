@@ -2,7 +2,6 @@ import re
 import html
 from typing import Tuple
 
-import ujson
 import aiohttp
 from lxml import etree
 from aiocache import cached
@@ -27,7 +26,7 @@ async def get_video_detail(url: str) -> Tuple[Message, str]:
         api_url = f"https://api.bilibili.com/x/web-interface/view?aid={aid.group()[2:]}"
     else:
         raise Exception("找不到bvid或aid")
-    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+    async with aiohttp.ClientSession() as client:
         details = await (await client.get(api_url, timeout=15)).json()
     if details["code"] != 0:
         raise Exception("cannot fetch video detail")
@@ -60,7 +59,7 @@ async def get_video_detail(url: str) -> Tuple[Message, str]:
 
 @cached(ttl=240)
 async def get_bangumi_detail(url: str) -> Tuple[Message, str]:
-    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+    async with aiohttp.ClientSession() as client:
         text = await (
             await client.get(
                 url,
@@ -118,7 +117,7 @@ async def get_live_summary(url: str) -> Tuple[Message, str]:
         roomid = re.search(r"\d+", link).group()
     else:
         raise Exception("no link found")
-    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+    async with aiohttp.ClientSession() as client:
         headers = {"User-Agent": UserAgent(browsers=["chrome", "edge"]).random}
         r = await (
             await client.get(

@@ -1,0 +1,160 @@
+body {
+    margin: 0;
+}
+
+li {
+    list-style: none
+}
+
+ul {
+    margin: 0;
+    padding: 0
+}
+
+.mod_songlist {
+    font-size: 14px;
+    overflow: hidden
+}
+
+.songlist__list {
+    overflow: hidden;
+    clear: both
+}
+
+.songlist__header,
+.songlist__item {
+    position: relative;
+    padding-left: 46px;
+    padding-right: 95px
+}
+
+.songlist__item {
+    clear: both;
+    font-size: 0;
+    overflow: hidden
+}
+
+.songlist__item--even {
+    background-color: rgba(0, 0, 0, .01)
+}
+
+.songlist__artist,
+.songlist__artist_withsource,
+.songlist__source,
+.songlist__number {
+    font-size: 14px
+}
+
+.songlist__artist,
+.songlist__artist_withsource,
+.songlist__source,
+.songlist__number,
+.songlist__songname {
+    line-height: 50px;
+    height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.songlist__header {
+    height: 50px;
+    line-height: 50px;
+    background-color: rgba(0, 0, 0, .01);
+    color: #999
+}
+
+.songlist__header_name,
+.songlist__songname {
+    float: left;
+    width: 47.685185%;
+    position: relative;
+    white-space: normal
+}
+
+.songlist__artist,
+.songlist__header_author {
+    float: right;
+    padding-left: 15px;
+    width: 25.5%;
+    box-sizing: border-box
+}
+
+.songlist__artist_withsource,
+.songlist__header_author_withsource {
+    float: left;
+    padding-left: 15px;
+    width: 25.5%;
+    box-sizing: border-box
+}
+
+.songlist__header_source,
+.songlist__source {
+    float: right;
+    width: 20.5%;
+    box-sizing: border-box;
+    padding-left: 40px;
+}
+
+.songlist__footer {
+    position: relative;
+    padding-left: 46px;
+    padding-right: 95px;
+    height: 50px;
+    line-height: 50px;
+    background-color: rgb(6 5 5 / 11%);
+    color: rgb(94, 91, 91);
+    text-align: center;
+    font-size: medium;
+    font-weight: bolder;
+}
+
+.songlist__song_txt {
+    margin-left: 10px
+}
+
+.songlist__song_txt {
+    color: #999
+}
+
+.songlist__number {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    color: #999;
+    width: 36px
+}
+
+.songlist__songname_txt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 56%;
+    margin-right: 8px;
+    white-space: nowrap;
+    font-size: 14px
+}
+
+.songlist__item .songlist__songname_txt:first-child {
+    max-width: 85%;
+    box-sizing: border-box
+}
+
+.songlist__item .songlist__songname_txt {
+    max-width: 72%;
+    box-sizing: border-box
+}
+
+.songlist__item .songlist__songname_txt {
+    max-width: 62%;
+    box-sizing: border-box
+}
+
+.songlist__item .mod_list_menu {
+    position: absolute;
+    right: -10px;
+    right: -9999px\9;
+    top: 50%;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none
+}

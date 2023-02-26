@@ -2,7 +2,6 @@ import random
 from time import time
 from pathlib import Path
 
-import ujson
 import aiohttp
 from nonebot import get_bot
 from nonebot.log import logger
@@ -52,7 +51,7 @@ async def get_moring_message() -> str:
     for i in range(3):
         try:
             # 获得不同的问候语
-            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+            async with aiohttp.ClientSession() as client:
                 r = await client.get(
                     f"https://timor.tech/api/holiday/tts?t={int(time())}", timeout=7
                 )

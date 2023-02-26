@@ -1,4 +1,3 @@
-import ujson
 import aiohttp
 from fake_useragent import UserAgent
 
@@ -12,7 +11,7 @@ DATA_PATH.mkdir(exist_ok=True, parents=True)
 
 async def update_suits_img():
     headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
-    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+    async with aiohttp.ClientSession() as client:
         r = await client.head(
             "https://nikki4.papegames.cn/audiovisual?utm_source=official&utm_medium=home_nav",
             headers=headers,

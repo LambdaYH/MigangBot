@@ -4,7 +4,6 @@ from asyncio import sleep
 from datetime import datetime
 
 import anyio
-import ujson
 import aiohttp
 from lxml import etree
 from nonebot.log import logger
@@ -19,7 +18,7 @@ async def get_data():
     for i in range(3):
         try:
             today = datetime.today()
-            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+            async with aiohttp.ClientSession() as client:
                 r = await client.get(
                     f"https://baike.baidu.com/cms/home/eventsOnHistory/{today.month:02}.json",
                     headers={

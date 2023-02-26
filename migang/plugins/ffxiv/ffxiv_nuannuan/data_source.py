@@ -7,7 +7,6 @@ from typing import Dict, List
 
 import pytz
 import anyio
-import ujson
 import aiohttp
 from PIL import Image
 from nonebot import get_driver
@@ -59,7 +58,7 @@ async def get_nuannuan_image() -> None:
 async def get_video_id(mid: int) -> str:
     try:
         # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
-        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+        async with aiohttp.ClientSession() as client:
             headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
             url = f"https://api.bilibili.com/x/space/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
             r = await client.head("https://www.bilibili.com/", headers=headers)
@@ -76,7 +75,7 @@ async def get_video_id(mid: int) -> str:
 async def extract_nn(bvid: str) -> Dict[str, str]:
     try:
         url = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
-        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+        async with aiohttp.ClientSession() as client:
             r = await (await client.get(url, timeout=5)).json()
             if r["code"] == 0:
                 url = f"https://www.bilibili.com/video/{bvid}"

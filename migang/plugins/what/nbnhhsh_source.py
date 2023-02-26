@@ -10,7 +10,7 @@ async def get_nbnhhsh(keyword: str) -> Tuple[str, str, str]:
     headers = {"referer": "https://lab.magiconch.com/nbnhhsh/"}
     data = {"text": keyword}
     async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
-        resp = await client.post(url=url, headers=headers, data=data, timeout=5)
+        resp = await client.post(url=url, headers=headers, json=data, timeout=5)
         res = await resp.json()
     title = ""
     result = []

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>migang_music</title>
+    <link rel="stylesheet" href="css/music_list.css">
+</head>
+
+<body>
+    <div class="mod_songlist">
+        <ul class="songlist__header">
+            <li class="songlist__header_name">歌曲</li>
+            {% if multi_source %}
+            <li class="songlist__header_author_withsource">歌手</li>
+            {% else %}
+            <li class="songlist__header_author">歌手</li>
+            {% endif %}
+            {% if multi_source %}
+            <li class="songlist__header_source">来源</li>
+            {% endif %}
+        </ul>
+        <ul class="songlist__list">
+            {% for song in music_list %}
+            <li>
+                {% if loop.index0 is even %}
+                <div class="songlist__item songlist__item--even">
+                    {% else %}
+                    <div class="songlist__item">
+                        {% endif %}
+                        <div class="songlist__number songlist__number--top">{{ loop.index }}</div>
+                        <div class="songlist__songname"><span class="songlist__songname_txt">{{ song['title'] }}</span>
+                        </div>
+                        {% if multi_source %}
+                        <div class="songlist__artist_withsource">{{ song['content'] }}</div>
+                        {% else %}
+                        <div class="songlist__artist">{{ song['content'] }}</div>
+                        {% endif %}
+                        {% if multi_source %}
+                        <div class="songlist__source">{{ song['source'] }}</div>
+                        {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <ul class="songlist__footer">
+            发送 选择+序号 (例如 选择1)来听歌吧~
+        </ul>
+    </div>
+</body>
+
+</html>

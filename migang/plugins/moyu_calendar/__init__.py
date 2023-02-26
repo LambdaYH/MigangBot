@@ -1,13 +1,10 @@
-from asyncio import sleep
-
-import ujson
 import aiohttp
 from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot import on_fullmatch
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
-from nonebot.adapters.onebot.v11 import Message, ActionFailed, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from migang.core import TaskItem, broadcast
 
@@ -38,7 +35,7 @@ moyu_calendar = on_fullmatch("摸鱼日历", priority=26, block=True, rule=to_me
 async def get_calendar() -> Message:
     for i in range(3):
         try:
-            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+            async with aiohttp.ClientSession() as client:
                 r = await client.get(
                     "https://api.j4u.ink/v1/store/other/proxy/remote/moyu.json",
                     timeout=7,

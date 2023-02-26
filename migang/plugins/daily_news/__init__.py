@@ -1,6 +1,5 @@
 import asyncio
 
-import ujson
 import aiohttp
 from nonebot.log import logger
 from nonebot.rule import to_me
@@ -44,7 +43,7 @@ dailynews = on_fullmatch("今日早报", priority=13, block=True, rule=to_me())
 async def get_zaobao() -> MessageSegment:
     for i in range(3):
         try:
-            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+            async with aiohttp.ClientSession() as client:
                 r = await client.get("http://dwz.2xb.cn/zaob", timeout=7)
                 r = await r.json()
             if r["code"] == 200:

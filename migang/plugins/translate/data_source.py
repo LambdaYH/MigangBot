@@ -62,7 +62,7 @@ async def get_baidu_trans(text):
             "salt": salt,
             "sign": sign,
         }
-        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+        async with aiohttp.ClientSession() as client:
             r = await client.get(
                 "https://api.fanyi.baidu.com/api/trans/vip/translate",
                 params=params,
@@ -95,7 +95,7 @@ async def get_youdao_trans(text):
         "typoResult": "true",
     }
     try:
-        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as client:
+        async with aiohttp.ClientSession() as client:
             data = await (await client.post(url, data=data)).json()
         if data["errorCode"] == 0:
             return f"[有道机翻]\n> {data['translateResult'][0][0]['tgt']}"
