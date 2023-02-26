@@ -102,7 +102,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             await user.save(using_db=connection)
             await user_prop.save(using_db=connection)
     avatar = await get_user_avatar(user_id)
-    return await anyio.run_sync_in_worker_thread(
+    return await anyio.to_thread.run_sync(
         draw,
         bot_name,
         avatar,

@@ -41,6 +41,7 @@ from .data_source import (
     get_help_image,
     get_task_image,
     get_plugin_help,
+    draw_usage
 )
 
 require("nonebot_plugin_htmlrender")
@@ -96,7 +97,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             await f.write(img)
     else:
         if help_ := get_plugin_help(args):
-            await simple_help.send(help_)
+            await simple_help.send(await anyio.to_thread.run_sync(draw_usage, help_))
         else:
             await simple_help.send(f"没有该插件的帮助信息")
 

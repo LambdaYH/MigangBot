@@ -20,7 +20,6 @@ from migang.core.manager import (
     plugin_manager,
 )
 
-PLUGIN_HELP_BG = Path(__file__).parent / "image" / "plugin_help.png"
 USER_HELP_PATH = DATA_PATH / "core" / "help" / "user_help_image"
 GROUP_HELP_PATH = DATA_PATH / "core" / "help" / "group_help_image"
 GROUP_TASK_PATH = DATA_PATH / "core" / "help" / "group_task_image"
@@ -41,6 +40,7 @@ LOGO_PATH = TEMPLATE_PATH / "menu" / "res" / "logo"
 @get_driver().on_startup
 async def _():
     await add_font("yz.ttf", FONT_PATH / "yz.ttf")
+    await add_font("HONORSans-Regular.ttf", FONT_PATH / "HONORSans-Regular.ttf")
 
 
 async def get_help_image(group_id: Optional[int], user_id: Optional[int], super: bool):
@@ -53,7 +53,7 @@ async def get_help_image(group_id: Optional[int], user_id: Optional[int], super:
     return await _build_html_image(group_id, user_id, super)
 
 
-def get_plugin_help(name: str) -> Optional[MessageSegment]:
+def get_plugin_help(name: str) -> Optional[str]:
     """
     说明:
         获取功能的帮助信息
@@ -64,25 +64,121 @@ def get_plugin_help(name: str) -> Optional[MessageSegment]:
     if usage := plugin_manager.get_plugin_usage(name) or (
         usage := task_manager.get_task_usage(name)
     ):
-        help_img = text2image(
-            text=f"{usage}",
-            fontname="yz.ttf",
-            fontsize=24,
-            padding=(40, 40),
-            bg_color=(255, 255, 255, 0),
-        )
-        help_img = (
-            BuildImage.open(PLUGIN_HELP_BG)
-            .resize(size=(help_img.width, help_img.height))
-            .draw_bbcode_text(
-                xy=(40, 40),
-                text=usage,
-                fontsize=24,
-                fontname="yz.ttf",
-            )
-        )
-        return MessageSegment.image(help_img.save_jpg())
+        return usage
     return None
+
+
+border = 18
+inner_border = 20
+top_border = 29
+text_image_width = 160
+text_image_padding = 15
+line_width = 5
+min_width = (
+    text_image_width + border * 2 + text_image_padding * 2 + max(10, inner_border) * 2
+)
+
+
+def draw_usage(usage: str) -> Optional[MessageSegment]:
+    help_img = text2image(
+        text=usage,
+        fontname="yz.ttf",
+        fontsize=24,
+        padding=(0, 0),
+        bg_color=(255, 255, 255, 0),
+    )
+    color_candidates = ["#4586F3", "#EB4334", "#FBBD06", "#35AA53"]
+    random.shuffle(color_candidates)
+
+    help_img = text2image(
+        text=usage,
+        fontname="yz.ttf",
+        fontsize=24,
+        padding=(0, 0),
+        bg_color=(255, 255, 255, 0),
+    )
+    bk = BuildImage.new(
+        "RGBA",
+        (
+            max(help_img.width + border * 2 + inner_border * 2, min_width),
+            help_img.height + border + top_border + inner_border * 2,
+        ),
+        color=(255, 255, 255),
+    )
+    # 边框左
+    bk.draw_line(
+        (border, top_border, border, bk.height - border),
+        fill=color_candidates[0],
+        width=line_width,
+    )
+    # 边框底
+    bk.draw_line(
+        (
+            border - int(line_width / 2),
+            bk.height - border,
+            bk.width - border,
+            bk.height - border,
+        ),
+        fill=color_candidates[1],
+        width=line_width,
+    )
+    # 边框右
+    bk.draw_line(
+        (
+            bk.width - border,
+            bk.height - border + int(line_width / 2),
+            bk.width - border,
+            top_border,
+        ),
+        fill=color_candidates[2],
+        width=line_width,
+    )
+    # 计算文字处于上边框的位置
+    length = bk.width - border * 2
+    start_idx = random.randint(
+        10, length - 10 - text_image_padding - text_image_width - text_image_padding
+    )
+    # 上边框左半部分
+    bk.draw_line(
+        (border, top_border, start_idx + border, top_border),
+        fill=color_candidates[3],
+        width=line_width,
+    )
+    # 上边框右半部分
+    bk.draw_line(
+        (
+            border
+            + start_idx
+            + text_image_padding
+            + text_image_width
+            + text_image_padding,
+            top_border,
+            bk.width - border + int(line_width / 2),
+            top_border,
+        ),
+        fill=color_candidates[3],
+        width=line_width,
+    )
+    # 把边框左被上边框遮住的一角画上
+    bk.draw_line(
+        (
+            border,
+            top_border - int(line_width / 2),
+            border,
+            top_border + int(line_width / 2),
+        ),
+        fill=color_candidates[0],
+        width=line_width,
+    )
+    bk.paste(help_img, (border + inner_border, top_border + inner_border))
+    random.shuffle(color_candidates)
+    bk.draw_bbcode_text(
+        (border + start_idx + text_image_padding, top_border - 30),
+        text=f"[color={color_candidates[0]}]使[/color][color={color_candidates[1]}]用[/color][color={color_candidates[2]}]帮[/color][color={color_candidates[3]}]助[/color]",
+        fontname="HONORSans-Regular.ttf",
+        fontsize=40,
+    )
+    return MessageSegment.image(bk.save_png())
 
 
 _sorted_data: Dict[str, List[PluginManager.Plugin]] = {}
@@ -219,7 +315,6 @@ async def _build_html_image(
         pages={
             "viewport": {"width": 1903, "height": 975},
         },
-        wait=2,
     )
     return pic
 
@@ -259,6 +354,5 @@ async def get_task_image(group_id: int) -> bytes:
         pages={
             "viewport": {"width": 850, "height": 975},
         },
-        wait=2,
     )
     return pic
