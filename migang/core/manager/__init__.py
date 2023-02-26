@@ -2,7 +2,10 @@ from pathlib import Path
 
 from nonebot.log import logger
 
+from migang.core.database import post_init_db, pre_close_db
+
 from .user_manager import UserManager
+from .goods_manager import GoodsManager
 from .group_manager import GroupManager
 from .cd_manager import CDItem, CDManager
 from .plugin_manager import PluginManager
@@ -11,9 +14,7 @@ from .task_manager import TaskItem, TaskManager
 from .permission_manager import PermissionManager
 from .config_manager import ConfigItem, ConfigManager
 from .count_manager import CountItem, CountPeriod, CountManager
-from .goods_manager import GoodsManager
 from .data_class import CheckType, LimitType, PluginType, CountPeriod
-from migang.core.database import post_init_db, pre_close_db
 
 core_data_path = Path() / "data" / "core"
 config_path = Path() / "configs"
