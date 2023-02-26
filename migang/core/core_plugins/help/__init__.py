@@ -38,10 +38,10 @@ from .data_source import (
     USER_HELP_PATH,
     GROUP_HELP_PATH,
     GROUP_TASK_PATH,
+    draw_usage,
     get_help_image,
     get_task_image,
     get_plugin_help,
-    draw_usage
 )
 
 require("nonebot_plugin_htmlrender")
