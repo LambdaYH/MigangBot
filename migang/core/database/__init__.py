@@ -17,10 +17,12 @@ _pre_close_db_func = []
 
 def post_init_db(func: Callable):
     _post_init_db_func.append(func)
+    return func
 
 
 def pre_close_db(func: Callable):
     _pre_close_db_func.append(func)
+    return func
 
 
 async def _load_config(path: Path) -> Dict[str, Any]:

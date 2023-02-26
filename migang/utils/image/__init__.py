@@ -3,6 +3,8 @@ from io import BytesIO
 
 from PIL import Image
 
+from migang.core.utils.image import get_user_avatar
+
 
 def pic_to_bytes(pic: Image) -> str:
     with BytesIO() as buf:

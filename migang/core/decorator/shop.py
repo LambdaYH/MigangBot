@@ -1,231 +1,198 @@
-from typing import Tuple, Union, Callable, Optional
-
-from nonebot.plugin import require
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from typing import Tuple, Union, Callable, Dict, Any, Iterable
+from pathlib import Path
 
 
-class ShopRegister:
-    def __init__(self):
-        self.__data = {}
+from migang.core.manager import goods_manager
+from migang.core.manager.goods_manager import Goods
+
+"""固有参数
+goods_name   # 商品名
+user_id      # 使用者id
+group_id =   # 使用者群id（若有）
+bot          # bot
+event        # 事件
+num          # 使用量
+**kwargs     # 自己定义的，用于同时注册多个
+"""
+
+
+def uniform_value(value, len) -> Tuple:
+    if isinstance(value, Iterable) and not isinstance(value, str):
+        return value
+    return tuple([value] * len)
+
+
+class GoodsRegister:
+    def __init__(self) -> None:
+        pass
+
+    def __register(
+        self,
+        name: Union[str, Iterable[str]],
+        price: Union[int, Iterable[int]],
+        description: Union[str, Iterable[str], None] = None,
+        passive: Union[bool, Iterable[bool], None] = None,
+        icon: Union[Iterable[str], str, None] = None,
+        daily_limit: Union[int, Iterable[int], None] = None,
+        on_shelf: Union[bool, Iterable[bool], None] = None,
+        discount: Union[float, Iterable[float], None] = None,
+    ):
+        len_ = len(name)
+        name = uniform_value(name, len_)
+        price = uniform_value(price, len_)
+        description = uniform_value(description, len_, "")
+        discount = uniform_value(discount, len_, 1)
+        on_shelf = uniform_value(on_shelf, len_, True)
+        daily_limit = uniform_value(daily_limit, len_, None)
+        passive = uniform_value(passive, len_, False)
+        icon = uniform_value(icon, len_, None)
+        for x in [price, description, discount, on_shelf, daily_limit, passive, icon]:
+            if len(x) != len_:
+                raise ValueError(f"商品{name}的handle参数数量不一致")
+        for (
+            name_,
+            price_,
+            description_,
+            discount_,
+            on_shelf_,
+            daily_limit_,
+            passive_,
+            icon_,
+        ) in zip(
+            name,
+            price,
+            description,
+            discount,
+            on_shelf,
+            daily_limit,
+            passive,
+            icon,
+        ):
+            goods = Goods(
+                name=name_,
+                price=price_,
+                icon=icon_,
+                discount=discount_,
+                daily_limit=daily_limit_,
+                on_shelf=on_shelf_,
+                description=description_,
+                passive=passive_,
+            )
+            goods_manager.add(goods)
+
+    def handle(
+        self,
+        name: Union[str, Iterable[str]],
+        price: Union[int, Iterable[int]],
+        description: Union[str, Iterable[str], None] = None,
+        passive: Union[bool, Iterable[bool], None] = None,
+        icon: Union[Iterable[str], str, None] = None,
+        daily_limit: Union[int, Iterable[int], None] = None,
+        on_shelf: Union[bool, Iterable[bool], None] = None,
+        discount: Union[float, Iterable[float], None] = None,
+        kwargs: Union[Dict[str, Any], Iterable[Dict[str, Any]], None] = None,
+    ):
+        self.__register(
+            name=name,
+            price=price,
+            description=description,
+            discount=discount,
+            on_shelf=on_shelf,
+            daily_limit=daily_limit,
+            passive=passive,
+            icon=icon,
+        )
+        if isinstance(name, str):
+            name = (name,)
+        if kwargs is None:
+            kwargs = len(name) * [{}]
+        elif isinstance(kwargs, Dict):
+            kwargs = [kwargs] * len(name)
+        if len(kwargs) != len(name):
+            raise ValueError(f"注册{name}的handle时，kwargs与商品数不一致")
+
+        def register(func: Callable):
+            for i, goods_name in enumerate(name):
+                if goods := goods_manager.get_good(name=goods_name):
+                    goods.register_handler(func, kwargs=kwargs[i])
+
+        return register
 
     def before_handle(
-        self, name: Union[str, Tuple[str, ...]], load_status: bool = True
-    ):
-        """
-        说明:
-            使用前检查方法
-        参数:
-            :param name: 道具名称
-            :param load_status: 加载状态
-        """
-
-        def register_before_handle(name_list: Tuple[str, ...], func: Callable):
-            if load_status:
-                for name_ in name_list:
-                    if not self.__data[name_]:
-                        self.__data[name_] = {}
-                    if not self.__data[name_].get("before_handle"):
-                        self.__data[name_]["before_handle"] = []
-                    self.__data[name]["before_handle"].append(func)
-
-        _name = (name,) if isinstance(name, str) else name
-        return lambda func: register_before_handle(_name, func)
-
-    def after_handle(self, name: Union[str, Tuple[str, ...]], load_status: bool = True):
-        """
-        说明:
-            使用后执行方法
-        参数:
-            :param name: 道具名称
-            :param load_status: 加载状态
-        """
-
-        def register_after_handle(name_list: Tuple[str, ...], func: Callable):
-            if load_status:
-                for name_ in name_list:
-                    if not self.__data[name_]:
-                        self.__data[name_] = {}
-                    if not self.__data[name_].get("after_handle"):
-                        self.__data[name_]["after_handle"] = []
-                    self.__data[name_]["after_handle"].append(func)
-
-        _name = (name,) if isinstance(name, str) else name
-        return lambda func: register_after_handle(_name, func)
-
-    def register(
         self,
-        name: Tuple[str, ...],
-        price: Tuple[float, ...],
-        des: Tuple[str, ...],
-        discount: Tuple[float, ...],
-        limit_time: Tuple[int, ...],
-        load_status: Tuple[bool, ...],
-        daily_limit: Tuple[int, ...],
-        is_passive: Tuple[bool, ...],
-        icon: Tuple[str, ...],
-        **kwargs,
+        name: Union[str, Iterable[str]],
+        price: Union[int, Iterable[int]],
+        description: Union[str, Iterable[str], None] = None,
+        passive: Union[bool, Iterable[bool], None] = None,
+        icon: Union[Iterable[str], str, None] = None,
+        daily_limit: Union[int, Iterable[int], None] = None,
+        on_shelf: Union[bool, Iterable[bool], None] = None,
+        discount: Union[float, Iterable[float], None] = None,
+        kwargs: Union[Dict[str, Any], Iterable[Dict[str, Any]], None] = None,
     ):
-        def add_register_item(func: Callable):
-            if name in self.__data.keys():
-                raise ValueError("该商品已注册，请替换其他名称！")
-            for n, p, d, dd, l, s, dl, pa, i in zip(
-                name,
-                price,
-                des,
-                discount,
-                limit_time,
-                load_status,
-                daily_limit,
-                is_passive,
-                icon,
-            ):
-                if s:
-                    _temp_kwargs = {}
-                    for key, value in kwargs.items():
-                        if key.startswith(f"{n}_"):
-                            _temp_kwargs[key.split("_", maxsplit=1)[-1]] = value
-                        else:
-                            _temp_kwargs[key] = value
-                    temp = self.__data.get(n, {})
-                    temp.update(
-                        {
-                            "price": p,
-                            "des": d,
-                            "discount": dd,
-                            "limit_time": l,
-                            "daily_limit": dl,
-                            "icon": i,
-                            "is_passive": pa,
-                            "func": func,
-                            "kwargs": _temp_kwargs,
-                        }
-                    )
-                    self.__data[n] = temp
-            return func
-
-        return lambda func: add_register_item(func)
-
-    async def load_register(self):
-        require("use")
-        require("shop_handle")
-        from migang.core.core_plugins.shop.shop_handle.data_source import register_goods
-        from migang.core.core_plugins.shop.use.data_source import (
-            func_manager,
-            register_use,
+        self.__register(
+            name=name,
+            price=price,
+            description=description,
+            discount=discount,
+            on_shelf=on_shelf,
+            daily_limit=daily_limit,
+            passive=passive,
+            icon=icon,
         )
+        if isinstance(name, str):
+            name = (name,)
+        if kwargs is None:
+            kwargs = len(name) * [{}]
+        elif isinstance(kwargs, Dict):
+            kwargs = [kwargs] * len(name)
+        if len(kwargs) != len(name):
+            raise ValueError(f"注册{name}的handle时，kwargs与商品数不一致")
 
-        # 统一进行注册
-        if self._flag:
-            # 只进行一次注册
-            self._flag = False
-            for name in self.__data.keys():
-                await register_goods(
-                    name,
-                    self.__data[name]["price"],
-                    self.__data[name]["des"],
-                    self.__data[name]["discount"],
-                    self.__data[name]["limit_time"],
-                    self.__data[name]["daily_limit"],
-                    self.__data[name]["is_passive"],
-                    self.__data[name]["icon"],
-                )
-                register_use(
-                    name, self.__data[name]["func"], **self.__data[name]["kwargs"]
-                )
-                func_manager.register_use_before_handle(
-                    name, self.__data[name].get("before_handle", [])
-                )
-                func_manager.register_use_after_handle(
-                    name, self.__data[name].get("after_handle", [])
-                )
+        def register(func: Callable):
+            for i, goods_name in enumerate(name):
+                if goods := goods_manager.get_good(name=goods_name):
+                    goods.register_before_handler(func, kwargs=kwargs[i])
 
-    def __call__(
+        return register
+
+    def after_handle(
         self,
-        name: Union[str, Tuple[str, ...]],  # 名称
-        price: Union[float, Tuple[float, ...]],  # 价格
-        des: Union[str, Tuple[str, ...]],  # 简介
-        discount: Union[float, Tuple[float, ...]] = 1,  # 折扣
-        limit_time: Union[int, Tuple[int, ...]] = 0,  # 限时
-        load_status: Union[bool, Tuple[bool, ...]] = True,  # 加载状态
-        daily_limit: Union[int, Tuple[int, ...]] = 0,  # 每日限购
-        is_passive: Union[bool, Tuple[bool, ...]] = False,  # 被动道具（无法被'使用道具'命令消耗）
-        icon: Union[str, Tuple[str, ...]] = False,  # 图标
-        **kwargs,
+        name: Union[str, Iterable[str]],
+        price: Union[int, Iterable[int]],
+        description: Union[str, Iterable[str], None] = None,
+        passive: Union[bool, Iterable[bool], None] = None,
+        icon: Union[Iterable[str], str, None] = None,
+        daily_limit: Union[int, Iterable[int], None] = None,
+        on_shelf: Union[bool, Iterable[bool], None] = None,
+        discount: Union[float, Iterable[float], None] = None,
+        kwargs: Union[Dict[str, Any], Iterable[Dict[str, Any]], None] = None,
     ):
-        _tuple_list = []
-        _current_len = -1
-        for x in [name, price, des, discount, limit_time, load_status]:
-            if isinstance(x, tuple):
-                if _current_len == -1:
-                    _current_len = len(x)
-                if _current_len != len(x):
-                    raise ValueError(
-                        f"注册商品 {name} 中 name，price，des，discount，limit_time，load_status，daily_limit 数量不符！"
-                    )
-        _current_len = _current_len if _current_len > -1 else 1
-        _name = self.__get(name, _current_len)
-        _price = self.__get(price, _current_len)
-        _discount = self.__get(discount, _current_len)
-        _limit_time = self.__get(limit_time, _current_len)
-        _des = self.__get(des, _current_len)
-        _load_status = self.__get(load_status, _current_len)
-        _daily_limit = self.__get(daily_limit, _current_len)
-        _is_passive = self.__get(is_passive, _current_len)
-        _icon = self.__get(icon, _current_len)
-        return self.register(
-            _name,
-            _price,
-            _des,
-            _discount,
-            _limit_time,
-            _load_status,
-            _daily_limit,
-            _is_passive,
-            _icon,
-            **kwargs,
+        self.__register(
+            name=name,
+            price=price,
+            description=description,
+            discount=discount,
+            on_shelf=on_shelf,
+            daily_limit=daily_limit,
+            passive=passive,
+            icon=icon,
         )
+        if isinstance(name, str):
+            name = (name,)
+        if kwargs is None:
+            kwargs = len(name) * [{}]
+        elif isinstance(kwargs, Dict):
+            kwargs = [kwargs] * len(name)
+        if len(kwargs) != len(name):
+            raise ValueError(f"注册{name}的handle时，kwargs与商品数不一致")
 
-    def __get(self, value, _current_len):
-        return (
-            value
-            if isinstance(value, tuple)
-            else tuple([value for _ in range(_current_len)])
-        )
+        def register(func: Callable):
+            for i, goods_name in enumerate(name):
+                if goods := goods_manager.get_good(name=goods_name):
+                    goods.register_after_handler(func, kwargs=kwargs[i])
 
-    def __setitem__(self, key, value):
-        self.__data[key] = value
-
-    def __getitem__(self, key):
-        return self.__data[key]
-
-    def __contains__(self, key):
-        return key in self.__data
-
-    def __str__(self):
-        return str(self.__data)
-
-    def keys(self):
-        return self.__data.keys()
-
-    def values(self):
-        return self.__data.values()
-
-    def items(self):
-        return self.__data.items()
+        return register
 
 
-class NotMeetUseConditionsException(Exception):
-
-    """
-    不满足条件异常类
-    """
-
-    def __init__(self, info: Optional[Union[str, MessageSegment, Message]]):
-        super().__init__(self)
-        self._info = info
-
-    def get_info(self):
-        return self._info
-
-
-shop_register = ShopRegister()
+goods_register = GoodsRegister()

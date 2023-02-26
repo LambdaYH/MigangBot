@@ -1,4 +1,5 @@
 import random
+import inspect
 from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Optional, Coroutine
 
@@ -38,19 +39,35 @@ class Effect:
         Returns:
             Tuple[str, Optional[Dict[str, Any]]]: str为效果发生语句，第二个返回值若存在，则是下一次调用时的参数
         """
+        params_required = inspect.signature(self.next_func).parameters
+        params = {}
+        if "user_id" in params_required:
+            params["user_id"] = user_id
+        if "user_sign_in" in params_required:
+            params["user_sign_in"] = user_sign_in
+        if "user_prop" in params_required:
+            params["user_prop"] = user_prop
         if iscoroutinefunction(self.func):
-            return await self.func(user_id, user_sign_in, user_prop)
-        return self.func(user_id)
+            return await self.func(**params)
+        return self.func(**params)
 
     async def next_effect(
         self, user_id: int, user_sign_in: SignIn, user_prop: UserProperty, **kwargs
     ) -> Optional[Any]:
         """下一次签到时自动触发调用"""
-        if self.next_effect is None:
+        if self.next_func is None:
             return None
+        params_required = inspect.signature(self.next_func).parameters
+        params = {}
+        if "user_id" in params_required:
+            params["user_id"] = user_id
+        if "user_sign_in" in params_required:
+            params["user_sign_in"] = user_sign_in
+        if "user_prop" in params_required:
+            params["user_prop"] = user_prop
         if iscoroutinefunction(self.next_func):
-            return await self.next_func(user_id, user_sign_in, user_prop, **kwargs)
-        return self.next_func(user_id, user_sign_in, user_prop, **kwargs)
+            return await self.next_func(**params, **kwargs)
+        return self.next_func(**params, **kwargs)
 
     def has_next_effect(self) -> bool:
         return self.next_func is not None

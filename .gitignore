@@ -160,3 +160,4 @@ db_config.yaml
 migang/plugins/about*
 test.py
 shop
+ID_DATA.db

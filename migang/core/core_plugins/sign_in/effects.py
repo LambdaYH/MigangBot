@@ -6,12 +6,12 @@ from migang.core.models import SignIn, UserProperty
 
 
 @sign_in_effect(weight=5, name="什么事都没发生")
-async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
+async def _():
     return "......"
 
 
 @sign_in_effect(weight=5, name="捡到钱了")
-async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
+async def _(user_prop: UserProperty):
     random_gold = random.randint(0, 100)
     user_prop.gold += random_gold
 
@@ -19,7 +19,7 @@ async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
 
 
 @sign_in_effect(weight=5, name="本次签到好感度翻倍")
-async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
+async def _(user_sign_in: SignIn, user_prop: UserProperty):
     impression_diff = user_sign_in.impression_diff
     user_prop.impression += Decimal(impression_diff)
     user_sign_in.impression_diff *= 2
@@ -28,19 +28,19 @@ async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
 
 
 @sign_in_effect(weight=5, name="下一次签到好感度双倍")
-async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
+async def _():
     return "下一次见面时，好感度翻倍~"
 
 
 @sign_in_effect.next(name="下一次签到好感度双倍")
-async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
+async def _(user_sign_in: SignIn, user_prop: UserProperty):
     impression_diff = user_sign_in.impression_diff
     user_prop.impression += Decimal(impression_diff)
     user_sign_in.impression_diff *= 2
 
 
 @sign_in_effect(weight=1, name="本次签到好感度三倍")
-async def _(user_id: int, user_sign_in: SignIn, user_prop: UserProperty):
+async def _(user_sign_in: SignIn, user_prop: UserProperty):
     impression_diff = user_sign_in.impression_diff
     user_prop.impression += Decimal(impression_diff) * 2
     user_sign_in.impression_diff *= 3

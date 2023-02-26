@@ -1,5 +1,6 @@
 import time
 import random
+import inspect
 from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Coroutine
 
@@ -65,10 +66,16 @@ class MessageManager:
                 .format(nickname=nickname)
             )
         for func in self.__get_reply:
+            args = inspect.signature(func).parameters.keys()
+            params = {}
+            if "msg" in args:
+                params["msg"] = msg
+            if "user_id" in args:
+                params["user_id"] = user_id
             if (
-                reply_ := await func(msg, user_id)
+                reply_ := await func(**params)
                 if iscoroutinefunction(func)
-                else func(msg, user_id)
+                else func(**params)
             ):
                 self.__add(user_id=user_id, msg=msg_str, reply=reply_)
                 return Message(str(reply_).format(nickname=nickname))

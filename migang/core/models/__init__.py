@@ -1,4 +1,4 @@
-from .shop import Shop
+from .goods_info import GoodsInfo
 from .sign_in import SignIn
 from .shop_log import ShopLog
 from .user_bag import UserBag

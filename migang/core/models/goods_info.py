@@ -4,27 +4,22 @@ from tortoise import fields
 from tortoise.models import Model
 
 
-class Shop(Model):
-    goods_name = fields.CharField(255, unique=True)
+class GoodsInfo(Model):
+    name = fields.CharField(255, unique=True)
     """商品名称"""
-    goods_price = fields.IntField()
+    price = fields.IntField()
     """价格"""
-    goods_description = fields.TextField()
+    description = fields.TextField()
     """描述"""
-    goods_discount = fields.FloatField(default=1)
+    discount = fields.FloatField(default=1)
     """折扣"""
-    goods_limit_time = fields.BigIntField(default=0)
-    """限时"""
     daily_limit = fields.IntField(default=0)
     """每日限购"""
-    is_passive = fields.BooleanField(default=False)
-    """是否为被动道具"""
-    icon = fields.TextField(null=True)
-    """图标路径"""
+    on_shelf = fields.BooleanField(default=True)
 
     class Meta:
         table = "shop"
-        table_description = "商店商品"
+        table_description = "商店"
 
     @classmethod
     async def add_goods(

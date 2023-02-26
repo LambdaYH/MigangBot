@@ -99,7 +99,7 @@ hello_msg = set(
 )
 
 
-def hello(msg: Message, user_id: int) -> Optional[Message]:
+def hello(msg: Message) -> Optional[Message]:
     """
     一些打招呼的内容
     """
@@ -124,7 +124,7 @@ no_result_img = [
 ]
 
 
-def no_result(msg: Message, user_id: int) -> Message:
+def no_result() -> Message:
     """
     没有回答时的回复
     """

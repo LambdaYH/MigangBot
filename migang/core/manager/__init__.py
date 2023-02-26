@@ -11,7 +11,9 @@ from .task_manager import TaskItem, TaskManager
 from .permission_manager import PermissionManager
 from .config_manager import ConfigItem, ConfigManager
 from .count_manager import CountItem, CountPeriod, CountManager
+from .goods_manager import GoodsManager
 from .data_class import CheckType, LimitType, PluginType, CountPeriod
+from migang.core.database import post_init_db, pre_close_db
 
 core_data_path = Path() / "data" / "core"
 config_path = Path() / "configs"
@@ -63,14 +65,22 @@ permission_manager: PermissionManager = PermissionManager(
 """管理权限，设置限时权限
 """
 
+goods_manager: GoodsManager = GoodsManager()
+"""管理商店商品
+"""
 
+
+@post_init_db
 async def init_managers():
     import asyncio
 
-    await asyncio.gather(*[group_manager.init(), user_manager.init()])
+    await asyncio.gather(
+        *[group_manager.init(), user_manager.init(), goods_manager.load_from_db()]
+    )
     permission_manager.init()
 
 
+@pre_close_db
 async def save_managers():
     """保存各管理器需要保存的文件"""
     import asyncio
