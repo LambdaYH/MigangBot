@@ -1,4 +1,0 @@
-[submodule "migang/3rd_plugins/GenshinUID"]
-	path = migang/3rd_plugins/GenshinUID
-	url = https://ghproxy.com/https://github.com/KimigaiiWuyi/GenshinUID.git
-	branch = nonebot2-beta1
