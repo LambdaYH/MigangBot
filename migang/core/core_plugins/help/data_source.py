@@ -1,4 +1,5 @@
 import random
+import math
 from pathlib import Path
 from enum import Enum, unique
 from typing import Dict, List, Optional
@@ -34,7 +35,48 @@ for img in GROUP_TASK_PATH.iterdir():
     img.unlink()
 
 TEMPLATE_PATH = Path(__file__).parent / "template"
-LOGO_PATH = TEMPLATE_PATH / "menu" / "res" / "logo"
+
+colors = [
+    "#eea2a4",
+    "#621d34",
+    "#e0c8d1",
+    "#8b2671",
+    "#142334",
+    "#2b73af",
+    "#93b5cf",
+    "#2474b5",
+    "#baccd9",
+    "#1781b5",
+    "#5cb3cc",
+    "#57c3c2",
+    "#1ba784",
+    "#92b3a5",
+    "#2bae85",
+    "#83cbac",
+    "#41ae3c",
+    "#d0deaa",
+    "#d2b42c",
+    "#d2b116",
+    "#f8df72",
+    "#645822",
+    "#ddc871",
+    "#f9d770",
+    "#d9a40e",
+    "#b78b26",
+    "#5d3d21",
+    "#f8b37f",
+    "#945833",
+    "#e8b49a",
+    "#a6522c",
+    "#8b614d",
+    "#f68c60",
+    "#f6cec1",
+    "#eeaa9c",
+    "#862617",
+    "#f2b9b2",
+    "#f1908c",
+]
+color_len = len(colors)
 
 
 @get_driver().on_startup
@@ -186,9 +228,9 @@ _icon2str = {
     "通用": "fa fa-cog",
     "原神相关": "fa fa-circle-o",
     "常规插件": "fa fa-cubes",
-    "联系管理员": "fa fa-envelope-o",
+    "基础功能": "fa fa-envelope-o",
     "抽卡相关": "fa fa-credit-card-alt",
-    "来点好康的": "fa fa-picture-o",
+    "好看的": "fa fa-picture-o",
     "数据统计": "fa fa-bar-chart",
     "一些工具": "fa fa-shopping-cart",
     "商店": "fa fa-shopping-cart",
@@ -236,7 +278,7 @@ async def _build_html_image(
     """
     _sort_data()
     classify = {}
-    logos = list(LOGO_PATH.iterdir())
+    random.shuffle(colors)
     for menu, plugins in _sorted_data.items():
         for plugin in plugins:
             status = PluginStatus.enabled
@@ -284,36 +326,34 @@ async def _build_html_image(
                 classify[menu] = [MenuItem(plugin_name=plugin.name, status=status)]
     max_len = 0
     flag_index = -1
-    max_data = None
     plugin_list = []
     for index, plu in enumerate(classify.keys()):
-        if plu in _icon2str.keys():
-            icon = _icon2str[plu]
-        else:
-            icon = "fa fa-pencil-square-o"
-        logo = random.choice(logos)
+        icon = _icon2str.get(plu) or "fa fa-pencil-square-o"
         data = {
             "name": plu,
             "items": classify[plu],
             "icon": icon,
-            "logo": str(logo.absolute()),
+            "color": colors[index % color_len],
         }
         if len(classify[plu]) > max_len:
             max_len = len(classify[plu])
             flag_index = index
-            max_data = data
         plugin_list.append(data)
-    del plugin_list[flag_index]
-    plugin_list.insert(0, max_data)
+    plugin_list[flag_index], plugin_list[0] = plugin_list[0], plugin_list[flag_index]
+    max_column_length = len(plugin_list[0]["items"])
+    plugin_count = sum([len(plugin["items"]) for plugin in plugin_list])
     pic = await template_to_pic(
         template_path=TEMPLATE_PATH / "menu",
         template_name="migang_menu.html",
         templates={
             "group": True if group_id else False,
             "plugin_list": plugin_list,
+            "column_count": math.ceil(
+                (plugin_count + len(plugin_list)) / max_column_length
+            ),
         },
         pages={
-            "viewport": {"width": 1903, "height": 975},
+            "viewport": {"width": 1800, "height": 975},
         },
     )
     return pic

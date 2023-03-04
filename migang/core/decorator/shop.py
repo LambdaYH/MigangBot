@@ -2,7 +2,12 @@ from pathlib import Path
 from typing import Any, Dict, Tuple, Union, Callable, Iterable, Optional
 
 from migang.core.manager import goods_manager
-from migang.core.manager.goods_manager import Goods, GoodsGroup
+from migang.core.manager.goods_manager import (
+    Goods,
+    GoodsGroup,
+    CancelGoodsHandle,
+    CancelThisGoodsHandle,
+)
 
 """固有参数
 goods_name   # 商品名
@@ -71,6 +76,7 @@ class GoodsRegister:
         for x in [
             price,
             description,
+            consumable,
             discount,
             on_shelf,
             purchase_limit,
@@ -86,6 +92,7 @@ class GoodsRegister:
             name_,
             price_,
             description_,
+            consumable_,
             discount_,
             on_shelf_,
             purchase_limit_,
@@ -98,6 +105,7 @@ class GoodsRegister:
             name,
             price,
             description,
+            consumable,
             discount,
             on_shelf,
             purchase_limit,
@@ -115,6 +123,7 @@ class GoodsRegister:
                 purchase_limit=purchase_limit_,
                 use_limit=use_limit_,
                 single_use_limit=single_use_limit_,
+                consumable=consumable_,
                 on_shelf=on_shelf_,
                 description=description_,
                 passive=passive_,
@@ -184,7 +193,7 @@ class GoodsRegister:
 
         def register(func: Callable):
             for i, goods_name in enumerate(name):
-                if goods := goods_manager.get_good(name=goods_name):
+                if goods := goods_manager.get_goods(name=goods_name):
                     goods.register_before_handler(func, kwargs=kwargs[i])
 
         return register
@@ -205,7 +214,7 @@ class GoodsRegister:
 
         def register(func: Callable):
             for i, goods_name in enumerate(name):
-                if goods := goods_manager.get_good(name=goods_name):
+                if goods := goods_manager.get_goods(name=goods_name):
                     goods.register_after_handler(func, kwargs=kwargs[i])
 
         return register

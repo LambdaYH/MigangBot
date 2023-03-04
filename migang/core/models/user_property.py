@@ -33,11 +33,11 @@ class UserProperty(Model):
             description = f"由 {file_path} 调用"
         if gold_diff >= 0:
             await TransactionLog(
-                user_id=self.user_id, gold_earned=gold_diff, desciption=description
+                user_id=self.user_id, gold_earned=gold_diff, description=description
             ).save(using_db=connection)
         else:
             await TransactionLog(
-                user_id=self.user_id, gold_spent=-gold_diff, desciption=description
+                user_id=self.user_id, gold_spent=-gold_diff, description=description
             ).save(using_db=connection)
         await self.save(update_fields=["gold"], using_db=connection)
 
@@ -61,11 +61,11 @@ class UserProperty(Model):
             user.gold += gold_diff
             if gold_diff >= 0:
                 await TransactionLog(
-                    user_id=user_id, gold_earned=gold_diff, desciption=description
+                    user_id=user_id, gold_earned=gold_diff, description=description
                 ).save(using_db=connection)
             else:
                 await TransactionLog(
-                    user_id=user_id, gold_spent=-gold_diff, desciption=description
+                    user_id=user_id, gold_spent=-gold_diff, description=description
                 ).save(using_db=connection)
             await user.save(update_fields=["gold"], using_db=connection)
 

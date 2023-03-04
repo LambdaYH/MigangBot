@@ -323,17 +323,14 @@ class GoodsManager:
                 await GoodsUseLog.filter(
                     user_id=user_id,
                     goods_name=name,
-                    time__range=(
-                        datetime.now()
-                        - timedelta(
-                            hours=now.hour,
-                            minutes=now.minute,
-                            seconds=now.second,
-                            microseconds=now.microsecond,
-                        )
-                        - TIMEDELTA,
-                        now - TIMEDELTA,
-                    ),
+                    time__gte=now
+                    - timedelta(
+                        hours=now.hour,
+                        minutes=now.minute,
+                        seconds=now.second,
+                        microseconds=now.microsecond,
+                    )
+                    - TIMEDELTA,
                 )
                 .annotate(today_used=Sum("amount"))
                 .using_db(connection)
@@ -369,7 +366,11 @@ class GoodsManager:
                         await matcher.send(ret, at_sender=True)
                 except CancelThisGoodsHandle:
                     pass
-                user.amount -= amount
+                if goods.consumable:
+                    user.amount -= amount
+                await GoodsUseLog(user_id=user_id, goods_name=name, amount=amount).save(
+                    using_db=connection
+                )
                 await user.save(update_fields=["amount"], using_db=connection)
                 return UseStatus.SUCCESS, {"name": name, "count": amount}
             except CancelGoodsHandle as e:

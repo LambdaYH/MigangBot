@@ -1,83 +1,79 @@
-:root{
+:root {
     /* 整图背景颜色 (#bfd5ea) */
-    --bgcolor:#EEF8f9;
+    --bgcolor: #EEF8f9;
     /* 停用颜色 */
-    --bancolor:#b5b2b2;
+    --bancolor: #b5b2b2;
     /* 禁用颜色 */
-    --stopcolor:red;
+    --stopcolor: red;
     /* 背景图高斯模糊 */
-    --bgblur:6px;
+    --bgblur: 6px;
     /* 插件框高斯模糊 */
-    --blur:4px;
+    --blur: 4px;
     /* 插件背景色 */
-    --itemcolor:hsla(0,0%,100%,.38);
+    --itemcolor: hsla(0, 0%, 100%, .38);
     /* 标题背景色 */
-    --titlecolor:#76acdb;
+    --titlecolor: #76acdb;
     /* 标题正文 */
-    --titletext:"米缸的功能~";
+    --titletext: "米缸的功能~";
     /* 功能项背景色 */
-    --optcolor:rgba( 255, 255, 255, 0.25 );
+    --optcolor: rgba(255, 255, 255, 0.25);
     /* 默认字体大小 */
-    --mfsize:40px;
+    --mfsize: 40px;
     /* 功能项标题字体大小 */
-    --ofsize:48px;
+    --ofsize: 48px;
     /* 主题背景颜色 */
-    --themebgcolor:#FE96000a;
+    --themebgcolor: #FE96000a;
     /* 插件背景颜色 */
-    --pluginbgcolor:#B6DCEF;
+    --pluginbgcolor: #B6DCEF;
     /* 主题边框颜色 */
-    --themebordercolor:#B6DCEF;
+    --themebordercolor: #B6DCEF;
     /* 备选颜色 */
-    --testcolor:#B6DCEF;
+    --testcolor: #B6DCEF;
     /* 偶数列倾斜角 */
-    --cdeg:20deg
+    --cdeg: 20deg
 }
-i{
+
+i {
     margin-right: 5px;
 }
-.content > div{
+
+.content>div {
     background-color: var(--themebgcolor) !important;
 }
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 @font-face {
     font-family: myFont;
     /* 导入的字体文件 */
     src: url("./res/font/CJGaoDeGuo.otf");
 }
-body{
-    font-family:'myFont';
-    font-size:var(--mfsize);
+
+body {
+    font-family: 'myFont';
+    font-size: var(--mfsize);
 }
-header{
-    position: relative;
-    width: 100%;
-    height: 100vh;
+
+#banner-image-box {
     background-size: cover;
-    background-image: url(./res/img/bg3.jpg);
-    background-position-y: -55px;
+    height: 600px;
+    background-position: center top;
+    background-image: url(./res/img/bg1.jpg);
 }
-header::after{
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 5vh;
-    filter: blur(5px);
+
+#gradient-color {
+    height: 100px;
+    position: relative;
+    top: 500px;
+    background: -webkit-linear-gradient(rgba(255, 222, 255, 0),
+            rgb(238, 248, 249));
 }
-.transition{
-    width: 100%;
-    height: 10vh;
-    filter: blur(3px);
-    transform: translateY(-10px) scaleY(1.5);
-    background-image: linear-gradient(to top, #EEF8f9 0%, rgb(255 255 255 / 99%) 100%);
-}
-.wrapper{
+
+.wrapper {
     position: relative;
     padding: 0.5rem 1.5rem 1.5rem;
     margin: 0 auto;
@@ -85,7 +81,8 @@ header::after{
     border-radius: 25px;
     user-select: none;
 }
-.wrapper::before{
+
+.wrapper::before {
     content: '';
     position: absolute;
     top: 0;
@@ -100,13 +97,7 @@ header::after{
     z-index: -1;
 }
 
-.content {
-    /* 瀑布流参数 */
-    column-count: 4;
-    gap: 1rem;
-    column-gap: normal;
-}
-.des{
+.des {
     /* width: 58rem; */
     margin-bottom: 1.5rem;
     background: var(--optcolor);
@@ -114,9 +105,10 @@ header::after{
     backdrop-filter: blur(var(--blur));
     border-radius: 10px;
     overflow: hidden;
-    
+
 }
-.des::before{
+
+.des::before {
     content: var(--titletext);
     position: absolute;
     height: 60px;
@@ -128,16 +120,19 @@ header::after{
     text-align: center;
     z-index: -1;
 }
-.des > p:nth-child(1){
+
+.des>p:nth-child(1) {
     margin-top: 65px;
 }
-.des > p{
+
+.des>p {
     text-align: left;
     margin-left: 1.5rem;
     margin-right: 1.5rem;
     margin-bottom: 10px;
 }
-.content > div{
+
+.content>div {
     position: relative;
     margin-bottom: 1rem;
     break-inside: avoid;
@@ -149,7 +144,8 @@ header::after{
     border: 2px solid var(--themebordercolor);
     overflow: hidden;
 }
-.content > div::before{
+
+.content>div::before {
     content: '';
     position: absolute;
     height: 80px;
@@ -161,12 +157,12 @@ header::after{
     z-index: -1;
 }
 
-.content > div > span{
+.content>div>span {
     margin: 0.8rem 1.2rem;
     display: block;
     height: 80px;
     line-height: 80px;
-    padding-left:2rem;
+    padding-left: 2rem;
     letter-spacing: 1px;
     /* border: 1px solid #9a9999; */
     /* border: 1px solid #d6d6d6; */
@@ -182,12 +178,14 @@ header::after{
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.splic{
+
+.splic {
     position: relative;
     display: inline-block;
     top: 28px;
 }
-.splic::before{
+
+.splic::before {
     content: '';
     width: 500px;
     top: 0px;
@@ -198,46 +196,47 @@ header::after{
     transform: translate(-95%, -100%);
     z-index: -1;
 }
-.content > div > div {
+
+.content>div>div {
     display: flex;
     justify-content: center;
     align-items: center;
-    height:80px
+    height: 80px
 }
-.content > div > div >span:nth-child(1){
+
+.content>div>div>span:nth-child(1) {
     color: white;
     font-size: var(--ofsize);
 }
-.logo{
-    margin-left: 20px;
-    display: inline-block;
-    height: 100%;
-    width: 80px;
-}
-.logo > img{
-    width: 100%;
-    height: 100%;
-}
-.ban{
+
+
+.ban {
     color: var(--bancolor);
     text-shadow: none;
 }
+
 del {
     text-shadow: none;
     color: var(--stopcolor);
 }
-.des-right,.content-right{
+
+.des-right,
+.content-right {
     width: 64%;
 }
-.des-left{
+
+.des-left {
     margin-left: 36%;
 }
-.des-mid{
+
+.des-mid {
     margin: 0 auto;
 }
-.content-left{
+
+.content-left {
     margin-left: 36%;
 }
-.content-mid{
+
+.content-mid {
     margin: 1rem auto;
 }

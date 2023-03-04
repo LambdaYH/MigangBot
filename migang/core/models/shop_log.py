@@ -25,15 +25,12 @@ class ShopLog(Model):
         await cls.filter(
             user_id=user_id,
             item_name=item_name,
-            time__range=(
-                datetime.now()
-                - timedelta(
-                    hours=now.hour,
-                    minutes=now.minute,
-                    seconds=now.second,
-                    microseconds=now.microsecond,
-                )
-                - TIMEDELTA,
-                now - TIMEDELTA,
-            ),
+            time__gte=now
+            - timedelta(
+                hours=now.hour,
+                minutes=now.minute,
+                seconds=now.second,
+                microseconds=now.microsecond,
+            )
+            - TIMEDELTA,
         ).annotate(amount=Sum("amount")).first().values_list("amount")[0]
