@@ -9,7 +9,7 @@ from datetime import date, datetime
 from typing import List, Tuple, Union, Optional
 
 import aiohttp
-from sqlmodel import select
+from sqlalchemy import select
 from nonebot import get_driver
 from nonebot_plugin_imageutils import BuildImage
 from nonebot_plugin_datastore import create_session

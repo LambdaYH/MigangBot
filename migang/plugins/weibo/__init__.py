@@ -43,10 +43,10 @@ def _load_config():
             __plugin_task__.append(
                 TaskItem(
                     task_name=task_name,
-                    name=v["desciption"],
+                    name=v["description"],
                     default_status=v["enable_on_default"],
-                    usage=f"微博推送组 {v['desciption']} 的启闭状态",
-                    description=f"微博推送组 {v['desciption']}",
+                    usage=f"微博推送组 {v['description']} 的启闭状态",
+                    description=f"微博推送组 {v['description']}",
                 )
             )
             tasks_dict[task_name] = task_spider_list
@@ -93,7 +93,7 @@ __plugin_config__ = [
         key="WeiboSubs",
         initial_value={
             "weibo-ff14": {
-                "desciption": "最终幻想14微博推送",
+                "description": "最终幻想14微博推送",
                 "enable_on_default": False,
                 "format": 1,
                 "users": [
@@ -115,7 +115,7 @@ __plugin_config__ = [
                 ],
             },
             "weibo-ShiningNikki": {
-                "desciption": "闪耀暖暖微博推送",
+                "description": "闪耀暖暖微博推送",
                 "enable_on_default": False,
                 "format": 0,
                 "users": [

@@ -5,7 +5,7 @@ from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_datastore import get_session
 from nonebot import require, on_command, on_fullmatch
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio.session import AsyncSession
 from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.params import Depends, Fullmatch, CommandArg
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
