@@ -40,7 +40,7 @@ LOGO_PATH = TEMPLATE_PATH / "menu" / "res" / "logo"
 @get_driver().on_startup
 async def _():
     await add_font("yz.ttf", FONT_PATH / "yz.ttf")
-    await add_font("HONORSans-Regular.ttf", FONT_PATH / "HONORSans-Regular.ttf")
+    await add_font("HONORSansCN-Regular.ttf", FONT_PATH / "HONORSansCN-Regular.ttf")
 
 
 async def get_help_image(group_id: Optional[int], user_id: Optional[int], super: bool):
@@ -175,7 +175,7 @@ def draw_usage(usage: str) -> Optional[MessageSegment]:
     bk.draw_bbcode_text(
         (border + start_idx + text_image_padding, top_border - 30),
         text=f"[color={color_candidates[0]}]使[/color][color={color_candidates[1]}]用[/color][color={color_candidates[2]}]帮[/color][color={color_candidates[3]}]助[/color]",
-        fontname="HONORSans-Regular.ttf",
+        fontname="HONORSansCN-Regular.ttf",
         fontsize=40,
     )
     return MessageSegment.image(bk.save_png())

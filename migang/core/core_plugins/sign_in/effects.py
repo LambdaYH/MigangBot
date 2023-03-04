@@ -15,7 +15,7 @@ async def _(user_prop: UserProperty):
     random_gold = random.randint(0, 100)
     user_prop.gold += random_gold
 
-    return f"额外获得了{random_gold}块星钻！"
+    return f"额外获得了{random_gold}块金币！"
 
 
 @sign_in_effect(weight=5, name="本次签到好感度翻倍")

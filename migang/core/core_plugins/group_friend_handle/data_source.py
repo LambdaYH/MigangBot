@@ -12,7 +12,7 @@ from migang.core.manager.request_manager import GroupRequest, FriendRequest
 
 @get_driver().on_startup
 async def _():
-    await add_font("HONORSans-Regular.ttf", FONT_PATH / "HONORSans-Regular.ttf")
+    await add_font("HONORSansCN-Regular.ttf", FONT_PATH / "HONORSansCN-Regular.ttf")
     await add_font("HYWenHei-85W.ttf", FONT_PATH / "HYWenHei-85W.ttf")
     await add_font("msyh.ttf", FONT_PATH / "msyh.ttf")
     await add_font("yz.ttf", FONT_PATH / "yz.ttf")
@@ -55,13 +55,13 @@ async def build_request_img(
             f"对方留言：{request.comment}",
             padding=(0, 0),
             fontsize=12,
-            fontname="HONORSans-Regular.ttf",
+            fontname="HONORSansCN-Regular.ttf",
             fill=(140, 140, 143),
         )
         info = BuildImage.new(mode="RGBA", size=(500, 100), color=(254, 254, 254))
         info.paste(avatar, pos=(15, int((info.height - avatar.height) / 2)), alpha=True)
         info.draw_text(
-            (120, 15), request.user_name or "None", fontname="HONORSans-Regular.ttf"
+            (120, 15), request.user_name or "None", fontname="HONORSansCN-Regular.ttf"
         )
         info.paste(age_bk, (120, 50), True)
         info.paste(comment, (120 + age_bk.width + 10, 49), True)
@@ -69,7 +69,7 @@ async def build_request_img(
             group_info = text2image(
                 text=f"邀请你加入：{request.group_name}({request.group_id})",
                 fontsize=12,
-                fontname="HONORSans-Regular.ttf",
+                fontname="HONORSansCN-Regular.ttf",
                 fill=(140, 140, 143),
                 padding=(0, 0),
             )
@@ -83,7 +83,7 @@ async def build_request_img(
             text=request.time.strftime("%Y-%m-%d %H:%M:%S"),
             padding=(1, 1),
             fill=(140, 140, 143),
-            fontname="HONORSans-Regular.ttf",
+            fontname="HONORSansCN-Regular.ttf",
             fontsize=8,
         )
         info.paste(
@@ -102,6 +102,6 @@ async def build_request_img(
         (15, 13),
         "好友请求" if type_ == "friend" else "入群请求",
         fontsize=20,
-        fontname="HONORSans-Regular.ttf",
+        fontname="HONORSansCN-Regular.ttf",
     )
     return bk

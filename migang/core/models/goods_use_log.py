@@ -1,4 +1,3 @@
-from typing import List, Tuple
 from datetime import datetime, timedelta
 
 from tortoise import fields
@@ -8,19 +7,18 @@ from tortoise.functions import Sum
 TIMEDELTA = datetime.now() - datetime.utcnow()
 
 
-class TransactionLog(Model):
+class GoodsUseLog(Model):
     user_id = fields.BigIntField(null=False)
-    gold_earned = fields.IntField(null=False, default=0)
-    gold_spent = fields.IntField(null=False, default=0)
-    description = fields.TextField(null=True)
+    goods_name = fields.TextField(null=False)
+    amount = fields.IntField(null=False, default=1)
     time = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
-        table = "transaction_log"
-        table_description = "交易日志"
+        table = "goods_use_log"
+        table_description = "商品使用日志"
 
     @classmethod
-    async def get_gold_info(cls, user_id: int) -> Tuple[int, int, int, int]:
+    async def get_today_use(cls, user_id: int, goods_name: str) -> int:
         """_summary_
 
         Args:
@@ -33,6 +31,7 @@ class TransactionLog(Model):
         today_data = (
             await cls.filter(
                 user_id=user_id,
+                goods_name=goods_name,
                 time__gte=now
                 - timedelta(
                     hours=now.hour,
@@ -42,19 +41,8 @@ class TransactionLog(Model):
                 )
                 - TIMEDELTA,
             )
-            .annotate(today_earned=Sum("gold_earned"), today_spent=Sum("gold_spent"))
+            .annotate(today_used=Sum("amount"))
             .first()
-            .values_list("today_earned", "today_spent")
+            .values_list("today_used")
         )
-        total_date = (
-            await cls.filter(user_id=user_id)
-            .annotate(total_earned=Sum("gold_earned"), total_spent=Sum("gold_spent"))
-            .first()
-            .values_list("total_earned", "total_spent")
-        )
-        return (
-            today_data[0] or 0,
-            today_data[1] or 0,
-            total_date[0] or 0,
-            total_date[1] or 0,
-        )
+        return today_data[0] or 0

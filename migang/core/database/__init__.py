@@ -44,7 +44,7 @@ async def _load_config(path: Path) -> Dict[str, Any]:
                 "default_connection": "default",
             }
         },
-        "use_tz": False,
+        "use_tz": True,
         "timezone": "UTC",
     }
     if data.get("db_url"):

@@ -39,7 +39,9 @@ class Effect:
         Returns:
             Tuple[str, Optional[Dict[str, Any]]]: str为效果发生语句，第二个返回值若存在，则是下一次调用时的参数
         """
-        params_required = inspect.signature(self.next_func).parameters
+        if self.func is None:
+            return "什么事都没发生"
+        params_required = inspect.signature(self.func).parameters
         params = {}
         if "user_id" in params_required:
             params["user_id"] = user_id

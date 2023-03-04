@@ -76,7 +76,7 @@ async def init_managers():
     import asyncio
 
     await asyncio.gather(
-        *[group_manager.init(), user_manager.init(), goods_manager.load_from_db()]
+        *[group_manager.init(), user_manager.init(), goods_manager.init()]
     )
     permission_manager.init()
 

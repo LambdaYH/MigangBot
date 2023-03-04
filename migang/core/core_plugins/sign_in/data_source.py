@@ -77,25 +77,25 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
                 effect_ret = await effect(
                     user_id=user_id, user_sign_in=user, user_prop=user_prop
                 )
+                # 记录下一次的
+                if isinstance(effect_ret, str):
+                    user.windfall = effect_ret
+                    if effect.has_next_effect():
+                        user.next_effect = [effect.name]
+                        user.next_effect_params = [{}]
+                    else:
+                        user.next_effect = user.next_effect_params = []
+                else:
+                    user.windfall, params = effect_ret
+                    if effect.has_next_effect():
+                        user.next_effect = [effect.name]
+                        if params is None:
+                            params = [{}]
+                        user.next_effect_params = [params]
+                    else:
+                        user.next_effect = user.next_effect_params = []
             except Exception as e:
                 logger.warning(f"执行 {effect.name} 的本次签到效果发生异常：{e}")
-            # 记录下一次的
-            if isinstance(effect_ret, str):
-                user.windfall = effect_ret
-                if effect.has_next_effect():
-                    user.next_effect = [effect.name]
-                    user.next_effect_params = [{}]
-                else:
-                    user.next_effect = user.next_effect_params = []
-            else:
-                user.windfall, params = effect_ret
-                if effect.has_next_effect():
-                    user.next_effect = [effect.name]
-                    if params is None:
-                        params = [{}]
-                    user.next_effect_params = [params]
-                else:
-                    user.next_effect = user.next_effect_params = []
             await TransactionLog(
                 user_id=user_id, gold_earned=user.gold_diff, description="签到"
             ).save(using_db=connection)
@@ -113,6 +113,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
         user.impression_diff,
         user.windfall,
         user_prop.impression,
+        user.time + TIMEDELTA,
     )
 
 
@@ -148,6 +149,7 @@ def draw(
     impression_diff: float,
     windfall: str,
     impression: float,
+    time: datetime,
 ):
     avatar_img = BuildImage.open(BytesIO(avatar)).resize((102, 102))
     avatar_img = avatar_img.circle()
@@ -222,7 +224,6 @@ def draw(
         fill=(211, 64, 33),
         padding=(0, 0),
     )
-    current_date = datetime.now()
     sub_bk.paste(gift_border, (570, 140), True)
     bk.draw_text(
         (30, 15),
@@ -251,7 +252,7 @@ def draw(
     bk.paste(bar_bk, (225, 275), True)
     bk.draw_text(
         (220, 370),
-        text=f"时间：{current_date.strftime('%Y-%m-%d %a %H:%M:%S')}",
+        text=f"时间：{time.strftime('%Y-%m-%d %a %H:%M:%S')}",
         fontname="yz.ttf",
         fontsize=20,
     )
@@ -299,7 +300,7 @@ def draw(
     )
     bk.draw_text(
         (580, 245),
-        text=f"星钻 + {gold_diff}",
+        text=f"金币 + {gold_diff}",
         fontsize=20,
         fontname="yz.ttf",
     )
