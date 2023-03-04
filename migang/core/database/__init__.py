@@ -80,6 +80,7 @@ async def _load_config(path: Path) -> Dict[str, Any]:
     return ret
 
 
+@get_driver().on_startup
 async def init_db() -> None:
     """初始化数据库，创建不存在的表
 
@@ -151,7 +152,7 @@ async def init_db() -> None:
             logger.error("数据库初始化后执行的函数出错")
             raise
 
-
+@get_driver().on_shutdown
 async def close_db() -> None:
     """程序结束时关闭数据库连接"""
     cors = [

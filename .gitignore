@@ -146,6 +146,7 @@ configs/
 .vscode
 package.json
 package-lock.json
+node_modules
 
 # conf
 migangbot.conf
@@ -163,3 +164,4 @@ migang/plugins/about*
 test.py
 shop
 ID_DATA.db
+test
