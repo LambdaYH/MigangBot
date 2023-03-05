@@ -17,7 +17,8 @@ async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
         async with aiohttp.ClientSession() as client:
             r = await (
                 await client.get(
-                    "https://ghproxy.com/https://raw.githubusercontent.com/nonebot/nonebot2/master/website/static/plugins.json", timeout=30
+                    "https://ghproxy.com/https://raw.githubusercontent.com/nonebot/nonebot2/master/website/static/plugins.json",
+                    timeout=30,
                 )
             ).json(content_type=None)
     except asyncio.TimeoutError:
@@ -38,8 +39,7 @@ async def init_plugin_info():
     )
     custom_usage = await async_load_data(CUSTOM_USAGE_FILE)
 
-    async def add_plugin(plugin):
-        nonlocal store_plugin_list
+    for plugin in plugins:
         plugin_name = plugin.name
         version, author, usage = None, None, None
         # 先填充metadata的数据再用属性
@@ -152,7 +152,6 @@ async def init_plugin_info():
         ):
             logger.info(f"已将插件 {plugin_name} 加入插件控制")
 
-    await asyncio.gather(*[add_plugin(plugin) for plugin in plugins])
     for i, e in enumerate(await plugin_manager.init()):
         if e:
             logger.error(f"无法将插件 {plugins[i].name} 加入插件控制：{e}")
