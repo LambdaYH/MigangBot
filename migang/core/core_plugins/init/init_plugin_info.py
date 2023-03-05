@@ -1,23 +1,28 @@
 from typing import Any, Dict, Iterable, Optional
 
-import anyio
+import asyncio
 import aiohttp
 from nonebot.log import logger
 
 from migang.core.permission import NORMAL
-from migang.core.manager.plugin_manager import CUSTOM_USAGE_PATH
+from migang.core.manager.plugin_manager import CUSTOM_USAGE_FILE
 from migang.core.manager import PluginType, core_data_path, plugin_manager
+from migang.core.utils.file_operation import async_load_data, async_save_data
 
 from .utils import get_plugin_list
 
 
 async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
-    async with aiohttp.ClientSession() as client:
-        r = await (
-            await client.get(
-                "https://cdn.jsdelivr.net/gh/nonebot/nonebot2/website/static/plugins.json"
-            )
-        ).json()
+    try:
+        async with aiohttp.ClientSession() as client:
+            r = await (
+                await client.get(
+                    "https://ghproxy.com/https://raw.githubusercontent.com/nonebot/nonebot2/master/website/static/plugins.json", timeout=30
+                )
+            ).json(content_type=None)
+    except asyncio.TimeoutError:
+        logger.warning(f"连接Nonebot2商店超时，无法加载商店插件信息")
+        return {}
     ret = {}
     for plugin in r:
         ret[plugin["module_name"]] = plugin
@@ -31,8 +36,10 @@ async def init_plugin_info():
     plugin_file_list = set(
         [file.name for file in (core_data_path / "plugin_manager").iterdir()]
     )
-    usage_file_list = set([file.name for file in CUSTOM_USAGE_PATH.iterdir()])
-    for plugin in plugins:
+    custom_usage = await async_load_data(CUSTOM_USAGE_FILE)
+
+    async def add_plugin(plugin):
+        nonlocal store_plugin_list
         plugin_name = plugin.name
         version, author, usage = None, None, None
         # 先填充metadata的数据再用属性
@@ -54,21 +61,17 @@ async def init_plugin_info():
                     name = p["name"]
                     usage = p["desc"]
                     author = p["author"]
-                    async with await anyio.open_file(
-                        core_data_path / "custom_usage" / f"{plugin_name}.txt",
-                        "w",
-                        encoding="utf-8",
-                    ) as f:
-                        await f.write(f"usage:\n    {usage}")
+                    custom_usage[plugin_name] = usage
                     try:
                         async with aiohttp.ClientSession() as client:
                             async with await client.get(
-                                f"https://pypi.org/pypi/{p['project_link']}/json"
+                                f"https://pypi.org/pypi/{p['project_link']}/json",
+                                timeout=10,
                             ) as r:
                                 r = await r.json()
                                 version = r["info"]["version"]
                     except Exception as e:
-                        logger.warning(f"从pypi读取 {plugin_name} 版本信息失败")
+                        logger.warning(f"从pypi读取 {plugin_name} 版本信息失败：{e}")
                 else:
                     logger.warning(
                         f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
@@ -96,11 +99,8 @@ async def init_plugin_info():
                 if hasattr(plugin.module, "__plugin_version__")
                 else None
             )
-        if f"{plugin_name}.txt" in usage_file_list:
-            async with await anyio.open_file(
-                CUSTOM_USAGE_PATH / f"{plugin_name}.txt", "r", encoding="utf-8"
-            ) as f:
-                usage = await f.read()
+        if plugin_name in custom_usage:
+            usage = custom_usage[plugin_name]
 
         plugin_type = (
             plugin.module.__getattribute__("__plugin_type__")
@@ -151,9 +151,12 @@ async def init_plugin_info():
             plugin_type=plugin_type,
         ):
             logger.info(f"已将插件 {plugin_name} 加入插件控制")
+
+    await asyncio.gather(*[add_plugin(plugin) for plugin in plugins])
     for i, e in enumerate(await plugin_manager.init()):
         if e:
             logger.error(f"无法将插件 {plugins[i].name} 加入插件控制：{e}")
         else:
             count += 1
+    await async_save_data(custom_usage, CUSTOM_USAGE_FILE)
     logger.info(f"已成功将 {count} 个插件加入插件控制")

@@ -8,10 +8,9 @@ from pydantic import BaseModel
 from migang.core.manager.data_class import PluginType
 from migang.core.permission import NORMAL, Permission
 
-CUSTOM_USAGE_PATH = Path() / "data" / "core" / "custom_usage"
+CUSTOM_USAGE_FILE = Path() / "data" / "core" / "custom_usage.yaml"
 """若在此路径下存在插件名.txt，则插件用法以该文件为主
 """
-CUSTOM_USAGE_PATH.mkdir(exist_ok=True, parents=True)
 
 
 class PluginManager:
