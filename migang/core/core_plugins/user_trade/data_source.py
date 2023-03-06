@@ -3,6 +3,10 @@ from typing import List, Tuple
 from io import BytesIO
 from typing import List
 import random
+from time import time
+from typing import Optional, List, Tuple, Dict
+import anyio
+from enum import Enum, unique
 from nonebot import get_driver
 from nonebot_plugin_imageutils import BuildImage
 from nonebot_plugin_imageutils.fonts import add_font
@@ -35,10 +39,26 @@ ttf_font = ImageFont.truetype(
 async def _():
     await add_font("HONORSansCN-Regular.ttf", FONT_PATH / "HONORSansCN-Regular.ttf")
 
+@unique
+class TradeState(Enum):
+    INITIATOR = 0
+    WAIT_FOR_ESTABLISH = 1
+    WAIT_FOR_PUT_CONTENT = 2
+    WAIT_FOR_CONFIRM = 3
+    CONFIRMED = 4
+
+
+class TradingStatus:
+    def __init__(self, target: int, state: TradeState) -> None:
+        self.target = target
+        self.state: TradeState = state
+        self.gold: int = 0
+        self.items: List[Tuple[str, int]] = []
+        self.start_time = time()
 
 async def draw_trade_window(
-    one_side: Tuple[int, int, List[Tuple[str, int]]],
-    other_side: Tuple[int, int, List[Tuple[str, int]]],
+    one_side: Tuple[int, TradingStatus],
+    other_side: Tuple[int, TradingStatus],
 ) -> bytes:
     """_summary_
 
@@ -52,13 +72,13 @@ async def draw_trade_window(
     one_side_img, other_side_img = await asyncio.gather(
         *[
             anyio.to_thread.run_sync(
-                draw, await get_user_avatar(one_side[0]), one_side[1], one_side[2], 0
+                draw, await get_user_avatar(one_side[0]), one_side[1].gold, one_side[1].items, 0
             ),
             anyio.to_thread.run_sync(
                 draw,
                 await get_user_avatar(other_side[0]),
-                other_side[1],
-                other_side[2],
+                other_side[1].gold,
+                other_side[1].items,
                 1,
             ),
         ]

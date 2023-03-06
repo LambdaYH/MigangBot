@@ -1,5 +1,8 @@
+from typing import Optional, List
+
 from tortoise import fields
 from tortoise.models import Model
+from tortoise.backends.base.client import BaseDBAsyncClient
 
 
 class UserBag(Model):
@@ -13,62 +16,84 @@ class UserBag(Model):
         unique_together = ("user_id", "item_name")
 
     @classmethod
-    async def add_item(cls, user_id: int, item_name: str, amount: int = 1):
+    async def add_item(
+        cls,
+        user_id: int,
+        item_name: str,
+        amount: int = 1,
+        connection: Optional[BaseDBAsyncClient] = None,
+    ):
+        """添加道具
+
+        Args:
+            user_id (int): 用户id
+            item_name (str): 道具名
+            amount (int, optional): 数量. Defaults to 1.
+            connection (Optional[BaseDBAsyncClient], optional): 事务连接. Defaults to None.
         """
-        说明:
-            增加道具
-        参数:
-            :param user_qq: qq号
-            :param group_id: 所在群号
-            :param name: 道具名称
-            :param num: 道具数量
-        """
-        user, _ = await cls.get_or_create(user_id=user_id, item_name=item_name)
+        user, _ = await cls.get_or_create(
+            user_id=user_id, item_name=item_name, using_db=connection
+        )
         user.amount += amount
-        await user.save(update_fields=["amount"])
+        await user.save(update_fields=["amount"], using_db=connection)
 
     @classmethod
-    async def use_item(cls, user_id: int, item_name: str, amount: int = 1) -> bool:
+    async def del_item(
+        cls,
+        user_id: int,
+        item_name: str,
+        amount: int = 1,
+        connection: Optional[BaseDBAsyncClient] = None,
+    ):
+        """删除道具
+
+        Args:
+            user_id (int): 用户id
+            item_name (str): 道具名
+            amount (int, optional): 数量. Defaults to 1.
+            connection (Optional[BaseDBAsyncClient], optional): 事务连接. Defaults to None.
         """
-        说明:
-            使用/删除 道具
-        参数:
-            :param user_qq: qq号
-            :param group_id: 所在群号
-            :param name: 道具名称
-            :param num: 使用个数
-        """
-        user, _ = await cls.get_or_create(user_id=user_id, item_name=item_name)
-        if user.amount < amount:
-            return False
+        user, _ = await cls.get_or_create(
+            user_id=user_id, item_name=item_name, using_db=connection
+        )
         user.amount -= amount
-        await user.save(update_fields=["amount"])
-        return True
+        user.amount = max(0, user.amount)
+        await user.save(update_fields=["amount"], using_db=connection)
 
     @classmethod
-    async def check_item(cls, user_id: int, item_name: str, amount: int = 1) -> bool:
+    async def check_item(
+        cls,
+        user_id: int,
+        item_name: str,
+        amount: int = 1,
+        connection: Optional[BaseDBAsyncClient] = None,
+    ) -> bool:
+        """检查道具，若能够使用返回True
+
+        Args:
+            user_id (int): 用户id
+            item_name (str): 道具名
+            amount (int, optional): 数量. Defaults to 1.
+            connection (Optional[BaseDBAsyncClient], optional): 事务连接. Defaults to None.
+
+        Returns:
+            bool: 若能够使用，返回True
         """
-        说明:
-            使用 道具
-        参数:
-            :param user_qq: qq号
-            :param group_id: 所在群号
-            :param name: 道具名称
-            :param num: 使用个数
-        """
-        user, _ = await cls.get_or_create(user_id=user_id, item_name=item_name)
+        user, _ = await cls.get_or_create(
+            user_id=user_id, item_name=item_name, using_db=connection
+        )
         return user.amount >= amount
 
     @classmethod
     async def get_item(cls, user_id: int, item_name: str) -> bool:
-        """看看有没有商品在
+        """看看有没有道具在
 
         Args:
-            user_id (int): _description_
-            item_name (str): _description_
+            user_id (int): 用户id
+            item_name (str): 道具名
 
         Returns:
-            bool: _description_
+            bool: 若存在，返回True
         """
         user = await cls.filter(user_id=user_id, item_name=item_name).first()
         if not user or user.amount == 0:
@@ -76,12 +101,13 @@ class UserBag(Model):
         return True
 
     @classmethod
-    async def get_item_list(cls, user_id: int):
-        return await cls.filter(user_id=user_id).exclude(amount=0).order_by("id").all()
+    async def get_item_list(cls, user_id: int) -> List["UserBag"]:
+        """获取用户背包的道具
 
-    @classmethod
-    async def get_name_by_idx(cls, user_id: int, idx: int):
-        property_list = await cls.get_item_list(user_id=user_id)
-        if idx >= len(property_list):
-            return None
-        return property_list[idx].item_name
+        Args:
+            user_id (int): 用户id
+
+        Returns:
+            List[UserBag]: 背包中的道具
+        """
+        return await cls.filter(user_id=user_id).exclude(amount=0).order_by("id").all()

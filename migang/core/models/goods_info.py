@@ -16,7 +16,7 @@ class GoodsInfo(Model):
     use_limit = fields.IntField(null=True, default=None)
     """使用限制"""
     group = fields.JSONField(null=True, default=None)
-    """商品组，同组商品共享使用次数与购买次数与折扣与上下货架"""
+    """商品组"""
     on_shelf = fields.BooleanField(default=True)
 
     class Meta:

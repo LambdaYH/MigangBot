@@ -49,12 +49,31 @@ class UserProperty(Model):
 
     @classmethod
     async def modify_gold(
-        cls, user_id: int, gold_diff: int, description: Optional[str] = None
+        cls,
+        user_id: int,
+        gold_diff: int,
+        description: Optional[str] = None,
+        connection: Optional[BaseDBAsyncClient] = None,
     ):
         if not description:
             file_path = Path(sys._getframe(1).f_code.co_filename)
             description = f"由 {file_path} 调用"
-        async with in_transaction() as connection:
+        if not connection:
+            async with in_transaction() as connection:
+                user = await cls.filter(user_id=user_id).using_db(connection).first()
+                if not user:
+                    user = await cls(user_id=user_id).save(using_db=connection)
+                user.gold += gold_diff
+                if gold_diff >= 0:
+                    await TransactionLog(
+                        user_id=user_id, gold_earned=gold_diff, description=description
+                    ).save(using_db=connection)
+                else:
+                    await TransactionLog(
+                        user_id=user_id, gold_spent=-gold_diff, description=description
+                    ).save(using_db=connection)
+                await user.save(update_fields=["gold"], using_db=connection)
+        else:
             user = await cls.filter(user_id=user_id).using_db(connection).first()
             if not user:
                 user = await cls(user_id=user_id).save(using_db=connection)
@@ -82,8 +101,10 @@ class UserProperty(Model):
         await user.save(update_fields=["impression"])
 
     @classmethod
-    async def get_gold(cls, user_id: int) -> None:
-        user = await cls.filter(user_id=user_id).first()
+    async def get_gold(
+        cls, user_id: int, connection: Optional[BaseDBAsyncClient] = None
+    ) -> None:
+        user = await cls.filter(user_id=user_id).using_db(connection).first()
         if not user:
             return 0
         return user.gold

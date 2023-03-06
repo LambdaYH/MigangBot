@@ -63,7 +63,7 @@ async def post_check() -> None:
         docs: Dict[str, Union[float, List[str]]] = response.json()
         version = docs.get("version")
 
-        async with await anyio.open_file("w", encoding="utf-8") as f:
+        async with await anyio.open_file(json_path, "w", encoding="utf-8") as f:
             await f.write(json.dumps(docs, ensure_ascii=False, indent=4))
             logger.info(
                 f"Get the latest Crazy Thursday posts from repo, version: {version}"
