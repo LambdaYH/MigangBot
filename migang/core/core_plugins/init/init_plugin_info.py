@@ -1,6 +1,6 @@
+import asyncio
 from typing import Any, Dict, Iterable, Optional
 
-import asyncio
 import aiohttp
 from nonebot.log import logger
 

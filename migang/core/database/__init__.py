@@ -152,6 +152,7 @@ async def init_db() -> None:
             logger.error("数据库初始化后执行的函数出错")
             raise
 
+
 @get_driver().on_shutdown
 async def close_db() -> None:
     """程序结束时关闭数据库连接"""

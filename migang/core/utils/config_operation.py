@@ -1,8 +1,9 @@
 import sys
 from pathlib import Path
-from nonebot import get_loaded_plugins, get_driver
-from typing import Any, Optional
 from functools import cache
+from typing import Any, Optional
+
+from nonebot import get_driver, get_loaded_plugins
 
 from migang.core.manager import config_manager
 

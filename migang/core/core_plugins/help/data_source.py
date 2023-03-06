@@ -1,5 +1,5 @@
-import random
 import math
+import random
 from pathlib import Path
 from enum import Enum, unique
 from typing import Dict, List, Optional

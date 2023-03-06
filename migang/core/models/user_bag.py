@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from tortoise import fields
 from tortoise.models import Model

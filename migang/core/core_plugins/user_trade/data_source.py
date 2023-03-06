@@ -1,21 +1,20 @@
-from pathlib import Path
-from typing import List, Tuple
-from io import BytesIO
-from typing import List
 import random
+import asyncio
 from time import time
-from typing import Optional, List, Tuple, Dict
-import anyio
+from io import BytesIO
+from pathlib import Path
 from enum import Enum, unique
+from typing import Dict, List, Tuple, Optional
+
+import anyio
 from nonebot import get_driver
+from PIL import ImageFont, ImageFilter
 from nonebot_plugin_imageutils import BuildImage
 from nonebot_plugin_imageutils.fonts import add_font
-from PIL import ImageFont, ImageFilter
-import anyio
-import asyncio
+
 from migang.core import FONT_PATH
-from migang.core.utils.image import get_user_avatar
 from migang.core.manager import goods_manager
+from migang.core.utils.image import get_user_avatar
 
 height = 50
 side_width = 40
@@ -39,6 +38,7 @@ ttf_font = ImageFont.truetype(
 async def _():
     await add_font("HONORSansCN-Regular.ttf", FONT_PATH / "HONORSansCN-Regular.ttf")
 
+
 @unique
 class TradeState(Enum):
     INITIATOR = 0
@@ -56,6 +56,7 @@ class TradingStatus:
         self.items: List[Tuple[str, int]] = []
         self.start_time = time()
 
+
 async def draw_trade_window(
     one_side: Tuple[int, TradingStatus],
     other_side: Tuple[int, TradingStatus],
@@ -72,7 +73,11 @@ async def draw_trade_window(
     one_side_img, other_side_img = await asyncio.gather(
         *[
             anyio.to_thread.run_sync(
-                draw, await get_user_avatar(one_side[0]), one_side[1].gold, one_side[1].items, 0
+                draw,
+                await get_user_avatar(one_side[0]),
+                one_side[1].gold,
+                one_side[1].items,
+                0,
             ),
             anyio.to_thread.run_sync(
                 draw,
