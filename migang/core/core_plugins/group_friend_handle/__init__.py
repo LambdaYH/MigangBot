@@ -9,7 +9,7 @@ from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.params import Command, Fullmatch, CommandArg
-from nonebot_plugin_imageutils import BuildImage, text2image
+from pil_utils import BuildImage, text2image
 from nonebot import on_notice, on_command, on_request, on_fullmatch
 from nonebot.adapters.onebot.v11 import (
     Bot,
@@ -346,7 +346,7 @@ async def _(
 [b]好友请求处理[/b]: {await get_config('handle_friend')}
 [b]入群请求处理[/b]: {await get_config('handle_group')}
         """.strip(),
-                fontname="yz.ttf",
+                fontname="Yozai",
                 fontsize=15,
             ).save(buf, "PNG")
             await help_msg.finish(MessageSegment.image(buf))
@@ -354,7 +354,7 @@ async def _(
     if help_ := (await get_config("custom_help")).get(msg):
         if help_["text_to_image"]:
             with BytesIO() as buf:
-                text2image(text=help_["text"], fontname="yz.ttf", fontsize=15).save(
+                text2image(text=help_["text"], fontname="Yozai", fontsize=15).save(
                     buf, "PNG"
                 )
                 await help_msg.send(message=MessageSegment.image(buf))
@@ -430,6 +430,6 @@ async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
 
 
 @friend_add.handle()
-async def _(event: FriendAddNoticeEvent):
+async def _():
     await asyncio.sleep(2)
     await friend_add.send(message=Message(await get_config("firend_help")))

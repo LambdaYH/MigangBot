@@ -1,9 +1,9 @@
 from pathlib import Path
 
-DATA_PATH = Path() / "data"
+DATA_PATH = (Path() / "data").resolve()
 """数据文件路径，插件的数据建议放这或者插件自己的文件夹
 """
-RESOURCE_PATH = Path() / "resources"
+RESOURCE_PATH = (Path() / "resources").resolve()
 """资源文件路径，存放共享资源与非插件资源
 """
 IMAGE_PATH = RESOURCE_PATH / "image"

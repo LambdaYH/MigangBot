@@ -8,3 +8,4 @@ from .group_status import GroupStatus
 from .goods_use_log import GoodsUseLog
 from .user_property import UserProperty
 from .transaction_log import TransactionLog
+from .goods_group import GoodsGroup

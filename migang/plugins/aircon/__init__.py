@@ -103,13 +103,13 @@ async def _(
             await switch_aircon.finish(
                 f"❄空调开着呢！发送[{list(bot.config.nickname)[0]}帮助群空调]查看使用说明~"
             )
-        update_aircon(session=session, aircon=aircon, ison=True)
+        update_aircon(aircon=aircon, ison=True)
         await switch_aircon.send("❄哔~空调已开\n" + print_aircon(aircon))
     else:
         aircon = await check_status(
             session=session, group_id=group_id, matcher=switch_aircon
         )
-        update_aircon(session=session, aircon=aircon, ison=False)
+        update_aircon(aircon=aircon, ison=False)
         await switch_aircon.send("💤哔~空调已关\n" + print_aircon(aircon))
     await session.commit()
 
@@ -122,7 +122,7 @@ async def _(
     aircon = await check_status(
         session=session, group_id=event.group_id, matcher=cur_temp, need_on=False
     )
-    update_aircon(session=session, aircon=aircon)
+    update_aircon(aircon=aircon)
     msg = ("❄" if aircon.is_on else "💤空调未开启\n") + print_aircon(aircon)
     await cur_temp.send(msg)
     await session.commit()
@@ -141,7 +141,7 @@ async def _(
     )
     if temp == 114514:
         await set_temp.finish("这么臭的空调有什么装的必要吗")
-    update_aircon(session=session, aircon=aircon, settemp=temp)
+    update_aircon(aircon=aircon, settemp=temp)
     await set_temp.send("❄" + print_aircon(aircon))
     await session.commit()
 
@@ -169,7 +169,7 @@ async def _(
     )
     if not wind_rate:
         return
-    update_aircon(session=session, aircon=aircon, windrate=wind_rate - 1)
+    update_aircon(aircon=aircon, windrate=wind_rate - 1)
     msg = print_aircon(aircon)
     await set_wind_rate.send("❄" + msg)
     await session.commit()
@@ -193,7 +193,7 @@ async def _(
     )
     if env_temp == 114514:
         await set_env_temp.finish("这么臭的空调有什么装的必要吗")
-    update_aircon(session=session, aircon=aircon, envtemp=env_temp)
+    update_aircon(aircon=aircon, envtemp=env_temp)
     msg = ("❄" if aircon.is_on else "💤空调未开启\n") + print_aircon(aircon)
 
     await set_env_temp.send(msg)
@@ -225,14 +225,14 @@ async def _(
     if cmd[:2] == "升级":
         if ac_type == len(ac_type_text) - 1:
             await switch_type.finish("已经是最高级的空调啦！")
-        update_aircon(session=session, aircon=aircon, actype=ac_type + 1)
+        update_aircon(aircon=aircon, actype=ac_type + 1)
         await switch_type.send(
             f"❄已升级至{ac_type_text[aircon.ac_type]}~\n" + print_aircon(aircon)
         )
     else:
         if ac_type == 0:
             await switch_type.finish("已经是最基础级别的空调啦！")
-        update_aircon(session=session, aircon=aircon, actype=ac_type - 1)
+        update_aircon(aircon=aircon, actype=ac_type - 1)
         await switch_type.send(
             f"❄已降级至{ac_type_text[aircon.ac_type]}~\n" + print_aircon(aircon)
         )

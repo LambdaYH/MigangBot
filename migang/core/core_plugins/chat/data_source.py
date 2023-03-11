@@ -1,32 +1,31 @@
 import random
+from datetime import timedelta
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 from asyncio.exceptions import TimeoutError
 
+import anyio
 import ujson
 import aiohttp
+from nonebot import get_driver
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 
+from migang.core.manager import permission_manager
 from migang.core import get_config
+from migang.core.permission import BLACK
 
 
-async def get_turing(msg: Message, user_id: int) -> Optional[str]:
-    """
-    获取 AI 返回值，顺序： 特殊回复 -> 图灵 -> 青云客
-    :param text: 问题
-    :param img_url: 图片链接
-    :param user_id: 用户id
-    :param nickname: 用户昵称
-    :return: 回答
-    """
-    text = "".join([seg.data["text"] for seg in msg["text"]])
-    img_url = [seg.data["url"] for seg in msg["image"]]
+async def get_turing(
+    nickname: str, plain_text: str, event: GroupMessageEvent, user_id: int
+) -> Optional[str]:
+    """获取图灵回复"""
+    img_url = [seg.data["url"] for seg in event.message["image"]]
     img_url = img_url[0] if img_url else ""
-    rst = await tu_ling(text, img_url, user_id)
+    rst = await tu_ling(plain_text, img_url, user_id)
     if not rst:
         return None
-    rst = str(rst).replace("小主人", "{nickname}").replace("小朋友", "{nickname}")
+    rst = rst.replace("小主人", nickname).replace("小朋友", nickname)
     return rst
 
 
@@ -37,10 +36,6 @@ turing_key_idx = 0
 async def tu_ling(text: str, img_url: str, user_id: int) -> Optional[str]:
     """
     获取图灵接口的回复
-    :param text: 问题
-    :param img_url: 图片链接
-    :param user_id: 用户id
-    :return: 图灵回复
     """
     global turing_key_idx
     tl_keys = await get_config("turing_keys")
@@ -99,18 +94,17 @@ hello_msg = set(
 )
 
 
-def hello(msg: Message) -> Optional[Message]:
+def hello(nickname: str, plain_text: str) -> Optional[Message]:
     """
     一些打招呼的内容
     """
-    text = "".join([seg.data["text"] for seg in msg["text"]])
-    if text and text not in hello_msg:
+    if plain_text and plain_text not in hello_msg:
         return None
     result = random.choice(
         (
             "哦豁？！",
             "你好！Ov<",
-            "库库库，呼唤{nickname}做什么呢",
+            f"库库库，呼唤{nickname}做什么呢",
             "我在呢！",
             "呼呼，叫俺干嘛",
         )
@@ -124,16 +118,50 @@ no_result_img = [
 ]
 
 
-def no_result() -> Message:
+def no_result(nickname: str) -> Message:
     """
     没有回答时的回复
     """
     return random.choice(
         [
             "你在说啥子？",
-            "纯洁的{nickname}没听懂",
+            f"纯洁的{nickname}没听懂",
             "下次再告诉你(下次一定)",
             "你觉得我听懂了吗？嗯？",
             "我！不！知！道！",
         ]
     ) + MessageSegment.image(random.choice(no_result_img))
+
+
+antiinsult: List[str] = []
+
+
+@get_driver().on_startup
+async def _():
+    global antiinsult
+    data_dir = Path() / "data" / "chat"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    file_path = data_dir / "curse.json"
+    try:
+        async with aiohttp.ClientSession() as session:
+            r = await session.get(
+                "https://ghproxy.com/https://github.com/tkgs0/nonebot-plugin-antiinsult/blob/main/nonebot_plugin_antiinsult/curse.json",
+                timeout=5,
+            )
+            antiinsult = (await r.json(content_type=None))["curse"]
+            async with await anyio.open_file(file_path, "w", encoding="utf8") as f:
+                await f.write(ujson.dumps(antiinsult, ensure_ascii=True))
+    except Exception as e:
+        logger.warning(f"更新反嘴臭词失败：{e}，尝试加载已有数据")
+        if file_path.exists():
+            async with await anyio.open_file(file_path, "r", encoding="utf8") as f:
+                antiinsult = ujson.loads(await f.read())
+
+
+def anti_zuichou(plain_text: str, user_id: int):
+    for word in antiinsult:
+        if word in plain_text:
+            permission_manager.set_user_perm(
+                user_id=user_id, permission=BLACK, duration=timedelta(hours=1)
+            )
+            return f"¿（拉黑1h）"

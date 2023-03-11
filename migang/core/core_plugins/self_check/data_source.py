@@ -3,17 +3,8 @@ from datetime import datetime
 
 import psutil
 import aiohttp
-from nonebot import get_driver
 from nonebot.log import logger
-from nonebot_plugin_imageutils.fonts import add_font
-from nonebot_plugin_imageutils import BuildImage, text2image
-
-from migang.core import FONT_PATH
-
-
-@get_driver().on_startup
-async def _():
-    await add_font("HWZhongSong.ttf", FONT_PATH / "HWZhongSong.ttf")
+from pil_utils import BuildImage, text2image
 
 
 async def check():
@@ -48,7 +39,7 @@ async def check():
             rst,
             bg_color=(255, 255, 255, 120),
             fontsize=24,
-            fontname="HWZhongSong.ttf",
+            fontname="STZhongsong",
             padding=(15, 20),
         )
         bk = BuildImage.open(Path(__file__).parent / "image" / "check.jpg").resize(

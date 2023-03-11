@@ -9,7 +9,7 @@ from typing import Set, List, Union
 import anyio
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_imageutils import text2image
+from pil_utils import text2image
 from nonebot import require, get_plugin, on_command
 from nonebot.permission import SUPERUSER, SuperUser
 from nonebot.rule import (
@@ -45,7 +45,6 @@ from .data_source import (
 )
 
 require("nonebot_plugin_htmlrender")
-require("nonebot_plugin_imageutils")
 
 __plugin_meta__ = PluginMetadata(
     name="帮助",

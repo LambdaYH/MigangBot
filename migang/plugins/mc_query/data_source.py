@@ -117,13 +117,13 @@ async def get_server_list(group_id: int, user_id: int) -> MessageSegment:
     servers: List[Union[McServerGroup, McServerPrivate]]
     async with create_session() as session:
         if group_id:
-            servers = await session.exec(
+            servers = await session.scalars(
                 statement=select(McServerGroup).where(
                     McServerGroup.group_id == group_id
                 )
             )
         else:
-            servers = await session.exec(
+            servers = await session.scalars(
                 statement=select(McServerPrivate).where(
                     McServerPrivate.user_id == user_id
                 )
@@ -133,7 +133,6 @@ async def get_server_list(group_id: int, user_id: int) -> MessageSegment:
         return MessageSegment.image(draw_list("空"))
     server_text_list = []
     for server in servers:
-        server = server[0]
         server_text_list.append(
             f"§b{server.name}§7 "
             + ("Java版" if server.sv_type == "je" else "基岩版")

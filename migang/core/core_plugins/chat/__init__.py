@@ -7,7 +7,7 @@ from nonebot.adapters.onebot.v11 import GROUP, Bot, Message, GroupMessageEvent
 from migang.core import ConfigItem, get_config
 
 from .message_manager import MessageManager
-from .data_source import hello, no_result, get_turing
+from .data_source import hello, no_result, get_turing, anti_zuichou
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
@@ -42,7 +42,7 @@ __plugin_config__ = (
 
 
 chat = on_message(rule=to_me(), priority=998, permission=GROUP)
-message_manager = MessageManager(hello, get_turing, no_result)
+message_manager = MessageManager(hello, anti_zuichou, get_turing, no_result)
 
 
 @chat.handle()
@@ -52,9 +52,11 @@ async def _(bot: Bot, event: GroupMessageEvent):
     user_name = event.sender.card or event.sender.nickname
     reply = await message_manager.reply(
         user_id=event.user_id,
-        nickname=list(bot.config.nickname)[0],
         user_name=user_name,
-        msg=event.message,
+        nickname=list(bot.config.nickname)[0],
+        bot=bot,
+        plain_text=event.get_plaintext(),
+        event=event,
     )
     logger.info(
         f"用户 {event.user_id} 群 {event.group_id if isinstance(event, GroupMessageEvent) else ''} "

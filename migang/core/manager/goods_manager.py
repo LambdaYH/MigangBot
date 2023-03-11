@@ -3,7 +3,7 @@ import inspect
 from pathlib import Path
 from enum import IntEnum, unique
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Tuple, Union, Callable, Optional
+from typing import Any, Dict, List, Tuple, Union, Callable, Optional, Iterable
 
 from nonebot.log import logger
 from tortoise.functions import Sum
@@ -11,7 +11,7 @@ from nonebot.matcher import Matcher
 from tortoise.transactions import in_transaction
 from nonebot.adapters.onebot.v11 import Bot, Event
 
-from migang.core.models import UserBag, GoodsInfo, GoodsUseLog
+from migang.core.models import UserBag, GoodsInfo, GoodsUseLog, GoodsGroup
 
 
 class CancelThisGoodsHandle(Exception):
@@ -278,12 +278,13 @@ class GoodsManager:
     async def init(self) -> None:
         """初始化"""
         await self.load_from_db()
-        for goods in self.__data.values():
-            if goods.group and (goods_group := self.__goods_group.get(goods.group)):
-                goods.discount, goods.on_shelf = (
-                    goods_group.discount,
-                    goods_group.on_shelf,
-                )
+        await self.load_group_from_db()
+        # for goods in self.__data.values():
+        #     if goods.group and (goods_group := self.__goods_group.get(goods.group)):
+        #         goods.discount, goods.on_shelf = (
+        #             goods_group.discount,
+        #             goods_group.on_shelf,
+        #         )
 
     async def use_goods(
         self, user_id: int, name: Union[str, int], params: GoodsHandlerParams
@@ -426,10 +427,32 @@ class GoodsManager:
         goods = self.__data.get(name)
         if not goods:
             return
-        for key, v in kwargs:
+        for key, v in kwargs.items():
             if key in goods.__dict__:
                 goods.__dict__[key] = v
         await self.save_to_db(name=name)
+
+    async def adjust_group(self, name: str, **kwargs) -> None:
+        """调整商品组的各种，调节一个商品组会导致商品组内商品一起调整
+
+        Args:
+            name (str): 商品组名
+        """
+        goods_group = self.__goods_group.get(name)
+        if not goods_group:
+            return
+        for key, v in kwargs.items():
+            if key in goods_group.__dict__:
+                goods_group.__dict__[key] = v
+        await self.save_group_to_db(name=goods_group.name)
+        goods_changed = []
+        for goods in self.__data.values():
+            if name in goods.group:
+                for k, v in kwargs:
+                    if k in ["discount", "on_shelf"]:
+                        goods.__dict__[key] = v
+                        goods_changed.append(goods.name)
+        await self.save_to_db(name=goods_changed)
 
     def add_group(self, name: str, goods_group: GoodsGroup) -> None:
         """把一个商品组添加进来
@@ -439,6 +462,49 @@ class GoodsManager:
             goods_group (GoodsGroup): _description_
         """
         self.__goods_group[name] = goods_group
+
+    async def load_group_from_db(self, name: Optional[str] = None) -> None:
+        if name is None:
+            name = self.__goods_group.keys()
+        else:
+            name = (name,)
+        for goods_group_name in name:
+            goods_group = self.__goods_group[goods_group_name]
+            if goods_group_info := await GoodsGroup.filter(
+                name=goods_group_name
+            ).first():
+                goods_group.purchase_limit, goods_group.use_limit = (
+                    goods_group_info.purchase_limit,
+                    goods_group_info.use_limit,
+                )
+
+    async def save_group_to_db(self, name: Optional[Iterable[str]] = None) -> None:
+        if isinstance(name, str):
+            name = (name,)
+        elif name is None:
+            name = self.__goods_group.keys()
+
+        async def save(goods_group_name: str):
+            goods_group = self.__data[goods_group_name]
+            if goods_group_info := await GoodsGroup.filter(
+                name=goods_group_name
+            ).first():
+                (
+                    goods_group_info.purchase_limit,
+                    goods_group_info.use_limit,
+                ) = (
+                    goods_group.purchase_limit,
+                    goods_group.use_limit,
+                )
+                await goods_group_info.save()
+            else:
+                await GoodsGroup(
+                    name=goods_group.name,
+                    purchase_limit=goods_group.purchase_limit,
+                    use_limit=goods_group.use_limit,
+                ).save()
+
+        await asyncio.gather(*[save(goods_name) for goods_name in name])
 
     async def load_from_db(self, name: Optional[str] = None) -> None:
         """所有商品属性以数据库中为准
@@ -450,9 +516,9 @@ class GoodsManager:
             name = (name,)
         else:
             name = self.__data.keys()
-        for goods in name:
-            if goods_info := await GoodsInfo.filter(name=goods).first():
-                goods = self.__data[goods]
+        for goods_name in name:
+            goods = self.__data[goods_name]
+            if goods_info := await GoodsInfo.filter(name=goods_name).first():
                 (
                     goods.price,
                     goods.description,
@@ -471,31 +537,36 @@ class GoodsManager:
                     goods_info.group,
                 )
 
-    async def save_to_db(self, name: Optional[str] = None) -> None:
+    async def save_to_db(self, name: Optional[Iterable[str]] = None) -> None:
         """将商品数据写入数据库
 
         Args:
             name (Optional[str], optional): 商品名，若空则全部商品. Defaults to None.
         """
-        if name:
+        if isinstance(name, str):
             name = (name,)
-        else:
+        elif name is None:
             name = self.__data.keys()
-        for goods in name:
-            goods = self.__data[goods]
-            if goods_info := await GoodsInfo.filter(name=goods).first():
+
+        async def save(goods_name: str):
+            goods = self.__data[goods_name]
+            if goods_info := await GoodsInfo.filter(name=goods.name).first():
                 (
                     goods_info.price,
                     goods_info.description,
                     goods_info.discount,
                     goods_info.purchase_limit,
+                    goods_info.use_limit,
                     goods_info.on_shelf,
+                    goods_info.group,
                 ) = (
                     goods.price,
                     goods.description,
                     goods.discount,
                     goods.purchase_limit,
+                    goods.use_limit,
                     goods.on_shelf,
+                    goods.group,
                 )
                 await goods_info.save()
             else:
@@ -505,5 +576,8 @@ class GoodsManager:
                     description=goods.description,
                     discount=goods.discount,
                     purchase_limit=goods.purchase_limit,
+                    use_limit=goods.use_limit,
                     on_shelf=goods.on_shelf,
                 ).save()
+
+        await asyncio.gather(*[save(goods_name) for goods_name in name])

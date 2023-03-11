@@ -8,9 +8,8 @@ Model = get_plugin_data().Model
 
 
 class McServerGroup(Model):
-    __table_args__ = {"extend_existing": True}
-
-    group_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    group_id: Mapped[int] = mapped_column(BigInteger)
     name: Mapped[str]
     host: Mapped[str]
     port: Mapped[Optional[int]]
@@ -18,9 +17,8 @@ class McServerGroup(Model):
 
 
 class McServerPrivate(Model):
-    __table_args__ = {"extend_existing": True}
-
-    user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger)
     name: Mapped[str]
     host: Mapped[str]
     port: Mapped[Optional[int]]

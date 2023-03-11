@@ -4,7 +4,7 @@ import inspect
 from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Coroutine
 
-from nonebot.adapters.onebot.v11 import Message
+from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent
 
 from migang.core.permission import BLACK
 from migang.core.manager import permission_manager
@@ -23,14 +23,14 @@ class MessageManager:
             "请不要再重复对我说一句话了，不然我就要生气了！",
             "别再发这句话了，我已经知道了...",
             "救命！有笨蛋一直给{nickname}发一样的话！",
-            "这句话你已经给我发了[_count_]次了，再发就生气！",
+            "这句话你已经给我发了{count}次了，再发就生气！",
         ]
         self.__repeat_ret = [
             "请不要学{nickname}说话",
             "为什么要一直学{nickname}说话？",
             "你再学！你再学我就生气了！",
             "呜呜，你是想欺负{nickname}嘛..",
-            "[_user_name_]不要再学我说话了！",
+            "{user_name}不要再学我说话了！",
             "再学我说话，我就把你拉进黑名单（生气",
             "别再学了！",
         ]
@@ -45,40 +45,50 @@ class MessageManager:
         ] = get_reply_func
 
     async def reply(
-        self, user_id: int, nickname: str, user_name: str, msg: Message
+        self,
+        user_id: int,
+        user_name: str,
+        nickname: str,
+        bot: Bot,
+        plain_text: str,
+        event: GroupMessageEvent,
     ) -> Message:
-        msg_str = str(msg)
+        msg_str = event.get_plaintext()
         if count := self.__check_repeat(user_id=user_id, msg=msg_str):
             if count >= 3:
                 permission_manager.set_user_perm(
                     user_id=user_id, permission=BLACK, duration=5 * 60
                 )
                 return f"生气了！不和你说话了（5min）"
-            return (
-                random.choice(self.__same_ret)
-                .replace("[_count_]", str(count + 1))
-                .format(nickname=nickname)
+            return random.choice(self.__same_ret).format(
+                nickname=nickname, count=count + 1
             )
         if self.__check_follow_me(user_id=user_id, msg=msg_str):
-            return (
-                random.choice(self.__repeat_ret)
-                .replace("[_user_name_]", user_name)
-                .format(nickname=nickname)
+            return random.choice(self.__repeat_ret).format(
+                nickname=nickname, user_name=user_name
             )
         for func in self.__get_reply:
             args = inspect.signature(func).parameters.keys()
             params = {}
-            if "msg" in args:
-                params["msg"] = msg
             if "user_id" in args:
                 params["user_id"] = user_id
+            if "user_name" in args:
+                params["user_name"] = user_name
+            if "bot" in args:
+                params["bot"] = bot
+            if "plain_text" in args:
+                params["plain_text"] = plain_text
+            if "event" in args:
+                params["event"] = event
+            if "nickname" in args:
+                params["nickname"] = nickname
             if (
                 reply_ := await func(**params)
                 if iscoroutinefunction(func)
                 else func(**params)
             ):
                 self.__add(user_id=user_id, msg=msg_str, reply=reply_)
-                return Message(str(reply_).format(nickname=nickname))
+                return Message(reply_)
         return "......(不知道说什么)"
 
     def __get_user(self, user_id: int) -> Dict:

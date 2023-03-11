@@ -27,6 +27,13 @@ class UserProperty(Model):
         description: Optional[str] = None,
         connection: Optional[BaseDBAsyncClient] = None,
     ):
+        """修改金币
+
+        Args:
+            gold_diff (int): 金币变动，可正可负
+            description (Optional[str], optional): 记录在交易日志. Defaults to None.
+            connection (Optional[BaseDBAsyncClient], optional): 事务. Defaults to None.
+        """
         self.gold += gold_diff
         if not description:
             file_path = Path(sys._getframe(1).f_code.co_filename)
@@ -55,6 +62,13 @@ class UserProperty(Model):
         description: Optional[str] = None,
         connection: Optional[BaseDBAsyncClient] = None,
     ):
+        """修改金币
+
+        Args:
+            gold_diff (int): 金币变动，可正可负
+            description (Optional[str], optional): 记录在交易日志. Defaults to None.
+            connection (Optional[BaseDBAsyncClient], optional): 事务. Defaults to None.
+        """
         if not description:
             file_path = Path(sys._getframe(1).f_code.co_filename)
             description = f"由 {file_path} 调用"

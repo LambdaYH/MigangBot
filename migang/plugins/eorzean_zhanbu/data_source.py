@@ -10,12 +10,9 @@ from typing import List, Tuple, Union, Optional
 
 import aiohttp
 from sqlalchemy import select
-from nonebot import get_driver
-from nonebot_plugin_imageutils import BuildImage
+from pil_utils import BuildImage
 from nonebot_plugin_datastore import create_session
-from nonebot_plugin_imageutils.fonts import add_font
 
-from migang.core import FONT_PATH
 
 from . import zhanbu_config
 from .model import EorzeanZhanbuRecorder
@@ -23,10 +20,7 @@ from .model import EorzeanZhanbuRecorder
 BG_PATH = Path(__file__).parent / "image"
 
 
-@get_driver().on_startup
-async def _():
-    await add_font("sakura.ttf", FONT_PATH / "sakura.ttf")
-    await add_font("Mamelon.otf", FONT_PATH / "Mamelon.otf")
+
 
 
 def vertical(str: str) -> str:
@@ -86,7 +80,7 @@ def draw(
         fill="#F5F5F5",
         fontsize=45,
         max_fontsize=45,
-        fontname="Mamelon.otf",
+        fontname="Mamelon",
     )
 
     # draw dye
@@ -94,7 +88,7 @@ def draw(
         xy=(58, 148, 220, 171),
         text=dye,
         fontsize=18,
-        fontname="sakura.ttf",
+        fontname="sakura_yingsuti",
         fill="#323232",
     )
 
@@ -125,7 +119,7 @@ def draw(
                 xy=(x, y),
                 text=textVertical,
                 fill="#323232",
-                fontname="sakura.ttf",
+                fontname="sakura_yingsuti",
                 fontsize=font_size,
             )
     return img.save_png()
@@ -269,8 +263,8 @@ async def get_eorzean_zhanbu(user_id: int) -> BytesIO:
                     user.dye,
                     user.append_msg,
                     user.basemap,
-                ) = (luck, yi, ji, dye, append_msg, basemap)
-                session.add(user)
+                    user.time,
+                ) = (luck, yi, ji, dye, append_msg, basemap, datetime.now())
             else:
                 user = EorzeanZhanbuRecorder(
                     user_id=user_id,

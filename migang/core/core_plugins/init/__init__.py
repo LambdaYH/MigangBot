@@ -11,6 +11,7 @@ from .init_plugin_info import init_plugin_info
 from .init_plugin_task import init_plugin_task
 from .init_plugin_count import init_plugin_count
 from .init_plugin_config import init_plugin_config
+from .init_font import load_font
 
 
 @get_driver().on_startup
@@ -21,6 +22,7 @@ async def _():
             init_plugin_config(),
             init_plugin_count(),
             init_plugin_task(),
+            load_font(),
         ]
     )
     init_plugin_cd()

@@ -7,11 +7,9 @@ from decimal import Decimal
 from datetime import datetime
 
 import anyio
-from nonebot import get_driver
 from nonebot.log import logger
 from tortoise.transactions import in_transaction
-from nonebot_plugin_imageutils.fonts import add_font
-from nonebot_plugin_imageutils import BuildImage, text2image
+from pil_utils import BuildImage, text2image
 
 from migang.core.path import FONT_PATH
 from migang.core.decorator import sign_in_effect
@@ -27,11 +25,6 @@ from .const import (
     lik2relation,
     level2attitude,
 )
-
-
-@get_driver().on_startup
-async def _():
-    await add_font("yz.ttf", FONT_PATH / "yz.ttf")
 
 
 TIMEDELTA = datetime.now() - datetime.utcnow()
@@ -205,7 +198,7 @@ def draw(
         (0, 0, gift_border.width, gift_border.height),
         windfall,
         lines_align="center",
-        fontname="yz.ttf",
+        fontname="Yozai",
     )
     bk = BuildImage.open(random.choice(list(SIGN_BACKGROUND_PATH.iterdir()))).resize(
         (876, 424)
@@ -220,7 +213,7 @@ def draw(
         text=f"{count}",
         bg_color=(255, 255, 255, 0),
         fontsize=40,
-        fontname="yz.ttf",
+        fontname="Yozai",
         fill=(211, 64, 33),
         padding=(0, 0),
     )
@@ -228,7 +221,7 @@ def draw(
     bk.draw_text(
         (30, 15),
         text=user_name,
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=50,
         max_fontsize=50,
         fill=(255, 255, 255),
@@ -236,80 +229,80 @@ def draw(
     bk.draw_text(
         (30, 85),
         text=f"UID: {user_id}",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=30,
         max_fontsize=50,
         fill=(255, 255, 255),
     )
     bk.paste(sub_bk, (0, 150), alpha=True)
-    bk.draw_text((30, 167), "Accumulative check-in for", fontname="yz.ttf", fontsize=25)
+    bk.draw_text((30, 167), "Accumulative check-in for", fontname="Yozai", fontsize=25)
     from PIL import ImageFont
 
-    ttffont = ImageFont.truetype(font=str(FONT_PATH / "yz.ttf"), size=25)
+    ttffont = ImageFont.truetype(font=str(FONT_PATH / "Yozai-Regular.ttf"), size=25)
     _x = ttffont.getsize("Accumulative check-in for")[0] + 45 + sign_day_img.width
     bk.paste(sign_day_img, (346, 158), True)
-    bk.draw_text((_x, 167), "days", fontsize=25, fontname="yz.ttf")
+    bk.draw_text((_x, 167), "days", fontsize=25, fontname="Yozai")
     bk.paste(bar_bk, (225, 275), True)
     bk.draw_text(
         (220, 370),
         text=f"时间：{time.strftime('%Y-%m-%d %a %H:%M:%S')}",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=20,
     )
     bk.draw_text(
         (220, 240),
         text="当前",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=20,
     )
     bk.draw_text(
         (262, 234),
         text=f"好感度：{impression:.2f}",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=30,
     )
     bk.draw_text(
         (220, 305),
         text=f"· 好感度等级：{level} [{lik2relation[level]}]",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=15,
     )
     bk.draw_text(
         (220, 325),
         text=f"· {bot_name}对你的态度：{level2attitude[level]}",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=15,
     )
     bk.draw_text(
         (220, 345),
         text=f"· 距离升级还差 {interpolation:.2f} 好感度",
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=15,
     )
     bk.draw_text(
         (550, 180),
         text="今日签到",
         fontsize=30,
-        fontname="yz.ttf",
+        fontname="Yozai",
     )
     bk.draw_text(
         (580, 220),
         text=f"好感度 + {impression_diff:.2f}",
         fontsize=20,
-        fontname="yz.ttf",
+        fontname="Yozai",
     )
     bk.draw_text(
         (580, 245),
         text=f"金币 + {gold_diff}",
         fontsize=20,
-        fontname="yz.ttf",
+        fontname="Yozai",
     )
     # 水印
     bk.draw_text(
         (15, 400),
         text=f"{bot_name}@{datetime.now().year}",
         fontsize=15,
-        fontname="yz.ttf",
+        fontname="Yozai",
         fill=(155, 155, 155),
     )
     return bk.save_png()

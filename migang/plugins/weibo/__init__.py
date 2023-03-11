@@ -7,7 +7,7 @@ from nonebot.rule import to_me
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
-from nonebot_plugin_imageutils import text2image
+from pil_utils import text2image
 from nonebot_plugin_htmlrender import get_new_page
 from nonebot import get_bot, get_driver, on_fullmatch
 from tenacity import RetryError, retry, wait_random, stop_after_attempt

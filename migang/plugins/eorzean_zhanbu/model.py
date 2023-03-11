@@ -8,8 +8,6 @@ Model = get_plugin_data().Model
 
 
 class EorzeanZhanbuRecorder(Model):
-    __table_args__ = {"extend_existing": True}
-
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     luck: Mapped[int]
     yi: Mapped[str]

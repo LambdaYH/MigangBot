@@ -10,9 +10,11 @@ from typing import List, Union, Literal, Optional, TypedDict
 
 from PIL.Image import Resampling
 from mcstatus.pinger import PingResponse
-from nonebot_plugin_imageutils.fonts import add_font
+from pil_utils import BuildImage, Text2Image
+from pil_utils.fonts import fontManager
 from mcstatus.bedrock_status import BedrockStatusResponse
-from nonebot_plugin_imageutils import BuildImage, Text2Image
+
+from migang.core import FONT_PATH
 
 ServerType = Literal["je", "be"]
 
@@ -94,7 +96,7 @@ RANDOM_CHAR_TEMPLATE = ascii_letters + digits + punctuation
 
 MARGIN = 32
 MIN_WIDTH = 512
-FONT_NAME = "unifont"
+FONT_NAME = "Unifont"
 TITLE_FONT_SIZE = 8 * 5
 EXTRA_FONT_SIZE = 8 * 4
 EXTRA_STROKE_WIDTH = 2
@@ -115,15 +117,6 @@ DEFAULT_ICON_PATH = RES_DIR / "default.png"
 GRASS_RES = BuildImage.open(GRASS_RES_PATH)
 DIRT_RES = BuildImage.open(DIRT_RES_PATH)
 DEFAULT_ICON_RES = BuildImage.open(DEFAULT_ICON_PATH)
-
-from nonebot import get_driver
-
-driver = get_driver()
-
-
-@driver.on_startup
-async def _():
-    await add_font("unifont.ttf", RES_DIR / "unifont.ttf")
 
 
 def get_latency_color(delay: Union[int, float]) -> str:

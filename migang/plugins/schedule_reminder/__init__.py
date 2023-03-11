@@ -8,7 +8,7 @@ from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from nonebot.params import ArgStr, CommandArg
 from nonebot_plugin_apscheduler import scheduler
-from nonebot_plugin_imageutils import text2image
+from pil_utils import text2image
 from apscheduler.triggers.cron import CronTrigger
 from nonebot import get_bot, get_driver, on_command
 from nonebot.adapters.onebot.v11 import (
@@ -431,7 +431,7 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
                     + MessageSegment.image(
                         pic_to_bytes(
                             text2image(
-                                "\n".join(ret_msgs), fontname="yz.ttf", fontsize=16
+                                "\n".join(ret_msgs), fontname="Yozai", fontsize=16
                             )
                         )
                     ),
@@ -459,7 +459,7 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
                     + MessageSegment.image(
                         pic_to_bytes(
                             text2image(
-                                "\n".join(ret_msgs), fontname="yz.ttf", fontsize=16
+                                "\n".join(ret_msgs), fontname="Yozai", fontsize=16
                             )
                         )
                     ),

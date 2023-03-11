@@ -4,13 +4,11 @@ from time import time
 from io import BytesIO
 from pathlib import Path
 from enum import Enum, unique
-from typing import Dict, List, Tuple, Optional
+from typing import List, Tuple
 
 import anyio
-from nonebot import get_driver
 from PIL import ImageFont, ImageFilter
-from nonebot_plugin_imageutils import BuildImage
-from nonebot_plugin_imageutils.fonts import add_font
+from pil_utils import BuildImage
 
 from migang.core import FONT_PATH
 from migang.core.manager import goods_manager
@@ -32,12 +30,6 @@ trade_bg_path = IMAGE_PATH / "trade_bg.png"
 ttf_font = ImageFont.truetype(
     str(FONT_PATH / "HONORSansCN-Regular.ttf"), size=30, encoding="utf-8"
 )
-
-
-@get_driver().on_startup
-async def _():
-    await add_font("HONORSansCN-Regular.ttf", FONT_PATH / "HONORSansCN-Regular.ttf")
-
 
 @unique
 class TradeState(Enum):

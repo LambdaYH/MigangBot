@@ -4,14 +4,12 @@ from pathlib import Path
 from enum import Enum, unique
 from typing import Dict, List, Optional
 
-from nonebot import get_driver
 from pydantic import BaseModel
-from nonebot_plugin_imageutils.fonts import add_font
+from pil_utils import BuildImage, text2image
 from nonebot_plugin_htmlrender import template_to_pic
 from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot_plugin_imageutils import BuildImage, text2image
 
-from migang.core.path import DATA_PATH, FONT_PATH
+from migang.core.path import DATA_PATH
 from migang.core.manager import (
     PluginType,
     PluginManager,
@@ -79,12 +77,6 @@ colors = [
 color_len = len(colors)
 
 
-@get_driver().on_startup
-async def _():
-    await add_font("yz.ttf", FONT_PATH / "yz.ttf")
-    await add_font("HONORSansCN-Regular.ttf", FONT_PATH / "HONORSansCN-Regular.ttf")
-
-
 async def get_help_image(group_id: Optional[int], user_id: Optional[int], super: bool):
     """
     说明:
@@ -124,7 +116,7 @@ min_width = (
 def draw_usage(usage: str) -> Optional[MessageSegment]:
     help_img = text2image(
         text=usage,
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=24,
         padding=(0, 0),
         bg_color=(255, 255, 255, 0),
@@ -134,7 +126,7 @@ def draw_usage(usage: str) -> Optional[MessageSegment]:
 
     help_img = text2image(
         text=usage,
-        fontname="yz.ttf",
+        fontname="Yozai",
         fontsize=24,
         padding=(0, 0),
         bg_color=(255, 255, 255, 0),
@@ -217,7 +209,7 @@ def draw_usage(usage: str) -> Optional[MessageSegment]:
     bk.draw_bbcode_text(
         (border + start_idx + text_image_padding, top_border - 30),
         text=f"[color={color_candidates[0]}]使[/color][color={color_candidates[1]}]用[/color][color={color_candidates[2]}]帮[/color][color={color_candidates[3]}]助[/color]",
-        fontname="HONORSansCN-Regular.ttf",
+        fontname="HONOR Sans CN",
         fontsize=40,
     )
     return MessageSegment.image(bk.save_png())

@@ -88,7 +88,6 @@ def install_aircon(
 
 
 def update_aircon(
-    session: AsyncSession,
     aircon: Aircon,
     ison: Optional[bool] = None,
     settemp: Optional[int] = None,
@@ -139,4 +138,3 @@ def update_aircon(
         aircon.ac_type = actype
     if envtemp is not None:
         aircon.env_temp = envtemp
-    session.add(aircon)
