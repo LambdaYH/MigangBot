@@ -2,6 +2,7 @@
 """
 
 from nonebot.log import logger
+from nonebot.rule import to_me
 from nonebot import on_fullmatch
 from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER, GroupMessageEvent
 
@@ -10,6 +11,7 @@ from migang.core.manager import group_manager
 switch_bot_wakeup = on_fullmatch(
     ("起床啦", "醒来吧", "醒来", "起床"),
     priority=1,
+    rule=to_me(),
     block=True,
     permission=GROUP_ADMIN | GROUP_OWNER,
 )
@@ -17,6 +19,7 @@ switch_bot_wakeup = on_fullmatch(
 switch_bot_sleep = on_fullmatch(
     ("休息吧", "睡吧"),
     priority=1,
+    rule=to_me(),
     block=True,
     permission=GROUP_ADMIN | GROUP_OWNER,
 )

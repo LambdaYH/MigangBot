@@ -1,5 +1,5 @@
 <div align=center><img height="320" src="https://image.cinte.cc/i/2023/03/11/640c74d38b7a9.jpg"/></div>
-<div align=right><font color=gray size=2>图片来自：暖暖与美梦神</font></div>
+<div align=right><font color=gray size=1>图片来自：暖暖与美梦神</font></div>
 
 <div align=center>
 <h1>MigangBot </br><font size=3>基于Nonebot2的米缸Bot<font></h1>

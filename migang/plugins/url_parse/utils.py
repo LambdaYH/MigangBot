@@ -6,7 +6,7 @@ from typing import Set, Deque, DefaultDict
 from nonebot import get_driver
 
 # 5min
-DEFAULT_CACHE_TIME = 30
+DEFAULT_CACHE_TIME = 30 * 5
 
 
 class CacheItem:

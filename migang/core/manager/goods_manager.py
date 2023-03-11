@@ -418,18 +418,31 @@ class GoodsManager:
             return list(self.__data.values())[name]
         return self.__data.get(name)
 
+    def get_goods_group(self, name: str) -> Optional[GoodsGroup]:
+        """获取商品组
+
+        Args:
+            name (str): 组名
+
+        Returns:
+            Optional[GoodsGroup]: _description_
+        """
+        return self.__goods_group.get(name)
+
     async def adjust(self, name: str, **kwargs) -> None:
         """调整商品价格折扣等，数据库中存储的项
 
         Args:
             name (str): 商品名
         """
+        print(kwargs)
         goods = self.__data.get(name)
         if not goods:
             return
         for key, v in kwargs.items():
             if key in goods.__dict__:
                 goods.__dict__[key] = v
+        print(goods.__dict__)
         await self.save_to_db(name=name)
 
     async def adjust_group(self, name: str, **kwargs) -> None:

@@ -147,9 +147,7 @@ configs/
 package.json
 package-lock.json
 node_modules
-
-# conf
-migangbot.conf
+font_index.json
 
 # env
 .env.dev
@@ -160,8 +158,3 @@ db_config.yaml
 
 
 # developing
-migang/plugins/about*
-test.py
-shop
-ID_DATA.db
-test
