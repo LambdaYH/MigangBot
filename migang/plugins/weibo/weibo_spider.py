@@ -16,8 +16,8 @@ from fake_useragent import UserAgent
 from migang.core import DATA_PATH, get_config
 from migang.utils.file import async_save_data
 
-from .exception import ParseError, NotFoundError
 from ._utils import sinaimgtvax
+from .exception import ParseError, NotFoundError
 
 api_url = f"https://m.weibo.cn/api/container/getIndex"
 PATH = DATA_PATH / "weibo"

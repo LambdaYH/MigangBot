@@ -43,9 +43,11 @@ def clean_all_help_image():
     for img in USER_HELP_PATH.iterdir():
         img.unlink()
 
+
 def clean_all_task_image():
     for img in GROUP_TASK_PATH.iterdir():
         img.unlink()
+
 
 def clean_group_help_image(group_id: int):
     if (file := GROUP_HELP_PATH / f"{group_id}.png").exists():

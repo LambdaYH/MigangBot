@@ -1,5 +1,5 @@
-from nonebot.plugin import PluginMetadata
 from nonebot import on_fullmatch
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment, GroupMessageEvent
 

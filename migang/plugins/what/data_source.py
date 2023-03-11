@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Tuple, Union
 
 from thefuzz import fuzz
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot_plugin_htmlrender import template_to_pic
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from .jiki_source import get_jiki
 from .baidu_source import get_baidu
