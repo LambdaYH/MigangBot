@@ -4,7 +4,7 @@
 <div align=center>
 <h1>MigangBot </br><font size=3>基于Nonebot2的米缸Bot<font></h1>
 
-[![CodeFactor](https://www.codefactor.io/repository/github/lambdayh/migangbot/badge?s=ef2b5315118bb36289a2974c018215457563ff0d)](https://www.codefactor.io/repository/github/lambdayh/migangbot)[![license](https://img.shields.io/github/license/LambdaYH/MigangBot)](https://github.com/LambdaYH/MigangBot/main/LICENSE)![python](https://img.shields.io/badge/Python-3.10-blue)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d320da31c517440890c47032c4b4c25e)](https://www.codacy.com/gh/LambdaYH/MigangBot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LambdaYH/MigangBot&amp;utm_campaign=Badge_Grade)[![license](https://img.shields.io/github/license/LambdaYH/MigangBot)](https://github.com/LambdaYH/MigangBot/main/LICENSE)![python](https://img.shields.io/badge/Python-3.10-blue)
 </div>
 
 # 关于
