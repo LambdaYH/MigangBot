@@ -3,9 +3,9 @@ from .shop_log import ShopLog
 from .user_bag import UserBag
 from .feedback import Feedback
 from .goods_info import GoodsInfo
+from .goods_group import GoodsGroup
 from .user_status import UserStatus
 from .group_status import GroupStatus
 from .goods_use_log import GoodsUseLog
 from .user_property import UserProperty
 from .transaction_log import TransactionLog
-from .goods_group import GoodsGroup

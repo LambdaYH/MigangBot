@@ -8,8 +8,8 @@ from typing import Tuple, Union
 from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from nonebot.params import Command, Fullmatch, CommandArg
 from pil_utils import BuildImage, text2image
+from nonebot.params import Command, Fullmatch, CommandArg
 from nonebot import on_notice, on_command, on_request, on_fullmatch
 from nonebot.adapters.onebot.v11 import (
     Bot,

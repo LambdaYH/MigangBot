@@ -1,7 +1,7 @@
 import random
-from datetime import timedelta
 from pathlib import Path
-from typing import Optional, List
+from datetime import timedelta
+from typing import List, Optional
 from asyncio.exceptions import TimeoutError
 
 import anyio
@@ -11,9 +11,9 @@ from nonebot import get_driver
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 
-from migang.core.manager import permission_manager
 from migang.core import get_config
 from migang.core.permission import BLACK
+from migang.core.manager import permission_manager
 
 
 async def get_turing(

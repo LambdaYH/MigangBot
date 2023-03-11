@@ -9,9 +9,9 @@ from string import digits, punctuation, ascii_letters
 from typing import List, Union, Literal, Optional, TypedDict
 
 from PIL.Image import Resampling
+from pil_utils.fonts import fontManager
 from mcstatus.pinger import PingResponse
 from pil_utils import BuildImage, Text2Image
-from pil_utils.fonts import fontManager
 from mcstatus.bedrock_status import BedrockStatusResponse
 
 from migang.core import FONT_PATH

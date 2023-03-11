@@ -1,7 +1,8 @@
-from matplotlib import font_manager
-from migang.core import FONT_PATH
 from pathlib import Path
 
+from matplotlib import font_manager
+
+from migang.core import FONT_PATH
 from migang.core.utils.file_operation import async_load_data, async_save_data
 
 
