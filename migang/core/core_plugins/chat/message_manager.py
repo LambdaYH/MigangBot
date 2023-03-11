@@ -4,7 +4,7 @@ import inspect
 from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Coroutine
 
-from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 
 from migang.core.permission import BLACK
 from migang.core.manager import permission_manager

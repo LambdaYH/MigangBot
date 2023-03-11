@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import Set, List, Union
 
 import anyio
+from pil_utils import text2image
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from pil_utils import text2image
 from nonebot import require, get_plugin, on_command
 from nonebot.permission import SUPERUSER, SuperUser
 from nonebot.rule import (

@@ -7,8 +7,8 @@ from enum import Enum, unique
 from typing import List, Tuple
 
 import anyio
-from PIL import ImageFont, ImageFilter
 from pil_utils import BuildImage
+from PIL import ImageFont, ImageFilter
 
 from migang.core import FONT_PATH
 from migang.core.manager import goods_manager
@@ -30,6 +30,7 @@ trade_bg_path = IMAGE_PATH / "trade_bg.png"
 ttf_font = ImageFont.truetype(
     str(FONT_PATH / "HONORSansCN-Regular.ttf"), size=30, encoding="utf-8"
 )
+
 
 @unique
 class TradeState(Enum):

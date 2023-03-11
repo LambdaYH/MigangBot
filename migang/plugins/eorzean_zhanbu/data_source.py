@@ -13,14 +13,10 @@ from sqlalchemy import select
 from pil_utils import BuildImage
 from nonebot_plugin_datastore import create_session
 
-
 from . import zhanbu_config
 from .model import EorzeanZhanbuRecorder
 
 BG_PATH = Path(__file__).parent / "image"
-
-
-
 
 
 def vertical(str: str) -> str:
