@@ -45,4 +45,4 @@ async def _(user_sign_in: SignIn, user_prop: UserProperty):
     user_prop.impression += Decimal(impression_diff) * 2
     user_sign_in.impression_diff *= 3
 
-    return f"本次签到好感度三倍！"
+    return "本次签到好感度三倍！"

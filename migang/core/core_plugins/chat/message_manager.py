@@ -59,7 +59,7 @@ class MessageManager:
                 permission_manager.set_user_perm(
                     user_id=user_id, permission=BLACK, duration=5 * 60
                 )
-                return f"生气了！不和你说话了（5min）"
+                return "生气了！不和你说话了（5min）"
             return random.choice(self.__same_ret).format(
                 nickname=nickname, count=count + 1
             )

@@ -254,7 +254,7 @@ def json_to_format_code(json: RawTextType, interpret: Optional[bool] = None) -> 
         if k == "text":
             if interpret:
                 try:
-                    v = json_to_format_code(JSON.loads(v), interpret)  # type: ignore
+                    v = json_to_format_code(json.loads(v), interpret)  # type: ignore
                 except:
                     pass
             texts.append(v)

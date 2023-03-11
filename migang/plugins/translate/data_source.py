@@ -80,7 +80,7 @@ async def get_deepl_trans(text):
         return "[Deepl机翻]\n> 出错了~"
 
 
-url = f"http://fanyi.youdao.com/translate?smartresult=dict&smartresult=rule&smartresult=ugc&sessionFrom=null"
+url = "http://fanyi.youdao.com/translate?smartresult=dict&smartresult=rule&smartresult=ugc&sessionFrom=null"
 
 
 async def get_youdao_trans(text):

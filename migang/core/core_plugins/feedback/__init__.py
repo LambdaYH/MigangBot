@@ -101,7 +101,7 @@ async def _(bot: Bot, arg: Message = CommandArg()):
                 await bot.send_private_msg(user_id=feedback.user_id, message=msg)
             await reply.send(f"留言ID[{feedback_id}]的回复已发送成功", at_sender=True)
         else:
-            await reply.send(f"输入的留言ID有误,请输入数字", at_sender=True)
+            await reply.send("输入的留言ID有误,请输入数字", at_sender=True)
     except Exception as e:
         logger.error(f"回复留言时出错：{e}")
         await reply.send("留言回复失败")

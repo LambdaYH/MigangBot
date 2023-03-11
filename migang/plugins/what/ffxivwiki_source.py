@@ -185,14 +185,14 @@ async def parse_item_garland(item_id, name_lang):
 
     if "reducedFrom" in item.keys():
         hasSource = True
-        result.append(f"·精选")
+        result.append("·精选")
         for itemIndex in item["reducedFrom"]:
             result.append("- {}".format(partials[("item", str(itemIndex))]["n"]))
         result.append("")
 
     if "craft" in item.keys():
         hasSource = True
-        result.append(f"·制作")
+        result.append("·制作")
         for craft in item["craft"]:
             result.append(
                 "  -- {} {}".format(
@@ -333,7 +333,7 @@ async def parse_item_garland(item_id, name_lang):
 
     if "instances" in item.keys():
         hasSource = True
-        result.append(f"·副本获取")
+        result.append("·副本获取")
         i = 0
         for dutyIndex in item["instances"]:
             if i > 4:

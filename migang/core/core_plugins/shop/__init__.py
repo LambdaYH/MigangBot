@@ -192,7 +192,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await UserProperty.modify_gold(
             user_id=user, gold_diff=gold, description="超级用户打钱了"
         )
-    await give_gold.send(f"已成功赠与金币")
+    await give_gold.send("已成功赠与金币")
 
 
 @modify.handle()

@@ -200,7 +200,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
             for user in bot.config.superusers:
                 await bot.send_private_msg(
                     user_id=int(user),
-                    message=f"还没反应过来我就在里面了呢~",
+                    message="还没反应过来我就在里面了呢~",
                 )
             await group_request.finish()
     user_name, sex, age = None, None, None

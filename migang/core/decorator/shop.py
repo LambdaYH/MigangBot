@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Dict, Tuple, Union, Callable, Iterable, Optional
 
 from migang.core.manager import goods_manager

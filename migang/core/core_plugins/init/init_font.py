@@ -7,8 +7,6 @@ from migang.core.utils.file_operation import async_load_data, async_save_data
 
 
 async def load_font():
-    import ujson as json
-
     # 一次性加载字体文件夹下的所有字体
     for font in font_manager.findSystemFonts((FONT_PATH,)):
         font_manager.fontManager.addfont(font)

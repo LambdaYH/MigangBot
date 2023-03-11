@@ -326,7 +326,7 @@ async def _(
             if not arg[1].isdigit():
                 trading_pairs[event.user_id].gold = 0
                 trading_pairs[event.user_id].items.clear()
-                await put_item.finish(f"金币的数量不正确！请重新放置物品")
+                await put_item.finish("金币的数量不正确！请重新放置物品")
 
             trading_pairs[event.user_id].gold += int(arg[1])
         else:
@@ -345,7 +345,7 @@ async def _(
     if ret:
         trading_pairs[event.user_id].gold = 0
         trading_pairs[event.user_id].items.clear()
-        await put_item.finish(f"背包中的 " + "/".join(ret) + " 数量不足，请重新放置物品")
+        await put_item.finish("背包中的 " + "/".join(ret) + " 数量不足，请重新放置物品")
     trading_pairs[event.user_id].state = TradeState.WAIT_FOR_CONFIRM
     trading_pairs[event.user_id].start_time = time()
     target_user = trading_pairs[event.user_id].target

@@ -72,7 +72,7 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
             {
                 "type": "node",
                 "data": {
-                    "name": f"苏暖暖",
+                    "name": "苏暖暖",
                     "uin": f"{bot.self_id}",
                     "content": MessageSegment.image(
                         DATA_PATH / "suits" / f"{suits_list[i]}.jpg"
