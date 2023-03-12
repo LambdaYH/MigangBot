@@ -22,6 +22,7 @@ usage：
     },
 )
 
+__plugin_category__ = "基础功能"
 
 sign_in = on_fullmatch("签到", priority=5, permission=GROUP, block=True)
 

@@ -9,29 +9,28 @@ from tortoise.backends.base.client import BaseDBAsyncClient
 TIMEDELTA = datetime.now() - datetime.utcnow()
 
 
-class ShopLog(Model):
+class ShopGroupLog(Model):
     user_id = fields.BigIntField(null=False)
-    item_name = fields.CharField(255, null=False)
+    group_name = fields.CharField(255, null=False)
     amount = fields.IntField(null=False)
-    price = fields.FloatField(null=False)
     time = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
-        table = "shop_log"
-        table_description = "商店购买/退货记录"
+        table = "shop_group_log"
+        table_description = "商品组购买/退货记录"
 
     @classmethod
     async def get_today_purchase_amount(
         cls,
         user_id: int,
-        item_name: str,
+        group_name: str,
         connection: Optional[BaseDBAsyncClient] = None,
     ) -> int:
         now = datetime.now()
         return (
             await cls.filter(
                 user_id=user_id,
-                item_name=item_name,
+                group_name=group_name,
                 time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
                 - TIMEDELTA,
             )

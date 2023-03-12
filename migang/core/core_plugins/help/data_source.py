@@ -345,7 +345,7 @@ async def _build_html_image(
             ),
         },
         pages={
-            "viewport": {"width": 1800, "height": 975},
+            "viewport": {"width": 1900, "height": 975},
         },
     )
     return pic

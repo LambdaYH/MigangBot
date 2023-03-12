@@ -142,7 +142,7 @@ class Goods:
         self.on_shelf = on_shelf
         self.consumable = consumable
         self.description = description
-        self.group = group
+        self.group = group or []
         self.__handlers = [None, None, None]
         self.__kwargs = [{}, {}, {}]
 

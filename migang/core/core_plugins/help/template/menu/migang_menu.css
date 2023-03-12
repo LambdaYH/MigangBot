@@ -50,7 +50,7 @@ i {
 @font-face {
     font-family: myFont;
     /* 导入的字体文件 */
-    src: url("./res/font/CJGaoDeGuo-MH");
+    src: url("./res/font/CJGaoDeGuo.otf");
 }
 
 body {

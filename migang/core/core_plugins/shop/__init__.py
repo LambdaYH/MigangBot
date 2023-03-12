@@ -15,7 +15,13 @@ from nonebot.adapters.onebot.v11 import (
 )
 
 from migang.core.manager import goods_manager
-from migang.core.models import UserBag, UserProperty, TransactionLog
+from migang.core.models import (
+    UserBag,
+    UserProperty,
+    TransactionLog,
+    ShopLog,
+    ShopGroupLog,
+)
 from migang.core.manager.goods_manager import UseStatus, GoodsHandlerParams
 
 from .bag import draw_bag
@@ -95,6 +101,22 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
         if not user_prop and price != 0:
             await buy.finish("金币不足！")
         if price != 0:
+            if goods.purchase_limit:
+                today_purchase = await ShopLog.get_today_purchase_amount(
+                    user_id=event.user_id, item_name=goods.name, connection=connection
+                )
+                if not goods.check_purchase_limit(amount=amount + today_purchase):
+                    await buy.finish(f"该商品今日限购 {goods.purchase_limit} 个！")
+            for group in goods.group:
+                group = goods_manager.get_goods_group(group)
+                if group and group.purchase_limit:
+                    today_purchase = await ShopGroupLog.get_today_purchase_amount(
+                        user_id=event.user_id,
+                        group_name=goods.name,
+                        connection=connection,
+                    )
+                    if not group.check_purchase_limit(amount=amount + today_purchase):
+                        await buy.finish(f"该类商品今日限购 {group.purchase_limit} 个")
             if user_prop.gold < price * amount:
                 await buy.finish("金币不足！")
             user_prop.gold -= price * amount
@@ -104,6 +126,13 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
                 gold_spent=price * amount,
                 description=f"商店购买{amount}个{goods.name}",
             ).save(using_db=connection)
+            await ShopLog(
+                user_id=event.user_id, item_name=goods.name, amount=amount, price=price
+            ).save(using_db=connection)
+            for group in goods.group:
+                await ShopGroupLog(
+                    user_id=event.user_id, group_name=group, amount=amount
+                ).save(using_db=connection)
         user, _ = await UserBag.get_or_create(
             user_id=event.user_id, item_name=goods.name, using_db=connection
         )
