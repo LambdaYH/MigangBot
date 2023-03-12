@@ -47,6 +47,7 @@ async def _(goods_name: str, user_id: int, bot: Bot, low: int, high: int):
     name="小袋星钻",
     price=20,
     description="可兑换为不定额（10~100）的金币哟~",
+    purchase_limit=10,
     use_limit=10,
     single_use_limit=10,
     icon=ICON_PATH / "小袋星钻.png",

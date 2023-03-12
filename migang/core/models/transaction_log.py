@@ -1,5 +1,5 @@
-from typing import List, Tuple
-from datetime import datetime, timedelta
+from typing import Tuple
+from datetime import datetime
 
 from tortoise import fields
 from tortoise.models import Model
