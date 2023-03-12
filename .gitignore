@@ -149,6 +149,10 @@ package-lock.json
 node_modules
 font_index.json
 
+# misc
+migangbot.conf
+run.sh
+
 # env
 .env.dev
 .env
