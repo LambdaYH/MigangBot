@@ -32,13 +32,7 @@ class GoodsUseLog(Model):
             await cls.filter(
                 user_id=user_id,
                 goods_name=goods_name,
-                time__gte=now
-                - timedelta(
-                    hours=now.hour,
-                    minutes=now.minute,
-                    seconds=now.second,
-                    microseconds=now.microsecond,
-                )
+                time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
                 - TIMEDELTA,
             )
             .annotate(today_used=Sum("amount"))

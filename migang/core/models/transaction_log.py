@@ -33,13 +33,7 @@ class TransactionLog(Model):
         today_data = (
             await cls.filter(
                 user_id=user_id,
-                time__gte=now
-                - timedelta(
-                    hours=now.hour,
-                    minutes=now.minute,
-                    seconds=now.second,
-                    microseconds=now.microsecond,
-                )
+                time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
                 - TIMEDELTA,
             )
             .annotate(today_earned=Sum("gold_earned"), today_spent=Sum("gold_spent"))

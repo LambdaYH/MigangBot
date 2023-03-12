@@ -127,6 +127,7 @@ class PermissionManager:
                     self.__user_manager.set_user_permission(
                         user_id=item.user_id, permission=item.target_perm
                     )
+                self.__dirty_data = True
             self.__event.clear()
             if not self.__data.empty():
                 try:

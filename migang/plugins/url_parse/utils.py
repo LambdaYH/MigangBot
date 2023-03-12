@@ -35,7 +35,8 @@ class GroupCache:
             if len(self.__deque) != 0:
                 try:
                     await asyncio.wait_for(
-                        self.__event.wait(), timeout=self.__deque[-1].expired - now
+                        self.__event.wait(),
+                        timeout=min(10, self.__deque[-1].expired - now),
                     )
                 except asyncio.TimeoutError:
                     pass
