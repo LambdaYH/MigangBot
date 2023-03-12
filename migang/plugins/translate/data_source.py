@@ -5,6 +5,7 @@ import hashlib
 import ujson
 import aiohttp
 from nonebot import get_driver
+from nonebot.log import logger
 
 from migang.core import get_config
 
@@ -34,7 +35,10 @@ headers = {
 @get_driver().on_startup
 async def _():
     global headers
-    headers["Ocp-Apim-Subscription-Key"] = await get_config("azure_api_key")
+    try:
+        headers["Ocp-Apim-Subscription-Key"] = await get_config("azure_api_key")
+    except Exception:
+        logger.warning("首次启动，请填写azure_api_key")
 
 
 async def get_azure_trans(text):
