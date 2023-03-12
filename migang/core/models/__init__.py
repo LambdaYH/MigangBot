@@ -8,5 +8,5 @@ from .user_status import UserStatus
 from .group_status import GroupStatus
 from .goods_use_log import GoodsUseLog
 from .user_property import UserProperty
-from .transaction_log import TransactionLog
 from .shop_group_log import ShopGroupLog
+from .transaction_log import TransactionLog
