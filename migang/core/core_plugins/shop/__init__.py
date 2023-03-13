@@ -112,7 +112,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
                 if group and group.purchase_limit:
                     today_purchase = await ShopGroupLog.get_today_purchase_amount(
                         user_id=event.user_id,
-                        group_name=goods.name,
+                        group_name=group.name,
                         connection=connection,
                     )
                     if not group.check_purchase_limit(amount=amount + today_purchase):

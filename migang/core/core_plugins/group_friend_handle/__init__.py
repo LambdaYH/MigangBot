@@ -430,6 +430,6 @@ async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
 
 
 @friend_add.handle()
-async def _():
+async def _(_: FriendAddNoticeEvent):
     await asyncio.sleep(2)
     await friend_add.send(message=Message(await get_config("firend_help")))
