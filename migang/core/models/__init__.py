@@ -1,3 +1,4 @@
+from .bank import Bank
 from .sign_in import SignIn
 from .shop_log import ShopLog
 from .user_bag import UserBag

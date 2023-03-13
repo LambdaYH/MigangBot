@@ -83,11 +83,11 @@ async def _(bot: Bot, event: MessageEvent, cmd: str = Startswith()):
                     user_id=bot.self_id,
                     nickname="无情的搜索机器",
                     content=f"""
-    {count}.
-    [名字] {name}
-    [作者] {authors if authors else ""}
-    [出版社] {publisher if publisher else ""}
-    URL:{base_url + href}
+{count}.
+[名字] {name}
+[作者] {authors if authors else ""}
+[出版社] {publisher if publisher else ""}
+URL:{href}
             """.strip(),
                 )
             )

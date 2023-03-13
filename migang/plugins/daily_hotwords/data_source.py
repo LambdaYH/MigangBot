@@ -16,7 +16,7 @@ def _get_wordcloud_and_hot_words(
     # 预处理
     message = pre_precess(message)
     # 分析消息。分词，并统计词频
-    frequency = analyse_message(message)
+    frequency = analyse_message(message)[:100]
 
     # 获取前三的词
     if len(frequency) < 3:
