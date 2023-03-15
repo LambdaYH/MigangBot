@@ -2754,29 +2754,6 @@ url = "http://mirrors.aliyun.com/pypi/simple"
 reference = "ali"
 
 [[package]]
-name = "nonebot-plugin-abstract"
-version = "1.0.6"
-description = "Plugin for nonebot2 that abstracts statements"
-category = "main"
-optional = false
-python-versions = ">=3.7.3,<4.0.0"
-files = [
-    {file = "nonebot_plugin_abstract-1.0.6-py3-none-any.whl", hash = "sha256:5aa906273636e1a4dbe922db18ebf875eab939071d0d88ab76685e61fafb58f5"},
-    {file = "nonebot_plugin_abstract-1.0.6.tar.gz", hash = "sha256:53fbf92156ccc6e9e8af5bd7369c411f0e8d201ef361d2cb52ff25ebc83e8fe4"},
-]
-
-[package.dependencies]
-jieba = "0.42.1"
-nonebot-adapter-onebot = ">=2.0.0-beta.1,<3.0.0"
-nonebot2 = ">=2.0.0-beta.1,<3.0.0"
-pinyin = "0.4.0"
-
-[package.source]
-type = "legacy"
-url = "http://mirrors.aliyun.com/pypi/simple"
-reference = "ali"
-
-[[package]]
 name = "nonebot-plugin-apscheduler"
 version = "0.2.0"
 description = "APScheduler Support for NoneBot2"
@@ -2836,6 +2813,28 @@ diro-py = ">=0.1,<0.2"
 nonebot-adapter-onebot = ">=2.0.0-beta.1,<3.0.0"
 nonebot2 = ">=2.0.0-beta.1,<3.0.0"
 ujson = ">=4.0.0"
+
+[package.source]
+type = "legacy"
+url = "http://mirrors.aliyun.com/pypi/simple"
+reference = "ali"
+
+[[package]]
+name = "nonebot-plugin-code"
+version = "0.0.5"
+description = "nonebot2 plugin run code online"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "nonebot_plugin_code-0.0.5-py3-none-any.whl", hash = "sha256:ac3d934e44caff921b81bd5bb638ae3c54eb9853eee3cf971fe135727e89401a"},
+    {file = "nonebot_plugin_code-0.0.5.tar.gz", hash = "sha256:15c717ebfa3f948ec639fff906dd126fe0906bf2b3f8b5bae0e3af101d4a9500"},
+]
+
+[package.dependencies]
+httpx = ">=0.19.0"
+nonebot-adapter-onebot = ">=2.0.0-beta.1,<3.0.0"
+nonebot2 = ">=2.0.0-beta.1,<3.0.0"
 
 [package.source]
 type = "legacy"
@@ -3543,22 +3542,6 @@ files = [
 [package.extras]
 docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues (>=3.0.1)", "sphinx-removed-in", "sphinxext-opengraph"]
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
-
-[package.source]
-type = "legacy"
-url = "http://mirrors.aliyun.com/pypi/simple"
-reference = "ali"
-
-[[package]]
-name = "pinyin"
-version = "0.4.0"
-description = "Translate chinese chars to pinyin based on Mandarin.dat"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pinyin-0.4.0.tar.gz", hash = "sha256:8842ae53cb7a81c8c3ec03d1cd7dba9aedb20d8d6962aebc620fad74da0868f5"},
-]
 
 [package.source]
 type = "legacy"
@@ -5380,4 +5363,4 @@ reference = "ali"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a16819e96a3bcb912a1085dd84ebda02ef7d7b7117f512137b76ec6ff19d0e2b"
+content-hash = "5ce2bce05817ff6089ed5d85a434ad63aef7c5dbcbd74167630f7a607892e091"
