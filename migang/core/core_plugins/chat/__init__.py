@@ -1,10 +1,10 @@
 import random
 from pathlib import Path
 
-from nonebot import on_message, on_keyword
 from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
+from nonebot import on_keyword, on_message
 from nonebot.adapters.onebot.v11 import (
     GROUP,
     Bot,
