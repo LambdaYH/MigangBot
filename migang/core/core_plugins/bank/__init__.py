@@ -96,7 +96,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
         )
         for demand_deposit in all_demand_deposit:
             if demand_deposit.amount >= amount:
-                total_earned += (
+                total_earned += int(
                     (now - demand_deposit.time.replace(tzinfo=None)).days
                     * rate
                     * amount
@@ -105,7 +105,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
                 await demand_deposit.save(update_fields=["amount"], using_db=connection)
                 break
             else:
-                total_earned += (
+                total_earned += int(
                     (now - demand_deposit.time.replace(tzinfo=None)).days
                     * rate
                     * demand_deposit.amount
