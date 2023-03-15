@@ -429,14 +429,12 @@ class GoodsManager:
         Args:
             name (str): 商品名
         """
-        print(kwargs)
         goods = self.__data.get(name)
         if not goods:
             return
         for key, v in kwargs.items():
             if key in goods.__dict__:
                 goods.__dict__[key] = v
-        print(goods.__dict__)
         await self.save_to_db(name=name)
 
     async def adjust_group(self, name: str, **kwargs) -> None:
