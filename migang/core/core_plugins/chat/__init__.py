@@ -1,8 +1,17 @@
-from nonebot import on_message
+import random
+from pathlib import Path
+
+from nonebot import on_message, on_keyword
 from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import GROUP, Bot, Message, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import (
+    GROUP,
+    Bot,
+    Message,
+    MessageSegment,
+    GroupMessageEvent,
+)
 
 from migang.core import ConfigItem, get_config
 
@@ -66,3 +75,31 @@ async def _(bot: Bot, event: GroupMessageEvent):
     for t in await get_config("text_filter"):
         reply = reply.replace(t, "*")
     await chat.send(Message(reply))
+
+
+# 加一点祖传回复
+
+
+wenhao = on_keyword(("??", "？？"), priority=99, block=False, permission=GROUP)
+tanhao = on_keyword(("!!", "！！"), priority=99, block=False, permission=GROUP)
+huoguo = on_keyword(("火锅",), priority=99, block=False, permission=GROUP)
+
+custom_chat_path = Path(__file__).parent / "image" / "custom_chat"
+
+
+@wenhao.handle()
+async def _():
+    if random.random() < 0.30:
+        await wenhao.send(MessageSegment.image(custom_chat_path / "wenhao.jpg"))
+
+
+@tanhao.handle()
+async def _():
+    if random.random() < 0.30:
+        await tanhao.send(MessageSegment.image(custom_chat_path / "tanhao.jpg"))
+
+
+@huoguo.handle()
+async def _():
+    if random.random() < 0.30:
+        await huoguo.send(MessageSegment.image(custom_chat_path / "huoguo.jpg"))
