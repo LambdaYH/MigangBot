@@ -84,7 +84,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
         if total_demand_deposit < amount:
             await take_coins.finish(f"您未在这存放足够的金币哦~")
         # 先把晚存入的取出来
-        rate = await get_config("demand_deposit_rate")
+        rate = (await get_config("demand_deposit_rate")) / 100
         total_earned = 0
         now = datetime.utcnow()
         all_demand_deposit = (
