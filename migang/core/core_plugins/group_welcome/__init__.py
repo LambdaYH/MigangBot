@@ -2,7 +2,7 @@ from typing import Tuple
 
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
-from nonebot import on_regex, on_notice, on_command
+from nonebot import on_regex, on_notice, on_command, on_fullmatch
 from nonebot.params import Arg, CommandArg, RegexGroup
 from nonebot.adapters.onebot.v11 import (
     GROUP,
@@ -24,6 +24,7 @@ __plugin_meta__ = PluginMetadata(
 指令：
     设置群欢迎语
     删除群欢迎语
+    查看群欢迎语
     禁用群欢迎语
     启用群欢迎语
 说明：
@@ -53,6 +54,8 @@ change_status = on_regex(
     permission=GROUP,
     block=True,
 )
+
+show_group_welcome = on_fullmatch("查看群欢迎语", priority=1, permission=GROUP, block=True)
 
 group_increase = on_notice(priority=1, block=False)
 
@@ -89,6 +92,14 @@ async def _(event: GroupMessageEvent, regex_group: Tuple[str, ...] = RegexGroup(
         group_welcome.status = cmd == "启用"
         await group_welcome.save(update_fields=["status"])
     await change_status.send(f"已{cmd}当前群的欢迎语~")
+
+
+@show_group_welcome.handle()
+async def _(event: GroupMessageEvent):
+    group_welcome = await GroupWelcome.filter(group_id=event.group_id).first()
+    if not group_welcome or group_welcome.content is None:
+        await show_group_welcome.finish("当前群未设置群欢迎语哦~")
+    await show_group_welcome.send(deserialize_message(group_welcome.content))
 
 
 @group_increase.handle()
