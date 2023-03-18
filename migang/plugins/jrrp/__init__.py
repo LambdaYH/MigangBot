@@ -9,7 +9,7 @@ from .config import Config
 from .data_source import get_fortune
 
 __plugin_meta__ = PluginMetadata(
-    name="运势",
+    name="今日运势",
     description="测试你的今日运势",
     usage="今日运势/今日人品/.jrrp",
     config=Config,

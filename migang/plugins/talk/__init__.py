@@ -1,8 +1,8 @@
-from nonebot import on_command
+from nonebot import on_startswith
 from nonebot.rule import to_me
-from nonebot.params import CommandArg
+from nonebot.params import Startswith
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
 
 from migang.core import CountItem
 from migang.utils.text import filt_message
@@ -28,15 +28,17 @@ usage：
 __plugin_category__ = "好玩的"
 __plugin_count__ = CountItem(count=5, hint="说不动了...")
 
-talk = on_command("说", aliases={"talk", "讲"}, priority=5, rule=to_me(), block=True)
+talk = on_startswith(("说","讲"), priority=5, rule=to_me(), block=True)
 
 
 @talk.handle()
-async def _(arg: Message = CommandArg()):
+async def _(event: MessageEvent, cmd: str = Startswith()):
     if not azure_tts_status():
         await talk.finish("咿呀呜啊！（未配置tts）")
     await talk.send(
         MessageSegment.record(
-            await get_azure_tts(filt_message(arg.extract_plain_text().strip()))
+            await get_azure_tts(
+                filt_message(event.get_plaintext().removeprefix(cmd).strip())
+            )
         )
     )
