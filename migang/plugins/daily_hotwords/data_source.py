@@ -1,11 +1,11 @@
-import jieba
 from io import BytesIO
-from typing import List, Tuple, Optional, Dict
+from typing import Dict, List, Tuple, Optional
 
+import jieba
 from anyio import to_thread
 from wordcloud import WordCloud
-from nonebot_plugin_wordcloud.config import global_config, plugin_config
 from nonebot_plugin_wordcloud.data_source import get_mask, pre_precess
+from nonebot_plugin_wordcloud.config import global_config, plugin_config
 
 
 def analyse_message(msg: str) -> Dict[str, float]:

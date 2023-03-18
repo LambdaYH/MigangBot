@@ -1,8 +1,8 @@
-from nonebot import on_startswith
 from nonebot.rule import to_me
+from nonebot import on_startswith
 from nonebot.params import Startswith
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 
 from migang.core import CountItem
 from migang.utils.text import filt_message
@@ -28,7 +28,7 @@ usage：
 __plugin_category__ = "好玩的"
 __plugin_count__ = CountItem(count=5, hint="说不动了...")
 
-talk = on_startswith(("说","讲"), priority=5, rule=to_me(), block=True)
+talk = on_startswith(("说", "讲"), priority=5, rule=to_me(), block=True)
 
 
 @talk.handle()

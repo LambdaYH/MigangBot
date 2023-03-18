@@ -1,10 +1,7 @@
-from nonebot.plugin import PluginMetadata
 from nonebot import on_notice
-from nonebot.adapters.onebot.v11 import (
-    GroupDecreaseNoticeEvent,
-    Bot,
-    ActionFailed,
-)
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import Bot, ActionFailed, GroupDecreaseNoticeEvent
+
 from migang.core.manager import TaskItem
 from migang.core.utils.task_operation import check_task
 
