@@ -3,16 +3,16 @@ https://github.com/iamwyh2019/aircon
 """
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_datastore import get_session
 from nonebot import require, on_command, on_fullmatch
+
+require("nonebot_plugin_datastore")
+from nonebot_plugin_datastore import get_session
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.params import Depends, Fullmatch, CommandArg
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 
 from .airconutils import get_aircon, print_aircon, update_aircon, install_aircon
-
-require("nonebot_plugin_datastore")
 
 __plugin_meta__ = PluginMetadata(
     name="群空调",

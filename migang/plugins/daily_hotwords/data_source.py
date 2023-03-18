@@ -1,10 +1,28 @@
+import jieba
 from io import BytesIO
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 
 from anyio import to_thread
 from wordcloud import WordCloud
 from nonebot_plugin_wordcloud.config import global_config, plugin_config
-from nonebot_plugin_wordcloud.data_source import get_mask, pre_precess, analyse_message
+from nonebot_plugin_wordcloud.data_source import get_mask, pre_precess
+
+
+def analyse_message(msg: str) -> Dict[str, float]:
+    """分析消息
+
+    分词，并统计词频
+    """
+    # 设置停用词表
+    if plugin_config.wordcloud_stopwords_path:
+        jieba.analyse.set_stop_words(plugin_config.wordcloud_stopwords_path)
+    # 加载用户词典
+    if plugin_config.wordcloud_userdict_path:
+        jieba.load_userdict(str(plugin_config.wordcloud_userdict_path))
+    # 基于 TF-IDF 算法的关键词抽取
+    # 返回所有关键词，因为设置了数量其实也只是 tags[:topK]，不如交给词云库处理
+    words = jieba.analyse.extract_tags(msg, topK=30, withWeight=True)
+    return {word: weight for word, weight in words}
 
 
 def _get_wordcloud_and_hot_words(
@@ -16,7 +34,7 @@ def _get_wordcloud_and_hot_words(
     # 预处理
     message = pre_precess(message)
     # 分析消息。分词，并统计词频
-    frequency = analyse_message(message)[:100]
+    frequency = analyse_message(message)
 
     # 获取前三的词
     if len(frequency) < 3:

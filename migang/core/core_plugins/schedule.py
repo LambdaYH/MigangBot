@@ -2,12 +2,12 @@
 """
 
 from nonebot import require
+
+require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
 from migang.core import CountPeriod
 from migang.core.manager import count_manager, save_managers
-
-require("nonebot_plugin_apscheduler")
 
 
 # 重置插件限制
