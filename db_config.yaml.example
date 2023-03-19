@@ -1,7 +1,7 @@
-db_type: mysql
+db_type: postgresql
 
 host: localhost
-port: 3306
+port: 5432
 user: migangbot_user
 password: migangbot_db_password
 database: migangbot_db

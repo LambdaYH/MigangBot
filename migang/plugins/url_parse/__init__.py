@@ -1,32 +1,20 @@
 import re
-import asyncio
-from typing import List, Tuple, Union, Callable, Optional, Coroutine
 
-import aiohttp
-from aiocache import cached
-from nonebot import on_regex
+from nonebot import on_message
 from nonebot.log import logger
-from nonebot.matcher import Matcher
-from nonebot.params import RegexMatched
+from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11.permission import GROUP
-from nonebot.adapters.onebot.v11 import Message, ActionFailed, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import ActionFailed, GroupMessageEvent
 
-from migang.core import TaskItem, GroupTaskChecker, check_task
+from migang.core import TaskItem
 
-from .utils import cache
-from .weibo import weibo_urls, get_weibo_info
-from .github import github_urls, get_github_repo_card
-from .bilibili import (
-    AID_PATTERN,
-    BVID_PATTERN,
-    get_live_summary,
-    get_video_detail,
-    get_bangumi_detail,
-    bilibili_live_keywords,
-    bilibili_video_keywords,
-    bilibili_bangumi_keywords,
-)
+from .weibo import enable
+from .github import enable
+
+# 不知道怎么导入文件所以就这样了
+from .bilibili import enable
+from .utils import parser_manager
 
 __plugin_meta__ = PluginMetadata(
     name="群内链接解析",
@@ -62,114 +50,36 @@ __plugin_task__ = (
 URL_PATTERN = re.compile(
     r"https?:[/|\\](?:[a-zA-Z]|[0-9]|[$-_@.&#+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
 )
-
-ALIAS_DOMAIN = (
-    "https://b23.tv",
-    "https://m.bilibili.com",
-    "https://bilibili.com",
-)
-
-url_parse = on_regex(pattern=URL_PATTERN, permission=GROUP, priority=22, block=False)
-bilibili_bvid = on_regex(
-    pattern=BVID_PATTERN,
-    permission=GROUP,
-    priority=23,
-    rule=GroupTaskChecker(BILIBILI_TASK),
-)
-bilibili_aid = on_regex(
-    pattern=AID_PATTERN,
-    permission=GROUP,
-    priority=24,
-    rule=GroupTaskChecker(BILIBILI_TASK),
-    block=False,
-)
-
-func_dict = {
-    get_video_detail: BILIBILI_TASK,
-    get_bangumi_detail: BILIBILI_TASK,
-    get_live_summary: BILIBILI_TASK,
-    get_github_repo_card: GITHUB_TASK,
-    get_weibo_info: WEIBO_TASK,
-}
+BVID_AID_PATTERN = re.compile(r"((?:av|AV)\d+|(?:BV|bv)[a-zA-Z0-9]{10})")
 
 
-# transfer b23.tv to bilibili.com
-@cached(ttl=300)
-async def get_url(url):
-    async with aiohttp.ClientSession() as client:
-        r = await client.head(url, timeout=15, allow_redirects=False)
-        if 300 <= r.status <= 399:
-            return r.headers["location"]
-    return url
+async def _rule(event: GroupMessageEvent, state: T_State) -> bool:
+    msg = str(event.message)
+    if msg.startswith("【FF14/时尚品鉴】"):
+        return False
+    url_set = set(URL_PATTERN.findall(msg))
+    # 对bv,av号额外处理
+    if not url_set:
+        for id_ in BVID_AID_PATTERN.findall(msg):
+            url_set.add(f"https://www.bilibili.com/video/{id_}")
+    if url_set:
+        if parsers := await parser_manager.get_parser(
+            urls=url_set, group_id=event.group_id
+        ):
+            state["parses"] = parsers
+            return True
+    return False
 
 
-def get_function(url: str) -> Optional[Callable]:
-    if "bilibili" in url:
-        if url.startswith(bilibili_video_keywords):
-            return get_video_detail
-        elif url.startswith(bilibili_bangumi_keywords):
-            return get_bangumi_detail
-        elif url.startswith(bilibili_live_keywords):
-            return get_live_summary
-    elif url.startswith(github_urls):
-        return get_github_repo_card
-    elif "weibo" in url and url.startswith(weibo_urls):
-        return get_weibo_info
-    return None
+url_parse = on_message(permission=GROUP, priority=22, block=True, rule=_rule)
 
 
 @url_parse.handle()
-async def _(matcher: Matcher, event: GroupMessageEvent):
-    msg = str(event.message)
-    if msg.startswith("【FF14/时尚品鉴】"):
-        return
-    url_list = set(URL_PATTERN.findall(msg))
-    tasks: List[Coroutine] = []
-    for url in url_list:
-        url = url.replace("\/", "/")
-        if url.startswith(ALIAS_DOMAIN):
-            url = await get_url(url)
-        url = url.rstrip("&")
-        if url.startswith("http:"):
-            url = url.replace("http:", "https:", 1)
-        if cache.check(group_id=event.group_id, url=url):
-            continue
-        func = get_function(url=url)
-        if (func is not None) and check_task(event.group_id, func_dict[func]):
-            tasks.append(func(url))
-    if tasks:
-        matcher.stop_propagation()
-    else:
-        return
-    ret: List[Union[Tuple[Message, str], str]] = await asyncio.gather(
-        *tasks, return_exceptions=True
-    )
-    for msg in ret:
-        if isinstance(msg, Tuple):
-            if cache.add(group_id=event.group_id, url=msg[1]):
-                try:
-                    await url_parse.send(msg[0])
-                except ActionFailed:
-                    logger.warning(f"发送消息 {msg[0]} 失败")
-        else:
-            logger.warning(f"链接解析失败：{msg}")
-
-
-@bilibili_aid.handle()
-@bilibili_bvid.handle()
-async def _(matcher: Matcher, event: GroupMessageEvent, id: str = RegexMatched()):
-    url = f"https://www.bilibili.com/video/{id}"
-    if cache.check(group_id=event.group_id, url=url):
-        await matcher.finish()
-    if (func := get_function(url=url)) is not None:
-        matcher.stop_propagation()
-        try:
-            msg, link = await func(url)
-            if cache.add(group_id=event.group_id, url=link):
-                try:
-                    await matcher.send(msg)
-                    cache.add(group_id=event.group_id, url=link)
-                except ActionFailed:
-                    logger.warning(f"发送消息 {msg[0]} 失败")
-        except Exception as e:
-            logger.warning(f"链接解析失败：{url}：{e}")
+async def _(event: GroupMessageEvent, state: T_State):
+    msgs = await parser_manager.do_parse(state["parses"])
+    for msg in msgs:
+        if msg is not None:
+            try:
+                await url_parse.send(msg)
+            except ActionFailed:
+                logger.warning(f"群 {event.group_id} 发送解析消息失败")

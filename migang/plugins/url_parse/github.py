@@ -3,9 +3,14 @@ from typing import Tuple
 
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
-github_urls = ("https://github.com",)
+from .utils import parser_manager
+
+enable = True
 
 
+@parser_manager(
+    task_name="url_parse_github_repo_card", startswith=("https://github.com",)
+)
 async def get_github_repo_card(url: str) -> Tuple[Message, str]:
     url = url.lstrip("https://")
     info = url[url.find("/") + 1 :].split("/")

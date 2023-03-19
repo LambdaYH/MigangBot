@@ -26,4 +26,6 @@
 - [C-Jun-GIT/Oreo](https://github.com/C-Jun-GIT/Oreo)
 - [kexue-z/nonebot-plugin-heweather](https://github.com/kexue-z/nonebot-plugin-heweather)
 - [Ice-Cirno/HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
+- [he0119/nonebot-plugin-wordcloud](https://github.com/he0119/nonebot-plugin-wordcloud)
+- [Kyomotoi/ATRI](https://github.com/Kyomotoi/ATRI)
 - ...

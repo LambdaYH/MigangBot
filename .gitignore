@@ -152,6 +152,7 @@ font_index.json
 # misc
 migangbot.conf
 run.sh
+migrate_from_zhenxun
 
 # env
 .env.dev

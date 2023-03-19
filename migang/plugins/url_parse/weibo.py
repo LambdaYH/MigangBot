@@ -6,12 +6,23 @@ from nonebot.log import logger
 from nonebot_plugin_htmlrender.browser import get_new_page
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
-weibo_urls = ("https://share.api.weibo.cn", "https://m.weibo.cn", "https://weibo.com")
+from .utils import parser_manager
 
 pattern_weibo_com = re.compile(r"https://weibo.com/[0-9]+/([a-zA-Z0-9]+)")
 pattern_share_api = re.compile(r"weibo_id=([a-zA-Z0-9]+)")
 
+enable = True
 
+
+@parser_manager(
+    task_name="url_parse_weibo_parse",
+    startswith=(
+        "https://share.api.weibo.cn",
+        "https://m.weibo.cn",
+        "https://weibo.com",
+    ),
+    ttl=240,
+)
 async def get_weibo_info(url: str) -> Tuple[Message, str]:
     if url.startswith("https://weibo.com/"):
         if res := pattern_weibo_com.search(url):
