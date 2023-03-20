@@ -3,19 +3,15 @@ name = "migangbot"
 version = "0.1.0"
 description = "基于Nonebot2与go-cqhttp的机器人"
 authors = ["LambdaYH"]
-license = "MIT"
+license = "AGPL-3.0"
 readme = "README.md"
-
-[[tool.poetry.source]]
-name = "ali"
-default = true
-url = "http://mirrors.aliyun.com/pypi/simple/"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 nonebot2 = {extras = ["fastapi"], version = "^2.0.0rc3"}
 nonebot-adapter-onebot = "^2.2.1"
 nonebot-plugin-apscheduler = "^0.2.0"
+
 ujson = "^5.7.0"
 ruamel-yaml = "^0.17.21"
 async-lru = "^1.0.3"
@@ -40,21 +36,22 @@ nb-cli = "^1.0.5"
 cn2an = "^0.5.19"
 cachetools = "^5.3.0"
 dateparser = "^1.1.7"
-# nonebot-bison = "^0.7.0"
+
+nonebot-bison = "^0.7.1"
 nonebot-plugin-word-bank2 = "^0.1.6"
-nonebot-plugin-htmlrender = "^0.2.0.1"
-nonebot-plugin-memes = "^0.4.1"
+nonebot-plugin-htmlrender = "^0.2.0.3"
+nonebot-plugin-memes = "^0.4.2"
 nonebot-plugin-shindan = "^0.3.1"
 nonebot-plugin-remake = "^0.2.7"
 nonebot-plugin-emojimix = "^0.2.0"
 nonebot-plugin-wordcloud = "^0.4.7"
 nonebot-plugin-ddcheck = "^0.2.0"
 nonebot-plugin-handle = "^0.2.0"
-nonebot-plugin-imagetools = "^0.2.0"
+nonebot-plugin-imagetools = "^0.2.1"
 nonebot-plugin-cocdicer = "^0.4.0"
 nonebot-plugin-withdraw = "^0.2.3"
 nonebot-plugin-hikarisearch = "^0.1.7"
-nonebot-plugin-datastore = "^0.6.0a3"
+nonebot-plugin-datastore = "^0.6.0"
 nonebot-plugin-oddtext = "^0.1.2"
 
 [tool.black]
@@ -82,7 +79,7 @@ plugins = [
     "nonebot_plugin_htmlrender",
     "nonebot_plugin_memes",
     "nonebot_plugin_word_bank2",
-    # "nonebot_bison",
+    "nonebot_bison",
     "nonebot_plugin_shindan",
     "nonebot_plugin_remake",
     "nonebot_plugin_emojimix",
