@@ -175,19 +175,14 @@ def draw(
         interpolation = 0
 
     bar_bk = BuildImage.open(SIGN_RESOURCE_PATH / "bar_white.png").resize((220, 20))
-    bar = BuildImage.open(SIGN_RESOURCE_PATH / "bar.png").resize((220, 20))
+    ratio = 1 - (next_impression - impression) / (next_impression - previous_impression)
+    bar = (
+        BuildImage.open(SIGN_RESOURCE_PATH / "bar.png")
+        .resize((220, 20))
+        .resize((int(bar.width * ratio), bar.height))
+    )
     bar_bk.paste(
         bar,
-        (
-            -int(
-                220
-                * (
-                    (next_impression - impression)
-                    / (next_impression - previous_impression)
-                )
-            ),
-            0,
-        ),
         alpha=True,
     )
     gift_border = BuildImage.open(SIGN_BORDER_PATH / "gift_border_02.png").resize(

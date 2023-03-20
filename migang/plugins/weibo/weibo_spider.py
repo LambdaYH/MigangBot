@@ -60,7 +60,7 @@ class WeiboSpider(object):
         self.__init = False
         self.record_file_path = weibo_record_path / f"{self.user_id}.json"
         self.user_name = self.user_id
-        self.received_weibo_ids: List[str]
+        self.received_weibo_ids: List[str] = []
 
     async def get_json(self, url, params=None):
         """

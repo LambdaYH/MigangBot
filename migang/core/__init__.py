@@ -1,7 +1,12 @@
 from .message import broadcast
 from .rules import GroupTaskChecker
 from .utils.task_operation import check_task
-from .utils.config_operation import get_config, sync_get_config
+from .utils.config_operation import (
+    get_config,
+    sync_get_config,
+    pre_init_manager,
+    post_init_manager,
+)
 from .permission import BAD, GOOD, BLACK, NORMAL, EXCELLENT, Permission
 from .path import (
     DATA_PATH,

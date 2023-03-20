@@ -15,7 +15,15 @@ from nonebot.adapters.onebot.v11 import GROUP, MessageSegment, GroupMessageEvent
 
 from migang.utils.image import pic_to_bytes
 from migang.utils.file import async_load_data, async_save_data
-from migang.core import TaskItem, ConfigItem, broadcast, check_task, sync_get_config
+from migang.core import (
+    TaskItem,
+    ConfigItem,
+    broadcast,
+    check_task,
+    sync_get_config,
+    post_init_manager,
+    get_config,
+)
 
 from ._utils import get_image_cqcode
 from .weibo_spider import WeiboSpider, weibo_record_path, weibo_id_name_file
@@ -156,7 +164,6 @@ filter_words为过滤词，包含过滤词的微博不推送
 __plugin_task__ = []
 try:
     _load_config()
-    forward_mode = sync_get_config(key="forward_mode")
 except Exception as e:
     logger.warning(f"微博推送加载异常，若初次加载微博推送，请等待配置文件生成完成并按需修改后重新启动")
 
@@ -176,9 +183,13 @@ weibo_update_username = on_fullmatch(
     block=True,
 )
 
+forward_mode = False
 
-@get_driver().on_startup
+
+@post_init_manager
 async def _():
+    global forward_mode
+    forward_mode = await get_config("forward_mode")
     tasks = []
     for spiders in tasks_dict.values():
         for spider in spiders:
