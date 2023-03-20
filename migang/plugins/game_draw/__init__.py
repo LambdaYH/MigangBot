@@ -321,10 +321,8 @@ driver = nonebot.get_driver()
 
 @driver.on_startup
 async def _():
-    tasks = []
     for game in games:
         if game.flag:
             game.handle.init_data()
             if not game.handle.data_exists():
-                tasks.append(asyncio.ensure_future(game.handle.update_info()))
-    await asyncio.gather(*tasks)
+                asyncio.create_task(game.handle.update_info())
