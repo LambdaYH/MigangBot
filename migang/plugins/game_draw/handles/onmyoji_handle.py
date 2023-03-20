@@ -1,6 +1,7 @@
 import random
-from lxml import etree
 from typing import List, Tuple
+
+from lxml import etree
 from nonebot.log import logger
 from PIL import Image, ImageDraw
 from PIL.Image import Image as IMG
@@ -10,10 +11,11 @@ try:
 except ModuleNotFoundError:
     import json
 
-from .base_handle import BaseHandle, BaseData
-from ..config import draw_config
-from ..util import remove_prohibited_str, cn2py, load_font
 from pil_utils import BuildImage
+
+from ..config import draw_config
+from .base_handle import BaseData, BaseHandle
+from ..util import cn2py, load_font, remove_prohibited_str
 
 
 class OnmyojiChar(BaseData):
@@ -95,7 +97,7 @@ class OnmyojiHandle(BaseHandle[OnmyojiChar]):
         return super().generate_img(card_list, num_per_line=10)
 
     def generate_card_img(self, card: OnmyojiChar) -> BuildImage:
-        bg = BuildImage.new('RGBA',(73,240), color="#F1EFE9")
+        bg = BuildImage.new("RGBA", (73, 240), color="#F1EFE9")
         img_path = str(self.img_path / f"{cn2py(card.name)}_mark_btn.png")
         img = BuildImage.open(img_path).convert("RGBA")
         label = self.star_label(card.star).resize((60, 33), Image.ANTIALIAS)

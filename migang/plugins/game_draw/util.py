@@ -1,8 +1,9 @@
 import platform
+
 import pypinyin
+from PIL.Image import Image as IMG
 from PIL.ImageFont import FreeTypeFont
 from PIL import Image, ImageDraw, ImageFont
-from PIL.Image import Image as IMG
 
 from migang.core import FONT_PATH
 

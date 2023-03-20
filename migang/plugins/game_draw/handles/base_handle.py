@@ -1,15 +1,16 @@
 import math
-import anyio
 import random
-import aiohttp
 import asyncio
-from PIL import Image
 from datetime import datetime
-from pydantic import BaseModel, Extra
 from asyncio.exceptions import TimeoutError
-from typing import Dict, List, Optional, TypeVar, Generic, Tuple
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from typing import Dict, List, Tuple, Generic, TypeVar, Optional
+
+import anyio
+import aiohttp
+from PIL import Image
 from nonebot.log import logger
+from pydantic import Extra, BaseModel
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 try:
     import ujson as json
@@ -17,10 +18,11 @@ except ModuleNotFoundError:
     import json
 
 from pil_utils import BuildImage
-from ..config import DRAW_PATH, draw_config
-from ..util import cn2py, circled_number
 
 from migang.core import DATA_PATH
+
+from ..util import cn2py, circled_number
+from ..config import DRAW_PATH, draw_config
 
 
 class BaseData(BaseModel, extra=Extra.ignore):
@@ -190,7 +192,7 @@ class BaseHandle(Generic[TC]):
         else:
             w = img_w * num_per_line
         h = img_h * math.ceil(len(card_imgs) / num_per_line)
-        img = BuildImage.new('RGBA', (w,h), color=self.game_card_color)
+        img = BuildImage.new("RGBA", (w, h), color=self.game_card_color)
         gap = 10
         last_x = 0
         last_y = 0
@@ -204,7 +206,7 @@ class BaseHandle(Generic[TC]):
 
     def generate_card_img(self, card: TC) -> BuildImage:
         img = str(self.img_path / f"{cn2py(card.name)}.png")
-        return BuildImage.open(img).resize((100,100))
+        return BuildImage.open(img).resize((100, 100))
 
     def load_data(self, filename: str = "") -> dict:
         if not filename:

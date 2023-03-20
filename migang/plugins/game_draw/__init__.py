@@ -1,32 +1,32 @@
 import asyncio
 import traceback
 from dataclasses import dataclass
-from typing import Any, Optional, Set, Tuple
+from typing import Any, Set, Tuple, Optional
 
 import nonebot
 from cn2an import cn2an
-from nonebot.plugin import PluginMetadata
-from nonebot import on_keyword, on_regex
-from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-from nonebot.params import RegexGroup
-from nonebot.permission import SUPERUSER
 from nonebot.typing import T_Handler
+from nonebot.params import RegexGroup
+from nonebot import on_regex, on_keyword
+from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
+from nonebot.adapters.onebot.v11 import MessageEvent
 
-from .handles.azur_handle import AzurHandle
+from migang.core import ConfigItem, sync_get_config
+
 from .handles.ba_handle import BaHandle
-from .handles.base_handle import BaseHandle
 from .handles.fgo_handle import FgoHandle
-from .handles.genshin_handle import GenshinHandle
-from .handles.guardian_handle import GuardianHandle
-from .handles.onmyoji_handle import OnmyojiHandle
 from .handles.pcr_handle import PcrHandle
-from .handles.pretty_handle import PrettyHandle
+from .handles.azur_handle import AzurHandle
+from .handles.base_handle import BaseHandle
 from .handles.prts_handle import PrtsHandle
-
-from migang.core import sync_get_config, ConfigItem
+from .handles.pretty_handle import PrettyHandle
+from .handles.genshin_handle import GenshinHandle
+from .handles.onmyoji_handle import OnmyojiHandle
+from .handles.guardian_handle import GuardianHandle
 
 __plugin_meta__ = PluginMetadata(
     name="游戏抽卡",
@@ -80,7 +80,7 @@ class Game:
     keywords: Set[str]
     handle: BaseHandle
     flag: bool
-    config_name:str
+    config_name: str
     max_count: int = 300  # 一次最大抽卡数
     reload_time: Optional[int] = None  # 重载UP池时间（小时）
     has_other_pool: bool = False
@@ -90,19 +90,19 @@ games = (
     Game(
         {"azur", "碧蓝航线"},
         AzurHandle(),
-        sync_get_config("azure_flag", default_value= True),
-        "azure_flag"
+        sync_get_config("azure_flag", default_value=True),
+        "azure_flag",
     ),
     Game(
         {"fgo", "命运冠位指定"},
         FgoHandle(),
-        sync_get_config("fgo_flag",default_value= True),
-        "fgo_flag"
+        sync_get_config("fgo_flag", default_value=True),
+        "fgo_flag",
     ),
     Game(
         {"genshin", "原神"},
         GenshinHandle(),
-        sync_get_config("genshin_flag",default_value= True),
+        sync_get_config("genshin_flag", default_value=True),
         "genshin_flag",
         max_count=180,
         reload_time=18,
@@ -118,14 +118,14 @@ games = (
     Game(
         {"onmyoji", "阴阳师"},
         OnmyojiHandle(),
-        sync_get_config("onmyoji_flag",default_value= True),
-        "onmyoji_flag"
+        sync_get_config("onmyoji_flag", default_value=True),
+        "onmyoji_flag",
     ),
     Game(
         {"pcr", "公主连结", "公主连接", "公主链接", "公主焊接"},
         PcrHandle(),
         sync_get_config("pcr_flag", default_value=True),
-        "pcr_flag"
+        "pcr_flag",
     ),
     Game(
         {"pretty", "马娘", "赛马娘"},

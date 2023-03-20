@@ -1,12 +1,12 @@
 import sys
 from pathlib import Path
 from functools import cache
-from typing import Any, Optional, Callable
+from typing import Any, Callable, Optional
 
 from nonebot import get_driver, get_loaded_plugins
 
-from migang.core.exception import ConfigNoExistError
 from migang.core.manager import config_manager
+from migang.core.exception import ConfigNoExistError
 
 plugin_list = set()
 

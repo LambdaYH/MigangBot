@@ -1,6 +1,7 @@
 import random
-from lxml import etree
 from typing import List, Tuple
+
+from lxml import etree
 from PIL import ImageDraw
 from nonebot.log import logger
 
@@ -9,10 +10,11 @@ try:
 except ModuleNotFoundError:
     import json
 
-from .base_handle import BaseHandle, BaseData
-from ..config import draw_config
-from ..util import remove_prohibited_str, cn2py, load_font
 from pil_utils import BuildImage
+
+from ..config import draw_config
+from .base_handle import BaseData, BaseHandle
+from ..util import cn2py, load_font, remove_prohibited_str
 
 
 class FgoData(BaseData):

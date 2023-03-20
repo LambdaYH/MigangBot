@@ -2,8 +2,8 @@ import random
 from typing import List, Tuple
 
 import aiohttp
-from nonebot.log import logger
 from PIL import ImageDraw
+from nonebot.log import logger
 from pil_utils import BuildImage
 
 from ..config import draw_config

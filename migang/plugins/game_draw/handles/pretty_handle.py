@@ -1,25 +1,27 @@
 import re
 import random
+from datetime import datetime
+from urllib.parse import unquote
+from typing import List, Tuple, Optional
+
 import dateparser
 from lxml import etree
 from PIL import ImageDraw
 from bs4 import BeautifulSoup
-from datetime import datetime
-from urllib.parse import unquote
-from typing import List, Optional, Tuple
+from nonebot.log import logger
 from pydantic import ValidationError
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
-from nonebot.log import logger
 
 try:
     import ujson as json
 except ModuleNotFoundError:
     import json
 
-from .base_handle import BaseHandle, BaseData, UpChar, UpEvent
-from ..config import draw_config
-from ..util import remove_prohibited_str, cn2py, load_font
 from pil_utils import BuildImage
+
+from ..config import draw_config
+from ..util import cn2py, load_font, remove_prohibited_str
+from .base_handle import UpChar, UpEvent, BaseData, BaseHandle
 
 
 class PrettyData(BaseData):
@@ -174,11 +176,13 @@ class PrettyHandle(BaseHandle[PrettyData]):
             img_w = 200
             img_h = 267
             font_h = 75
-            bg = BuildImage.new("RGBA", (img_w + sep_w * 2, img_h + font_h), color="#EFF2F5")
+            bg = BuildImage.new(
+                "RGBA", (img_w + sep_w * 2, img_h + font_h), color="#EFF2F5"
+            )
             label_path = str(self.img_path / f"{card.star}_label.png")
-            label = BuildImage.open(label_path).resize((40,40))
+            label = BuildImage.open(label_path).resize((40, 40))
             img_path = str(self.img_path / f"{cn2py(card.name)}.png")
-            img = BuildImage.open(img_path).resize((img_w,img_h))
+            img = BuildImage.open(img_path).resize((img_w, img_h))
             bg.paste(img, (sep_w, 0), alpha=True)
             bg.paste(label, (30, 3), alpha=True)
             # 加名字

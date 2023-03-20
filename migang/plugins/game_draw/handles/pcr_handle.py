@@ -1,14 +1,15 @@
 import random
-from lxml import etree
 from typing import List, Tuple
-from PIL import ImageDraw
 from urllib.parse import unquote
-from nonebot.log import logger
 
-from .base_handle import BaseHandle, BaseData
-from ..config import draw_config
-from ..util import remove_prohibited_str, cn2py, load_font
+from lxml import etree
+from PIL import ImageDraw
+from nonebot.log import logger
 from pil_utils import BuildImage
+
+from ..config import draw_config
+from .base_handle import BaseData, BaseHandle
+from ..util import cn2py, load_font, remove_prohibited_str
 
 
 class PcrChar(BaseData):
@@ -58,7 +59,9 @@ class PcrHandle(BaseHandle[PcrChar]):
         img_w = 90
         img_h = 90
         font_h = 20
-        bg = BuildImage.new('RGBA',(img_w + sep_w * 2, img_h + font_h + sep_h * 2), color="#EFF2F5")
+        bg = BuildImage.new(
+            "RGBA", (img_w + sep_w * 2, img_h + font_h + sep_h * 2), color="#EFF2F5"
+        )
         star_path = str(self.img_path / "star.png")
         star = BuildImage.open(star_path).resize((star_h, star_h))
         img_path = str(self.img_path / f"{cn2py(card.name)}.png")

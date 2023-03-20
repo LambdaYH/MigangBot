@@ -1,4 +1,5 @@
-from typing import Optional, TypeVar, Generic
+from typing import Generic, TypeVar, Optional
+
 from pydantic import BaseModel
 from cachetools import TTLCache
 

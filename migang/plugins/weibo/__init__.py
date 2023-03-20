@@ -20,9 +20,9 @@ from migang.core import (
     ConfigItem,
     broadcast,
     check_task,
+    get_config,
     sync_get_config,
     post_init_manager,
-    get_config,
 )
 
 from ._utils import get_image_cqcode

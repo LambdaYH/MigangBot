@@ -3,9 +3,10 @@
 
 import asyncio
 
-from nonebot import logger
-from nonebot import get_driver
+from nonebot import logger, get_driver
 from nonebot.utils import run_sync, is_coroutine_callable
+
+from migang.core.utils import config_operation
 
 from .init_font import load_font
 from .command_check import check_command
@@ -14,8 +15,6 @@ from .init_plugin_info import init_plugin_info
 from .init_plugin_task import init_plugin_task
 from .init_plugin_count import init_plugin_count
 from .init_plugin_config import init_plugin_config
-
-from migang.core.utils import config_operation
 
 
 @get_driver().on_startup

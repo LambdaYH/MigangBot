@@ -1,6 +1,6 @@
 from nonebot import get_driver
 from nonebot.log import logger
-from pydantic import BaseModel, Extra, ValidationError
+from pydantic import Extra, BaseModel, ValidationError
 
 from migang.core import DATA_PATH, sync_get_config
 
