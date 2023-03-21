@@ -464,8 +464,6 @@ async def _(event: GroupMessageEvent, session: AsyncSession = Depends(get_sessio
     group_jobs = await session.scalars(
         select(Schedule).where(Schedule.group_id == event.group_id)
     )
-    if not group_jobs:
-        await show_group_task.finish("当前群不存在定时任务", at_sender=True)
     ret_msgs = []
     for i, job in enumerate(group_jobs):
         if job.type == "cron":
@@ -482,6 +480,8 @@ async def _(event: GroupMessageEvent, session: AsyncSession = Depends(get_sessio
                     break
             ret_msg = f"[id:{i+1}]\n类型:interval\n参数:{pa}\n内容:{job.content}"
         ret_msgs.append(ret_msg)
+    if not ret_msgs:
+        await show_group_task.finish("当前群不存在定时任务", at_sender=True)
     await show_task.finish(
         f"当前群[{event.group_id}]的所有定时任务"
         + MessageSegment.image(
