@@ -1,62 +1,63 @@
 import re
+import asyncio
+import hashlib
+from typing import Any, Dict, List
 from datetime import datetime, timedelta
 
-import httpx
+import aiohttp
+import aiofiles
 from croniter import croniter
-from nonebot import get_driver
-from nonebot.log import logger
+from pydantic import parse_obj_as
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
-api_url = "sm.sm"
+from migang.core import DATA_PATH
 
+data_dir = DATA_PATH / "schedule_reminder"
+image_dir = data_dir / "image"
 
-@get_driver().on_startup
-async def _():
-    global api_url
-    try:
-        async with httpx.AsyncClient() as client:
-            await client.head(f"https://{api_url}/api/v2/upload")
-    except Exception:
-        logger.debug(f"已切换到 smms.app")
-        api_url = "smms.app"
+image_dir.mkdir(exist_ok=True, parents=True)
 
 
-async def upload_image(img_url, token=""):
-    headers = {}
-    if token:
-        headers = {"Authorization": token}
-    try:
-        async with httpx.AsyncClient() as client:
-            original_image = await client.get(url=img_url, timeout=5)
-            sm_req = await client.post(
-                headers=headers,
-                url=f"https://{api_url}/api/v2/upload",
-                files={"smfile": original_image.content},
-                timeout=30,
-            )
-        return sm_req.json()
-    except Exception as e:
-        logger.warning(f"上传 {img_url} 失败：{e}")
-        return None
+async def cache_file(msg: Message):
+    async with aiohttp.ClientSession() as client:
+        await asyncio.gather(
+            *[cache_image_url(seg, client) for seg in msg if seg.type == "image"]
+        )
 
 
-CQ_PATTERN = r"\[CQ:\w+,.+?\]"
-IMAGE_PATTERN = r"\[CQ:(?:image),.*(?:url|file)=(https?://.*)\]"
-IMAGE_URL_PATTERN = r"https?://.*\.(?:jpg|png|gif|webp|jpeg|jfif)"
+async def cache_image_url(seg: MessageSegment, client: aiohttp.ClientSession):
+    if url := seg.data.get("url"):
+        for _ in range(3):
+            try:
+                r = await client.get(url)
+                data = await r.read()
+                break
+            except asyncio.TimeoutException:
+                await asyncio.sleep(0.5)
+        seg.type = "cached_image"
+    else:
+        return
+    hash = hashlib.md5(data).hexdigest()
+    filename = f"{hash}.cache"
+    cache_file_path = image_dir / filename
+    cache_files = [f.name for f in image_dir.iterdir() if f.is_file()]
+    if filename not in cache_files:
+        async with aiofiles.open(cache_file_path, "wb") as f:
+            await f.write(data)
+    seg.data = {"file": filename}
 
 
-def get_image_url(CQ_text):
-    urls = re.findall(IMAGE_URL_PATTERN, CQ_text)
-    return urls
+async def serialize_message(message: Message) -> List[Dict[str, Any]]:
+    await cache_file(message)
+    return [seg.__dict__ for seg in message]
 
 
-def get_CQ_image(CQ_text):
-    cqs = re.findall(CQ_PATTERN, CQ_text)
-    imgs = {}
-    for i in cqs:
-        img = re.findall(IMAGE_PATTERN, i)
-        if img:
-            imgs[img[0]] = i
-    return imgs
+def deserialize_message(message: List[Dict[str, Any]]) -> Message:
+    for seg in message:
+        if seg["type"] == "cached_image":
+            seg["type"] = "image"
+            seg["data"]["file"] = (image_dir / seg["data"]["file"]).resolve().as_uri()
+    return parse_obj_as(Message, message)
 
 
 MONTHDAY = {
@@ -75,7 +76,7 @@ MONTHDAY = {
 }
 
 
-def cronParse(cron):
+def cron_parse(cron):
     if not croniter.is_valid(cron):
         return False, None, None, None
     time = datetime.now()
@@ -88,7 +89,7 @@ def cronParse(cron):
     )
 
 
-def dateParse(time):
+def date_parse(time):
     mode = 0
     if time.endswith("后"):
         mode = 1
@@ -173,7 +174,7 @@ def dateParse(time):
         return True, timeBase
 
 
-def intervalParse(interval):
+def interval_parse(interval):
     # m : minites, d: day, h:hour
     inSettings = interval.split(":")
     if len(inSettings) != 2:
