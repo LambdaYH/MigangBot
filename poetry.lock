@@ -2628,6 +2628,101 @@ nonebot-adapter-onebot = ">=2.2.0,<3.0.0"
 nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
 
 [[package]]
+name = "nonebot-plugin-gachalogs"
+version = "0.2.11"
+description = "Genshin gacha history analysis plugin for NoneBot2"
+category = "main"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "nonebot_plugin_gachalogs-0.2.11-py3-none-any.whl", hash = "sha256:6e07d845aa3b484018c3367b8f6a20715ec2ed846ac40d6f3930cdeb07fc2f95"},
+    {file = "nonebot_plugin_gachalogs-0.2.11.tar.gz", hash = "sha256:f287d3b63abef8a9ca9539958ddce93f80449574cfbeed9691397a508e8b7381"},
+]
+
+[package.dependencies]
+httpx = ">=0.20.0,<1.0.0"
+matplotlib = ">=3.5.1"
+nonebot-adapter-onebot = ">=2.0.0b1"
+nonebot2 = ">=2.0.0a16"
+xlsxwriter = ">=3.0.2"
+
+[[package]]
+name = "nonebot-plugin-gsabyss"
+version = "0.1.4"
+description = "Genshin spiral abyss plugin for NoneBot2"
+category = "main"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "nonebot_plugin_gsabyss-0.1.4-py3-none-any.whl", hash = "sha256:cb4576fa9562390d03e12d8b34225cf33156d15fff5641738a862d6d1ddbc837"},
+    {file = "nonebot_plugin_gsabyss-0.1.4.tar.gz", hash = "sha256:a7232f4fce9b33ab4bc86a29ce7a51040d994e66f57e962c7117d0dbea6d057d"},
+]
+
+[package.dependencies]
+httpx = ">=0.20.0,<1.0.0"
+nonebot-adapter-onebot = ">=2.0.0b1"
+nonebot-plugin-apscheduler = ">=0.2.0"
+nonebot2 = ">=2.0.0b3"
+Pillow = ">=9.1.0"
+
+[[package]]
+name = "nonebot-plugin-gscode"
+version = "0.1.6"
+description = "Genshin live codes plugin for NoneBot2"
+category = "main"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "nonebot_plugin_gscode-0.1.6-py3-none-any.whl", hash = "sha256:a28e8f817e7e920a9a40e836a4cd1de32e3dac37a7e6344eae5a4c9bd43a66ff"},
+    {file = "nonebot_plugin_gscode-0.1.6.tar.gz", hash = "sha256:b2ede32b75d55aa4fa651938ff9ffb4645ee7ced76b1777fdf8bb57f69662971"},
+]
+
+[package.dependencies]
+httpx = ">=0.20.0,<1.0.0"
+nonebot-adapter-onebot = ">=2.0.0b1"
+nonebot2 = ">=2.0.0b3"
+
+[[package]]
+name = "nonebot-plugin-gsmaterial"
+version = "0.2.5"
+description = "Genshin daily material plugin for NoneBot2"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_gsmaterial-0.2.5-py3-none-any.whl", hash = "sha256:8c70c801e6e94b53bffc35eb9701eafc93ebadae6f872a0dbbe102abf31b69e8"},
+    {file = "nonebot_plugin_gsmaterial-0.2.5.tar.gz", hash = "sha256:2b127507ca8f392d7a7851621f867bf524398251a166c7e04a676c8b78571ef3"},
+]
+
+[package.dependencies]
+httpx = ">=0.20.0,<1.0.0"
+nonebot-adapter-onebot = ">=2.0.0b1"
+nonebot-plugin-apscheduler = ">=0.1.0"
+nonebot2 = ">=2.0.0a16"
+Pillow = ">=9.2.0,<10.0.0"
+pytz = "*"
+
+[[package]]
+name = "nonebot-plugin-gspanel"
+version = "0.2.23"
+description = "Genshin player cards plugin for NoneBot2"
+category = "main"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "nonebot_plugin_gspanel-0.2.23-py3-none-any.whl", hash = "sha256:3d43e9cb0c9b29ad6ee299af5d2011c4acdd7067ffba982d685df98aec8f6694"},
+    {file = "nonebot_plugin_gspanel-0.2.23.tar.gz", hash = "sha256:be16d540267f139b21f7e17e0f67bbc04db4998db4da409b5e8c70bf42eed7c7"},
+]
+
+[package.dependencies]
+attrs = ">=20.1.0"
+httpx = ">=0.20.0,<1.0.0"
+nonebot-adapter-onebot = ">=2.0.0b1"
+nonebot-plugin-htmlrender = ">=0.2.0.3"
+nonebot2 = ">=2.0.0b3"
+playwright = ">=1.25.0"
+
+[[package]]
 name = "nonebot-plugin-handle"
 version = "0.2.0"
 description = "Nonebot2 汉字Wordle 插件"
@@ -3401,6 +3496,24 @@ files = [
     {file = "pyfiglet-0.8.post1-py2.py3-none-any.whl", hash = "sha256:d555bcea17fbeaf70eaefa48bb119352487e629c9b56f30f383e2c62dd67a01c"},
     {file = "pyfiglet-0.8.post1.tar.gz", hash = "sha256:c6c2321755d09267b438ec7b936825a4910fec696292139e664ca8670e103639"},
 ]
+
+[[package]]
+name = "pygal"
+version = "3.0.0"
+description = "A Python svg graph plotting library"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pygal-3.0.0-py2.py3-none-any.whl", hash = "sha256:9ae06e32dec1422f9cd0d606fe2728f78e0b5d644551137480d8d5806e2426f0"},
+    {file = "pygal-3.0.0.tar.gz", hash = "sha256:2923f95d2e515930aa5a997219dccefbf3d92b7eaf5fc1c9febb95b09935fdb2"},
+]
+
+[package.extras]
+docs = ["pygal-sphinx-directives", "sphinx", "sphinx-rtd-theme"]
+lxml = ["lxml"]
+png = ["cairosvg"]
+test = ["cairosvg", "coveralls", "flask", "lxml", "pygal-maps-ch", "pygal-maps-fr", "pygal-maps-world", "pyquery", "pytest", "pytest-cov", "pytest-flake8", "pytest-isort", "pytest-runner"]
 
 [[package]]
 name = "pygments"
@@ -4766,6 +4879,18 @@ numpy = ">=1.6.1"
 pillow = "*"
 
 [[package]]
+name = "xlsxwriter"
+version = "3.0.9"
+description = "A Python module for creating Excel XLSX files."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "XlsxWriter-3.0.9-py3-none-any.whl", hash = "sha256:5eaaf3c6f791cba1dd1c3065147c35982180f693436093aabe5b7d6c16148e95"},
+    {file = "XlsxWriter-3.0.9.tar.gz", hash = "sha256:7216d39a2075afac7a28cad81f6ac31b0b16d8976bf1b775577d157346f891dd"},
+]
+
+[[package]]
 name = "yarl"
 version = "1.8.2"
 description = "Yet another URL library"
@@ -4856,4 +4981,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "83a61e8ec1a40340088b6451505687ae97e1d61e65bbb8a5de0378a54465418d"
+content-hash = "4bd91826d8b1e38467c99dc773c1e7c9c6df71be060eace3f57e33ab91e8e32c"
