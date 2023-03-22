@@ -47,18 +47,18 @@ async def get_weibo_info(url: str) -> Tuple[Message, str]:
                 #     expression="(el) => el.style.display = 'none'",
                 # )
                 # 去除“小程序看微博热搜”横幅
+                card = await page.wait_for_selector(
+                    f"xpath=//div[@class='card m-panel card9 f-weibo']",
+                    timeout=6 * 1000,
+                )
                 try:
-                    await page.wait_for_selector(".wrap", state="attached", timeout=30)
-                    await page.eval_on_selector(
+                    await card.wait_for_selector(".wrap", state="attached", timeout=30)
+                    await card.eval_on_selector(
                         selector=".wrap",
                         expression="(el) => el.style.display = 'none'",
                     )
                 except Exception:
                     pass
-                card = await page.wait_for_selector(
-                    f"xpath=//div[@class='card m-panel card9 f-weibo']",
-                    timeout=6 * 1000,
-                )
                 img = await card.screenshot()
                 break
         except Exception as e:
