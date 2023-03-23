@@ -34,6 +34,9 @@ async def _(
 ):
     if matcher.plugin_name in _ignore_plugins:
         return
+    # 当上报自身消息后，防止bot自身触发指令
+    if event.user_id == event.self_id:
+        raise IgnoredException("自己不该触发自己吧...")
     # 检测群插件启用情况以及群权限
     if not group_manager.check_group_plugin_status(
         plugin_name=matcher.plugin_name, group_id=event.group_id
