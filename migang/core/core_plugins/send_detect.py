@@ -9,8 +9,8 @@ from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Bot, Event, Message
 
 from migang.core.permission import BLACK
-from migang.core.manager import permission_manager, group_manager
 from migang.core import ConfigItem, get_config, post_init_manager
+from migang.core.manager import group_manager, permission_manager
 
 __plugin_hidden__ = True
 __plugin_always_on__ = True

@@ -1,11 +1,12 @@
 import random
 from pathlib import Path
 from typing import Tuple
+
 from nonebot import on_command
 from nonebot.plugin import PluginMetadata
-from nonebot.params import CommandArg, Command
-
+from nonebot.params import Command, CommandArg
 from nonebot.adapters.onebot.v11 import Message
+
 from migang.utils.file import async_load_data
 
 __plugin_meta__ = PluginMetadata(
