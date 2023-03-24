@@ -2,14 +2,14 @@
 """
 import time
 import bisect
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from nonebot import on
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Bot, Event, Message
 
 from migang.core.permission import BLACK
-from migang.core.manager import permission_manager
+from migang.core.manager import permission_manager, group_manager
 from migang.core import ConfigItem, get_config, post_init_manager
 
 __plugin_hidden__ = True
@@ -102,10 +102,6 @@ async def _():
     send_ban_time = await get_config("send_ban_time")
 
 
-async def serialize_message(message: Message) -> List[Dict[str, Any]]:
-    return [seg.__dict__ for seg in message]
-
-
 class GroupSelfMessage:
     def __init__(self) -> None:
         self.__data: Dict[int, Dict[str, Any]] = {}
@@ -160,9 +156,16 @@ class GroupSelfMessage:
 group_self_message = GroupSelfMessage()
 
 
+def _rule(event) -> bool:
+    if not hasattr(event, "group_id"):
+        return False
+    # 这个类型的hook不到，所以这里加个检测防止自己的消息触发自己
+    return group_manager.check_group_plugin_status("send_detect", event.group_id)
+
+
 detect = on(
     type="message_sent",
-    rule=lambda event: hasattr(event, "group_id"),
+    rule=_rule,
     block=False,
     priority=0,
 )
@@ -173,16 +176,16 @@ async def _(bot: Bot, event: Event):
     if repeat_check_on and group_self_message.check_group_repeat(
         group_id=event.group_id, message=event.message
     ):
-        await detect.send(
-            f"检测到{list(bot.config.nickname)[0]}在{repeat_check_duration}s内连续发送了{repeat_limit}条相同消息，为防止刷屏，静默{repeat_ban_time}s"
-        )
         permission_manager.set_group_perm(
             group_id=event.group_id, permission=BLACK, duration=repeat_ban_time
         )
-    elif send_on and group_self_message.check_group_send(group_id=event.group_id):
         await detect.send(
-            f"检测到{list(bot.config.nickname)[0]}在{send_ban_time}s内发送了{send_limit}条消息，为防止刷屏，静默{send_ban_time}s"
+            f"检测到{list(bot.config.nickname)[0]}在{repeat_check_duration}s内连续发送了{repeat_limit}条相同消息，为防止刷屏，静默{repeat_ban_time}s"
         )
+    elif send_on and group_self_message.check_group_send(group_id=event.group_id):
         permission_manager.set_group_perm(
             group_id=event.group_id, permission=BLACK, duration=send_ban_time
+        )
+        await detect.send(
+            f"检测到{list(bot.config.nickname)[0]}在{send_duration}s内发送了{send_limit}条消息，为防止刷屏，静默{send_ban_time}s"
         )

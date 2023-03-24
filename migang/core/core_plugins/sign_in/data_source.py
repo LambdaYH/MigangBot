@@ -200,14 +200,6 @@ def draw(
 
     user_id = str(user_id).rjust(12, "0")
     user_id = user_id[:4] + " " + user_id[4:8] + " " + user_id[8:]
-    sign_day_img = text2image(
-        text=f"{count}",
-        bg_color=(255, 255, 255, 0),
-        fontsize=40,
-        fontname="Yozai",
-        fill=(211, 64, 33),
-        padding=(0, 0),
-    )
     sub_bk.paste(gift_border, (570, 140), True)
     bk.draw_text(
         (30, 15),
@@ -226,13 +218,12 @@ def draw(
         fill=(255, 255, 255),
     )
     bk.paste(sub_bk, (0, 150), alpha=True)
-    bk.draw_text((30, 167), "Accumulative check-in for", fontname="Yozai", fontsize=25)
-    from PIL import ImageFont
-
-    ttffont = ImageFont.truetype(font=str(FONT_PATH / "Yozai-Regular.ttf"), size=25)
-    _x = ttffont.getsize("Accumulative check-in for")[0] + 45 + sign_day_img.width
-    bk.paste(sign_day_img, (346, 158), True)
-    bk.draw_text((_x, 167), "days", fontsize=25, fontname="Yozai")
+    bk.draw_bbcode_text(
+        xy=(30, 157),
+        text=f"Accumulative check-in for [size=40][color=#D34021]{count}[/color][/size] days",
+        fontname="Yozai",
+        fontsize=25,
+    )
     bk.paste(bar_bk, (225, 275), True)
     bk.draw_text(
         (220, 370),

@@ -27,9 +27,9 @@ async def _(
         plugin_name=matcher.plugin_name, user_id=event.user_id
     ):
         raise IgnoredException("个人权限不足或插件未启用")
-    # 当上报自身消息后，防止bot自身触发指令
-    if event.user_id == event.self_id:
-        raise IgnoredException("自己不该触发自己吧...")
+    # # 当上报自身消息后，防止bot自身触发指令
+    # if event.user_id == event.self_id:
+    #     raise IgnoredException("自己不该触发自己吧...")
     # 检测插件CD
     if (ret := cd_manager.check(plugin_name=matcher.plugin_name, event=event)) != True:
         if ret != None:

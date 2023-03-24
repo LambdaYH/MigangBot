@@ -70,7 +70,11 @@ music_select_handler = on_command(
     "选择", aliases={"选歌"}, priority=5, block=True, permission=GROUP
 )
 music_laiyishou = on_command(
-    "来一首", aliases={"点一首", "来首", "点首"}, priority=5, block=True, permission=GROUP
+    "来一首",
+    aliases={"点一首", "来首", "点首", "/music"},
+    priority=5,
+    block=True,
+    permission=GROUP,
 )
 
 music_select = {}
