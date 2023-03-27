@@ -127,7 +127,7 @@ handle_request = on_command(
     block=True,
     permission=SUPERUSER,
 )
-change_request_handle = on_regex(r"^修改(群|好友)请求处理方式(询问|请求|拒绝)$", priority=1, block=False)
+change_request_handle = on_regex(r"^修改(群|好友)请求处理方式(询问|同意|拒绝)$", priority=1, block=False)
 group_increase = on_notice(priority=1, block=False)
 group_decrease = on_notice(priority=1, block=False)
 friend_add = on_notice(priority=1, block=False)
