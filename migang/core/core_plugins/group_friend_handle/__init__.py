@@ -9,8 +9,8 @@ from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from pil_utils import BuildImage, text2image
-from nonebot.params import Command, Fullmatch, CommandArg
-from nonebot import on_notice, on_command, on_request, on_fullmatch
+from nonebot.params import Command, Fullmatch, CommandArg, RegexGroup
+from nonebot import on_notice, on_command, on_request, on_fullmatch, on_regex
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Message,
@@ -25,7 +25,7 @@ from nonebot.adapters.onebot.v11 import (
     GroupIncreaseNoticeEvent,
 )
 
-from migang.core import BLACK, ConfigItem, get_config
+from migang.core import BLACK, ConfigItem, get_config, sync_get_config
 from migang.core.manager import request_manager, permission_manager
 
 from .data_source import build_request_img
@@ -127,12 +127,16 @@ handle_request = on_command(
     block=True,
     permission=SUPERUSER,
 )
+change_request_handle = on_regex(r"^修改(群|好友)请求处理方式(询问|请求|拒绝)$", priority=1, block=False)
 group_increase = on_notice(priority=1, block=False)
 group_decrease = on_notice(priority=1, block=False)
 friend_add = on_notice(priority=1, block=False)
 
 # 不强制退出的群
 allowed_group = set()
+
+_handle_group = sync_get_config(key="handle_group", default_value="询问")
+_handle_friend = sync_get_config(key="handle_friend", default_value="询问")
 
 
 @friend_request.handle()
@@ -154,14 +158,13 @@ async def _(bot: Bot, event: FriendRequestEvent):
             f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
             f"备注：{event.comment}",
         )
-    handle = await get_config("handle_friend")
-    if handle == "同意":
+    if _handle_friend == "同意":
         try:
             await bot.set_friend_add_request(flag=event.flag, approve=True)
             await logger.info(f"已同意好友请求：{event.user_id}")
         except ActionFailed:
             await logger.info(f"同意好友请求失败：{event.user_id}")
-    elif handle == "拒绝":
+    elif _handle_friend == "拒绝":
         try:
             await bot.set_friend_add_request(flag=event.flag, approve=False)
             await logger.info(f"已拒绝好友请求：{event.user_id}")
@@ -226,8 +229,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
             f"状态：{await get_config('handle_group')}\n"
             f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n",
         )
-    handle = await get_config("handle_group")
-    if handle == "同意":
+    if _handle_group == "同意":
         try:
             await bot.set_group_add_request(
                 flag=event.flag, sub_type="invite", approve=True
@@ -235,7 +237,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
             await logger.info(f"已入群请求：{event.group_id}")
         except ActionFailed:
             await logger.info(f"入群请求失败：{event.group_id}")
-    elif handle == "拒绝":
+    elif _handle_group == "拒绝":
         try:
             reason = await get_config("reject_group_reason")
             if reason is None:
@@ -364,6 +366,17 @@ async def _(
         await help_msg.send(f"没有关于 {msg} 的帮助信息")
 
 
+@change_request_handle.handle()
+async def _(reg_group: Tuple[str, ...] = RegexGroup()):
+    if reg_group[0] == "群":
+        global _handle_group
+        _handle_group = reg_group[1]
+    else:
+        global _handle_friend
+        _handle_friend = reg_group[1]
+    await change_request_handle.send(f"处理{reg_group[0]}方式已更改为{reg_group[1]}，下次重启前有效")
+
+
 @allow_group.handle()
 async def _(arg: Message = CommandArg()):
     group_id = arg.extract_plain_text().strip()
@@ -377,9 +390,8 @@ async def _(arg: Message = CommandArg()):
 @group_increase.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
     if event.user_id == int(bot.self_id):
-        handle_group = await get_config("handle_group")
         if (
-            handle_group != "同意"
+            _handle_group != "同意"
             and (await get_config("auto_leave"))
             and (event.group_id not in allowed_group)
         ):
