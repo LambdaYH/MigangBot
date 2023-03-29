@@ -10,12 +10,14 @@ from nonebot.adapters.onebot.v11 import (
 )
 
 from migang.utils.text import filt_message
-from migang.core import ConfigItem, sync_get_config
+from migang.core import ConfigItem, sync_get_config, TaskItem
+from migang.core.rules import GroupTaskChecker
 from migang.core.exception import ConfigNoExistError
 from migang.utils.tts import get_azure_tts, azure_tts_status
 
+__plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
-    name="复读",
+    name="复读_",
     description="群友的本质是（）",
     usage="""
 usage：
@@ -35,8 +37,14 @@ __plugin_config__ = ConfigItem(
     default_value=1.35,
     description="a的值，复读概率计算式：p_n = 1 - 1/a^n 递推式：p_n+1 = 1 - (1 - p_n) / a",
 )
+__plugin_task__ = TaskItem(task_name="repeat", name="复读", default_status=True)
 
-repeat = on_message(permission=GROUP, priority=999, block=False)
+repeat = on_message(
+    permission=GROUP,
+    priority=999,
+    block=False,
+    rule=GroupTaskChecker(task_name="repeat"),
+)
 
 
 class Fudu:

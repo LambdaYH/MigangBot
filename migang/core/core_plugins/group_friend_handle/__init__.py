@@ -5,6 +5,7 @@ from io import BytesIO
 from datetime import datetime
 from typing import Tuple, Union
 
+from nonebot import require
 from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
@@ -29,6 +30,9 @@ from migang.core.manager import request_manager, permission_manager
 from migang.core import BLACK, ConfigItem, get_config, sync_get_config
 
 from .data_source import build_request_img
+
+require("nonebot_plugin_htmlrender")
+from nonebot_plugin_htmlrender import md_to_pic
 
 __plugin_meta__ = PluginMetadata(
     name="好友与群邀请退群等事件处理",
@@ -106,7 +110,7 @@ __plugin_config__ = (
             }
         },
         default_value=[],
-        description="自定义帮助，参照案例，发送[.help keyword]即可显示出，text_to_image即是否用图片形式发送，否则则转换为Message",
+        description="自定义帮助，参照案例，发送[.help keyword]即可显示出，text_to_image即是否用图片形式发送（md格式），否则则转换为Message",
     ),
 )
 
@@ -355,11 +359,9 @@ async def _(
 
     if help_ := (await get_config("custom_help")).get(msg):
         if help_["text_to_image"]:
-            with BytesIO() as buf:
-                text2image(text=help_["text"], fontname="Yozai", fontsize=15).save(
-                    buf, "PNG"
-                )
-                await help_msg.send(message=MessageSegment.image(buf))
+            await help_msg.send(
+                message=MessageSegment.image(await md_to_pic(help_["text"]))
+            )
         else:
             await help_msg.send(message=Message(help_["text"]))
     else:
