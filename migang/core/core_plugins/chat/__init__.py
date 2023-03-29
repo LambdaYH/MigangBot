@@ -3,6 +3,7 @@ from pathlib import Path
 
 from nonebot.log import logger
 from nonebot.rule import to_me
+from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot import on_keyword, on_message
 from nonebot.adapters.onebot.v11 import (
@@ -16,7 +17,8 @@ from nonebot.adapters.onebot.v11 import (
 from migang.core import ConfigItem, get_config
 
 from .message_manager import MessageManager
-from .data_source import hello, no_result, get_turing, anti_zuichou
+from .data_source import hello, no_result, anti_zuichou
+from .chatgpt import get_gpt_chat
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
@@ -51,11 +53,11 @@ __plugin_config__ = (
 
 
 chat = on_message(rule=to_me(), priority=998, permission=GROUP)
-message_manager = MessageManager(hello, anti_zuichou, get_turing, no_result)
+message_manager = MessageManager(hello, anti_zuichou, get_gpt_chat, no_result)
 
 
 @chat.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(matcher: Matcher, bot: Bot, event: GroupMessageEvent):
     if "CQ:xml" in str(event.message) or event.get_plaintext().startswith("/"):
         return
     user_name = event.sender.card or event.sender.nickname
@@ -64,9 +66,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
         user_name=user_name,
         nickname=list(bot.config.nickname)[0],
         bot=bot,
+        matcher=matcher,
         plain_text=event.get_plaintext(),
         event=event,
     )
+    if not reply:
+        return
     logger.info(
         f"用户 {event.user_id} 群 {event.group_id if isinstance(event, GroupMessageEvent) else ''} "
         f"问题：{event.message} ---- 回答：{reply}"

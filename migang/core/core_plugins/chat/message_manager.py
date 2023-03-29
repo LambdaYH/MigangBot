@@ -4,10 +4,13 @@ import inspect
 from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Coroutine
 
+from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 
 from migang.core.permission import BLACK
 from migang.core.manager import permission_manager
+
+from .exception import BreakSession
 
 
 class MessageManager:
@@ -51,6 +54,7 @@ class MessageManager:
         nickname: str,
         bot: Bot,
         plain_text: str,
+        matcher: Matcher,
         event: GroupMessageEvent,
     ) -> Message:
         msg_str = event.get_plaintext()
@@ -82,13 +86,18 @@ class MessageManager:
                 params["event"] = event
             if "nickname" in args:
                 params["nickname"] = nickname
-            if (
-                reply_ := await func(**params)
-                if iscoroutinefunction(func)
-                else func(**params)
-            ):
-                self.__add(user_id=user_id, msg=msg_str, reply=reply_)
-                return Message(reply_)
+            if "matcher" in args:
+                params["matcher"] = matcher
+            try:
+                if (
+                    reply_ := await func(**params)
+                    if iscoroutinefunction(func)
+                    else func(**params)
+                ):
+                    self.__add(user_id=user_id, msg=msg_str, reply=reply_)
+                    return Message(reply_)
+            except BreakSession:
+                return None
         return "......(不知道说什么)"
 
     def __get_user(self, user_id: int) -> Dict:
