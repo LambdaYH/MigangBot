@@ -2,10 +2,8 @@ from nonebot.params import Startswith
 from nonebot import require, on_startswith
 from nonebot.plugin import PluginMetadata
 from nonebot import require
-from nonebot.adapters.onebot.v11 import (
-    MessageEvent,
-    MessageSegment,
-)
+from nonebot.adapters.onebot.v11 import MessageEvent
+
 import anyio
 
 __plugin_hidden__ = True
