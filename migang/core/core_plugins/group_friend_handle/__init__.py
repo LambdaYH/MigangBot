@@ -10,7 +10,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from pil_utils import BuildImage, text2image
 from nonebot.params import Command, Fullmatch, CommandArg, RegexGroup
-from nonebot import on_notice, on_command, on_request, on_fullmatch, on_regex
+from nonebot import on_regex, on_notice, on_command, on_request, on_fullmatch
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Message,
@@ -25,8 +25,8 @@ from nonebot.adapters.onebot.v11 import (
     GroupIncreaseNoticeEvent,
 )
 
-from migang.core import BLACK, ConfigItem, get_config, sync_get_config
 from migang.core.manager import request_manager, permission_manager
+from migang.core import BLACK, ConfigItem, get_config, sync_get_config
 
 from .data_source import build_request_img
 
