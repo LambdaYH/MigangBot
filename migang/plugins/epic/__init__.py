@@ -1,3 +1,4 @@
+from nonebot.plugin import PluginMetadata
 from nonebot import on_fullmatch, get_bot
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent
 from nonebot_plugin_apscheduler import scheduler
@@ -6,23 +7,22 @@ from migang.core import TaskItem, broadcast
 
 from .data_source import get_epic_free
 
-__zx_plugin_name__ = "epic免费游戏"
-__plugin_usage__ = """
+__plugin_meta__ = PluginMetadata(
+    name="epic免费游戏",
+    description="可以不玩，不能没有，每日白嫖",
+    usage="""
 usage：
     可以不玩，不能没有，每日白嫖
     指令：
         epic喜加一
-""".strip()
-__plugin_des__ = "可以不玩，不能没有，每日白嫖"
-__plugin_cmd__ = ["epic"]
-__plugin_version__ = 0.1
-__plugin_author__ = "AkashiCoin"
-__plugin_settings__ = {
-    "level": 5,
-    "default_status": True,
-    "limit_superuser": False,
-    "cmd": ["epic"],
-}
+""".strip(),
+    extra={
+        "unique_name": "migang_epic",
+        "example": "",
+        "author": "AkashiCoin",
+        "version": 0.1,
+    },
+)
 __plugin_task__ = TaskItem(task_name="epic_free_game", name="epic免费游戏")
 
 
