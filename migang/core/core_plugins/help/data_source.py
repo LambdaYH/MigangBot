@@ -128,7 +128,7 @@ def draw_usage(usage: str) -> Optional[MessageSegment]:
         fontname="Yozai",
         fontsize=24,
         padding=(0, 0),
-        bg_color=(255, 255, 255, 0),
+        bg_color=(255, 255, 255),
     )
     bk = BuildImage.new(
         "RGBA",
