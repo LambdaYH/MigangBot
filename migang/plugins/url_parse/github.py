@@ -5,8 +5,6 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from .utils import parser_manager
 
-enable = True
-
 
 @parser_manager(
     task_name="url_parse_github_repo_card", startswith=("https://github.com",)

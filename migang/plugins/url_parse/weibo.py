@@ -11,9 +11,6 @@ from .utils import parser_manager
 pattern_weibo_com = re.compile(r"https://weibo.com/[0-9]+/([a-zA-Z0-9]+)")
 pattern_share_api = re.compile(r"weibo_id=([a-zA-Z0-9]+)")
 
-enable = True
-
-
 @parser_manager(
     task_name="url_parse_weibo_parse",
     startswith=(
