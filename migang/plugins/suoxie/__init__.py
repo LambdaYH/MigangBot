@@ -23,7 +23,7 @@ usage：
 
 __plugin_category__ = "一些工具"
 
-suoxie = on_command(cmd="缩写", aliases={"sx", "转义", "/hhsh"}, priority=5, block=True)
+suoxie = on_command(cmd="缩写", aliases={"sx", "转义", "/hhsh","nbnhhsh"}, priority=5, block=True)
 
 url = f"https://lab.magiconch.com/api/nbnhhsh/guess/"
 
