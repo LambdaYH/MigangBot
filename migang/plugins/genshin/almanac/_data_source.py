@@ -1,11 +1,13 @@
 import random
-from dataclasses import dataclass
-from datetime import datetime
-from typing import List, Tuple, Union
 from pathlib import Path
+from datetime import datetime
+from dataclasses import dataclass
+from typing import List, Tuple, Union
+
 import ujson as json
-from nonebot.utils import run_sync
 from pil_utils import BuildImage
+from nonebot.utils import run_sync
+
 from migang.core import DATA_PATH
 
 ALC_PATH = DATA_PATH / "migang_genshin" / "almanac"
@@ -68,6 +70,7 @@ def int2cn(v: Union[str, int]):
         :param v: str
     """
     return "".join([chinese[x] for x in str(v)])
+
 
 @run_sync
 def build_alc_image() -> Path:

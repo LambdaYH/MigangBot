@@ -1,6 +1,7 @@
-from nonebot import on_fullmatch
-import aiohttp
 import asyncio
+
+import aiohttp
+from nonebot import on_fullmatch
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(

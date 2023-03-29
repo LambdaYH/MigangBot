@@ -1,15 +1,15 @@
-from nonebot import on_command, require
-from nonebot.adapters.onebot.v11 import (
-    Message,
-    MessageSegment,
-)
-from nonebot.params import CommandArg
-from nonebot.plugin import PluginMetadata
 import asyncio
 import datetime
+
 from nonebot.log import logger
-from .data_source import gen_wbtop_pic, get_wbtop
+from nonebot.params import CommandArg
+from nonebot import require, on_command
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
+
 from migang.utils.text import is_number
+
+from .data_source import get_wbtop, gen_wbtop_pic
 
 require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import get_new_page

@@ -12,6 +12,7 @@ from .utils import parser_manager
 AID_PATTERN = re.compile(r"(av|AV)\d+")
 BVID_PATTERN = re.compile(r"(BV|bv)([a-zA-Z0-9])+")
 
+
 @parser_manager(
     task_name="url_parse_bilibili",
     startswith=("https://www.bilibili.com/video",),

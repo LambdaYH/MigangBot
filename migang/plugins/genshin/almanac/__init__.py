@@ -1,7 +1,8 @@
 from nonebot import on_fullmatch
+from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
 from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot.plugin import PluginMetadata
+
 from migang.core import TaskItem, broadcast
 
 from ._data_source import build_alc_image

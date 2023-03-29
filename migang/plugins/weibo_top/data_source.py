@@ -1,12 +1,13 @@
-from nonebot.adapters.onebot.v11 import MessageSegment
-import aiohttp
+import datetime
 from pathlib import Path
 from typing import Tuple, Union
-import datetime
+
+import aiohttp
+from PIL import ImageFont
 from pil_utils import BuildImage
+from nonebot.adapters.onebot.v11 import MessageSegment
 
 from migang.core import FONT_PATH
-from PIL import ImageFont
 
 banner_path = Path(__file__).parent / "image" / "webtop.png"
 

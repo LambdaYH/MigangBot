@@ -1,10 +1,11 @@
-from nonebot import on_command
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot
-from nonebot.params import CommandArg
-from nonebot.matcher import Matcher
-from nonebot.plugin import PluginMetadata
 import random
 import asyncio
+
+from nonebot import on_command
+from nonebot.matcher import Matcher
+from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 
 __plugin_meta__ = PluginMetadata(
     name="roll",

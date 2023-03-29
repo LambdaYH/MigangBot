@@ -9,11 +9,8 @@ from nonebot.adapters.onebot.v11 import ActionFailed, GroupMessageEvent
 
 from migang.core import TaskItem
 
-from . import weibo
-from . import bilibili
-from . import github
-
 from .utils import parser_manager
+from . import weibo, github, bilibili
 
 __plugin_meta__ = PluginMetadata(
     name="群内链接解析",

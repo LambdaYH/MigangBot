@@ -1,8 +1,6 @@
 from nonebot import on_notice
-from nonebot.adapters.onebot.v11 import PokeNotifyEvent, MessageSegment
-
-
 from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import MessageSegment, PokeNotifyEvent
 
 __zx_plugin_name__ = "戳一戳"
 

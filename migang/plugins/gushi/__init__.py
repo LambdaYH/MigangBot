@@ -1,7 +1,8 @@
+import asyncio
+
+import aiohttp
 from nonebot import on_fullmatch
 from nonebot.plugin import PluginMetadata
-import aiohttp
-import asyncio
 
 __plugin_meta__ = PluginMetadata(
     name="古诗",

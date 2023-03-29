@@ -1,7 +1,7 @@
-from nonebot import on_fullmatch
 import aiohttp
-from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
+from nonebot import on_fullmatch
+from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
     name="一言二次元语录",

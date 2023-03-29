@@ -1,10 +1,11 @@
 import random
 from pathlib import Path
-from nonebot import on_fullmatch
-from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot.rule import to_me
 
+from nonebot.rule import to_me
+from nonebot import on_fullmatch
 from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import MessageSegment
+
 from migang.core import CDItem
 
 __plugin_meta__ = PluginMetadata(

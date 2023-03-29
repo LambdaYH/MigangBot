@@ -1,10 +1,8 @@
-from nonebot.params import Startswith
-from nonebot import require, on_startswith
-from nonebot.plugin import PluginMetadata
-from nonebot import require
-from nonebot.adapters.onebot.v11 import MessageEvent
-
 import anyio
+from nonebot.params import Startswith
+from nonebot.plugin import PluginMetadata
+from nonebot import require, on_startswith
+from nonebot.adapters.onebot.v11 import MessageEvent
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
@@ -23,7 +21,7 @@ usage：
 )
 
 require("help")
-from migang.core.core_plugins.help.data_source import get_plugin_help, draw_usage
+from migang.core.core_plugins.help.data_source import draw_usage, get_plugin_help
 
 fast_help = on_startswith("/", priority=955, block=False)
 

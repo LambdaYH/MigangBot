@@ -1,7 +1,8 @@
 from datetime import datetime
+
+import aiohttp
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot
-import aiohttp
 
 
 # 获取所有 Epic Game Store 促销游戏
@@ -24,9 +25,13 @@ async def get_epic_game():
         logger.error(f"Epic 访问接口错误 {type(e)}：{e}")
     return None
 
+
 # 此处用于获取游戏简介
 async def get_epic_game_desp(name):
-    desp_url = "https://store-content-ipv4.ak.epicgames.com/api/zh-CN/content/products/" + str(name)
+    desp_url = (
+        "https://store-content-ipv4.ak.epicgames.com/api/zh-CN/content/products/"
+        + str(name)
+    )
     headers = {
         "Referer": "https://store.epicgames.com/zh-CN/p/" + str(name),
         "Content-Type": "application/json; charset=utf-8",
@@ -41,6 +46,7 @@ async def get_epic_game_desp(name):
     except Exception as e:
         logger.error(f"Epic 访问接口错误 {type(e)}：{e}")
     return None
+
 
 # 获取 Epic Game Store 免费游戏信息
 # 处理免费游戏的信息方法借鉴 pip 包 epicstore_api 示例
@@ -115,11 +121,11 @@ async def get_epic_free(bot: Bot, type_event: str):
                     if game.get("productSlug"):
                         gamesDesp = await get_epic_game_desp(game["productSlug"])
                         try:
-                            #是否存在简短的介绍
+                            # 是否存在简短的介绍
                             if "shortDescription" in gamesDesp:
                                 game_desp = gamesDesp["shortDescription"]
                         except KeyError:
-                                game_desp = gamesDesp["description"]
+                            game_desp = gamesDesp["description"]
                     else:
                         game_desp = game["description"]
                     try:
@@ -130,7 +136,7 @@ async def get_epic_free(bot: Bot, type_event: str):
                             "%b.%d %H:%M"
                         )
                     except IndexError:
-                        end_date = '未知'
+                        end_date = "未知"
                     # API 返回不包含游戏商店 URL，此处自行拼接，可能出现少数游戏 404 请反馈
                     if game.get("productSlug"):
                         game_url = "https://store.epicgames.com/zh-CN/p/{}".format(
