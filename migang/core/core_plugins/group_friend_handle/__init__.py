@@ -5,13 +5,12 @@ from io import BytesIO
 from datetime import datetime
 from typing import Tuple, Union
 
-from nonebot import require
 from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from pil_utils import BuildImage, text2image
 from nonebot.params import Command, Fullmatch, CommandArg, RegexGroup
-from nonebot import on_regex, on_notice, on_command, on_request, on_fullmatch
+from nonebot import require, on_regex, on_notice, on_command, on_request, on_fullmatch
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Message,
