@@ -2670,14 +2670,14 @@ ujson = ">=4.0.0"
 
 [[package]]
 name = "nonebot-plugin-datastore"
-version = "0.6.0"
+version = "0.6.1"
 description = "适用于 Nonebot2 的数据存储插件"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_datastore-0.6.0-py3-none-any.whl", hash = "sha256:e274e7afdb2b4cd03caafd82c4616a29234f3d6f94bcbe292b8ef7845dd51d09"},
-    {file = "nonebot_plugin_datastore-0.6.0.tar.gz", hash = "sha256:8667ed359a017aa0c376e920bb70899f2189aa781f4670c87143cfaac10a5540"},
+    {file = "nonebot_plugin_datastore-0.6.1-py3-none-any.whl", hash = "sha256:586b37c9f1c1d9730fcdb3ac54847ca5b52936f51ca771a61b93685fbffbfa50"},
+    {file = "nonebot_plugin_datastore-0.6.1.tar.gz", hash = "sha256:316403044a013eb1a9a9cb1b1fc7417100ad3591f6ae2e2cfc97d96094190720"},
 ]
 
 [package.dependencies]
@@ -5244,4 +5244,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "2fe8c21397485ade8968b6f8a6b2246a0afbbfb86e7e8d229c54e38a5f02a586"
+content-hash = "35ef67437169a923bf86b16216eb53499138cc53cea159aec7d518b55edb5273"

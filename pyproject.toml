@@ -67,9 +67,6 @@ nonebot-plugin-gscode = "^0.1.6"
 line-length = 88
 include = '\.pyi?$'
 extend-exclude = '''
-(
-  migang/core/core_plugins/chat/chatgpt/naturel_gpt/*.py
-)
 '''
 
 [tool.isort]
