@@ -312,8 +312,7 @@ async def _():
     tasks = []
     for game in games:
         if game.flag:
-            tasks.append(asyncio.ensure_future(game.handle.update_info()))
-    await asyncio.gather(*tasks)
+            asyncio.create_task(game.handle.update_info())
 
 
 driver = nonebot.get_driver()
