@@ -73,6 +73,7 @@ async def init_plugin_info():
                     except Exception as e:
                         logger.warning(f"从pypi读取 {plugin_name} 版本信息失败：{e}")
                 else:
+                    custom_usage[plugin_name] = None
                     logger.warning(
                         f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
                     )
