@@ -16,9 +16,9 @@ from nonebot.adapters.onebot.v11 import (
 
 from migang.core import ConfigItem, get_config
 
+from .chatgpt import get_gpt_chat
 from .message_manager import MessageManager
 from .data_source import hello, no_result, anti_zuichou
-from .chatgpt import get_gpt_chat
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
