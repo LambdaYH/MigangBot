@@ -339,8 +339,8 @@ async def _build_html_image(
         templates={
             "group": True if group_id else False,
             "plugin_list": plugin_list,
-            "column_count": math.ceil(
-                (plugin_count + len(plugin_list)) / max_column_length
+            "column_count": min(
+                math.ceil((plugin_count + len(plugin_list)) / max_column_length), 4
             ),
         },
         pages={
