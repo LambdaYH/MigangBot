@@ -93,7 +93,6 @@ def get_plugin_help(name: str) -> Optional[str]:
         获取功能的帮助信息
     参数:
         :param msg: 功能cmd
-        :param is_super: 是否为超级用户
     """
     if usage := plugin_manager.get_plugin_usage(name) or (
         usage := task_manager.get_task_usage(name)

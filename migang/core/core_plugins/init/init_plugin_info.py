@@ -139,7 +139,7 @@ async def init_plugin_info():
             version=version,
             category=plugin.module.__getattribute__("__plugin_category__")
             if hasattr(plugin.module, "__plugin_category__")
-            else "通用",
+            else "功能",
             usage=usage,
             default_status=plugin.module.__getattribute__("__default_status__")
             if hasattr(plugin.module, "__default_status__")
