@@ -1,12 +1,15 @@
+import re
 import math
 import random
+from io import BytesIO
 from pathlib import Path
 from enum import Enum, unique
 from typing import Dict, List, Optional
 
+import anyio
+from nonebot import require
 from pydantic import BaseModel
 from pil_utils import BuildImage, text2image
-from nonebot_plugin_htmlrender import template_to_pic
 from nonebot.adapters.onebot.v11 import MessageSegment
 
 from migang.core.path import DATA_PATH
@@ -18,6 +21,9 @@ from migang.core.manager import (
     group_manager,
     plugin_manager,
 )
+
+require("nonebot_plugin_htmlrender")
+from nonebot_plugin_htmlrender import template_to_pic, md_to_pic, html_to_pic
 
 USER_HELP_PATH = DATA_PATH / "core" / "help" / "user_help_image"
 GROUP_HELP_PATH = DATA_PATH / "core" / "help" / "group_help_image"
@@ -112,7 +118,7 @@ min_width = (
 )
 
 
-def draw_usage(usage: str) -> Optional[MessageSegment]:
+async def draw_usage(usage: str) -> Optional[MessageSegment]:
     help_img = text2image(
         text=usage,
         fontname="Yozai",
@@ -122,96 +128,119 @@ def draw_usage(usage: str) -> Optional[MessageSegment]:
     )
     color_candidates = ["#4586F3", "#EB4334", "#FBBD06", "#35AA53"]
     random.shuffle(color_candidates)
+    if usage.startswith("[md]"):
+        usage = usage.removeprefix("[md]").lstrip()
+        width = 600
+        if match := re.match(r"^\[width=(\d+)\]", usage):
+            usage = usage.removeprefix(match.group(0)).lstrip()
+            width = int(match.group(1))
+        help_img = BuildImage.open(BytesIO(await md_to_pic(usage, width=width)))
+    elif usage.startswith("[html]"):
+        usage = usage.removeprefix("[html]").lstrip()
+        kwargs = {}
+        if match := re.match(r"^\[width=(\d+)[,，]height=(\d+)\]", usage):
+            usage = usage.removeprefix(match.group(0)).lstrip()
+            kwargs["viewport"] = {
+                "width": int(match.group(1)),
+                "height": int(match.group(2)),
+            }
+        help_img = BuildImage.open(BytesIO(await html_to_pic(usage, **kwargs)))
+    else:
+        if usage.startswith("[text]"):
+            usage = usage.removeprefix("[text]").lstrip()
+        help_img = text2image(
+            text=usage,
+            fontname="Yozai",
+            fontsize=24,
+            padding=(0, 0),
+            bg_color=(255, 255, 255),
+        )
 
-    help_img = text2image(
-        text=usage,
-        fontname="Yozai",
-        fontsize=24,
-        padding=(0, 0),
-        bg_color=(255, 255, 255),
-    )
-    bk = BuildImage.new(
-        "RGBA",
-        (
-            max(help_img.width + border * 2 + inner_border * 2, min_width),
-            help_img.height + border + top_border + inner_border * 2,
-        ),
-        color=(255, 255, 255),
-    )
-    # 边框左
-    bk.draw_line(
-        (border, top_border, border, bk.height - border),
-        fill=color_candidates[0],
-        width=line_width,
-    )
-    # 边框底
-    bk.draw_line(
-        (
-            border - int(line_width / 2),
-            bk.height - border,
-            bk.width - border,
-            bk.height - border,
-        ),
-        fill=color_candidates[1],
-        width=line_width,
-    )
-    # 边框右
-    bk.draw_line(
-        (
-            bk.width - border,
-            bk.height - border + int(line_width / 2),
-            bk.width - border,
-            top_border,
-        ),
-        fill=color_candidates[2],
-        width=line_width,
-    )
-    # 计算文字处于上边框的位置
-    length = bk.width - border * 2
-    start_idx = random.randint(
-        10, length - 10 - text_image_padding - text_image_width - text_image_padding
-    )
-    # 上边框左半部分
-    bk.draw_line(
-        (border, top_border, start_idx + border, top_border),
-        fill=color_candidates[3],
-        width=line_width,
-    )
-    # 上边框右半部分
-    bk.draw_line(
-        (
-            border
-            + start_idx
-            + text_image_padding
-            + text_image_width
-            + text_image_padding,
-            top_border,
-            bk.width - border + int(line_width / 2),
-            top_border,
-        ),
-        fill=color_candidates[3],
-        width=line_width,
-    )
-    # 把边框左被上边框遮住的一角画上
-    bk.draw_line(
-        (
-            border,
-            top_border - int(line_width / 2),
-            border,
-            top_border + int(line_width / 2),
-        ),
-        fill=color_candidates[0],
-        width=line_width,
-    )
-    bk.paste(help_img, (border + inner_border, top_border + inner_border))
-    random.shuffle(color_candidates)
-    bk.draw_bbcode_text(
-        (border + start_idx + text_image_padding, top_border - 30),
-        text=f"[color={color_candidates[0]}]使[/color][color={color_candidates[1]}]用[/color][color={color_candidates[2]}]帮[/color][color={color_candidates[3]}]助[/color]",
-        fontname="HONOR Sans CN",
-        fontsize=40,
-    )
-    return MessageSegment.image(bk.save_png())
+    def _draw():
+        bk = BuildImage.new(
+            "RGBA",
+            (
+                max(help_img.width + border * 2 + inner_border * 2, min_width),
+                help_img.height + border + top_border + inner_border * 2,
+            ),
+            color=(255, 255, 255),
+        )
+        # 边框左
+        bk.draw_line(
+            (border, top_border, border, bk.height - border),
+            fill=color_candidates[0],
+            width=line_width,
+        )
+        # 边框底
+        bk.draw_line(
+            (
+                border - int(line_width / 2),
+                bk.height - border,
+                bk.width - border,
+                bk.height - border,
+            ),
+            fill=color_candidates[1],
+            width=line_width,
+        )
+        # 边框右
+        bk.draw_line(
+            (
+                bk.width - border,
+                bk.height - border + int(line_width / 2),
+                bk.width - border,
+                top_border,
+            ),
+            fill=color_candidates[2],
+            width=line_width,
+        )
+        # 计算文字处于上边框的位置
+        length = bk.width - border * 2
+        start_idx = random.randint(
+            10, length - 10 - text_image_padding - text_image_width - text_image_padding
+        )
+        # 上边框左半部分
+        bk.draw_line(
+            (border, top_border, start_idx + border, top_border),
+            fill=color_candidates[3],
+            width=line_width,
+        )
+        # 上边框右半部分
+        bk.draw_line(
+            (
+                border
+                + start_idx
+                + text_image_padding
+                + text_image_width
+                + text_image_padding,
+                top_border,
+                bk.width - border + int(line_width / 2),
+                top_border,
+            ),
+            fill=color_candidates[3],
+            width=line_width,
+        )
+        # 把边框左被上边框遮住的一角画上
+        bk.draw_line(
+            (
+                border,
+                top_border - int(line_width / 2),
+                border,
+                top_border + int(line_width / 2),
+            ),
+            fill=color_candidates[0],
+            width=line_width,
+        )
+        bk.paste(help_img, (border + inner_border, top_border + inner_border))
+        random.shuffle(color_candidates)
+        bk.draw_bbcode_text(
+            (border + start_idx + text_image_padding, top_border - 30),
+            text=f"[color={color_candidates[0]}]使[/color][color={color_candidates[1]}]用[/color][color={color_candidates[2]}]帮[/color][color={color_candidates[3]}]助[/color]",
+            fontname="HONOR Sans CN",
+            fontsize=40,
+        )
+        return bk.save_png()
+
+    return MessageSegment.image(await anyio.to_thread.run_sync(_draw))
 
 
 _sorted_data: Dict[str, List[PluginManager.Plugin]] = {}

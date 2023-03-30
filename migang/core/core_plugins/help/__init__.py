@@ -96,7 +96,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             await f.write(img)
     else:
         if help_ := get_plugin_help(args):
-            await simple_help.send(await anyio.to_thread.run_sync(draw_usage, help_))
+            await simple_help.send(await draw_usage(help_))
         else:
             await simple_help.send(f"没有该插件的帮助信息")
 

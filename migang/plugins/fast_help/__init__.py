@@ -30,5 +30,4 @@ fast_help = on_startswith("/", priority=955, block=False)
 async def _(event: MessageEvent, cmd: str = Startswith()):
     plugin_name = event.get_plaintext().removeprefix(cmd).strip()
     if usage := get_plugin_help(name=plugin_name):
-        print(usage)
-        await fast_help.send(await anyio.to_thread.run_sync(draw_usage, usage))
+        await fast_help.send(await draw_usage(usage))
