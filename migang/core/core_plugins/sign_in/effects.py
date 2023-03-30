@@ -5,7 +5,7 @@ from migang.core.decorator import sign_in_effect
 from migang.core.models import SignIn, UserProperty
 
 
-@sign_in_effect(weight=5, name="什么事都没发生")
+@sign_in_effect(weight=10, name="什么事都没发生")
 async def _():
     return "......"
 
@@ -19,7 +19,7 @@ async def _(user_sign_in: SignIn, user_prop: UserProperty):
     return f"额外获得了{random_gold}块金币！"
 
 
-@sign_in_effect(weight=5, name="本次签到好感度翻倍")
+@sign_in_effect(weight=3, name="本次签到好感度翻倍")
 async def _(user_sign_in: SignIn, user_prop: UserProperty):
     impression_diff = user_sign_in.impression_diff
     user_prop.impression += Decimal(impression_diff)
@@ -28,7 +28,7 @@ async def _(user_sign_in: SignIn, user_prop: UserProperty):
     return f"本次签到好感度翻倍！"
 
 
-@sign_in_effect(weight=5, name="下一次签到好感度双倍")
+@sign_in_effect(weight=3, name="下一次签到好感度双倍")
 async def _():
     return "下一次见面时，好感度翻倍~"
 
