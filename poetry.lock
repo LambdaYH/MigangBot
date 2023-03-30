@@ -2634,21 +2634,6 @@ apscheduler = ">=3.7.0,<4.0.0"
 nonebot2 = ">=2.0.0-rc.1,<3.0.0"
 
 [[package]]
-name = "nonebot-plugin-bracket"
-version = "0.1.2"
-description = "Nonebot2 插件，用于补全左括号"
-category = "main"
-optional = false
-python-versions = ">=3.8,<4.0"
-files = [
-    {file = "nonebot_plugin_bracket-0.1.2-py3-none-any.whl", hash = "sha256:188eb399a338135ad7ee16c4b0f2b0c15c0672c95f59b2ba932d0beeeb4561ae"},
-    {file = "nonebot_plugin_bracket-0.1.2.tar.gz", hash = "sha256:9f5ebbfb0d15bf11237d3a1357b215d7b3eef899bda4f8384b303038a2c6ec42"},
-]
-
-[package.dependencies]
-nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
-
-[[package]]
 name = "nonebot-plugin-chatrecorder"
 version = "0.2.3"
 description = "适用于 Nonebot2 的聊天记录插件"
@@ -5259,4 +5244,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "cf2b6122b48ed8d3c092693be25b5c69ede98c046b27934bf3e706be5ad89fde"
+content-hash = "753e0bc43989efb5e32e21e6a46ebd121f98b9dc1c89a209c170f800ac0f96b2"
