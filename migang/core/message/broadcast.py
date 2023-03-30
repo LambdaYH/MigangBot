@@ -90,7 +90,7 @@ class SendManager:
 
 async def broadcast(
     task_name: str,
-    msg: Union[Iterable[Union[Message, MessageSegment]], Message, MessageSegment],
+    msg: Union[Iterable[Union[Message, MessageSegment]], Message, MessageSegment, str],
     forward: bool = False,
     bot: Optional[Bot] = None,
 ) -> None:
@@ -113,6 +113,8 @@ async def broadcast(
         )
     ]
     shuffle(group_list)
+    if isinstance(msg, str):
+        msg = Message(msg)
     if isinstance(msg, Message) or isinstance(msg, MessageSegment):
         msg = (msg,)
     await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()

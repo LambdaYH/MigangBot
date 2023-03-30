@@ -2634,6 +2634,21 @@ apscheduler = ">=3.7.0,<4.0.0"
 nonebot2 = ">=2.0.0-rc.1,<3.0.0"
 
 [[package]]
+name = "nonebot-plugin-bracket"
+version = "0.1.2"
+description = "Nonebot2 插件，用于补全左括号"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_bracket-0.1.2-py3-none-any.whl", hash = "sha256:188eb399a338135ad7ee16c4b0f2b0c15c0672c95f59b2ba932d0beeeb4561ae"},
+    {file = "nonebot_plugin_bracket-0.1.2.tar.gz", hash = "sha256:9f5ebbfb0d15bf11237d3a1357b215d7b3eef899bda4f8384b303038a2c6ec42"},
+]
+
+[package.dependencies]
+nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
+
+[[package]]
 name = "nonebot-plugin-chatrecorder"
 version = "0.2.3"
 description = "适用于 Nonebot2 的聊天记录插件"
@@ -3269,14 +3284,14 @@ files = [
 
 [[package]]
 name = "pil-utils"
-version = "0.1.4"
+version = "0.1.5"
 description = "A simple PIL wrapper and text-to-image tool"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pil_utils-0.1.4-py3-none-any.whl", hash = "sha256:00c6cda736b632c0de9c3968145d8886e1383a905a2e68639a7c9504b98f6301"},
-    {file = "pil_utils-0.1.4.tar.gz", hash = "sha256:a95cce7b0c6fcab5f0dddf40c0cbd2a42db5f1a049e630825ae3b3074bda957b"},
+    {file = "pil_utils-0.1.5-py3-none-any.whl", hash = "sha256:8ed5e6031263f6ace8566fb82f2e8a2a84a04569d01a734a036454db2633cc6f"},
+    {file = "pil_utils-0.1.5.tar.gz", hash = "sha256:33c449a7d6f83039a97245241499c842465454c1f45c28843280f3c85d45f6ed"},
 ]
 
 [package.dependencies]
@@ -3285,7 +3300,7 @@ fonttools = ">=4.0.0,<5.0.0"
 matplotlib = ">=3.0.0,<4.0.0"
 numpy = ">=1.20.0,<2.0.0"
 opencv-python-headless = ">=4.0.0,<5.0.0"
-Pillow = ">=9.1.0,<10.0.0"
+Pillow = ">=9.2.0,<10.0.0"
 
 [[package]]
 name = "pillow"
@@ -3396,19 +3411,19 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.2.2)", "pytest (>=7.2)", "pytest-
 
 [[package]]
 name = "playwright"
-version = "1.32.0"
+version = "1.32.1"
 description = "A high-level API to automate web browsers"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "playwright-1.32.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:1cccf2185452cdd7eb4c130fad15ed403fb246d3f6560c6c0ff65953e6b204e7"},
-    {file = "playwright-1.32.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:b94b014442989dd707b7c4f4c8cc92462d087282a48b121055343a3229f1333f"},
-    {file = "playwright-1.32.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:0d92de3ee2652de48ba05737493687dc07bd721415afb528b5fa909950291e67"},
-    {file = "playwright-1.32.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:0c824f29d7406860c6c6773c512018c9ec2114d0baef20968e994e9cb3498dfa"},
-    {file = "playwright-1.32.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ef7dcf45b7011105e33055e8cb3aa9bbaa50a861e8cc2d997f132379b721fe29"},
-    {file = "playwright-1.32.0-py3-none-win32.whl", hash = "sha256:ad58e165b6cb0125f9176637176a1b46db7c8360a6058ae44ca1c5ff24740c26"},
-    {file = "playwright-1.32.0-py3-none-win_amd64.whl", hash = "sha256:138f1671e0033218e2d83bcd1a89000ee913fb84adff4f3606cfeb86529db0c8"},
+    {file = "playwright-1.32.1-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:e2f919e8611f598d6e81bd12ab24c5987955b05fc663c98b862034a955387300"},
+    {file = "playwright-1.32.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:5dbf28b8256c2f570a66d6a7c04cd0bfb5225e696e01f85cf5aa49e29ea95b42"},
+    {file = "playwright-1.32.1-py3-none-macosx_11_0_universal2.whl", hash = "sha256:42473495f8af0279d868cc541d0c6d3733a8adb117253499dae85203104b0824"},
+    {file = "playwright-1.32.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:83123330e2913a28d11bb8846f7c81a4736553c80f3e9748d213bcaa24fafe91"},
+    {file = "playwright-1.32.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d56a743f7d88a313b25a88422779c64e5d5a95baa805b9dfd1c5785aa01d217d"},
+    {file = "playwright-1.32.1-py3-none-win32.whl", hash = "sha256:274bfdd413a979346ce66e99c993c105a123e48da591a65638e5cdf518c90172"},
+    {file = "playwright-1.32.1-py3-none-win_amd64.whl", hash = "sha256:32bb5645904b5ba3096a4696c70ce3213eb2310c77273140dc5de14498a84134"},
 ]
 
 [package.dependencies]
@@ -4632,14 +4647,14 @@ telegram = ["requests"]
 
 [[package]]
 name = "transformers"
-version = "4.27.3"
+version = "4.27.4"
 description = "State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow"
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "transformers-4.27.3-py3-none-any.whl", hash = "sha256:d764c351b6d590952ac6104573721abe323b3eabd55e53bae0215c14750d5f13"},
-    {file = "transformers-4.27.3.tar.gz", hash = "sha256:26bff783ad6ed463fe3f0954406e7c30a8313758b6488677827886e48e6bd5a9"},
+    {file = "transformers-4.27.4-py3-none-any.whl", hash = "sha256:ee1979c643093005427a9233af738628cb6f4cd1eaca63a2a4d2228bd5396952"},
+    {file = "transformers-4.27.4.tar.gz", hash = "sha256:5f0f735e6fb081e16db9e412466dbfa32c38231a3edd00def8cdc384c90dde36"},
 ]
 
 [package.dependencies]
@@ -5244,4 +5259,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "35ef67437169a923bf86b16216eb53499138cc53cea159aec7d518b55edb5273"
+content-hash = "2e0cb7a490664d6c107c042ec209ac75374dd396e1288f93dd862914c207b412"
