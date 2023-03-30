@@ -6,7 +6,7 @@ from nonebot.params import Fullmatch, CommandArg
 from .data_source import get_market_data, handle_item_name_abbr
 
 __plugin_meta__ = PluginMetadata(
-    name="最终幻想14物价查询",
+    name="物价查询",
     description="看看狒狒里商品的物价，基于https://universalis.app",
     usage="""
 usage：
@@ -26,8 +26,9 @@ usage：
     },
 )
 __plugin_category__ = "FF14"
+__plugin_aliases__ = ["最终幻想14物价查询"]
 
-ffxiv_market = on_command("/market item", aliases={"/mitem"}, priority=5, block=True)
+ffxiv_market = on_command("/market item", aliases={"/mitem", "/查价"}, priority=5, block=True)
 
 market_help = on_fullmatch(("/market upload", "/market help"), priority=5, block=True)
 

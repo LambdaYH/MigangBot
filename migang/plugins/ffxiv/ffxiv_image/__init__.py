@@ -12,7 +12,7 @@ from migang.core import CDItem, CountItem
 from .model import ImageData
 
 __plugin_meta__ = PluginMetadata(
-    name="最终幻想14图库",
+    name="狒狒14图库",
     description="狒狒各类种族的图库",
     usage="""
 usage：
