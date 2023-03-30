@@ -4,7 +4,6 @@ v1 版的 API，现在已经废弃，没有维护
 以后可能会失效
 文档网址 https://cn.fflogs.com/v1/docs
 """
-import ujson as json
 import math
 import asyncio
 from random import randint
@@ -12,6 +11,7 @@ from typing import Literal, cast
 from datetime import datetime, timedelta
 
 import httpx
+import ujson as json
 from sqlalchemy import select
 from nonebot.log import logger
 from nonebot_plugin_apscheduler import scheduler
