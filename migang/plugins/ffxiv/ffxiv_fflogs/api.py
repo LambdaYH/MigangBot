@@ -4,7 +4,7 @@ v1 版的 API，现在已经废弃，没有维护
 以后可能会失效
 文档网址 https://cn.fflogs.com/v1/docs
 """
-import json
+import ujson as json
 import math
 import asyncio
 from random import randint
@@ -143,23 +143,29 @@ class FFLogs:
                 logger.info(f"{boss} {job.name}的数据缓存完成。")
                 await asyncio.sleep(randint(1, 30))
 
-    async def _http(self, url: str, params: dict = {}):
+    async def _http_need_client(
+        self, url: str, client: httpx.AsyncClient, params: dict = {}
+    ):
+        """当需要多次连续请求时候在外面开client复用"""
         try:
             params.setdefault("api_key", await self.get_token())
             # 使用 httpx 库发送最终的请求
-            async with httpx.AsyncClient() as client:
-                resp = await client.get(url, params=params)
-                if resp.status_code == 401:
-                    raise AuthException("Token 有误，无法获取数据")
-                if resp.status_code == 400:
-                    raise ParameterException("参数有误，无法获取数据")
-                if resp.status_code != 200:
-                    # 如果 HTTP 响应状态码不是 200，说明调用失败
-                    return None
-                return json.loads(resp.text)
+            resp = await client.get(url, params=params)
+            if resp.status_code == 401:
+                raise AuthException("Token 有误，无法获取数据")
+            if resp.status_code == 400:
+                raise ParameterException("参数有误，无法获取数据")
+            if resp.status_code != 200:
+                # 如果 HTTP 响应状态码不是 200，说明调用失败
+                return None
+            return json.loads(resp.text)
         except (httpx.HTTPError, json.JSONDecodeError, KeyError):
             # 抛出上面任何异常，说明调用失败
             return None
+
+    async def _http(self, url: str, params: dict = {}):
+        async with httpx.AsyncClient() as client:
+            return self._http_need_client(url=url, client=client, params=params)
 
     async def _get_one_day_ranking(
         self, boss: int, difficulty: int, job: int, date: datetime
@@ -184,27 +190,29 @@ class FFLogs:
         end_timestamp = int(end_date.timestamp()) * 1000
 
         # API 只支持获取 50 页以内的数据
-        while hasMorePages and page < 51:
-            rankings_url = f"{self.base_url}/rankings/encounter/{boss}"
+        async with httpx.AsyncClient() as client:
+            while hasMorePages and page < 51:
+                rankings_url = f"{self.base_url}/rankings/encounter/{boss}"
 
-            res = await self._http(
-                rankings_url,
-                params={
-                    "metric": "rdps",
-                    "difficulty": difficulty,
-                    "spec": job,
-                    "page": page,
-                    "filter": f"date.{start_timestamp}.{end_timestamp}",
-                },
-            )
-            try:
-                ranking = FFLogsRanking.parse_obj(res)
-            except ValidationError:
-                raise DataException("服务器没有正确返回数据")
+                res = await self._http_need_client(
+                    url=rankings_url,
+                    client=client,
+                    params={
+                        "metric": "rdps",
+                        "difficulty": difficulty,
+                        "spec": job,
+                        "page": page,
+                        "filter": f"date.{start_timestamp}.{end_timestamp}",
+                    },
+                )
+                try:
+                    ranking = FFLogsRanking.parse_obj(res)
+                except ValidationError:
+                    raise DataException("服务器没有正确返回数据")
 
-            hasMorePages = ranking.hasMorePages
-            rankings += ranking.rankings
-            page += 1
+                hasMorePages = ranking.hasMorePages
+                rankings += ranking.rankings
+                page += 1
 
         # 如果获取数据的日期不是当天，则缓存数据
         # 因为今天的数据可能还会增加，不能先缓存

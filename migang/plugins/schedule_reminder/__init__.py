@@ -240,7 +240,7 @@ async def _(event: MessageEvent, state: T_State, arg: Message = CommandArg()):
 
 @add_task.got(
     "job_type",
-    prompt="请发送所选择的定时任务种类：\ninterval: 间隔\ndate: 特定日期\ncron: cron格式\n输入冒号前的英文单次",
+    prompt="请发送所选择的定时任务种类：\ninterval: 间隔\ndate: 特定日期\ncron: cron格式\n输入冒号前的英文单词",
 )
 async def _(state: T_State, job_type: str = ArgStr("job_type")):
     type_ = -1
