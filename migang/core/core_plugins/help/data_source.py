@@ -23,7 +23,7 @@ from migang.core.manager import (
 )
 
 require("nonebot_plugin_htmlrender")
-from nonebot_plugin_htmlrender import template_to_pic, md_to_pic, html_to_pic
+from nonebot_plugin_htmlrender import md_to_pic, html_to_pic, template_to_pic
 
 USER_HELP_PATH = DATA_PATH / "core" / "help" / "user_help_image"
 GROUP_HELP_PATH = DATA_PATH / "core" / "help" / "group_help_image"
