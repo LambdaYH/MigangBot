@@ -28,7 +28,9 @@ usage：
 __plugin_category__ = "FF14"
 __plugin_aliases__ = ["最终幻想14物价查询"]
 
-ffxiv_market = on_command("/market item", aliases={"/mitem", "/查价"}, priority=5, block=True)
+ffxiv_market = on_command(
+    "/market item", aliases={"/mitem", "/查价"}, priority=5, block=True
+)
 
 market_help = on_fullmatch(("/market upload", "/market help"), priority=5, block=True)
 

@@ -4,29 +4,29 @@ v1 版的 API，现在已经废弃，没有维护
 以后可能会失效
 文档网址 https://cn.fflogs.com/v1/docs
 """
-import asyncio
 import json
 import math
-from datetime import datetime, timedelta
+import asyncio
 from random import randint
 from typing import Literal, cast
+from datetime import datetime, timedelta
 
 import httpx
+from sqlalchemy import select
 from nonebot.log import logger
 from nonebot_plugin_apscheduler import scheduler
-from nonebot_plugin_datastore import create_session, get_plugin_data
-from nonebot_plugin_datastore.db import post_db_init
 from pydantic import ValidationError, parse_obj_as
-from sqlalchemy import select
+from nonebot_plugin_datastore.db import post_db_init
+from nonebot_plugin_datastore import create_session, get_plugin_data
 
 from .config import plugin_config
+from .models import User, Class, Zones, Ranking, FFLogsRanking, CharacterRanking
 from .data import (
     FFLOGS_DATA,
     FFlogsDataModel,
-    get_boss_info_by_nickname,
     get_job_info_by_nickname,
+    get_boss_info_by_nickname,
 )
-from .models import CharacterRanking, Class, FFLogsRanking, Ranking, User, Zones
 
 plugin_data = get_plugin_data()
 

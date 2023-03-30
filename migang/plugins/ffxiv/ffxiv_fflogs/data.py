@@ -4,7 +4,7 @@
 """
 from nonebot_plugin_datastore import get_plugin_data
 
-from .models import BossInfo, FFlogsDataModel, JobInfo
+from .models import JobInfo, BossInfo, FFlogsDataModel
 
 plugin_data = get_plugin_data()
 

@@ -1,10 +1,11 @@
 from typing import cast
 
+from pydantic import BaseModel
+from nonebot.params import CommandArg
 from nonebot.adapters import Message, MessageSegment
 from nonebot.adapters.onebot.v11 import Message as OneBotV11Message
 from nonebot.adapters.onebot.v12 import Message as OneBotV12Message
-from nonebot.params import CommandArg
-from pydantic import BaseModel
+
 
 def strtobool(val: str) -> bool:
     """将文本转化成布尔值
@@ -16,6 +17,7 @@ def strtobool(val: str) -> bool:
     if val in ("y", "yes", "t", "true", "on", "1", "是", "确认", "开"):
         return True
     return False
+
 
 class MentionedUser(BaseModel):
     id: str

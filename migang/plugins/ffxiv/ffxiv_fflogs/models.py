@@ -1,7 +1,7 @@
-from nonebot_plugin_datastore import get_plugin_data
-from pydantic import BaseModel, Field
+from pydantic import Field, BaseModel
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
+from nonebot_plugin_datastore import get_plugin_data
 
 Model = get_plugin_data().Model
 

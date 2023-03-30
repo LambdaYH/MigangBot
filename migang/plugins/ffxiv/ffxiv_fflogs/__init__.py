@@ -3,19 +3,18 @@
 查询副本输出数据。
 https://github.com/he0119/CoolQBot/tree/master/src/plugins/ff14/plugins/ff14_fflogs
 """
-from nonebot import logger, on_command, get_driver
-from nonebot.adapters import Event, Message, MessageSegment
-from nonebot.adapters.onebot.v11 import Bot as V11Bot
-from nonebot.adapters.onebot.v12 import Bot as V12Bot
-from nonebot.params import CommandArg, Depends
 from nonebot.plugin import PluginMetadata
+from nonebot.params import Depends, CommandArg
+from nonebot import logger, get_driver, on_command
 from nonebot_plugin_datastore import get_plugin_data
 from nonebot_plugin_datastore.db import post_db_init
-
-from .utils import MentionedUser, get_mentioned_user, strtobool
+from nonebot.adapters.onebot.v11 import Bot as V11Bot
+from nonebot.adapters.onebot.v12 import Bot as V12Bot
+from nonebot.adapters import Event, Message, MessageSegment
 
 from .api import fflogs
 from .data import FFLOGS_DATA
+from .utils import MentionedUser, strtobool, get_mentioned_user
 
 __plugin_meta__ = PluginMetadata(
     name="FFLogs",
