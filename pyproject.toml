@@ -106,7 +106,7 @@ plugins = [
     "nonebot_plugin_gsmaterial",
     "nonebot_plugin_gsabyss",
     "nonebot_plugin_gscode",
-    "nonebot-plugin-bracket",
+    "nonebot_plugin_bracket",
 ]
 plugin_dirs = ["migang/core/core_plugins", "migang/plugins"]
 
