@@ -1,9 +1,9 @@
 """ 配置文件
 """
-from nonebot import get_driver
 from datetime import time
 
-from pydantic import BaseModel, Extra
+from nonebot import get_driver
+from pydantic import Extra, BaseModel
 
 
 class Config(BaseModel, extra=Extra.ignore):

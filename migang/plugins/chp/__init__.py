@@ -1,7 +1,7 @@
-import aiohttp
 import asyncio
 from pathlib import Path
 
+import aiohttp
 from nonebot import on_fullmatch
 from nonebot.plugin import PluginMetadata
 
