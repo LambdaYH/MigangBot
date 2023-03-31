@@ -2355,14 +2355,14 @@ dnspython = "2.2.1"
 
 [[package]]
 name = "meme-generator"
-version = "0.0.8"
+version = "0.0.9"
 description = "Python package for making fun pictures"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "meme_generator-0.0.8-py3-none-any.whl", hash = "sha256:df101082578d7b8aa4afccd970fbf37d26bce8147ecd1bccbb1892ac5bc91d6d"},
-    {file = "meme_generator-0.0.8.tar.gz", hash = "sha256:cb8d589b41af4912ebed6acaf642a6b7158b4c4b05bba70c28311c53b49e577e"},
+    {file = "meme_generator-0.0.9-py3-none-any.whl", hash = "sha256:64a3e67eca11d864ad8b43bcd6b5be4c01144641e2046d2dc98a143515fc73d6"},
+    {file = "meme_generator-0.0.9.tar.gz", hash = "sha256:8436711f5c8df8e04eb9f6dc53c938a1ee72a0d325bcc2da06655d4e0013fac8"},
 ]
 
 [package.dependencies]
@@ -2921,14 +2921,14 @@ typing-extensions = ">=4.0.0"
 
 [[package]]
 name = "nonebot-plugin-memes"
-version = "0.4.3"
+version = "0.4.4"
 description = "Nonebot2 plugin for making memes"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_memes-0.4.3-py3-none-any.whl", hash = "sha256:7b9a2c08ba82c542b4bf684941b09ba7065b14ce29d09543a9cb37aeac901fc7"},
-    {file = "nonebot_plugin_memes-0.4.3.tar.gz", hash = "sha256:e91cd2c7e74efa17d7bd424b3d268c6f212e3b18dbcf79ee1086ba715c60461f"},
+    {file = "nonebot_plugin_memes-0.4.4-py3-none-any.whl", hash = "sha256:96daec41039539d1feb302902b8f239564c57ef3673d9d8eb11b6d1752de993d"},
+    {file = "nonebot_plugin_memes-0.4.4.tar.gz", hash = "sha256:9fde83551b7d942dbf14c62fb8ad51a02665a88024e8d5e9837a87d5bfb5e03a"},
 ]
 
 [package.dependencies]
