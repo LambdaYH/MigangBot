@@ -157,7 +157,7 @@ async def _(bot: Bot, event: FriendRequestEvent):
             user_id=int(user),
             message=f"*****一份好友申请*****\n"
             f"昵称：{user_name}({event.user_id})\n"
-            f"状态：{await get_config('handle_friend')}\n"
+            f"状态：{_handle_friend}\n"
             f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
             f"备注：{event.comment}",
         )
@@ -229,7 +229,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
             message=f"*****一份入群申请*****\n"
             f"群聊：{group_name}({event.group_id})\n"
             f"申请人：{user_name}({event.user_id})\n"
-            f"状态：{await get_config('handle_group')}\n"
+            f"状态：{_handle_group}\n"
             f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n",
         )
     if _handle_group == "同意":
