@@ -3051,6 +3051,24 @@ tzdata = "*"
 wordcloud = ">=1.8.1,<2.0.0"
 
 [[package]]
+name = "nonebot-plugin-wordle"
+version = "0.2.0"
+description = "Nonebot2 wordle猜单词插件"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_wordle-0.2.0-py3-none-any.whl", hash = "sha256:4944af28451623f8c693cbc50bdd45ffc44ee414be9e9c96e37863fa540b48d6"},
+    {file = "nonebot_plugin_wordle-0.2.0.tar.gz", hash = "sha256:f7a43a353cecf8f14f67f4af83707a36576481d582371c9e54ab3a50a255515f"},
+]
+
+[package.dependencies]
+nonebot-adapter-onebot = ">=2.2.0,<3.0.0"
+nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
+Pillow = ">=9.0.0,<10.0.0"
+pyspellchecker = ">=0.7.0,<0.8.0"
+
+[[package]]
 name = "nonebot2"
 version = "2.0.0rc3"
 description = "An asynchronous python bot framework."
@@ -3746,6 +3764,18 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4"
 files = [
     {file = "pypinyin-0.48.0-py2.py3-none-any.whl", hash = "sha256:38b8a478b4af17c5b4211482ea35c68eb0ca3a81661e5fb2abe6f9cc66d1634b"},
     {file = "pypinyin-0.48.0.tar.gz", hash = "sha256:63d18b8f10dd38a3e57f26b6833a983d9176f2e9c4a53157c23e1343d0b3dbf8"},
+]
+
+[[package]]
+name = "pyspellchecker"
+version = "0.7.1"
+description = "Pure python spell checker based on work by Peter Norvig"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "pyspellchecker-0.7.1-py3-none-any.whl", hash = "sha256:9fac7e3abf2a11eb1660906dc513bc9f92bd49795f136bb1a56ac1f59f5498b0"},
+    {file = "pyspellchecker-0.7.1.tar.gz", hash = "sha256:ed46a7218a363ef1a348fac14c9fef95b0aca5daa7744389d70843fcc0961b31"},
 ]
 
 [[package]]
@@ -5244,4 +5274,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "753e0bc43989efb5e32e21e6a46ebd121f98b9dc1c89a209c170f800ac0f96b2"
+content-hash = "23185f97c9c6b97f83c49ed87b806f9f0c49e0851d50d38944f7866e6d0c2ffb"
