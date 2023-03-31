@@ -8,10 +8,11 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
 )
 
-from migang.core.models import UserProperty, SignIn
+from migang.core.models import SignIn, UserProperty
 from migang.core.decorator import CancelGoodsHandle, goods_register
 
 ICON_PATH = Path(__file__).parent / "images" / "shop_icon"
+
 
 @goods_register(
     name=("番茄薯片", "甜果果", "榴莲起司"),
@@ -105,6 +106,7 @@ async def _(bot: Bot, user_id: int, group_id: int, event: MessageEvent):
 async def _(event: MessageEvent):
     if not isinstance(event, GroupMessageEvent):
         raise CancelGoodsHandle("不许偷偷睡觉！")
+
 
 @goods_register(
     name="双倍好感度卡",

@@ -1,9 +1,8 @@
 import re
 
-from nonebot import require
-from nonebot import on_startswith
 from nonebot.plugin import PluginMetadata
-from nonebot.params import EventPlainText, Startswith
+from nonebot import require, on_startswith
+from nonebot.params import Startswith, EventPlainText
 from nonebot.adapters.onebot.v11 import MessageSegment
 
 require("nonebot_plugin_htmlrender")
