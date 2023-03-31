@@ -76,7 +76,9 @@ async def handler(matcher_: Matcher, event: MessageEvent, bot: Bot) -> None:
             return
 
     if len(msg_sent_set) > 10:
-        logger.warning(f"累积的待处理的自己发送消息数量为 {len(msg_sent_set)}, 请检查逻辑是否有错误")
+        if config.DEBUG_LEVEL > 0:
+            logger.warning(f"累积的待处理的自己发送消息数量为 {len(msg_sent_set)}, 请检查逻辑是否有错误")
+        msg_sent_set.clear()
 
     # # 处理消息前先检查权限
     # (permit_success, _) = await permission_check_func(matcher=matcher_, event=event, bot=bot, cmd=None, type='message')
@@ -85,7 +87,8 @@ async def handler(matcher_: Matcher, event: MessageEvent, bot: Bot) -> None:
 
     # 判断用户账号是否被屏蔽
     if event.get_user_id() in config.FORBIDDEN_USERS:
-        logger.info(f"用户 {event.get_user_id()} 被屏蔽，拒绝处理消息")
+        if config.DEBUG_LEVEL > 0:
+            logger.info(f"用户 {event.get_user_id()} 被屏蔽，拒绝处理消息")
         return
 
     sender_name = (
@@ -112,7 +115,8 @@ async def handler(matcher_: Matcher, event: MessageEvent, bot: Bot) -> None:
         event.get_plaintext().strip().startswith(config.IGNORE_PREFIX)
         or not event.get_plaintext()
     ):
-        logger.info("忽略前缀或消息为空，跳过处理...")
+        if config.DEBUG_LEVEL > 1:
+            logger.info("忽略前缀或消息为空，跳过处理...")  # 纯图片消息也会被判定为空消息
         return
 
     # 判断群聊/私聊
@@ -123,7 +127,8 @@ async def handler(matcher_: Matcher, event: MessageEvent, bot: Bot) -> None:
         chat_key = "private_" + event.get_user_id()
         chat_type = "private"
     else:
-        logger.info("未知消息来源: " + event.get_session_id())
+        if config.DEBUG_LEVEL > 0:
+            logger.info("未知消息来源: " + event.get_session_id())
         return
 
     chat_text, wake_up = await gen_chat_text(event=event, bot=bot)
@@ -167,7 +172,8 @@ async def do_msg_response(
     # 检测是否包含违禁词
     for w in config.WORD_FOR_FORBIDDEN:
         if str(w).lower() in trigger_text.lower():
-            logger.info(f"检测到违禁词 {w}，拒绝处理...")
+            if config.DEBUG_LEVEL > 0:
+                logger.info(f"检测到违禁词 {w}，拒绝处理...")
             return
 
     # 唤醒词检测
@@ -190,7 +196,7 @@ async def do_msg_response(
     #             wake_up = True
     #             break
 
-    current_preset_key = chat.get_chat_preset_key()
+    # current_preset_key = chat.get_chat_preset_key()
 
     # 判断是否需要回复
     if (  # 如果不是 bot 相关的信息，则直接返回

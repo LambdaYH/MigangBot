@@ -59,7 +59,7 @@ class Chat:
         self._chat_data.chat_history.append(messageunit)
         if config.DEBUG_LEVEL > 0:
             logger.info(
-                f"[会话: {self._chat_key}]添加对话历史行: {messageunit}  |  当前对话历史行数: {len(self._chat_data.chat_history)}"
+                f"[会话: {self._chat_key}]添加对话历史行: {messageunit}\n  |  当前对话历史行数: {len(self._chat_data.chat_history)}"
             )
         self._last_msg_time = time.time()  # 更新上次对话时间
         while (
@@ -116,7 +116,7 @@ class Chat:
         impression_data.chat_history.append(messageunit)
         if config.DEBUG_LEVEL > 0:
             logger.info(
-                f"添加对话历史行: {messageunit}  |  当前对话历史行数: {len(impression_data.chat_history)}"
+                f"添加对话历史行: {messageunit}\n  |  当前对话历史行数: {len(impression_data.chat_history)}"
             )
         # 保证对话历史不超过最大长度
         if (
@@ -249,13 +249,13 @@ class Chat:
 
         # 对话历史
         offset = 0
-        chat_history: str = "\n\n".join(
+        chat_history: str = "\n\n\n".join(
             self._chat_data.chat_history[-(config.CHAT_MEMORY_SHORT_LENGTH + offset) :]
         )  # 从对话历史中截取短期对话
         tg = TextGenerator.instance
         while tg.cal_token_count(chat_history) > config.CHAT_HISTORY_MAX_TOKENS:
             offset += 1  # 如果对话历史过长，则逐行删除对话历史
-            chat_history = "\n\n".join(
+            chat_history = "\n\n\n".join(
                 self._chat_data.chat_history[
                     -(config.CHAT_MEMORY_SHORT_LENGTH + offset) :
                 ]
