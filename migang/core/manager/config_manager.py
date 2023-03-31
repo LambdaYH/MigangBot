@@ -73,16 +73,19 @@ class ConfigManager:
             plugin_name = config.config_name
         file_name = self.__path / f"{plugin_name}.yaml"
         data: CommentedMap = await async_load_data(file_name)
+        modified = False
         if plugin_name not in self.__default_value:
             self.__default_value[plugin_name] = {}
         self.__default_value[plugin_name][config.key] = config.default_value
         if config.key in data:
             return
+        modified = True
         data[config.key] = config.initial_value
         data.yaml_set_comment_before_after_key(
             key=config.key, before=config.description
         )
-        await async_save_data(data, file_name)
+        if modified:
+            await async_save_data(data, file_name)
 
     async def add_configs(
         self, plugin_name: str, configs: Iterable[ConfigItem]
@@ -97,6 +100,7 @@ class ConfigManager:
             self.__default_value[plugin_name] = {}
         file_name = self.__path / f"{plugin_name}.yaml"
         data: CommentedMap = await async_load_data(file_name)
+        modified = False
         for config in configs:
             if config.config_name:
                 await self.add_config(plugin_name, config)
@@ -104,11 +108,14 @@ class ConfigManager:
             self.__default_value[plugin_name][config.key] = config.default_value
             if config.key in data:
                 continue
+            modified = True
             data[config.key] = config.initial_value
             data.yaml_set_comment_before_after_key(
                 key=config.key, before=config.description
             )
-        await async_save_data(data, file_name)
+        if modified:
+            # 仅修改过才重新写入
+            await async_save_data(data, file_name)
 
     @alru_cache(maxsize=128)
     async def __async_get_config(self, plugin_name: str) -> CommentedMap:
