@@ -23,9 +23,9 @@ icon_size = (72, 72)
 
 def split_text(
     text: str,
-    line_width: Tuple[int, ...] = (280, 460),
+    line_width: Tuple[int, ...] = (435, 715),
     line_num: Tuple[int, ...] = (3, None),
-    font: ImageFont = ImageFont.truetype(str(FONT_PATH / "FZSJ-QINGCRJ.ttf")),
+    font: ImageFont = ImageFont.truetype(str(FONT_PATH / "FZSJ-QINGCRJ.ttf"), size=25),
 ) -> List[str]:
     """按照字体所显示出来的长度分成不同长度的列组
 
@@ -77,7 +77,7 @@ def draw_shop() -> BytesIO:
             color=(255, 255, 255, 0),
         ).paste(bk, (0, 10))
         # 画说明
-        last_height = 10
+        last_height = 4
         for i, line in enumerate(lines):
             start_x = goods_bk.width + 10
             if i >= 3:
@@ -86,7 +86,7 @@ def draw_shop() -> BytesIO:
                 text=line,
                 xy=(start_x, last_height + 7),
                 fontname="FZSJ-QINGCRJ",
-                fontsize=16,
+                fontsize=25,
             )
             last_height += line_height
         last_height = 10
@@ -242,5 +242,8 @@ def draw_shop() -> BytesIO:
         fontname="DFBuDingW12-GB",
         fontsize=60,
         max_fontsize=60,
+    )
+    bk.draw_text(
+        (10, 10), text="发送 购买道具【商品名/序号】购买", fontname="DFBuDingW12-GB", fontsize=20
     )
     return bk.save_png()
