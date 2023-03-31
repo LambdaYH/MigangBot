@@ -165,7 +165,7 @@ class FFLogs:
 
     async def _http(self, url: str, params: dict = {}):
         async with httpx.AsyncClient() as client:
-            return self._http_need_client(url=url, client=client, params=params)
+            return await self._http_need_client(url=url, client=client, params=params)
 
     async def _get_one_day_ranking(
         self, boss: int, difficulty: int, job: int, date: datetime

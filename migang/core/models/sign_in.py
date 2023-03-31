@@ -34,7 +34,7 @@ class SignIn(Model):
         table_description = "用户签到记录"
 
     @classmethod
-    async def add_next_effect(cls, user_id: int, effect: str, **kwargs):
+    async def add_next_effect(cls, user_id: int, effect: str, **kwargs) -> bool:
         user = await cls.filter(user_id=user_id).first()
         if not user:
             user = cls(
@@ -43,6 +43,9 @@ class SignIn(Model):
             await user.save()
             await user.update_from_dict({"time": datetime.now() - timedelta(days=12)})
             return
+        if effect in user.next_effect:
+            return False
         user.next_effect.append(effect)
         user.next_effect_params.append(kwargs)
         await user.save(update_fields=["next_effect", "next_effect_params"])
+        return True

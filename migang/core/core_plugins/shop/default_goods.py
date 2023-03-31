@@ -8,11 +8,10 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
 )
 
-from migang.core.models import UserProperty
+from migang.core.models import UserProperty, SignIn
 from migang.core.decorator import CancelGoodsHandle, goods_register
 
 ICON_PATH = Path(__file__).parent / "images" / "shop_icon"
-
 
 @goods_register(
     name=("番茄薯片", "甜果果", "榴莲起司"),
@@ -106,3 +105,18 @@ async def _(bot: Bot, user_id: int, group_id: int, event: MessageEvent):
 async def _(event: MessageEvent):
     if not isinstance(event, GroupMessageEvent):
         raise CancelGoodsHandle("不许偷偷睡觉！")
+
+@goods_register(
+    name="双倍好感度卡",
+    price=50,
+    description="有10%的概率触发下一次签到双倍好感度",
+    use_limit=1,
+    icon=ICON_PATH / "door.png",
+    purchase_limit=1,
+)
+async def _(user_id: int):
+    if random.random() <= 0.10:
+        if not await SignIn.add_next_effect(user_id=user_id, effect="双倍好感度卡"):
+            raise CancelGoodsHandle("当前存在未触发的双倍好感度效果，无法重复使用")
+        return "成功触发双倍好感度效果，下一次签到时触发"
+    return "双倍好感度卡...破损了（没有触发任何效果）"
