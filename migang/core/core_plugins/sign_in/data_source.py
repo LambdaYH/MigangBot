@@ -1,3 +1,4 @@
+import math
 import bisect
 import random
 import secrets
@@ -8,10 +9,9 @@ from datetime import datetime
 
 import anyio
 from nonebot.log import logger
-from pil_utils import BuildImage, text2image
+from pil_utils import BuildImage
 from tortoise.transactions import in_transaction
 
-from migang.core.path import FONT_PATH
 from migang.core.decorator import sign_in_effect
 from migang.core.utils.image import get_user_avatar
 from migang.core.models import SignIn, UserProperty, TransactionLog
@@ -35,8 +35,9 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
         user_prop = (
             await UserProperty.filter(user_id=user_id).using_db(connection).first()
         )
+        impression_diff: str
         if user and (user.time + TIMEDELTA).date() == datetime.now().date():
-            pass
+            impression_diff = f"{user.impression_diff:.2f}"
         else:
             if not user:
                 user = SignIn(user_id=user_id)
@@ -45,6 +46,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             # 签到基础作用
             user.gold_diff = random.randint(1, 100)
             user.impression_diff = (secrets.randbelow(99) + 1) / 10
+            pre_impression_diff = user.impression_diff
             user.signin_count += 1
             user_prop.impression += Decimal(user.impression_diff)
             user_prop.gold += user.gold_diff
@@ -91,6 +93,17 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             await TransactionLog(
                 user_id=user_id, gold_earned=user.gold_diff, description="签到"
             ).save(using_db=connection)
+            post_impression_diff = user.impression_diff
+            magnification = f"{post_impression_diff / pre_impression_diff:g}"
+            magnification = (
+                f"{float(magnification):.1f}" if "." in magnification else magnification
+            )
+            if magnification != "1":
+                impression_diff = (
+                    f"{pre_impression_diff} [color=red]x {magnification}[/color]"
+                )
+            else:
+                impression_diff = f"{pre_impression_diff}"
             await user.save(using_db=connection)
             await user_prop.save(using_db=connection)
     avatar = await get_user_avatar(user_id)
@@ -102,7 +115,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
         user_name,
         user.signin_count,
         user.gold_diff,
-        user.impression_diff,
+        impression_diff,
         user.windfall,
         user_prop.impression,
         user.time + TIMEDELTA,
@@ -138,7 +151,7 @@ def draw(
     user_name: str,
     count: int,
     gold_diff: int,
-    impression_diff: float,
+    impression_diff: str,
     windfall: str,
     impression: float,
     time: datetime,
@@ -269,7 +282,7 @@ def draw(
     )
     bk.draw_text(
         (580, 220),
-        text=f"好感度 + {impression_diff:.2f}",
+        text=f"好感度 + {impression_diff}",
         fontsize=20,
         fontname="Yozai",
     )

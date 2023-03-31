@@ -89,7 +89,7 @@ async def _(goods_name: str, num: int, user_id: int, low: int, high: int):
 @goods_register(
     name="床",
     price=800,
-    description="躺上去享受8小时精致睡眠",
+    description="躺上去享受8小时精致睡眠（需要Bot为管理员，使用后被禁言8h）",
     icon=ICON_PATH / "bed.png",
     use_limit=2,
     consumable=False,
