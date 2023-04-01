@@ -8,8 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-nonebot2 = {extras = ["fastapi"], version = "^2.0.0rc3"}
-nonebot-adapter-onebot = "^2.2.1"
+nonebot2 = {extras = ["fastapi"], version = "^2.0.0rc4"}
+nonebot-adapter-onebot = "^2.2.2"
 nonebot-plugin-apscheduler = "^0.2.0"
 
 ujson = "^5.7.0"
@@ -44,7 +44,7 @@ transformers = "^4.27.3"
 nonebot-bison = "^0.7.1"
 nonebot-plugin-word-bank2 = "^0.1.6"
 nonebot-plugin-htmlrender = "^0.2.0.3"
-nonebot-plugin-memes = "^0.4.4"
+nonebot-plugin-memes = "^0.4.5"
 nonebot-plugin-shindan = "^0.3.1"
 nonebot-plugin-remake = "^0.2.7"
 nonebot-plugin-emojimix = "^0.2.0"
@@ -55,7 +55,7 @@ nonebot-plugin-imagetools = "^0.2.1"
 nonebot-plugin-cocdicer = "^0.4.0"
 nonebot-plugin-withdraw = "^0.2.3"
 nonebot-plugin-hikarisearch = "^0.1.7"
-nonebot-plugin-datastore = "^0.6.0"
+nonebot-plugin-datastore = "^0.6.2"
 nonebot-plugin-oddtext = "^0.1.2"
 nonebot-plugin-gachalogs = "^0.2.12"
 nonebot-plugin-gspanel = "^0.2.23"

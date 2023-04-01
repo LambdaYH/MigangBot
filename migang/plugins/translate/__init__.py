@@ -30,7 +30,7 @@ __plugin_meta__ = PluginMetadata(
 - 翻译 xxxx
 - 翻译to:语言 xxx
 ---
-### 当添加`to:语言`参数时，仅启用谷歌、百度翻译
+### 当添加`to:语言`参数时，仅启用谷歌、百度翻译，语言为冒号后的几个字母
 #### 谷歌翻译支持的语言有
 {get_language_form(google_language)}
 
