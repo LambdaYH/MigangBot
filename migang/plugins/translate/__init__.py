@@ -79,7 +79,7 @@ async def _(
 ):
     text = plain_text.removeprefix(cmd).strip()
     to = None
-    if match := re.search("^to:(\S+)"):
+    if match := re.search(r"^to:(\S+)", text):
         to = match.group(1)
         text = text.removeprefix(match.group(0)).strip()
     tasks = []
@@ -101,6 +101,8 @@ async def _(
         if await get_config("baidu_api_key"):
             tasks.append(get_baidu_trans(text, to=to))
     msg = await asyncio.gather(*tasks)
+    if not msg:
+        await translate.finish(f"没有返回任何翻译结果...")
     if msg and len(max(msg, key=len)) < 60:
         await translate.finish("\n".join(msg))
     msg = [
