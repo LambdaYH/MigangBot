@@ -1,11 +1,12 @@
+import re
 import asyncio
 
 import aiohttp
 from nonebot.log import logger
-from nonebot.params import CommandArg
+from nonebot.params import Startswith, EventPlainText
 from nonebot.plugin import PluginMetadata
-from nonebot import get_driver, on_command
-from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
+from nonebot import get_driver, on_startswith
+from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent, MessageEvent
 
 from migang.core import ConfigItem, get_config
 
@@ -15,16 +16,26 @@ from .data_source import (
     get_deepl_trans,
     get_google_trans,
     get_youdao_trans,
+    baidu_language,
+    google_language,
+    get_language_form,
 )
 
 __plugin_meta__ = PluginMetadata(
     name="翻译",
     description="将多个语言翻译成中文，提供多翻译源结果",
-    usage="""
-usage：
-    将多个语言翻译成中文，提供多翻译源结果
-    指令:
-        翻译 xxxx
+    usage=f"""[md][width=900]
+## 将多个语言翻译成中文，提供多翻译源结果
+### 指令
+- 翻译 xxxx
+- 翻译to:语言 xxx
+---
+### 当添加`to:语言`参数时，仅启用谷歌、百度翻译
+#### 谷歌翻译支持的语言有
+{get_language_form(google_language)}
+
+#### 百度翻译支持的语言有
+{get_language_form(baidu_language)}
 """.strip(),
     extra={
         "unique_name": "migang_translate",
@@ -43,7 +54,7 @@ __plugin_config__ = (
 )
 
 
-translate = on_command(cmd="翻译", priority=5, block=True)
+translate = on_startswith("翻译", priority=5, block=True)
 
 GOOGLE_STATUS = False
 
@@ -60,19 +71,35 @@ async def _():
 
 
 @translate.handle()
-async def _(bot: Bot, event, arg: Message = CommandArg()):
-    text = arg.extract_plain_text().strip()
-    tasks = [
-        get_youdao_trans(text),
-    ]
-    if GOOGLE_STATUS:
-        tasks.append(get_google_trans(text))
-    if await get_config("baidu_api_key"):
-        tasks.append(get_baidu_trans(text))
-    if await get_config("azure_api_key"):
-        tasks.append(get_azure_trans(text))
-    if await get_config("deepl_api_key"):
-        tasks.append(get_deepl_trans(text))
+async def _(
+    bot: Bot,
+    event: MessageEvent,
+    plain_text: str = EventPlainText(),
+    cmd: str = Startswith(),
+):
+    text = plain_text.removeprefix(cmd).strip()
+    to = None
+    if match := re.search("^to:(\S+)"):
+        to = match.group(1)
+        text = text.removeprefix(match.group(0)).strip()
+    tasks = []
+    if to is None:
+        tasks.append(
+            get_youdao_trans(text),
+        )
+        if GOOGLE_STATUS:
+            tasks.append(get_google_trans(text))
+        if await get_config("baidu_api_key"):
+            tasks.append(get_baidu_trans(text))
+        if await get_config("azure_api_key"):
+            tasks.append(get_azure_trans(text))
+        if await get_config("deepl_api_key"):
+            tasks.append(get_deepl_trans(text))
+    else:
+        if GOOGLE_STATUS:
+            tasks.append(get_google_trans(text=text, to=to))
+        if await get_config("baidu_api_key"):
+            tasks.append(get_baidu_trans(text, to=to))
     msg = await asyncio.gather(*tasks)
     if msg and len(max(msg, key=len)) < 60:
         await translate.finish("\n".join(msg))
