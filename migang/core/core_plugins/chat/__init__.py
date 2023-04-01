@@ -16,7 +16,7 @@ from nonebot.adapters.onebot.v11 import (
 
 from migang.core import ConfigItem, get_config
 
-from .chatgpt import get_gpt_chat
+from .chatgpt import handler, get_gpt_chat
 from .message_manager import MessageManager
 from .data_source import hello, no_result, anti_zuichou
 
@@ -54,6 +54,10 @@ __plugin_config__ = (
 
 chat = on_message(rule=to_me(), priority=998, permission=GROUP)
 message_manager = MessageManager(hello, anti_zuichou, get_gpt_chat, no_result)
+# 没at时候把消息送给naturel_gpt处理
+on_message(
+    priority=998, block=False, rule=lambda event: not event.is_tome()
+).append_handler(handler=handler)
 
 
 @chat.handle()

@@ -3,21 +3,21 @@ import asyncio
 
 import aiohttp
 from nonebot.log import logger
-from nonebot.params import Startswith, EventPlainText
 from nonebot.plugin import PluginMetadata
 from nonebot import get_driver, on_startswith
-from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent, MessageEvent
+from nonebot.params import Startswith, EventPlainText
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent
 
 from migang.core import ConfigItem, get_config
 
 from .data_source import (
+    baidu_language,
     get_azure_trans,
     get_baidu_trans,
     get_deepl_trans,
+    google_language,
     get_google_trans,
     get_youdao_trans,
-    baidu_language,
-    google_language,
     get_language_form,
 )
 

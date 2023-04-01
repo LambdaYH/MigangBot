@@ -421,7 +421,7 @@ async def do_msg_response(
                             logger.info(f"检测到纯符号文本: {reply.get(key).strip()}，跳过发送...")
                         continue
                     await matcher.send(reply.get(key).strip())
-                    logger.info(f"回复文字消息：{reply.get(key).strip()}")
+                    logger.info(f"回复文本消息: {reply.get(key).strip()}")
                 elif key == "image" and reply.get(key):  # 发送图片
                     await matcher.send(MessageSegment.image(file=reply.get(key, "")))
                     logger.info(f"回复图片消息: {reply.get(key)}")

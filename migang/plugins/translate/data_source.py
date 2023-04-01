@@ -10,18 +10,15 @@ import aiohttp
 from nonebot import get_driver
 from nonebot.log import logger
 from nonebot.utils import run_sync
+from deep_translator import DeeplTranslator, GoogleTranslator
 
 from migang.core import get_config
-
-from deep_translator import DeeplTranslator, GoogleTranslator
 
 
 def get_language_form(language: Dict[str, str], num_per_line: int = 5) -> str:
     language_list = list(language)
     lines = []
-    lines.append(
-        "<div style='width:90'></div>".join(["|"] * (num_per_line + 1))
-    )
+    lines.append("<div style='width:90'></div>".join(["|"] * (num_per_line + 1)))
     lines.append("|" + "|".join([":---"] * num_per_line) + "|")
     for i in range(math.ceil(len(language) / num_per_line)):
         this_line = []

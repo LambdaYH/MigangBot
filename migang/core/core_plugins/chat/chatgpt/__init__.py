@@ -1,8 +1,6 @@
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 
-from migang.core.manager import ConfigItem, config_manager
-
 from ..exception import BreakSession
 from .naturel_gpt.matcher import handler
 
