@@ -174,7 +174,7 @@ def get_google_trans(text: str, to: str = "zh-CN"):
     if to not in google_language:
         return f"[谷歌机翻]\n> 目标语言不受支持..."
     try:
-        return f"[谷歌机翻]\n> {GoogleTranslator(source='auto', target='zh-CN').translate(text=text)}"
+        return f"[谷歌机翻]\n> {GoogleTranslator(source='auto', target=to).translate(text=text)}"
     except:
         return "[谷歌机翻]\n> 出错了~"
 
@@ -244,7 +244,7 @@ baidu_language = {
 
 
 async def get_baidu_trans(text: str, to: str = "zh"):
-    if to not in baidu_language.values():
+    if to not in baidu_language:
         return "[百度机翻]\n> 目标语言不受支持..."
     try:
         baidu_appid = await get_config("baidu_app_id")
