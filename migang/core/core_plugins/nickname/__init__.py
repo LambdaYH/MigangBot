@@ -51,7 +51,7 @@ set_nickname = on_command(
 query_nickname = on_fullmatch(
     ("我叫什么", "我是谁", "我的名字"), priority=1, block=True, rule=to_me()
 )
-cancel_nickname = on_fullmatch("取消昵称", priority=5, block=True, rule=to_me())
+cancel_nickname = on_fullmatch(("取消昵称", "忘了我吧"), priority=5, block=True, rule=to_me())
 
 
 @set_nickname.handle()
@@ -108,7 +108,7 @@ async def _(bot: Bot, event: MessageEvent):
         name := await UserProperty.filter(user_id=event.user_id)
         .first()
         .values_list("nickname")
-    ):
+    ) and name[0] != None:
         name = name[0]
         await query_nickname.finish(
             choice(
