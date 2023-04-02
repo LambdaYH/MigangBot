@@ -6,7 +6,12 @@ from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot import get_driver, on_startswith
 from nonebot.params import Startswith, EventPlainText
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    MessageEvent,
+    MessageSegment,
+    GroupMessageEvent,
+)
 
 from migang.core import ConfigItem, get_config
 
@@ -106,14 +111,7 @@ async def _(
     if msg and len(max(msg, key=len)) < 60:
         await translate.finish("\n".join(msg))
     msg = [
-        {
-            "type": "node",
-            "data": {
-                "name": "翻译威",
-                "uin": f"{bot.self_id}",
-                "content": m,
-            },
-        }
+        MessageSegment.node_custom(user_id=event.self_id, nickname="翻译威", content=m)
         for m in msg
     ]
     if isinstance(event, GroupMessageEvent):

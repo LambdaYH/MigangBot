@@ -390,7 +390,7 @@ async def _(arg: Message = CommandArg()):
 
 @group_increase.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
-    if event.user_id == int(bot.self_id):
+    if event.user_id == event.self_id:
         if (
             _handle_group != "同意"
             and (await get_config("auto_leave"))

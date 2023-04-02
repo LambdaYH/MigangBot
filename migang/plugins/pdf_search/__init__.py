@@ -61,7 +61,7 @@ async def _(bot: Bot, event: MessageEvent, cmd: str = Startswith()):
         )
         texts = [
             MessageSegment.node_custom(
-                user_id=bot.self_id, nickname="无情的搜索机器", content="搜索到以下结果"
+                user_id=event.self_id, nickname="无情的搜索机器", content="搜索到以下结果"
             )
         ]
         count = 0
@@ -80,7 +80,7 @@ async def _(bot: Bot, event: MessageEvent, cmd: str = Startswith()):
 
             texts.append(
                 MessageSegment.node_custom(
-                    user_id=bot.self_id,
+                    user_id=event.self_id,
                     nickname="无情的搜索机器",
                     content=f"""
 {count}.
@@ -99,7 +99,7 @@ URL:{href}
     else:
         texts.append(
             MessageSegment.node_custom(
-                user_id=bot.self_id,
+                user_id=event.self_id,
                 nickname="无情的搜索机器",
                 content=f"共{total}个结果，仅显示前3个" if total > count else f"共{count}个结果",
             )

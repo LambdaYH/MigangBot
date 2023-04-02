@@ -78,7 +78,7 @@ async def _(
 
 
 @qrcode.got("image", prompt="请发送需要识别的二维码图片")
-async def _(bot: Bot, event, state: T_State):
+async def _(bot: Bot, event: MessageEvent, state: T_State):
     if isinstance(state["image"], Message):
         imgs = [seg.data["url"] for seg in state["image"]]
         if not imgs:
@@ -96,14 +96,11 @@ async def _(bot: Bot, event, state: T_State):
             if not urls:
                 continue
             msg_list.append(
-                {
-                    "type": "node",
-                    "data": {
-                        "name": list(bot.config.nickname)[0],
-                        "uin": f"{bot.self_id}",
-                        "content": urls,
-                    },
-                }
+                MessageSegment.node_custom(
+                    user_id=event.self_id,
+                    nickname=list(bot.config.nickname)[0],
+                    content=urls,
+                )
             )
     if not msg_list:
         await qrcode.finish("未检测到二维码", at_sender=True)

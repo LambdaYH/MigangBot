@@ -407,6 +407,7 @@ async def do_msg_response(
                 if config.DEBUG_LEVEL > 0:
                     logger.info(f"检测到纯符号文本: {reply.strip()}，跳过发送...")
                 continue
+            logger.info(f"回复文本消息: {reply.strip()}")
             if config.ENABLE_MSG_TO_IMG:
                 img = await text_to_img(reply.strip())
                 await matcher.send(MessageSegment.image(img))

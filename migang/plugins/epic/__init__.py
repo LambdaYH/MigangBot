@@ -34,7 +34,7 @@ async def handle(bot: Bot, event: MessageEvent):
     Type_Event = "Private"
     if isinstance(event, GroupMessageEvent):
         Type_Event = "Group"
-    msg_list, code = await get_epic_free(bot, Type_Event)
+    msg_list, code = await get_epic_free(event, Type_Event)
     if code == 404:
         await epic.send(msg_list)
     elif isinstance(event, GroupMessageEvent):

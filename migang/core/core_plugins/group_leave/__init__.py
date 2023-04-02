@@ -27,7 +27,7 @@ group_decrease = on_notice(priority=1, block=False)
 
 @group_decrease.handle()
 async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
-    if event.user_id != int(bot.self_id) and check_task(
+    if event.user_id != event.self_id and check_task(
         group_id=event.group_id, task_name="group_leave"
     ):
         try:

@@ -519,7 +519,7 @@ async def _(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent]):
     msgs = []
     msgs.append(
         MessageSegment.node_custom(
-            user_id=bot.self_id,
+            user_id=event.self_id,
             nickname="定时姬",
             content=f"""
 [添加定时任务 任务类型] 来添加
@@ -538,7 +538,7 @@ cron:cron格式
     )
     msgs += [
         MessageSegment.node_custom(
-            user_id=bot.self_id, nickname="定时姬", content=MessageSegment.image(url)
+            user_id=event.self_id, nickname="定时姬", content=MessageSegment.image(url)
         )
         for url in [
             "https://image.cinte.cc/i/2021/05/26/dabd2171ef1bf.png",

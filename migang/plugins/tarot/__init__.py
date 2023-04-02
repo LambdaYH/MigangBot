@@ -82,7 +82,7 @@ async def _(bot: Bot, event: MessageEvent):
         if count < 4:
             chain.append(
                 MessageSegment.node_custom(
-                    bot.self_id,
+                    event.self_id,
                     f"占星术士{list(bot.config.nickname)[0]}",
                     "".join(msg) + image_file,
                 )

@@ -104,7 +104,7 @@ async def _(event: GroupMessageEvent):
 
 @group_increase.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
-    if event.user_id != int(bot.self_id):
+    if event.user_id != event.self_id:
         group_welcome = await GroupWelcome.filter(group_id=event.group_id).first()
         if (
             not group_welcome

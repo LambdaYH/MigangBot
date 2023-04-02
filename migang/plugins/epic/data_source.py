@@ -2,7 +2,7 @@ from datetime import datetime
 
 import aiohttp
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 
 
 # 获取所有 Epic Game Store 促销游戏
@@ -51,7 +51,7 @@ async def get_epic_game_desp(name):
 # 获取 Epic Game Store 免费游戏信息
 # 处理免费游戏的信息方法借鉴 pip 包 epicstore_api 示例
 # https://github.com/SD4RK/epicstore_api/blob/master/examples/free_games_example.py
-async def get_epic_free(bot: Bot, type_event: str):
+async def get_epic_free(event: MessageEvent, type_event: str):
     games = await get_epic_game()
     if not games:
         return "Epic 可能又抽风啦，请稍后再试（", 404
@@ -84,15 +84,13 @@ async def get_epic_free(bot: Bot, type_event: str):
                         _message = "\n由 {} 公司发行的游戏 {} ({}) 在 UTC 时间 {} 即将推出免费游玩，预计截至 {}。".format(
                             game_corp, game_name, game_price, start_date, end_date
                         )
-                        data = {
-                            "type": "node",
-                            "data": {
-                                "name": "Epic威",
-                                "uin": f"{bot.self_id}",
-                                "content": _message,
-                            },
-                        }
-                        msg_list.append(data)
+                        msg_list.append(
+                            MessageSegment.node_custom(
+                                user_id=event.self_id,
+                                nickname="Epic威",
+                                content=_message,
+                            )
+                        )
                     else:
                         msg = "\n由 {} 公司发行的游戏 {} ({}) 在 UTC 时间 {} 即将推出免费游玩，预计截至 {}。".format(
                             game_corp, game_name, game_price, start_date, end_date
@@ -176,15 +174,13 @@ async def get_epic_free(bot: Bot, type_event: str):
                             end_date,
                             game_url,
                         )
-                        data = {
-                            "type": "node",
-                            "data": {
-                                "name": "Epic威",
-                                "uin": f"{bot.self_id}",
-                                "content": _message,
-                            },
-                        }
-                        msg_list.append(data)
+                        msg_list.append(
+                            MessageSegment.node_custom(
+                                user_id=event.self_id,
+                                nickname="Epic威",
+                                content=_message,
+                            )
+                        )
                     else:
                         msg = "[CQ:image,file={}]\n\nFREE now :: {} ({})\n{}\n此游戏由 {} 开发、{} 发行，将在 UTC 时间 {} 结束免费游玩，戳链接速度加入你的游戏库吧~\n{}\n".format(
                             game_thumbnail,

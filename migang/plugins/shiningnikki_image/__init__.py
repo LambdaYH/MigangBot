@@ -69,17 +69,14 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
     num = min(len(suits), num)
     for i in range(num):
         msgs.append(
-            {
-                "type": "node",
-                "data": {
-                    "name": "苏暖暖",
-                    "uin": f"{bot.self_id}",
-                    "content": MessageSegment.image(
-                        DATA_PATH / "suits" / f"{suits_list[i]}.jpg"
-                    )
-                    + f"\n套装名：{suits[suits_list[i]]['name']}",
-                },
-            }
+            MessageSegment.node_custom(
+                user_id=event.self_id,
+                nickname="苏暖暖",
+                content=MessageSegment.image(
+                    DATA_PATH / "suits" / f"{suits_list[i]}.jpg"
+                )
+                + f"\n套装名：{suits[suits_list[i]]['name']}",
+            )
         )
     if isinstance(event, GroupMessageEvent):
         await bot.send_forward_msg(group_id=event.group_id, messages=msgs)

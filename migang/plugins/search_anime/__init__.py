@@ -55,7 +55,9 @@ async def _(
         if isinstance(anime_report, str):
             await search_anime.finish(anime_report)
         mes_list = [
-            MessageSegment.node_custom(user_id=bot.self_id, nickname="搜番威", content=mes)
+            MessageSegment.node_custom(
+                user_id=event.self_id, nickname="搜番威", content=mes
+            )
             for mes in anime_report
         ]
         if isinstance(event, GroupMessageEvent):
