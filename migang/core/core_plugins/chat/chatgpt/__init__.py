@@ -35,7 +35,6 @@ sender_name_cache: TTLCache[Tuple[int, int]] = TTLCache(maxsize=1024, ttl=60 * 1
 
 
 async def not_at_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
-    logger.info("触发了我的检查")
     # 只响应非at事件，at事件让别的去管
     if event.is_tome():
         return False
@@ -89,7 +88,6 @@ async def not_at_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> boo
 
 
 async def not_at_handler(matcher: Matcher, state: T_State):
-    logger.info("触发了我的回复")
     # 进入对话流程，进行回复
     chat = state["gpt_chat"]
     trigger_text = state["gpt_trigger_text"]
