@@ -2,6 +2,7 @@
 from typing import Dict, List, Tuple, Union
 
 import requests
+from aiocache import cached
 from nonebot.rule import Rule
 from nonebot.params import Matcher
 from nonebot.permission import SUPERUSER
