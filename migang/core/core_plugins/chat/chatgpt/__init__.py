@@ -59,10 +59,10 @@ async def not_at_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> boo
         )
         sender_name_cache[(event.group_id, event.user_id)] = sender_name
 
-    trigger_text, _ = await gen_chat_text(event=event, bot=bot)
+    trigger_text, wake_up = await gen_chat_text(event=event, bot=bot)
     chat: Chat = ChatManager.instance.get_or_create_chat(chat_key=chat_key)
 
-    if config.REPLY_ON_NAME_MENTION and (  # 如果和 bot 相关，处理
+    if config.REPLY_ON_NAME_MENTION and (
         chat.get_chat_preset_key().lower() in trigger_text.lower()
     ):
         # 更新全局对话历史记录
@@ -78,6 +78,7 @@ async def not_at_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> boo
         state["gpt_trigger_text"] = trigger_text
         state["gpt_chat"] = chat
         state["gpt_chat_key"] = chat_key
+        state["gpt_is_tome"] = wake_up
         return True
     # 和Bot无关，记录但是不处理
     if config.CHAT_ENABLE_RECORD_ORTHER:
@@ -88,14 +89,17 @@ async def not_at_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> boo
 
 
 async def not_at_handler(matcher: Matcher, state: T_State):
-    # 进入对话流程，进行回复
+    # 进行回复，初始化所需
     chat = state["gpt_chat"]
     trigger_text = state["gpt_trigger_text"]
     sender_name = state["gpt_sender_name"]
     trigger_userid = state["gpt_trigger_userid"]
     chat_key = state["gpt_chat_key"]
+    is_tome = state["gpt_is_tome"]
     loop_data = {}
     loop_times = 0
+
+    wake_up = False  # 进入对话流程，重置唤醒状态
 
     # 记录对用户的对话信息
     await chat.update_chat_history_row_for_user(
@@ -340,7 +344,7 @@ async def not_at_handler(matcher: Matcher, state: T_State):
                 wake_up=wake_up,
                 loop_times=loop_times + 1,
                 chat_type="group",
-                is_tome=False,
+                is_tome=is_tome,
                 chat_key=chat_key,
             )
         elif "notify" in loop_data:  # 如果存在通知消息，将其作为触发消息再次调用对话
@@ -352,6 +356,6 @@ async def not_at_handler(matcher: Matcher, state: T_State):
                 wake_up=wake_up,
                 loop_times=loop_times + 1,
                 chat_type="group",
-                is_tome=False,
+                is_tome=is_tome,
                 chat_key=chat_key,
             )
