@@ -86,7 +86,6 @@ async def _(
                 group_member_set.remove(event.self_id)
             if event.user_id in group_member_set:
                 group_member_set.remove(event.user_id)
-
             wife_id = choice(list(group_member_set))
             if not user_wife_info:
                 user_wife_info = DailyWife(
@@ -96,8 +95,9 @@ async def _(
                     time=datetime.now(),
                 )
                 session.add(user_wife_info)
-            user_wife_info.wife_id = wife_id
-            user_wife_info.time = datetime.now()
+            else:
+                user_wife_info.wife_id = wife_id
+                user_wife_info.time = datetime.now()
     member_info = await bot.get_group_member_info(
         group_id=event.group_id, user_id=wife_id
     )
