@@ -18,11 +18,11 @@
 <details><summary>Debian/Ubuntu下的部署</summary>
 ⚠️ 仅在Debian11 + Python3.10 + Postgres 下测试过
 
-1. 安装系统依赖
+1.  安装系统依赖
 ```
 sudo apt install libopencv-dev fonts-noto
 ```
-2. 安装Postgres并创建数据库（如果不用Postgres就默认使用sqlite，db文件在`data/database/migangbot.db`）
+2.  安装Postgres并创建数据库（如果不用Postgres就默认使用sqlite，db文件在`data/database/migangbot.db`）
 ```
 sudo apt install postgresql postgresql-contrib
 sudo su - postgres
@@ -35,23 +35,23 @@ CREATE DATABASE migangbot_db OWNER migangbot_user;
 3. 安装Python3.10（编译安装或者用包管理器）
 <details><summary>编译安装</summary>
 
-1. 安装依赖
+1.  安装依赖
 
 ```
 sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
 ```
-2. 下载源码并解压
+2.  下载源码并解压
 ```
 wget https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz
 tar -zxvf Python-3.10.10.tgz
 ```
-3. 编译
+3.  编译
 ```
 cd Python-3.10.10/
 ./configure --enable-optimizations
 make -j 2
 ```
-4. 安装
+4.  安装
 ```
 sudo make altinstall
 ```
@@ -61,30 +61,30 @@ sudo make altinstall
 不知道哪个发行版的默认python3是python3.10
 </details>
 
-4. 安装poetry
+4.  安装poetry
 ```
 pip3.10 install poetry
 ```
-5. 下载MigangBot并安装依赖
+5.  下载MigangBot并安装依赖
 ```
 git clone https://github.com/LambdaYH/MigangBot.git
 cd MigangBot
 poetry shell
 poetry install
 ```
-6. 配置数据库（若跳过这步则使用sqlite）
+6.  配置数据库（若跳过这步则使用sqlite）
 ```
 cp db_config.yaml.example db_config.yaml
 ```
 并完成`db_config.yaml`的编辑
 
-7. 启动一次Bot生成各项配置文件
+7.  启动一次Bot生成各项配置文件
 ```
 # 先编辑 .env.prod
 nb run
 ```
-8. 编辑所需文件（参考[运行时各路径说明](#Bot运行时各路径说明)）
-9. 持久化运行（二选一）
+8.  编辑所需文件（参考[运行时各文件/路径说明](#运行时各文件/路径说明)）
+9.  持久化运行（二选一）
 - 使用`supervisor`
 ```
 sudo apt install supervisor
@@ -139,14 +139,19 @@ bash run.sh
 | aliases | 别名 | `List[str]` |
 | group_permission | >=此群权限的群才可触发该插件 | `int`（1 - 5）  |
 | user_permission | >=此用户权限的用户才可触发该插件 | `int`（1 - 5）  |
-| global_status | 全局启用状态 | bool |
-| default_status | 默认启用状态 | bool |
+| global_status | 全局启用状态 | `bool` |
+| default_status | 默认启用状态 | `bool` |
 | enabled_group | 启用的群，仅默认启用状态为`false`时生效 | `List[int]` |
 | disabled_group | 禁用的群，仅默认启用状态为`true`时生效 | `List[int]` |
 | category | 插件类别，用于帮助图片中的分类显示 | `str` |
-| hidden | 是否在帮助界面中隐藏 | bool |
+| hidden | 是否在帮助界面中隐藏 | `bool` |
 | author | 插件作者，虽然放着这么一个项，但是完全没用 | `str` |
 | version | 插件版本，虽然放着这么一个项，但是完全没用 | `any` |
+
+### data/core/custom_usage.yaml 说明
+- text: 直接写就行
+- markdown: 说明的开头加上`[md]`，可选择性添加`[width=xxx]`来指定生成的图片宽度
+- html: 说明的开头加上`[html]`，可选择性添加`[width=xxx,height=xxx]`来指定宽度与高度
 
 
 
