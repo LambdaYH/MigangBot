@@ -2,13 +2,20 @@ import re
 from datetime import timedelta
 from typing import Tuple, Union
 
-from nonebot import on_regex
+from nonebot import require, on_regex
 from nonebot.params import RegexGroup
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from migang.core.permission import Permission
 from migang.core.manager import permission_manager
+
+require("switch")
+from migang.core.core_plugins.switch import (
+    clean_user_help_image,
+    clean_group_help_image,
+    clean_group_task_image,
+)
 
 __plugin_meta__ = PluginMetadata(
     name="权限控制",
@@ -77,10 +84,13 @@ async def _(reg_groups: Tuple = RegexGroup()):
         permission_manager.set_user_perm(
             user_id=target_id, permission=perm, duration=duration
         )
+        clean_user_help_image(user_id=target_id)
     else:
         permission_manager.set_group_perm(
             group_id=target_id, permission=perm, duration=duration
         )
+        clean_group_task_image(group_id=target_id)
+        clean_group_help_image(group_id=target_id)
     await perm_ctl.send(
         f"已设定{type_}的权限为 {perm}" + (f"持续时长为 {duration}" if duration else "")
     )

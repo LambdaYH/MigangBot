@@ -39,6 +39,7 @@ openai = "^0.27.2"
 cairosvg = "^2.7.0"
 cachetools = "^5.3.0"
 dateparser = "^1.1.7"
+feedparser = "^6.0.10"
 transformers = "^4.27.3"
 
 nonebot-bison = "^0.7.1"

@@ -59,6 +59,11 @@ def clean_group_task_image(group_id: int):
         file.unlink()
 
 
+def clean_user_help_image(user_id: int):
+    if (file := USER_HELP_PATH / f"{user_id}.png").exists():
+        file.unlink()
+
+
 @switch.handle()
 async def _(
     event: GroupMessageEvent,
