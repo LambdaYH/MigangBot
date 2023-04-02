@@ -10,10 +10,9 @@ from nonebot.adapters.onebot.v11 import (
 )
 
 from migang.utils.text import filt_message
-from migang.core.rules import GroupTaskChecker
 from migang.core.exception import ConfigNoExistError
 from migang.utils.tts import get_azure_tts, azure_tts_status
-from migang.core import TaskItem, ConfigItem, sync_get_config
+from migang.core import TaskItem, ConfigItem, check_task, sync_get_config
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
@@ -38,13 +37,6 @@ __plugin_config__ = ConfigItem(
     description="a的值，复读概率计算式：p_n = 1 - 1/a^n 递推式：p_n+1 = 1 - (1 - p_n) / a",
 )
 __plugin_task__ = TaskItem(task_name="repeat", name="复读", default_status=True)
-
-repeat = on_message(
-    permission=GROUP,
-    priority=999,
-    block=False,
-    rule=GroupTaskChecker(task_name="repeat"),
-)
 
 
 class Fudu:
@@ -85,38 +77,47 @@ except ConfigNoExistError:
     PROB_A = 1.35
 
 
-@repeat.handle()
-async def _(event: GroupMessageEvent):
-    if event.is_tome():
-        return
+def _rule(event: GroupMessageEvent) -> bool:
+    if (not check_task(group_id=event.group_id, task_name="repeat")) or event.is_tome():
+        return False
     add_msg = uniform_message(event.message)
     if not add_msg:
-        return
+        return False
     if not _fudu_list.check(event.group_id, add_msg):
         _fudu_list.reset(event.group_id, add_msg)
-        return
+        return False
     if not _fudu_list.is_repeated(event.group_id):
         p = _fudu_list.prob(event.group_id)
         if random.random() < p:
-            plain_text = event.get_plaintext()
-            _fudu_list.set_repeated(event.group_id)
-            if random.random() < 0.10:
-                if plain_text.endswith("打断施法！"):
-                    await repeat.finish("打断" + plain_text)
-                else:
-                    await repeat.finish("打断施法！")
-            if (
-                azure_tts_status()
-                and random.random() < 0.20
-                and 0 < len(plain_text) < 50
-            ):
-                await repeat.finish(
-                    MessageSegment.record(await get_azure_tts(filt_message(plain_text)))
-                )
-            else:
-                await repeat.finish(filt_message(event.message))
+            return True
         else:
             _fudu_list.set_prob(event.group_id, 1 - (1 - p) / PROB_A)
+    return False
+
+
+repeat = on_message(
+    permission=GROUP,
+    priority=999,
+    block=False,
+    rule=_rule,
+)
+
+
+@repeat.handle()
+async def _(event: GroupMessageEvent):
+    plain_text = event.get_plaintext()
+    _fudu_list.set_repeated(event.group_id)
+    if random.random() < 0.10:
+        if plain_text.endswith("打断施法！"):
+            await repeat.finish("打断" + plain_text)
+        else:
+            await repeat.finish("打断施法！")
+    if azure_tts_status() and random.random() < 0.20 and 0 < len(plain_text) < 50:
+        await repeat.finish(
+            MessageSegment.record(await get_azure_tts(filt_message(plain_text)))
+        )
+    else:
+        await repeat.finish(filt_message(event.message))
 
 
 def uniform_message(msg: Message) -> Message:
