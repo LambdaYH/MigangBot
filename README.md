@@ -83,7 +83,7 @@ cp db_config.yaml.example db_config.yaml
 # 先编辑 .env.prod
 nb run
 ```
-8.  编辑所需文件（参考[运行时各文件/路径说明](#运行时各文件/路径说明)）
+8.  编辑所需文件（参考[运行时各文件/路径说明](#运行时各文件路径说明)）
 9.  持久化运行（二选一）
 - 使用`supervisor`
 ```
