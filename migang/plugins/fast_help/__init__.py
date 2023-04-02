@@ -1,5 +1,4 @@
-import anyio
-from nonebot.params import Startswith
+from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from nonebot import require, on_startswith
 from nonebot.adapters.onebot.v11 import MessageEvent
@@ -23,11 +22,17 @@ usage：
 require("help")
 from migang.core.core_plugins.help.data_source import draw_usage, get_plugin_help
 
-fast_help = on_startswith("/", priority=955, block=False)
+
+def _rule(event: MessageEvent, state: T_State) -> bool:
+    if usage := get_plugin_help(name=event.get_plaintext()[1:].strip()):
+        state["_usage"] = usage
+        return True
+    return False
+
+
+fast_help = on_startswith("/", priority=955, block=False, rule=_rule)
 
 
 @fast_help.handle()
-async def _(event: MessageEvent, cmd: str = Startswith()):
-    plugin_name = event.get_plaintext().removeprefix(cmd).strip()
-    if usage := get_plugin_help(name=plugin_name):
-        await fast_help.send(await draw_usage(usage))
+async def _(state: T_State):
+    await fast_help.send(await draw_usage(state["_usage"]))
