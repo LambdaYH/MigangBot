@@ -39,7 +39,7 @@ help_msg = """/market item 物品名 猫/鸟/猪/狗: 查询服务器的物品�
 Powered by https://universalis.app"""
 
 upload_help = """您可以使用以下几种方式上传交易数据：
-0.如果您使用咖啡整合的ACT，可以启用抹茶插件中的Universalis集成功能 http://url.cn/a9xaUIKs 
+0.如果您使用咖啡整合的ACT，可以启用抹茶插件中的Universalis集成功能 http://url.cn/a9xaUIKs
 1.如果您使用过国际服的 XIVLauncher，您可以使用国服支持的Dalamud版本 https://url.cn/6L7nD0gF
 2.如果您使用过ACT，您可以加载ACT插件 UniversalisPlugin https://url.cn/TEY1QKKV
 3.如果您想不依赖于其他程序，您可以使用 UniversalisStandalone https://url.cn/TEY1QKKV

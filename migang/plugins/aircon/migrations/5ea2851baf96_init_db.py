@@ -1,7 +1,7 @@
 """init_db
 
 Revision ID: 5ea2851baf96
-Revises: 
+Revises:
 Create Date: 2023-03-04 17:58:54.105170
 
 """

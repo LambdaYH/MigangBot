@@ -22,8 +22,8 @@ usage：
     指令：
         code> 语言 代码
     例子：
-        code> cpp 
-        #include<iostream> 
+        code> cpp
+        #include<iostream>
         int main() {{ std::cout << "hello migang" << std::endl; }}
 支持的语言：
 {list_supp_lang(7)}
