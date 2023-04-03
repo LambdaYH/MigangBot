@@ -16,8 +16,7 @@ __plugin_meta__ = PluginMetadata(
 usage：
     聚合多个源的百科，视网络环境搜索可能不稳定
     当前搜索源包含：
-        - 百度百科
-        - 小鸡词典（R.I.P）
+        - 萌娘百科
         - nbnhhsh
         - 最终幻想14Wiki（獭獭那抄的）
     指令：

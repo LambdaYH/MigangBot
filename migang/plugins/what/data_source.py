@@ -8,6 +8,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from .jiki_source import get_jiki
 from .baidu_source import get_baidu
+from .moegirl_source import get_moegirl
 from .nbnhhsh_source import get_nbnhhsh
 from .ffxivwiki_source import get_ffxivwiki
 
@@ -18,12 +19,14 @@ sources_func = {
     "baidu": get_baidu,
     "nbnhhsh": get_nbnhhsh,
     "ffxivwiki": get_ffxivwiki,
+    "moegirl": get_moegirl,
 }
 source_name = {
     "jiki": "小鸡词典",
     "baidu": "百度百科",
     "nbnhhsh": "能不能好好说话",
     "ffxivwiki": "最终幻想14Wiki",
+    "moegirl": "萌娘百科",
 }
 
 
@@ -37,7 +40,7 @@ async def render_res(question: str, content: str, source: str) -> bytes:
 
 
 async def get_content(
-    keyword: str, sources=["nbnhhsh", "ffxivwiki", "baidu"]
+    keyword: str, sources=["nbnhhsh", "ffxivwiki", "moegirl"]
 ) -> Union[str, Message]:
     result = None
     msgs = await asyncio.gather(
