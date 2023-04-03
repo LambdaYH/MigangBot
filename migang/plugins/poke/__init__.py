@@ -8,10 +8,7 @@ __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
     name="戳一戳",
     description="简单的戳一戳",
-    usage="""
-usage：
-    搜pdf xxx
-""".strip(),
+    usage="",
     extra={
         "unique_name": "migang_poke",
         "example": "",
@@ -30,4 +27,4 @@ poke = on_notice(priority=5, block=False, rule=_rule)
 
 @poke.handle()
 async def _(event: PokeNotifyEvent):
-    await poke.send(MessageSegment.poke(id_=event.target_id))
+    await poke.send(MessageSegment("poke", {"qq": event.user_id}))

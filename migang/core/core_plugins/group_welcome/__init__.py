@@ -57,7 +57,12 @@ change_status = on_regex(
 
 show_group_welcome = on_fullmatch("查看群欢迎语", priority=1, permission=GROUP, block=True)
 
-group_increase = on_notice(priority=1, block=False)
+
+def _rule_group_increase(event: GroupIncreaseNoticeEvent) -> bool:
+    return event.user_id != event.self_id
+
+
+group_increase = on_notice(priority=1, block=False, rule=_rule_group_increase)
 
 
 @change_group_welcome.handle()
@@ -104,15 +109,9 @@ async def _(event: GroupMessageEvent):
 
 @group_increase.handle()
 async def _(event: GroupIncreaseNoticeEvent):
-    if event.user_id != event.self_id:
-        group_welcome = await GroupWelcome.filter(group_id=event.group_id).first()
-        if (
-            not group_welcome
-            or not group_welcome.status
-            or group_welcome.content is None
-        ):
-            return
-        await group_increase.send(
-            MessageSegment.at(event.user_id)
-            + deserialize_message(group_welcome.content)
-        )
+    group_welcome = await GroupWelcome.filter(group_id=event.group_id).first()
+    if not group_welcome or not group_welcome.status or group_welcome.content is None:
+        return
+    await group_increase.send(
+        MessageSegment.at(event.user_id) + deserialize_message(group_welcome.content)
+    )

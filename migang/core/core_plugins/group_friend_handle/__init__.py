@@ -131,9 +131,23 @@ handle_request = on_command(
     permission=SUPERUSER,
 )
 change_request_handle = on_regex(r"^修改(群|好友)请求处理方式(询问|同意|拒绝)$", priority=1, block=False)
-group_increase = on_notice(priority=1, block=False)
-group_decrease = on_notice(priority=1, block=False)
-friend_add = on_notice(priority=1, block=False)
+
+
+def _rule_group_increase(event: GroupIncreaseNoticeEvent) -> bool:
+    return event.user_id == event.self_id
+
+
+def _rule_group_decrease(event: GroupDecreaseNoticeEvent) -> bool:
+    return event.sub_type == "kick_me"
+
+
+def _rule_friend_add(event: FriendAddNoticeEvent) -> bool:
+    return True
+
+
+group_increase = on_notice(priority=1, block=False, rule=_rule_group_increase)
+group_decrease = on_notice(priority=1, block=False, rule=_rule_group_decrease)
+friend_add = on_notice(priority=1, block=False, rule=_rule_friend_add)
 
 # 不强制退出的群
 allowed_group = set()
@@ -390,59 +404,57 @@ async def _(arg: Message = CommandArg()):
 
 @group_increase.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
-    if event.user_id == event.self_id:
-        if (
-            _handle_group != "同意"
-            and (await get_config("auto_leave"))
-            and (event.group_id not in allowed_group)
-        ):
-            await bot.send_group_msg(
-                group_id=event.group_id,
-                message=Message(await get_config("auto_leave_info")),
-            )
-            await bot.set_group_leave(group_id=event.group_id)
-            del request_manager.get_requests().group_request[-1]
-            await bot.send_private_msg(
-                user_id=int(list(bot.config.superusers)[0]),
-                message=f"已自动退出群聊 {event.group_id}",
-            )
-        else:
-            await asyncio.sleep(2)
-            await bot.send_group_msg(
-                group_id=event.group_id, message=Message(await get_config("group_help"))
-            )
+    if (
+        _handle_group != "同意"
+        and (await get_config("auto_leave"))
+        and (event.group_id not in allowed_group)
+    ):
+        await bot.send_group_msg(
+            group_id=event.group_id,
+            message=Message(await get_config("auto_leave_info")),
+        )
+        await bot.set_group_leave(group_id=event.group_id)
+        del request_manager.get_requests().group_request[-1]
+        await bot.send_private_msg(
+            user_id=int(list(bot.config.superusers)[0]),
+            message=f"已自动退出群聊 {event.group_id}",
+        )
+    else:
+        await asyncio.sleep(2)
+        await bot.send_group_msg(
+            group_id=event.group_id, message=Message(await get_config("group_help"))
+        )
 
 
 @group_decrease.handle()
 async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
-    if event.sub_type == "kick_me":
-        operator_id = event.operator_id
-        group_id = event.group_id
-        try:
-            info = await bot.get_stranger_info(user_id=operator_id)
-            operator_name = info["nickname"]
-        except ActionFailed:
-            operator_name = "None"
-        try:
-            info = await bot.get_group_info(group_id=group_id)
-            group_name = info["group_name"]
-        except ActionFailed:
-            group_name = "None"
-        await bot.send_private_msg(
-            user_id=int(list(bot.config.superusers)[0]),
-            message=f"****呜..一份踢出报告****\n"
-            f"我被 {operator_name}({operator_id})\n"
-            f"踢出了 {group_name}({group_id})\n"
-            f"日期：{str(datetime.now()).split('.')[0]}",
-        )
-        if event.group_id in allowed_group:
-            allowed_group.remove(event.group_id)
-        permission_manager.set_group_perm(event.group_id, permission=BLACK)
-        permission_manager.set_user_perm(event.user_id, permission=BLACK)
-        logger.info(f"已拉黑用户 {operator_name}({operator_id}) 与群 {group_name}({group_id})")
+    operator_id = event.operator_id
+    group_id = event.group_id
+    try:
+        info = await bot.get_stranger_info(user_id=operator_id)
+        operator_name = info["nickname"]
+    except ActionFailed:
+        operator_name = "None"
+    try:
+        info = await bot.get_group_info(group_id=group_id)
+        group_name = info["group_name"]
+    except ActionFailed:
+        group_name = "None"
+    await bot.send_private_msg(
+        user_id=int(list(bot.config.superusers)[0]),
+        message=f"****呜..一份踢出报告****\n"
+        f"我被 {operator_name}({operator_id})\n"
+        f"踢出了 {group_name}({group_id})\n"
+        f"日期：{str(datetime.now()).split('.')[0]}",
+    )
+    if event.group_id in allowed_group:
+        allowed_group.remove(event.group_id)
+    permission_manager.set_group_perm(event.group_id, permission=BLACK)
+    permission_manager.set_user_perm(event.user_id, permission=BLACK)
+    logger.info(f"已拉黑用户 {operator_name}({operator_id}) 与群 {group_name}({group_id})")
 
 
 @friend_add.handle()
-async def _(_: FriendAddNoticeEvent):
+async def _():
     await asyncio.sleep(2)
     await friend_add.send(message=Message(await get_config("firend_help")))

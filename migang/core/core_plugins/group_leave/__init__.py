@@ -22,30 +22,32 @@ __plugin_category__ = "群功能"
 
 __plugin_task__ = TaskItem(task_name="group_leave", name="退群提醒", default_status=False)
 
-group_decrease = on_notice(priority=1, block=False)
+
+def _rule(event: GroupDecreaseNoticeEvent) -> bool:
+    return event.user_id != event.self_id and check_task(
+        group_id=event.group_id, task_name="group_leave"
+    )
+
+
+group_decrease = on_notice(priority=1, block=False, rule=_rule)
 
 
 @group_decrease.handle()
 async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
-    if event.user_id != event.self_id and check_task(
-        group_id=event.group_id, task_name="group_leave"
-    ):
-        try:
-            user_info = await bot.get_stranger_info(user_id=event.user_id)
-            user_name = user_info["nickname"]
-        except ActionFailed:
-            user_name = "未知"
-        if event.sub_type == "leave":
-            rst = f"{user_name}({event.user_id})前往了星之海..."
-        if event.sub_type == "kick":
-            operator = await bot.get_group_member_info(
-                user_id=event.operator_id, group_id=event.group_id
-            )
-            operator_name = (
-                operator["card"] if operator["card"] else operator["nickname"]
-            )
-            rst = f"{user_name}({event.user_id}) 被 {operator_name} 送往了星之海."
-        try:
-            await group_decrease.send(rst)
-        except ActionFailed:
-            return
+    try:
+        user_info = await bot.get_stranger_info(user_id=event.user_id)
+        user_name = user_info["nickname"]
+    except ActionFailed:
+        user_name = "未知"
+    if event.sub_type == "leave":
+        rst = f"{user_name}({event.user_id})前往了星之海..."
+    if event.sub_type == "kick":
+        operator = await bot.get_group_member_info(
+            user_id=event.operator_id, group_id=event.group_id
+        )
+        operator_name = operator["card"] if operator["card"] else operator["nickname"]
+        rst = f"{user_name}({event.user_id}) 被 {operator_name} 送往了星之海."
+    try:
+        await group_decrease.send(rst)
+    except ActionFailed:
+        return
