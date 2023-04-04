@@ -214,11 +214,11 @@ class RequestManager:
             bot=bot, id=id, type_=type_, approve=False, reason=reason
         )
 
-    def get_group_request(self, id: int) -> GroupRequest:
+    def get_group_request(self, id_: int) -> GroupRequest:
         target = self.__data.group_request
-        if id >= len(target):
+        if id_ >= len(target):
             return None
-        return target[id]
+        return target[id_]
 
     def get_requests(self) -> Requests:
         """获取请求列表
