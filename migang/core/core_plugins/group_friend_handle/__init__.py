@@ -321,6 +321,7 @@ async def _(bot: Bot, cmds: Tuple[str, ...] = Command(), args: Message = Command
     cmd = "group" if cmds[0][2:4] == "入群" else "friend"
     approve = cmds[0][:2] == "同意"
     if approve:
+        allowed_group.add(request_manager.get_group_request(id=id_).group_id)
         await handle_request.send(
             await request_manager.approve(bot=bot, id=id_, type_=cmd)
         )
@@ -383,6 +384,8 @@ async def _(
 
 @change_request_handle.handle()
 async def _(reg_group: Tuple[str, ...] = RegexGroup()):
+    if reg_group[1] not in ("同意", "询问", "拒绝"):
+        await change_request_handle.finish("方式必须为 同意/询问/拒绝！")
     if reg_group[0] == "群":
         global _handle_group
         _handle_group = reg_group[1]
@@ -414,7 +417,7 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
             message=Message(await get_config("auto_leave_info")),
         )
         await bot.set_group_leave(group_id=event.group_id)
-        del request_manager.get_requests().group_request[-1]
+        await asyncio.sleep(0.5)
         await bot.send_private_msg(
             user_id=int(list(bot.config.superusers)[0]),
             message=f"已自动退出群聊 {event.group_id}",
