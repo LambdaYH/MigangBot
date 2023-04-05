@@ -61,18 +61,18 @@ async def _():
 
 
 async def update_image() -> Optional[Path]:
-    try:
-        path = IMAGE_PATH / f"{(datetime.now() - timedelta(hours=4)).date()}.png"
-        if path.exists():
-            return path
-        async with get_new_page(viewport={"width": 860, "height": 3000}) as page:
-            url = "https://bbs.mihoyo.com/ys/obc/channel/map/193"
-            await page.goto(url)
-            await page.wait_for_timeout(3000)
-            await page.locator(
-                '//*[@id="__layout"]/div/div[2]/div[2]/div/div[1]/div[2]/div/div'
-            ).screenshot(path=path)
-            return path
-    except Exception as e:
-        logger.error(f"原神每日素材更新出错...: {e}")
-        return None
+    path = IMAGE_PATH / f"{(datetime.now() - timedelta(hours=4)).date()}.png"
+    if path.exists():
+        return path
+    for _ in range(3):
+        try:
+            async with get_new_page(viewport={"width": 860, "height": 3000}) as page:
+                url = "https://bbs.mihoyo.com/ys/obc/channel/map/193"
+                await page.goto(url, wait_until="networkidle")
+                await page.locator(
+                    '//*[@id="__layout"]/div/div[2]/div[2]/div/div[1]/div[2]/div/div'
+                ).screenshot(path=path)
+                return path
+        except Exception as e:
+            logger.error(f"原神每日素材更新出错...: {e}")
+    return None
