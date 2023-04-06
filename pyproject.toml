@@ -85,6 +85,9 @@ isort = "^5.12.0"
 pre-commit = "^3.2.1"
 
 [tool.nonebot]
+adapters = [
+    { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
+]
 plugins = [
     "nonebot_plugin_apscheduler",
     "nonebot_plugin_datastore",
