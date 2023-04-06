@@ -17,13 +17,9 @@ from nonebot_plugin_htmlrender import get_new_page
 from nonebot_plugin_datastore import create_session
 from nonebot.adapters.onebot.v11 import MessageSegment
 
+from .draw import draw_list
 from .model import McServerGroup, McServerPrivate
-from .draw import draw_java, draw_list, draw_error, draw_bedrock
-
-data_path = Path() / "data" / "mcquery"
-db_file = data_path / "mcserver.db"
-
-data_path.mkdir(exist_ok=True, parents=True)
+from .picmcstat.draw import draw_java, draw_error, draw_bedrock
 
 
 async def get_server(
@@ -128,9 +124,6 @@ async def get_server_list(group_id: int, user_id: int) -> MessageSegment:
                     McServerPrivate.user_id == user_id
                 )
             )
-
-    if not servers:
-        return MessageSegment.image(draw_list("空"))
     server_text_list = []
     for server in servers:
         server_text_list.append(
@@ -139,6 +132,8 @@ async def get_server_list(group_id: int, user_id: int) -> MessageSegment:
             + f"\n§f{server.host}"
             + (f":{server.port}" if server.port else "")
         )
+    if not server_text_list:
+        return MessageSegment.image(draw_list("空"))
     return MessageSegment.image(draw_list("\n".join(server_text_list)))
 
 
