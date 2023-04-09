@@ -101,7 +101,7 @@ async def get_market_data(server_name: str, item_name: str, hq=False) -> str:
                     item_name = item_name.replace(f"|{lang}", "")
                     name_lang = lang
                     break
-            new_item_name, item_id = get_item_id(item_name, name_lang)
+            new_item_name, item_id = await get_item_id(item_name, name_lang)
             if item_id < 0:
                 return f'所查询物品"{item_name}"不存在'
         url = f"https://universalis.app/api/{server_name}/{item_id}"
