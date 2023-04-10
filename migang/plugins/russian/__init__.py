@@ -265,7 +265,7 @@ async def _(
                 )
     ats = []
     for seg in event.message:
-        if seg.type == "at":
+        if seg.type == "at" and seg.data["qq"] != "all":
             ats.append(int(seg.data["qq"]))
     if ats:
         state["at"] = ats

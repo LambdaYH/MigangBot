@@ -215,7 +215,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await give_gold.finish(f"金币数必须为整数")
     gold = int(gold) * sign
     for seg in event.message:
-        if seg.type == "at":
+        if seg.type == "at" and seg.data["qq"] != "all":
             user_list.append(seg.data["qq"])
     for user in user_list:
         await UserProperty.modify_gold(

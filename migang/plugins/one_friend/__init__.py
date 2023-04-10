@@ -40,7 +40,7 @@ async def _(
 ):
     target_user: Optional[int] = None
     for seg in event.message:
-        if seg.type == "at":
+        if seg.type == "at" and seg.data["qq"] != "all":
             target_user = seg.data["qq"]
             break
     if not target_user:

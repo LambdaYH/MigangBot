@@ -95,7 +95,8 @@ def check_establish_trade(event: GroupMessageEvent, state: T_State):
             if target_user:
                 return False  # 只能和一位对象交易
             else:
-                target_user = seg.data["qq"]
+                if seg.data["qq"] != "all":
+                    target_user = seg.data["qq"]
     if not target_user:
         return False
     target_user = int(target_user)

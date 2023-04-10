@@ -38,7 +38,7 @@ async def _():
 async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
     target = ""
     for seg in arg:
-        if seg.type == "at":
+        if seg.type == "at" and seg.data["qq"] != "all":
             assert isinstance(event, GroupMessageEvent)
             info = await bot.get_group_member_info(
                 group_id=event.group_id, user_id=seg.data["qq"]
