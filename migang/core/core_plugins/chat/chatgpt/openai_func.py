@@ -9,17 +9,6 @@ from migang.core.models import ChatGPTChatMemory
 
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
-try:  # 检查openai版本是否高于0.27.0
-    import pkg_resources
-
-    openai_version = pkg_resources.get_distribution("openai").version
-    if openai_version < "0.27.0":
-        logger.warning(
-            f"当前 openai 库版本为 {openai_version}，请更新至 0.27.0 版本以上，否则可能导致 gpt-3.5-turbo 模型无法使用"
-        )
-except:
-    logger.warning(f"无法获取 openai 库版本，请更新至 0.27.0 版本以上，否则 gpt-3.5-turbo 模型将无法使用")
-
 
 class TextGenerator:
     def __init__(

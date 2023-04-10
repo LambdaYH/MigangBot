@@ -6,7 +6,6 @@ from nonebot.log import logger
 from nonebot.utils import is_coroutine_callable
 
 
-# 扩展插件基类
 class Extension:
     def __init__(
         self, func: Callable, name: str, description: str, refer_word: List[str]
@@ -49,8 +48,6 @@ class Extension:
 
     def generate_description(self, chat_history_text="") -> str:
         """生成扩展描述prompt(供bot参考用)"""
-        # print(chat_history_text)
-        # 判断参考词
         if self.__refer_word and chat_history_text:
             for refer_word in self.__refer_word:
                 if refer_word in chat_history_text:

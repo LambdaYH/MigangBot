@@ -1,8 +1,5 @@
-from typing import Optional
-
 from tortoise import fields
 from tortoise.models import Model
-from tortoise.functions import Max
 
 
 class ChatGPTChatHistory(Model):

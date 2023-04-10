@@ -1,3 +1,5 @@
+import random
+
 import openai
 from transformers import GPT2TokenizerFast
 
@@ -6,6 +8,13 @@ tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 from migang.core import get_config
 
 from ..extension import extension_manager
+
+style_preset = (
+    "Chinese style, ink painting",
+    "anime style, colored-pencil",
+    "anime style, colored crayons",
+)
+custom_size = (512, 512)
 
 
 @extension_manager(
@@ -19,9 +28,8 @@ async def _(content: str):
         if not proxy.startswith("http"):
             proxy = "http://" + proxy
         openai.proxy = proxy
-    custom_size = (512, 512)
     # style = "anime style, colored-pencil"
-    style = "Chinese style, ink painting"
+    style = random.choice(style_preset)
     response = await openai.Image.acreate(
         prompt=content + ", " + style, n=1, size=f"{custom_size[0]}x{custom_size[1]}"
     )
@@ -30,17 +38,14 @@ async def _(content: str):
     if image_url is None:
         return {
             "text": "图片生成错误...",
-            "image": None,  # 图片url
         }
     elif "rejected" in response:
         # 返回的信息将会被发送到会话中
         return {
             "text": "抱歉，这个图违反了ai生成规定，可能是太色了吧",  # 文本信息
-            "image": None,  # 图片url
         }
     else:
         # 返回的信息将会被发送到会话中
         return {
-            "text": "画好了!",  # 文本信息
             "image": image_url,  # 图片url
         }

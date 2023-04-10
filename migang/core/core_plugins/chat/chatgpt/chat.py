@@ -234,7 +234,7 @@ async def do_chat(
                 if time_diff > 0:
                     logger.debug(f"等待 {time_diff}s 后再次调用对话...")
                     await asyncio.sleep(time_diff)
-                    logger.debug(f"再次调用对话...")
+                    logger.debug("再次调用对话...")
             state["gpt_trigger_text"] = loop_data.get("notify", {}).get("msg", "")
             state["gpt_sender_name"] = loop_data.get("notify", {}).get(
                 "sender", "[system]"

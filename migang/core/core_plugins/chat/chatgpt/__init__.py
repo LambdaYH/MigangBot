@@ -5,13 +5,8 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from migang.core.manager import config_manager
 from migang.core import ConfigItem, pre_init_manager
 
-# ========================= #
-# 把扩展导入
-from .extensions import paint
 from ..exception import BreakSession
 from .chat import do_chat, pre_check
-
-# ========================= #
 
 
 @pre_init_manager
@@ -21,7 +16,7 @@ async def _():
         configs=(
             ConfigItem(
                 key="personality",
-                default_value="她叫[bot_name]，是一个搭配师",
+                default_value="她叫{bot_name}，是一个搭配师",
                 description="chatgpt人格预设",
             ),
             ConfigItem(
@@ -32,14 +27,14 @@ async def _():
             ),
             ConfigItem(
                 key="memory_short_length",
-                initial_value=16,
-                default_value=16,
+                initial_value=12,
+                default_value=12,
                 description="短期会话记忆长度",
             ),
             ConfigItem(
                 key="memory_max_length",
-                initial_value=32,
-                default_value=32,
+                initial_value=24,
+                default_value=24,
                 description="长期记忆最大长度",
             ),
             ConfigItem(
@@ -115,6 +110,13 @@ async def _():
             ConfigItem("proxy", description="代理服务器"),
         ),
     )
+
+
+# ========================= #
+# 把扩展导入
+from .extensions import paint
+
+# ========================= #
 
 
 async def get_gpt_chat(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
