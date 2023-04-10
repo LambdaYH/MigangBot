@@ -178,15 +178,15 @@ async def _(bot: Bot, event: FriendRequestEvent):
     if _handle_friend == "同意":
         try:
             await bot.set_friend_add_request(flag=event.flag, approve=True)
-            await logger.info(f"已同意好友请求：{event.user_id}")
+            logger.info(f"已同意好友请求：{event.user_id}")
         except ActionFailed:
-            await logger.info(f"同意好友请求失败：{event.user_id}")
+            logger.info(f"同意好友请求失败：{event.user_id}")
     elif _handle_friend == "拒绝":
         try:
             await bot.set_friend_add_request(flag=event.flag, approve=False)
-            await logger.info(f"已拒绝好友请求：{event.user_id}")
+            logger.info(f"已拒绝好友请求：{event.user_id}")
         except ActionFailed:
-            await logger.info(f"拒绝好友请求失败：{event.user_id}")
+            logger.info(f"拒绝好友请求失败：{event.user_id}")
     else:
         await request_manager.add(
             user_name=user_name,
@@ -251,9 +251,9 @@ async def _(bot: Bot, event: GroupRequestEvent):
             await bot.set_group_add_request(
                 flag=event.flag, sub_type="invite", approve=True
             )
-            await logger.info(f"已入群请求：{event.group_id}")
+            logger.info(f"已入群请求：{event.group_id}")
         except ActionFailed:
-            await logger.info(f"入群请求失败：{event.group_id}")
+            logger.info(f"入群请求失败：{event.group_id}")
     elif _handle_group == "拒绝":
         try:
             reason = await get_config("reject_group_reason")
@@ -262,9 +262,9 @@ async def _(bot: Bot, event: GroupRequestEvent):
             await bot.set_group_add_request(
                 flag=event.flag, sub_type="invite", approve=False, reason=reason
             )
-            await logger.info(f"已拒绝入群请求：{event.group_id}")
+            logger.info(f"已拒绝入群请求：{event.group_id}")
         except ActionFailed:
-            await logger.info(f"拒绝入群请求失败：{event.group_id}")
+            logger.info(f"拒绝入群请求失败：{event.group_id}")
     else:
         if hint := await get_config("group_request_hint"):
             await bot.send_private_msg(user_id=event.user_id, message=Message(hint))
