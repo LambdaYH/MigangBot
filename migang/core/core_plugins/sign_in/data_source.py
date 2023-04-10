@@ -1,4 +1,3 @@
-import math
 import bisect
 import random
 import secrets
@@ -16,7 +15,7 @@ from migang.core.decorator import sign_in_effect
 from migang.core.utils.image import get_user_avatar
 from migang.core.models import SignIn, UserProperty, TransactionLog
 
-from .effects import *
+from . import effects
 from .const import (
     SIGN_BORDER_PATH,
     SIGN_RESOURCE_PATH,

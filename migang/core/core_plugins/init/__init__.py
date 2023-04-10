@@ -28,7 +28,7 @@ async def _():
         try:
             await asyncio.gather(*cors)
         except Exception as e:
-            logger.error(f"执行初始化后的函数出错：{e}")
+            logger.error(f"执行初始化前的函数出错：{e}")
 
     await asyncio.gather(
         *[

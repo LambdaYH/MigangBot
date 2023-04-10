@@ -25,8 +25,8 @@ from migang.core.models import (
 )
 
 from .bag import draw_bag
+from . import default_goods
 from .shop import draw_shop
-from .default_goods import *
 from .shop_control import adjust_goods, adjust_goods_group
 
 __plugin_meta__ = PluginMetadata(
