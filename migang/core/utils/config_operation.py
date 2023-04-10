@@ -3,6 +3,7 @@ from pathlib import Path
 from functools import cache
 from typing import Any, Callable, Optional
 
+from nonebot.log import logger
 from nonebot import get_driver, get_loaded_plugins
 
 from migang.core.manager import config_manager
@@ -69,6 +70,7 @@ def sync_get_config(
             plugin_name=plugin_name, plugin_config=key
         )
     except ConfigNoExistError:
+        logger.info(f"{plugin_name} 的参数项 {key} 不存在，加载默认值 {default_value}")
         return default_value
 
 

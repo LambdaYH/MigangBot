@@ -19,7 +19,7 @@ personality: str = sync_get_config("personality", "chat_chatgpt", "")
 memory_short_length: int = sync_get_config("memory_short_length", "chat_chatgpt", 12)
 memory_max_length: int = sync_get_config("memory_max_length", "chat_chatgpt", 24)
 unlock_content: bool = sync_get_config("unlock_content", "chat_chatgpt", False)
-impression_length: int = sync_get_config("impression_min_length", "chat_chatgpt", 20)
+impression_length: int = sync_get_config("impression_length", "chat_chatgpt", 20)
 impression_refresh_length: int = sync_get_config(
     "impression_refresh_length", "chat_chatgpt", 10
 )
