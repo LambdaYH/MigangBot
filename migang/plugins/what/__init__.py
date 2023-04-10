@@ -32,7 +32,7 @@ usage：
 )
 __plugin_category__ = "一些工具"
 commands = {"是啥", "是什么", "是谁"}
-what = on_keyword({"是啥", "是什么", "是谁"}, priority=14)
+what = on_keyword(commands, priority=14)
 baike = on_command("百科", block=True, priority=13)
 
 
@@ -41,8 +41,9 @@ async def _(msg: str = EventPlainText()):
     def split_command(msg):
         for command in commands:
             if command in msg:
-                prefix, suffix = re.split(command, msg)
-                return prefix, suffix
+                prefix_suffix = re.split(command, msg)
+                if len(prefix_suffix) == 2:
+                    return prefix_suffix[0], prefix_suffix[1]
         return "", ""
 
     msg = msg.strip().strip(".>,?!。，（）()[]【】")
