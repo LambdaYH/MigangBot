@@ -5,11 +5,7 @@ from tortoise.expressions import Q
 from nonebot.adapters.onebot.v11 import Bot
 
 from migang.core import sync_get_config
-from migang.core.models import (
-    ChatGPTChatMemory,
-    ChatGPTChatHistory,
-    ChatGPTChatImpression,
-)
+from migang.core.models import ChatGPTChatHistory, ChatGPTChatImpression
 
 from .openai_func import text_generator
 from .extension import extension_manager
@@ -34,16 +30,6 @@ async def get_chat_prompt_template(bot: Bot, group_id: int, user_id: int) -> str
         group_id=group_id, user_id=user_id, self_id=int(bot.self_id)
     ).first()
     impression_text = f"[impression]\n{impression.impression.format(user_name=user_name,bot_name=bot_name) if impression else ''}\n\n"
-
-    # 记忆
-    memories = await ChatGPTChatMemory.filter(group_id=group_id)
-    memory_text = "\n".join(
-        [
-            f"{idx}. {memory.memory_key}: {memory.memory_value}"
-            for idx, memory in enumerate(memories)
-        ]
-    )
-    memory = f"[history memory]\n{memory_text}\n\n" if memory_text else ""
 
     # 对话历史，限制memory_short_length条
     chat_histories = (
@@ -129,7 +115,7 @@ async def get_chat_prompt_template(bot: Bot, group_id: int, user_id: int) -> str
             "role": "user",
             "content": (  # 用户消息(实际场景)
                 f"[Character setting]\n{personality.format(bot_name=bot_name)}\n\n"
-                f"{memory}{impression_text}"
+                f"{impression_text}"
                 f"\n[Chat History (current time: {time.strftime('%Y-%m-%d %H:%M:%S %A')})]\n"
                 f"\n{chat_history}\n\n{bot_name}:(Generate the response content of {bot_name}, excluding '{bot_name}:', Do not generate any reply from anyone else.)"
             ),
@@ -144,7 +130,7 @@ async def update_impression(bot: Bot, group_id: int, user_id: int) -> None:
             Q(group_id=group_id),
             Q(
                 Q(user_id=self_id, target_id=user_id),
-                Q(user_id=user_id, triggered=True),
+                Q(user_id=user_id, target_id=self_id),
                 join_type="OR",
             ),
         )

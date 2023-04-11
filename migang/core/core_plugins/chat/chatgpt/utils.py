@@ -31,7 +31,9 @@ async def get_user_name(bot: Bot, group_id: int, user_id: int) -> str:
     if user_id == int(bot.self_id):
         return get_bot_name(bot)
     try:
-        user_info = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
+        user_info = await bot.get_group_member_info(
+            group_id=group_id, user_id=user_id, no_cache=False
+        )
         user_name = user_info.get("card") or user_info["nickname"]
         return user_name
     except ActionFailed:

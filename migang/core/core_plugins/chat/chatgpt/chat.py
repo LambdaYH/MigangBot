@@ -1,4 +1,5 @@
 import re
+import random
 import asyncio
 import traceback
 from typing import Tuple
@@ -12,8 +13,8 @@ from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment, GroupMessa
 from migang.core import sync_get_config
 from migang.core.models import ChatGPTChatHistory
 
+from .openai_func import text_generator
 from .extension import extension_manager
-from .openai_func import set_memory, text_generator
 from .prompt import update_impression, get_chat_prompt_template
 from .utils import get_bot_name, gen_chat_text, get_user_name, serialize_message
 
@@ -56,8 +57,8 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     await ChatGPTChatHistory(
         user_id=event.user_id,
         group_id=event.group_id,
+        target_id=event.self_id if triggered else None,
         message=record_msg,
-        triggered=triggered,
     ).save()
 
     if triggered:
@@ -65,8 +66,6 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
         # 保存信息，用于回复
         state["gpt_sender_name"] = sender_name
         state["gpt_trigger_text"] = chat_text
-        state["gpt_loop_data"] = {}
-        state["gpt_loop_times"] = 0
     return triggered
 
 
@@ -75,12 +74,7 @@ async def do_chat(
 ) -> None:
     trigger_text = state["gpt_trigger_text"]
     sender_name = state["gpt_sender_name"]
-    loop_data = state["gpt_loop_data"]
-    loop_times = state["gpt_loop_times"]
     bot_name = get_bot_name(bot)
-
-    # 重置唤醒
-    wake_up = False
 
     start_time = datetime.now()
 
@@ -153,7 +147,6 @@ async def do_chat(
             raw_res = re.sub(r"/.?#(.+?)#.?/", "", raw_res)
 
     # 根据回复内容列表逐条发送回复
-    res_times = max_response_per_msg
     for reply in reply_list[:max_response_per_msg]:
         # 判断回复内容是否为str
         if isinstance(reply, str) and reply.strip():
@@ -183,30 +176,7 @@ async def do_chat(
                     )
                 elif key == "code_block" and reply.get(key):  # 发送代码块
                     await matcher.send(Message(reply.get(key).strip()))
-                elif key == "memory" and reply.get(key):  # 记忆存储
-                    logger.info(f"存储记忆: {reply.get(key)}")
-                    await set_memory(
-                        group_id=event.group_id,
-                        user_id=event.user_id,
-                        mem_key=reply.get(key).get("key"),
-                        mem_value=reply.get(key).get("value"),
-                    )
-                elif key == "notify" and reply.get(key):  # 通知消息
-                    if "sender" in reply.get(key) and "msg" in reply.get(key):
-                        loop_data["notify"] = reply.get(key)
-                    else:
-                        logger.warning(f"通知消息格式错误: {reply.get(key)}")
-                elif key == "wake_up" and reply.get(key):  # 重新调用对话
-                    logger.info(f"重新调用对话: {reply.get(key)}")
-                    wake_up = reply.get(key)
-                elif key == "timer" and reply.get(key):  # 定时器
-                    logger.info(f"设置定时器: {reply.get(key)}")
-                    loop_data["timer"] = reply.get(key)
-
-                res_times -= 1
-                if res_times < 1:  # 如果回复次数超过限制，则跳出循环
-                    break
-        await asyncio.sleep(1.5)  # 每条回复之间间隔1.5秒
+        await asyncio.sleep(random.random() + 1.2)  # 每条回复之间间隔至少1.2秒
 
     cost_token = text_generator.cal_token_count(
         str(prompt_template) + raw_res
@@ -218,35 +188,11 @@ async def do_chat(
     await ChatGPTChatHistory(
         user_id=event.self_id,
         group_id=event.group_id,
-        message=serialize_message(raw_res),
         target_id=event.user_id,
+        message=serialize_message(raw_res),
     ).save()
 
     # 更新印象
     await update_impression(bot=bot, group_id=event.group_id, user_id=event.user_id)
 
     logger.debug(f"对话响应完成 | 耗时: {(datetime.now() - start_time).seconds}s")
-
-    # 检查是否再次触发对话
-    if wake_up and loop_times < 3:
-        if "notify" in loop_data:  # 如果存在定时器或通知消息，将其作为触发消息再次调用对话
-            if time_diff := loop_data.get("timer"):
-                if time_diff > 0:
-                    logger.debug(f"等待 {time_diff}s 后再次调用对话...")
-                    await asyncio.sleep(time_diff)
-                    logger.debug("再次调用对话...")
-            state["gpt_trigger_text"] = loop_data.get("notify", {}).get("msg", "")
-            state["gpt_sender_name"] = loop_data.get("notify", {}).get(
-                "sender", "[system]"
-            )
-            state["gpt_loop_times"] += 1
-            await ChatGPTChatHistory(
-                user_id=event.user_id,
-                group_id=event.group_id,
-                message=serialize_message(state["gpt_trigger_text"]),
-            ).save()
-            await do_chat(
-                matcher=matcher,
-                event=event,
-                bot=bot,
-            )

@@ -5,7 +5,6 @@ from nonebot.log import logger
 from transformers import GPT2TokenizerFast
 
 from migang.core import sync_get_config
-from migang.core.models import ChatGPTChatMemory
 
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
@@ -208,32 +207,3 @@ text_generator: TextGenerator = TextGenerator(
         "max_impression_tokens", plugin_name="chat_chatgpt"
     ),
 )
-
-
-async def set_memory(
-    group_id: int, user_id: int, mem_key: str, mem_value: str = ""
-) -> None:
-    """为当前预设设置记忆"""
-    mem_key = mem_key.replace(" ", "_")  # 将空格替换为下划线
-    # 如果没有指定mem_value，则删除该记忆
-    memory = await ChatGPTChatMemory.filter(
-        group_id=group_id, memory_key=mem_key
-    ).first()
-    if not mem_value:
-        if memory:
-            await memory.delete()
-            logger.debug(f"忘记了: {mem_key}")
-        else:
-            logger.warning(f"尝试删除不存在的记忆 {mem_key}")
-    else:  # 否则设置该记忆，并将其移到在最后
-        if not memory:
-            memory = ChatGPTChatMemory(
-                group_id=group_id,
-                user_id=user_id,
-                memory_key=mem_key,
-                memory_value=mem_value,
-            )
-        else:
-            memory.memory_value = mem_value
-        await memory.save()
-        logger.debug(f"记住了: {mem_key} -> {mem_value}")

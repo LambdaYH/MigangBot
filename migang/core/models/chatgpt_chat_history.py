@@ -4,11 +4,10 @@ from tortoise.models import Model
 
 class ChatGPTChatHistory(Model):
     user_id = fields.BigIntField(null=False)
+    """对话发起者"""
     group_id = fields.BigIntField(null=True)
     target_id = fields.BigIntField(null=True, default=None)
-    """仅bot回复时记录"""
-    triggered = fields.BooleanField(default=False)
-    """是普通对话还是触发了的对话"""
+    """对话对象"""
     message = fields.JSONField()
     time = fields.DatetimeField(auto_now_add=True)
 
