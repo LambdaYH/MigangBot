@@ -176,7 +176,7 @@ async def do_chat(
                     )
                 elif key == "code_block" and reply.get(key):  # 发送代码块
                     await matcher.send(Message(reply.get(key).strip()))
-        await asyncio.sleep(random.random() + 1.2)  # 每条回复之间间隔至少1.2秒
+        await asyncio.sleep(random.random() + 1.5)  # 每条回复之间间隔至少1.5秒
 
     cost_token = text_generator.cal_token_count(
         str(prompt_template) + raw_res
