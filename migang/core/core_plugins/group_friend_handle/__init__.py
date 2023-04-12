@@ -130,7 +130,9 @@ handle_request = on_command(
     block=True,
     permission=SUPERUSER,
 )
-change_request_handle = on_regex(r"^修改(群|好友)请求处理方式(询问|同意|拒绝)$", priority=1, block=False)
+change_request_handle = on_regex(
+    r"^修改(群|好友)请求处理方式(询问|同意|拒绝)$", priority=1, block=False, permission=SUPERUSER
+)
 
 
 def _rule_group_increase(event: GroupIncreaseNoticeEvent) -> bool:
