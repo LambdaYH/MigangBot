@@ -2,7 +2,7 @@
 """
 from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import anyio
 from nonebot.log import logger
@@ -174,16 +174,16 @@ class RequestManager:
             )
             del target[id]
             await self.save()
-            return f"无法{'同意' if type_== 'group' else '拒绝'}id为{id}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效"
+            return f"无法{'同意' if approve else '拒绝'}id为{id}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效"
         logger.info(
-            f"已{'同意' if type_== 'group' else '拒绝'}请求：\n{request.json(ensure_ascii=False,indent=4)}"
+            f"已{'同意' if approve else '拒绝'}请求：\n{request.json(ensure_ascii=False,indent=4)}"
         )
         del target[id]
         await self.save()
         if type_ == "group":
-            return f"已同意群 {request.group_name}({request.group_id}) 的入群请求"
+            return f"已{'同意' if approve else '拒绝'}群 {request.group_name}({request.group_id}) 的入群请求"
         else:
-            return f"已同意用户 {request.user_name}({request.user_id}) 的好友请求"
+            return f"已{'同意' if approve else '拒绝'}用户 {request.user_name}({request.user_id}) 的好友请求"
 
     async def approve(self, bot: Bot, id: int, type_: str) -> str:
         """同意请求
