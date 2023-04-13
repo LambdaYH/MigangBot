@@ -2,12 +2,12 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
+import aiohttp
 from nonebot import require
 
 from .const import *
 
 require("nonebot_plugin_htmlrender")
-import aiohttp
 from nonebot_plugin_htmlrender import template_to_pic
 
 # https://house.ffxiv.cyou/#/about
