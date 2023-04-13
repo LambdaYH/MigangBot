@@ -17,6 +17,8 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
+__plugin_cd__ = 3
+
 
 def _rule(event: PokeNotifyEvent):
     return event.self_id == event.target_id

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="house.css">
+</head>
+
+<body>
+    <div id="banner">
+        <img src="./img/logo.png" width="35" height="35", class="logo">
+        <p id="banner-text">艾欧泽亚售楼中心 https://house.ffxiv.cyou/</p>
+    </div>
+    <div class="sales">
+        {% for house in houses %}
+        <div class="card sale-item">
+            <div class="card-image">
+                {% if house['area_id'] == 0 %}
+                <div class="area-image zone-mist">
+                {% elif house['area_id'] == 1 %}
+                <div class="area-image zone-lavender-beds">
+                {% elif house['area_id'] == 2 %}
+                <div class="area-image zone-goblet">
+                {% elif house['area_id'] == 3 %}
+                <div class="area-image zone-shirogane">
+                {% else %}
+                <div class="area-image zone-empyreum">
+                {% endif %}
+                    <div class="area-name"> {{house['area_name']}} {{house['size']}}
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="area-item">
+                    <div>{{house['region_type']}}</div>
+                    <p><a><i class="xiv link"></i> {{house['location']}}
+                        </a><span class="item-price"> {{house['price']}} <i class="xiv gil"></i></span>
+                    </p>
+                    <p class="item-comment"> {{house['comment']}} </p>
+                    <div class="item-stage">
+                        <p>{{house['stage']}}</p>
+                        <p class="lottery-sub-info">
+                            <span>{{house['participate']}}</span><span>{{house['time']}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="sales-footer">
+                    <p> {{house['update_time']}} 更新</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>

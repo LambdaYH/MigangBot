@@ -1,0 +1,300 @@
+@font-face {
+    font-family: FFXIV;
+    src: url(./fonts/FFXIV_Lodestone.ttf) format("truetype"), url(./fonts/FFXIV_Lodestone.woff) format("woff");
+    unicode-range: U+e020-e0db;
+    font-display: swap
+}
+
+.card {
+    background-color: #fff;
+    border-radius: .25rem;
+    box-shadow: 0 .5em 1em -.125em hsla(0, 0%, 4%, .1), 0 0 0 1px hsla(0, 0%, 4%, .02);
+    color: #4a4a4a;
+    max-width: 100%;
+    position: relative
+}
+
+.card-content:first-child,
+.card-footer:first-child,
+.card-header:first-child {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem
+}
+
+.card-content:last-child,
+.card-footer:last-child,
+.card-header:last-child {
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem
+}
+
+.card-header {
+    background-color: transparent;
+    align-items: stretch;
+    box-shadow: 0 .125em .25em hsla(0, 0%, 4%, .1);
+    display: flex
+}
+
+.card-header-title {
+    align-items: center;
+    color: #363636;
+    display: flex;
+    flex-grow: 1;
+    font-weight: 700;
+    padding: .75rem 1rem
+}
+
+.card-header-icon,
+.card-header-title.is-centered {
+    justify-content: center
+}
+
+.card-header-icon {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: 0 0;
+    border: none;
+    color: currentColor;
+    font-family: inherit;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    padding: .75rem 1rem
+}
+
+.card-image {
+    display: block;
+    position: relative
+}
+
+.card-image:first-child img {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem
+}
+
+.card-image:last-child img {
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem
+}
+
+.card-content {
+    padding: 1.5rem
+}
+
+.card-content,
+.card-footer {
+    background-color: transparent
+}
+
+.card-footer {
+    border-top: 1px solid #ededed;
+    align-items: stretch;
+    display: flex
+}
+
+.card-footer-item {
+    align-items: center;
+    display: flex;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 0;
+    justify-content: center;
+    padding: .75rem
+}
+
+.card-footer-item:not(:last-child) {
+    border-right: 1px solid #ededed
+}
+
+.card .media:not(:last-child) {
+    margin-bottom: 1.5rem
+}
+
+
+.card {
+    background-color: #f9f9f9
+}
+
+.progress-bar:before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    line-height: 1.2em;
+    z-index: 2
+}
+
+.progress-bar {
+    text-align: center;
+    position: relative;
+    height: 1.2em
+}
+
+.sales {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: baseline
+}
+
+.sale-item {
+    width: 250px;
+    text-align: left;
+    margin: 10px
+}
+
+.area-image {
+    height: 110px;
+    background-repeat: no-repeat;
+    background-image: url(./img/zone.jpg)
+}
+
+/* 沙都 */
+.zone-goblet {
+    background-position: 50% -140px;
+}
+
+/* 森都 */
+.zone-lavender-beds {
+    background-position: 50% -10px;
+}
+
+/* 白银 */
+.zone-shirogane {
+    background-position: 50% -400px;
+}
+
+/* 伊修加德 */
+.zone-empyreum {
+    background-position: 50% -530px;
+}
+
+/* 海都 */
+.zone-mist {
+    background-position: 50% -270px;
+}
+
+.area-name,
+.item-state {
+    color: #fff;
+    bottom: 0;
+    position: absolute
+}
+
+.area-name {
+    font-weight: 700;
+    text-shadow: rgba(0, 0, 0, .8) 1px 1px 3px, rgba(0, 0, 0, .8) -1px -1px 3px;
+    font-size: 1.25em;
+    padding: 5px 10px
+}
+
+.item-state {
+    right: 0;
+    font-size: 1.1em;
+    padding: 6px 10px;
+    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, .8))
+}
+
+.item-state span+span {
+    margin-left: .2em
+}
+
+.item-stage {
+    margin-top: 8px;
+    text-align: center
+}
+
+.lottery-sub-info {
+    font-size: .9em;
+    color: #666
+}
+
+.lottery-sub-info span {
+    padding: 0 5px
+}
+
+.lottery-sub-info span+span {
+    border-left: 1px solid #666
+}
+
+.card-content {
+    padding: 15px 20px
+}
+
+.sales-footer {
+    font-size: .9em;
+    text-align: right;
+    color: #999;
+    margin-top: 8px
+}
+
+.item-comment {
+    font-weight: 700
+}
+
+i.xiv.link::before {
+    content: "\e0bb";
+}
+
+i.xiv::before {
+    font-family: FFXIV;
+    font-style: normal;
+}
+
+i.xiv.gil::before {
+    content: "\e049"
+}
+
+a {
+    color: #0477b0;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.item-price {
+    color: #666;
+    border-left: 1px solid #999;
+    padding-left: 5px;
+    margin-left: 3px;
+}
+
+p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.sales {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+#banner {
+    background-size: cover;
+    height: 45px;
+    background-position: center top;
+    background-color: #363636;
+}
+
+#banner-text {
+    color: #fff;
+    align-items: center;
+    padding: .5rem .75rem;
+    line-height: 30px;
+    font-size: 1.25em;
+}
+
+.logo {
+    height: 35px;
+    margin: 5px;
+    float: left;
+}
