@@ -87,7 +87,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     else:
         image_url = state["image"]
 
-    msg_list = []
+    url_list = []
 
     async with aiohttp.ClientSession() as client:
         for i in image_url:
@@ -95,19 +95,19 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
             urls = "\n".join(decode(await img.read()))
             if not urls:
                 continue
-            msg_list.append(
-                MessageSegment.node_custom(
-                    user_id=event.self_id,
-                    nickname=list(bot.config.nickname)[0],
-                    content=urls,
-                )
-            )
-    if not msg_list:
+            url_list.append(urls)
+    if not url_list:
         await qrcode.finish("未检测到二维码", at_sender=True)
-    if len(msg_list) == 1:
-        await qrcode.finish(
-            MessageSegment.reply(event.message_id) + msg_list[0]["data"]["content"]
+    if len(url_list) == 1:
+        await qrcode.finish(MessageSegment.reply(event.message_id) + url_list[0])
+    msg_list = [
+        MessageSegment.node_custom(
+            user_id=event.self_id,
+            nickname=list(bot.config.nickname)[0],
+            content=url,
         )
+        for url in url_list
+    ]
     await qrcode.send(MessageSegment.reply(event.message_id) + "各二维码对应的链接如下")
     if isinstance(event, GroupMessageEvent):
         await bot.send_forward_msg(group_id=event.group_id, messages=msg_list)
