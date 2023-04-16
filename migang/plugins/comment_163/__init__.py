@@ -14,7 +14,7 @@ usage：
         网易云热评
 """.strip(),
     extra={
-        "unique_name": "migang_alapi_comments_163",
+        "unique_name": "migang_comments_163",
         "example": "",
         "author": "HibiKier",
         "version": 0.1,
