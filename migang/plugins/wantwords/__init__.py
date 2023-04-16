@@ -45,7 +45,7 @@ mode_to_params = {
 @wantwords.handle()
 async def _(args: Annotated[Message, CommandArg()]):
     args = args.extract_plain_text().split(" ", maxsplit=1)
-    if len(args) != 2:
+    if len(args) != 2 or args[0].lower() not in mode_to_params:
         await wantwords.finish("格式错误，请按照【找词 模式（zhzh/enzh/zhen/enen） 描述】发送")
     mode = mode_to_params[args[0].lower()]
     description = args[1].strip()
