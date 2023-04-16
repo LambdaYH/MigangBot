@@ -61,7 +61,6 @@ class TextGenerator:
             if "Rate limit" in res:
                 reason = res
                 res = "超过每分钟请求次数限制，喝杯茶休息一下吧 (´；ω；`)"
-                break
             elif "module 'openai' has no attribute 'ChatCompletion'" in res:
                 reason = res
                 res = "当前 openai 库版本过低，无法使用 gpt-3.5-turbo 模型 (´；ω；`)"
