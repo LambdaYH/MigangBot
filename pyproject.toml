@@ -14,7 +14,7 @@ nonebot-plugin-apscheduler = "^0.2.0"
 
 ujson = "^5.7.0"
 ruamel-yaml = "^0.17.21"
-async-lru = "^1.0.3"
+async-lru = "^2.0.2"
 tortoise-orm = {extras = ["accel", "asyncmy", "asyncpg"], version = "^0.19.3"}
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 lxml = "^4.9.2"
@@ -43,7 +43,7 @@ feedparser = "^6.0.10"
 transformers = "^4.27.3"
 
 nonebot-bison = "^0.7.1"
-nonebot-plugin-word-bank2 = "^0.1.6"
+nonebot-plugin-word-bank2 = "^0.1.7"
 nonebot-plugin-htmlrender = "^0.2.0.3"
 nonebot-plugin-memes = "^0.4.5"
 nonebot-plugin-shindan = "^0.3.2"

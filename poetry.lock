@@ -273,15 +273,18 @@ python-dateutil = ">=2.7.0"
 
 [[package]]
 name = "async-lru"
-version = "1.0.3"
-description = "Simple lru_cache for asyncio"
+version = "2.0.2"
+description = "Simple LRU cache for asyncio"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "async-lru-1.0.3.tar.gz", hash = "sha256:c2cb9b2915eb14e6cf3e717154b40f715bf90e596d73623677affd0d1fbcd32a"},
-    {file = "async_lru-1.0.3-py3-none-any.whl", hash = "sha256:ea692c303feb6211ff260d230dae1583636f13e05c9ae616eada77855b7f415c"},
+    {file = "async-lru-2.0.2.tar.gz", hash = "sha256:3b87ec4f2460c52cc7916a0138cc606b584c75d1ef7d661853c95d1d3acb869a"},
+    {file = "async_lru-2.0.2-py3-none-any.whl", hash = "sha256:d7c2b873e9af5c5a1f0a87a6c145e7e0b4eb92342b7235dda9dd5b10e950d6e2"},
 ]
+
+[package.dependencies]
+typing-extensions = ">=4.0.0"
 
 [[package]]
 name = "async-timeout"
@@ -3054,20 +3057,20 @@ nonebot2 = ">=2.0.0-beta.4,<3.0.0"
 
 [[package]]
 name = "nonebot-plugin-word-bank2"
-version = "0.1.6"
+version = "0.1.7.1"
 description = "无数据问答插件"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_word_bank2-0.1.6-py3-none-any.whl", hash = "sha256:7b798cd08a232c73590924cc1af204fc8ba046134344ad78ae2931e67db6329a"},
-    {file = "nonebot_plugin_word_bank2-0.1.6.tar.gz", hash = "sha256:db659a54d66fb6596c46235dfc5cbfc4a1f419dcb00cc77c36a7f29587ae332f"},
+    {file = "nonebot_plugin_word_bank2-0.1.7.1-py3-none-any.whl", hash = "sha256:a27438c649780efb9208d735b158678f4216645b905c353e2d973024c1608612"},
+    {file = "nonebot_plugin_word_bank2-0.1.7.1.tar.gz", hash = "sha256:bf967c1e2cab08b7662dc25bef3a1c709b2dc0d47f8528e40f547b5303db76e2"},
 ]
 
 [package.dependencies]
 httpx = ">=0.18.0,<1.0.0"
-nonebot-adapter-onebot = ">=2.0.0-beta.1,<3.0.0"
-nonebot2 = ">=2.0.0-beta.4,<3.0.0"
+nonebot-adapter-onebot = ">=2.0.0-beta.1"
+nonebot2 = ">=2.0.0-beta.4"
 
 [[package]]
 name = "nonebot-plugin-wordcloud"
@@ -5320,4 +5323,5 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6bc19244e9e8b8e6fa51011e9fbbff052ca69c5c66207d20c460b3977377bdda"
+dependabot/pip/async-lru-2.0.2
+content-hash = "52f613932eeb82cc40365561fd9acf30aa425f96a8ad20e51185f59cde5ff138"
