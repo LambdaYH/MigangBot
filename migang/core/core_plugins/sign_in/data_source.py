@@ -189,7 +189,7 @@ def draw(
     bar_bk = BuildImage.open(SIGN_RESOURCE_PATH / "bar_white.png").resize((220, 20))
     ratio = 1 - (next_impression - impression) / (next_impression - previous_impression)
     bar = BuildImage.open(SIGN_RESOURCE_PATH / "bar.png").resize((220, 20))
-    bar = bar.resize((int(bar.width * ratio), bar.height))
+    bar = bar.resize((max(int(bar.width * ratio), 1), bar.height))
     bar_bk.paste(
         bar,
         alpha=True,
