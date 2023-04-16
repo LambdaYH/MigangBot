@@ -4,7 +4,13 @@ from typing import Dict, List, Union, Iterable, Optional
 
 from nonebot import get_bot
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, MessageSegment
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    Message,
+    ActionFailed,
+    NetworkError,
+    MessageSegment,
+)
 
 from migang.core.manager import group_manager
 
@@ -37,7 +43,7 @@ class SendManager:
                             group_id=group, messages=self.msg
                         )
                         self.failed_dict.pop(group)
-                    except ActionFailed as e:
+                    except (ActionFailed, NetworkError) as e:
                         logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
             else:
                 for group in list(self.failed_dict):
@@ -48,7 +54,7 @@ class SendManager:
                                 group_id=group, message=self.msg[idx]
                             )
                             self.failed_dict[group].remove(idx)
-                        except ActionFailed as e:
+                        except (ActionFailed, NetworkError) as e:
                             logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
                     if not self.failed_dict[group]:
                         self.failed_dict.pop(group)
@@ -68,7 +74,7 @@ class SendManager:
                     await self.bot.send_group_forward_msg(
                         group_id=group, messages=self.msg
                     )
-                except ActionFailed as e:
+                except (ActionFailed, NetworkError) as e:
                     logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
                     self.failed_dict[group] = True
         else:
@@ -77,7 +83,7 @@ class SendManager:
                     await asyncio.sleep(random() + 0.3)
                     try:
                         await self.bot.send_group_msg(group_id=group, message=m)
-                    except ActionFailed as e:
+                    except (ActionFailed, NetworkError) as e:
                         logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
                         if group not in self.failed_dict:
                             self.failed_dict[group] = set()
