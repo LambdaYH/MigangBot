@@ -206,7 +206,7 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent, cmd: str = Startswi
 @give_gold.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     user_list = []
-    gold = args.extract_plain_text()
+    gold = args.extract_plain_text().strip()
     sign = 1
     if gold and gold[0] == "-":
         gold = gold[1:]

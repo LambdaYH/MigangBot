@@ -58,7 +58,7 @@ async def _(
             group_id=event.group_id, user_id=target_user
         )
         user_name = at_user.get("card") or at_user["nickname"]
-    msg = Message(reg_group[0]).extract_plain_text()
+    msg = Message(reg_group[0]).extract_plain_text().strip()
     if not msg:
         msg = "我...要说什么？"
     msg = msg.replace("他", "我").replace("她", "我").replace("它", "我")
