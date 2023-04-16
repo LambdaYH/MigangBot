@@ -208,7 +208,7 @@ async def _(
     bot: Bot, event: GroupMessageEvent, state: T_State, arg: Message = CommandArg()
 ):
     global rs_player
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     try:
         if (
             rs_player[event.group_id][1]
@@ -539,7 +539,7 @@ async def _(
     cmd: Tuple[str, ...] = Command(),
     arg: Message = CommandArg(),
 ):
-    num = arg.extract_plain_text().strip()
+    num = arg.extract_plain_text()
     if is_number(num) and 51 > int(num) > 10:
         num = int(num)
     else:

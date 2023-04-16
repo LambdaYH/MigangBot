@@ -224,7 +224,7 @@ del_group_task = on_command(
 
 @add_task.handle()
 async def _(event: MessageEvent, state: T_State, arg: Message = CommandArg()):
-    args = arg.extract_plain_text().strip()
+    args = arg.extract_plain_text()
     if args:
         state["job_type"] = args
     user_id = event.user_id
@@ -356,7 +356,7 @@ async def _(state: T_State, time_setting: str = ArgStr("time_setting")):
 
 @del_task.handle()
 async def _(event: MessageEvent, arg: Message = CommandArg()):
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     if not msg:
         await del_task.finish("参数错误，请按照[删除定时任务 任务id]格式发送", at_sender=True)
     if not msg.isdigit():
@@ -382,7 +382,7 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
 
 @show_task.handle()
 async def _(event: MessageEvent, arg: Message = CommandArg()):
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     async with create_session() as session:
         user_jobs = (
             await session.scalars(
@@ -502,7 +502,7 @@ async def _(
             select(Schedule).where(Schedule.group_id == event.group_id)
         )
     ).all()
-    id_ = arg.extract_plain_text().strip()
+    id_ = arg.extract_plain_text()
     if not id_ or not id_.isdigit():
         await del_group_task("任务id必须为正整数")
     id_ = int(id_)

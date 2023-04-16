@@ -33,7 +33,7 @@ url = f"https://lab.magiconch.com/api/nbnhhsh/guess/"
 @suoxie.handle()
 async def _(arg: Message = CommandArg()):
     try:
-        episode = arg.extract_plain_text().strip()
+        episode = arg.extract_plain_text()
         if not episode:
             await suoxie.finish("你想知道哪个拼音缩写的全称呢？请发送[缩写 xxx]查看哦", at_sender=True)
         body = {"text": episode}

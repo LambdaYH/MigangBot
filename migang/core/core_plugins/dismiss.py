@@ -34,7 +34,7 @@ dismiss = on_command(".dismiss", permission=GROUP, priority=1, block=True)
 
 @dismiss.handle()
 async def _(bot: Bot, event: GroupMessageEvent, arg: Message = CommandArg()):
-    target_id = arg.extract_plain_text().strip()
+    target_id = arg.extract_plain_text()
     bot_id = bot.self_id
     if event.is_tome() or target_id == bot_id[-4:] or target_id == bot_id:
         await dismiss.send(await get_config("leave_msg"))

@@ -44,7 +44,7 @@ kExceptionNotice = ("占卜水晶球滑落了~正在重新捡起(擦擦)", "水�
 
 @eorzean_zhanbu.handle()
 async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     try:
         if msg != "":
             await eorzean_zhanbu.finish(get_event_zhanbu(event.user_id, msg))

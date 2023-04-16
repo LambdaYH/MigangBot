@@ -117,7 +117,7 @@ def image_to_base64(image_cv2):
 
 @oreo.handle()
 async def _(arg: Message = CommandArg()):
-    name = arg.extract_plain_text().strip()
+    name = arg.extract_plain_text()
     if len(name) < 2:
         await oreo.finish("请在指令后接长度至少为2的奥与利组合哦~，例如oreo奥利奥奥利")
     # 预处理

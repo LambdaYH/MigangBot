@@ -316,7 +316,7 @@ async def _(cmd: str = Fullmatch()):
 
 @handle_request.handle()
 async def _(bot: Bot, cmds: Tuple[str, ...] = Command(), args: Message = CommandArg()):
-    id_: str = args.extract_plain_text().strip()
+    id_: str = args.extract_plain_text()
     if not id_.isdigit():
         await handle_request.finish("请输入有效的数字")
     id_ = int(id_)
@@ -354,7 +354,7 @@ async def _(
     event: Union[GroupMessageEvent, PrivateMessageEvent],
     arg: Message = CommandArg(),
 ):
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     if not msg:
         if isinstance(event, GroupMessageEvent):
             await help_msg.finish(Message(await get_config("group_help")))
@@ -400,7 +400,7 @@ async def _(reg_group: Tuple[str, ...] = RegexGroup()):
 
 @allow_group.handle()
 async def _(arg: Message = CommandArg()):
-    group_id = arg.extract_plain_text().strip()
+    group_id = arg.extract_plain_text()
     if not group_id.isdigit():
         await allow_group.finish(f"群号 {group_id} 不是一个合法数字！")
     global allowed_group

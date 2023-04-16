@@ -44,7 +44,7 @@ wbtop_data = []
 @wbtop.handle()
 async def _(arg: Message = CommandArg()):
     global wbtop_data
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     if wbtop_data:
         now_time = datetime.datetime.now()
         if now_time > wbtop_data["time"] + datetime.timedelta(minutes=5):

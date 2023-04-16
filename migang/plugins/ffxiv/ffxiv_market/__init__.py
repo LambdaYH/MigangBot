@@ -57,7 +57,7 @@ async def _(cmd: str = Fullmatch()):
 
 @ffxiv_market.handle()
 async def _(args: Message = CommandArg()):
-    args: str = args.extract_plain_text().strip()
+    args: str = args.extract_plain_text()
     args_split = args.split(" ")
     if not args or len(args_split) < 2:
         await ffxiv_market.finish(f"参数错误！：\n{help_msg}")

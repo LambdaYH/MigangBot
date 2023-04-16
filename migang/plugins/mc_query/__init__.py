@@ -81,7 +81,7 @@ mc_list = on_command("mcslist", aliases={"mc服务器列表", "MC服务器列表
 
 @query.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
-    params = args.extract_plain_text().strip().split(" ")
+    params = args.extract_plain_text().split(" ")
     host, port, sv_type = None, None, None
     if len(params) != 2:
         if len(params) != 1:
@@ -115,7 +115,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
 
 @add_mc.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
-    params = args.extract_plain_text().strip().split(" ")
+    params = args.extract_plain_text().split(" ")
     if len(params) != 3:
         await add_mc.finish(f"参数错误，请按照[添加mcs 服务器名 ip:<port> je/be]重新发送")
     group_id, user_id = (
@@ -137,7 +137,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
 
 @del_mc.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
-    name = args.extract_plain_text().strip()
+    name = args.extract_plain_text()
     group_id, user_id = (
         event.group_id if isinstance(event, GroupMessageEvent) else None,
         event.user_id,

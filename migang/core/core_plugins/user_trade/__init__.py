@@ -316,7 +316,7 @@ async def _(
 ):
     if "err" in state:
         await establish_trade.finish(state["err"], at_sender=True)
-    args = args.extract_plain_text().strip().split(" ")
+    args = args.extract_plain_text().split(" ")
     trading_pairs[event.user_id].start_time = time()
     user_bag = await UserBag.get_item_list(user_id=event.user_id)
     for arg in args:

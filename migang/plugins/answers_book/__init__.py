@@ -65,7 +65,7 @@ async def get_answers(qid: int, question: str):
 
 @answers_book.handle()
 async def _(event: MessageEvent, arg: Message = CommandArg()):
-    msg = arg.extract_plain_text().strip()
+    msg = arg.extract_plain_text()
     if not msg:
         await answers_book.finish("你想问什么问题呢？请重新发送[翻看答案+问题]", at_sender=True)
     await answers_book.send(await get_answers(event.user_id, msg), at_sender=True)

@@ -119,7 +119,7 @@ async def _(
     if not args:
         await throw.finish("想说些什么话呢？在指令后边写上吧！")
 
-    message_text = args.extract_plain_text().strip()
+    message_text = args.extract_plain_text()
 
     audit = await text_audit(text=message_text)
     if not audit == "pass":
@@ -209,7 +209,7 @@ async def _(
     if not ba.verifyReport(event.user_id):
         await report.finish(ba.bannedMessage)
 
-    index = args.extract_plain_text().strip()
+    index = args.extract_plain_text()
     bottle = await get_bottle(index=index, matcher=matcher, session=session)
     result = await bottle_manager.report(
         bottle=bottle, user_id=event.user_id, session=session
@@ -254,7 +254,7 @@ async def _(
 ):
     await verify(matcher=matcher, event=event)
 
-    command = args.extract_plain_text().strip().split()
+    command = args.extract_plain_text().split()
     if not command:
         await comment.finish(f"请在指令后接 漂流瓶id 评论")
     if len(command) == 1:
@@ -305,7 +305,7 @@ async def _(
     args: Message = CommandArg(),
     session: AsyncSession = Depends(get_session),
 ):
-    index = args.extract_plain_text().strip()
+    index = args.extract_plain_text()
     bottle = await get_bottle(index=index, matcher=matcher, session=session)
 
     try:
@@ -344,7 +344,7 @@ async def rem(
     arg: Message = CommandArg(),
     session: AsyncSession = Depends(get_session),
 ):
-    index = arg.extract_plain_text().strip()
+    index = arg.extract_plain_text()
     bottle = await get_bottle(index=index, matcher=matcher, session=session)
     if (
         str(event.user_id) in list(bot.config.superusers)
@@ -366,7 +366,7 @@ async def _(
     arg: Message = CommandArg(),
     session: AsyncSession = Depends(get_session),
 ):
-    index = arg.extract_plain_text().strip()
+    index = arg.extract_plain_text()
     bottle = await get_bottle(
         index=index, matcher=matcher, session=session, include_del=True
     )
@@ -388,7 +388,7 @@ async def _(
     args: Message = CommandArg(),
     session: AsyncSession = Depends(get_session),
 ):
-    index = args.extract_plain_text().strip()
+    index = args.extract_plain_text()
     bottle = await get_bottle(
         index=index, matcher=matcher, session=session, include_del=True
     )
@@ -414,7 +414,7 @@ async def _(
 async def _(
     args: Message = CommandArg(),
 ):
-    command = args.extract_plain_text().strip().split(" ")
+    command = args.extract_plain_text().split(" ")
     if command[0] in ["group", "群聊", "群号"]:
         if ba.add("group", command[1]):
             await ban.finish(f"成功封禁{command[0]}：{command[1]}")
@@ -443,7 +443,7 @@ async def _(
 async def _(
     args: Message = CommandArg(),
 ):
-    command = args.extract_plain_text().strip().split(" ")
+    command = args.extract_plain_text().split(" ")
     if command[0] in ["group", "群聊", "群号"]:
         if ba.add("whiteGroup", command[1]):
             await ban.finish(f"成功设置白名单{command[0]}：{command[1]}")
@@ -465,7 +465,7 @@ async def _(
     args: Message = CommandArg(),
     session: AsyncSession = Depends(get_session),
 ):
-    command = args.extract_plain_text().strip().split()
+    command = args.extract_plain_text().split()
     if len(command) != 2:
         await comrem.finish("请检查参数")
     bottle = await get_bottle(

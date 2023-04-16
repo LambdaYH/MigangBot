@@ -69,7 +69,7 @@ async def _(msg: str = EventPlainText()):
 
 @baike.handle()
 async def _(msg: Message = CommandArg()):
-    keyword = msg.extract_plain_text().strip()
+    keyword = msg.extract_plain_text()
     if not keyword:
         await baike.finish()
 

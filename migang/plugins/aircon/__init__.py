@@ -137,7 +137,7 @@ async def _(
     group_id = event.group_id
     aircon = await check_status(session=session, group_id=group_id, matcher=set_temp)
     temp = await check_range(
-        set_temp, arg.extract_plain_text().strip(), -273, 999999, "只能设置-273-999999°C喔"
+        set_temp, arg.extract_plain_text(), -273, 999999, "只能设置-273-999999°C喔"
     )
     if temp == 114514:
         await set_temp.finish("这么臭的空调有什么装的必要吗")
@@ -161,7 +161,7 @@ async def _(
 
     wind_rate = await check_range(
         set_wind_rate,
-        arg.extract_plain_text().strip(),
+        arg.extract_plain_text(),
         1,
         3,
         "只能设置1/2/3档喔",
@@ -186,7 +186,7 @@ async def _(
     )
     env_temp = await check_range(
         set_env_temp,
-        arg.extract_plain_text().strip(),
+        arg.extract_plain_text(),
         -273,
         999999,
         "只能设置-273-999999°C喔",

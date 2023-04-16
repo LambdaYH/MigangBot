@@ -33,7 +33,7 @@ roll = on_command("roll", priority=5, block=True)
 async def _(
     matcher: Matcher, bot: Bot, event: MessageEvent, arg: Message = CommandArg()
 ):
-    msg = arg.extract_plain_text().strip().split()
+    msg = arg.extract_plain_text().split()
     if not msg:
         await roll.finish(f"roll: {random.randint(0, 100)}", at_sender=True)
     if msg and len(msg) < 2:

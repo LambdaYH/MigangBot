@@ -74,7 +74,7 @@ command_list = on_command(
 
 @simple_help.handle()
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    args = args.extract_plain_text().strip()
+    args = args.extract_plain_text()
     if not args:
         image_file: Path
         group_id, user_id = None, None
@@ -114,7 +114,7 @@ async def _(event: GroupMessageEvent):
 
 @command_list.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
-    name = args.extract_plain_text().strip()
+    name = args.extract_plain_text()
     if (plugin_name := plugin_manager.get_plugin_name(name)) is None:
         await command_list.finish(f"插件 {name} 不存在！")
     else:

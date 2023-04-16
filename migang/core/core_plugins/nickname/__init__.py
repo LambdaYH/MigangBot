@@ -56,7 +56,7 @@ cancel_nickname = on_fullmatch(("取消昵称", "忘了我吧"), priority=5, blo
 
 @set_nickname.handle()
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    name = args.extract_plain_text().strip()
+    name = args.extract_plain_text()
     if not name:
         await set_nickname.finish("....叫你...什么？", at_sender=True)
     if name in bot.config.nickname:

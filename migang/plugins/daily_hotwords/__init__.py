@@ -82,7 +82,7 @@ async def _(
             await schedule_cmd.finish("热词每日定时发送未开启")
     elif command == "开启热词每日定时发送":
         schedule_time = None
-        if time_str := args.extract_plain_text().strip():
+        if time_str := args.extract_plain_text():
             try:
                 schedule_time = get_time_fromisoformat_with_timezone(time_str)
             except ValueError:

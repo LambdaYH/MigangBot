@@ -71,7 +71,7 @@ async def _(
     arg: Message = CommandArg(),
 ):
     cmd = cmd[0]
-    param = arg.extract_plain_text().strip()
+    param = arg.extract_plain_text()
     if not param:
         await switch.finish()
     if param == "全部插件":
@@ -155,7 +155,7 @@ async def _(
     arg: Message = CommandArg(),
 ):
     cmd = cmd[0]
-    param = arg.extract_plain_text().strip()
+    param = arg.extract_plain_text()
     if not param:
         await switch.finish()
     if param == "全部插件":

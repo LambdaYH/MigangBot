@@ -46,7 +46,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
             target = info.get("card", "") or info.get("nickname", "")
             break
     if not target:
-        target = arg.extract_plain_text().strip()
+        target = arg.extract_plain_text()
     if not target:
         await fabin.finish("请发送[发病 对象]~", at_sender=True)
     author = event.sender.card or event.sender.nickname

@@ -102,7 +102,7 @@ async def _(
             await music_handler.finish(
                 f"暂时很忙哦，请{(cool_down - intervals).seconds}秒之后再点歌~"
             )
-    if args := arg.extract_plain_text().strip():
+    if args := arg.extract_plain_text():
         state["music_name"] = args
     source = cmd[0].lstrip("搜")
     if source in ("网易云",):
@@ -125,7 +125,7 @@ async def _(event: GroupMessageEvent, state: T_State, arg: Message = CommandArg(
             await music_handler.finish(
                 f"暂时很忙哦，请{(cool_down - intervals).seconds}秒之后再点歌~"
             )
-    if args := arg.extract_plain_text().strip():
+    if args := arg.extract_plain_text():
         state["music_name"] = args
 
 
@@ -140,7 +140,7 @@ async def _(event: GroupMessageEvent, state: T_State, arg: Message = CommandArg(
             await music_select_handler.finish("不可以替他人选歌哦", at_sender=True)
         else:
             await music_select_handler.finish()
-    if args := arg.extract_plain_text().strip():
+    if args := arg.extract_plain_text():
         state["music_id"] = args
 
 
@@ -215,7 +215,7 @@ async def search_music(music_name, sources: List[str] = ["netease", "qq", "migu"
 
 @music_laiyishou.handle()
 async def _(arg: Message = CommandArg()):
-    music_name = arg.extract_plain_text().strip()
+    music_name = arg.extract_plain_text()
     if not music_name:
         return
     if m := await search_netease_music(music_name, 1):

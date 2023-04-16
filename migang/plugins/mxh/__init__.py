@@ -35,7 +35,7 @@ mxh = on_command("/mxh", aliases={"梅溪湖"}, priority=5, block=True)
 
 @mxh.handle()
 async def _(cmds: Tuple[str, ...] = Command(), args: Message = CommandArg()):
-    args = args.extract_plain_text().strip().split(" ")
+    args = args.extract_plain_text().split(" ")
     if len(args) != 2:
         await mxh.finish(f"参数错误：请按照【{cmds[0]} 攻 受】重新发送")
     stories = await async_load_data(story_path)
