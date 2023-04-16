@@ -43,7 +43,7 @@ feedparser = "^6.0.10"
 transformers = "^4.27.3"
 
 nonebot-bison = "^0.7.1"
-nonebot-plugin-word-bank2 = "^0.1.6"
+nonebot-plugin-word-bank2 = "^0.1.7"
 nonebot-plugin-htmlrender = "^0.2.0.3"
 nonebot-plugin-memes = "^0.4.5"
 nonebot-plugin-shindan = "^0.3.2"
