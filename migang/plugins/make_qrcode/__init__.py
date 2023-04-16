@@ -14,7 +14,7 @@ __plugin_meta__ = PluginMetadata(
 usage：
     将文字转换成二维码
     指令:
-        生成二维码
+        生成二维码 文字
 """.strip(),
     extra={
         "unique_name": "migang_make_qrcode",
