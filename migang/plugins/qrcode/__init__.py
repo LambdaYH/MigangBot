@@ -24,8 +24,8 @@ usage：
         二维码 [图片]
 """.strip(),
     extra={
-        "unique_name": "migang_translate",
-        "example": "翻译 hello",
+        "unique_name": "migang_qrcode",
+        "example": "",
         "author": "migang",
         "version": 0.1,
     },
