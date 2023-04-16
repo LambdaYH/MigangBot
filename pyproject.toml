@@ -65,6 +65,7 @@ nonebot-plugin-gsmaterial = "^0.2.5"
 nonebot-plugin-gsabyss = "^0.1.4"
 nonebot-plugin-gscode = "^0.1.6"
 nonebot-plugin-wordle = "^0.2.1"
+nonebot-plugin-sentry = "^0.3.0"
 
 [tool.black]
 line-length = 88
@@ -93,6 +94,7 @@ plugins = [
     "nonebot_plugin_apscheduler",
     "nonebot_plugin_datastore",
     "nonebot_plugin_htmlrender",
+    "nonebot_plugin_sentry",
     "nonebot_plugin_memes",
     "nonebot_plugin_word_bank2",
     "nonebot_bison",
