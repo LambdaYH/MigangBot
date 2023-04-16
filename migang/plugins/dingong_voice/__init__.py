@@ -33,5 +33,4 @@ RECORD_PATH = Path(__file__).parent / "res"
 @dg_voice.handle()
 async def _():
     voice = random.choice(list(RECORD_PATH.iterdir()))
-    print(voice)
     await dg_voice.send(MessageSegment.record(voice))
