@@ -37,6 +37,7 @@ async def init_plugin_info():
     plugin_file_list = set(
         [file.name for file in (core_data_path / "plugin_manager").iterdir()]
     )
+    custom_usage_modified = False
     custom_usage = await async_load_data(CUSTOM_USAGE_FILE)
 
     for plugin in plugins:
@@ -77,6 +78,7 @@ async def init_plugin_info():
                     logger.warning(
                         f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
                     )
+                custom_usage_modified = True
         if metadata := plugin.metadata:
             version = metadata.extra.get("version")
             author = metadata.extra.get("author")
@@ -158,5 +160,6 @@ async def init_plugin_info():
             logger.error(f"无法将插件 {plugins[i].name} 加入插件控制：{e}")
         else:
             count += 1
-    await async_save_data(custom_usage, CUSTOM_USAGE_FILE)
+    if custom_usage_modified:
+        await async_save_data(custom_usage, CUSTOM_USAGE_FILE)
     logger.info(f"已成功将 {count} 个插件加入插件控制")
