@@ -301,6 +301,8 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State, cmd: str = Fullm
                 await state_confirm.send(
                     f"{nickname}({target_user}) 与 {event.sender.card or event.sender.nickname}({event.user_id})的交易完成了！"
                 )
+                del trading_pairs[target_user]
+                del trading_pairs[event.user_id]
         else:
             await state_confirm.finish(
                 f"请等待 {nickname}({target_user}) 确认交易", at_sender=True
