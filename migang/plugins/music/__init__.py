@@ -3,7 +3,7 @@ https://github.com/pcrbot/music
 """
 import asyncio
 import datetime
-from typing import List, Tuple, Annotated
+from typing import List, Tuple
 
 from nonebot import on_command
 from nonebot.log import logger
