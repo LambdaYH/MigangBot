@@ -33,8 +33,8 @@ epic = on_fullmatch("epic喜加一", priority=5, block=True)
 async def handle(bot: Bot, event: MessageEvent):
     msg_list, code = await get_epic_free(event.self_id)
     if code == 404:
-        await epic.send(msg_list)
-    elif isinstance(event, GroupMessageEvent):
+        await epic.finish(msg_list)
+    if isinstance(event, GroupMessageEvent):
         await bot.send_forward_msg(group_id=event.group_id, messages=msg_list)
     else:
         await bot.send_forward_msg(user_id=event.user_id, message=msg_list)
