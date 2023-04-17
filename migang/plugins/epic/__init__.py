@@ -23,7 +23,7 @@ usage：
         "version": 0.1,
     },
 )
-__plugin_task__ = TaskItem(task_name="epic_free_game", name="epic免费游戏")
+__plugin_task__ = TaskItem(task_name="epic_free_game", name="epic免费游戏推送")
 
 
 epic = on_fullmatch("epic喜加一", priority=5, block=True)
