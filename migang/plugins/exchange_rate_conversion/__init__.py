@@ -64,7 +64,7 @@ async def _(args: Annotated[Message, CommandArg()]):
     try:
         async with get_new_page(**params) as page:
             await page.goto(
-                f"https://www.google.com/search?{urllib.parse.urlencode({'q': f'{args[1]}+{from_}+to+{to_}'})}",
+                f"https://www.google.com/search?{urllib.parse.urlencode({'q': f'{args[1]}+{from_}+to+{to_}', 'hl':'zh-cn'})}",
                 wait_until="networkidle",
                 timeout=10 * 1000,
             )
