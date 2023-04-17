@@ -40,7 +40,6 @@ async def search(keyword: str, result_num: int = 3):
                             )
                     except Exception as e:
                         logger.warning(f"酷狗音乐详情解析错误：{e}")
-                        pass
     except Exception as e:
         logger.warning(f"Kugo music error: {e}")
     return song_list
