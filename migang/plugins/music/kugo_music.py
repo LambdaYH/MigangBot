@@ -19,16 +19,16 @@ async def search(keyword: str, result_num: int = 3):
             if songs := result["data"]["info"][:result_num]:
                 for song in songs:
                     try:
-                        hash = song["hash"]
+                        hash_ = song["hash"]
                         album_id = song["album_id"]
                         song_url = "http://m.kugou.com/app/i/getSongInfo.php"
-                        params = {"cmd": "playInfo", "hash": hash}
+                        params = {"cmd": "playInfo", "hash": hash_}
                         resp = await client.get(song_url, params=params)
 
-                        if info := resp.json():
+                        if info := await resp.json(content_type=None):
                             song_list.append(
                                 {
-                                    "url": f"https://www.kugou.com/song/#hash={hash}&album_id={album_id}",
+                                    "url": f"https://www.kugou.com/song/#hash={hash_}&album_id={album_id}",
                                     "audio": info["url"],
                                     "title": info["songName"],
                                     "content": info["author_name"],
@@ -38,7 +38,8 @@ async def search(keyword: str, result_num: int = 3):
                                     "source": "酷狗音乐",
                                 }
                             )
-                    except:
+                    except Exception as e:
+                        logger.warning(f"酷狗音乐详情解析错误：{e}")
                         pass
     except Exception as e:
         logger.warning(f"Kugo music error: {e}")

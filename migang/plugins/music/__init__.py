@@ -3,13 +3,13 @@ https://github.com/pcrbot/music
 """
 import asyncio
 import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Annotated
 
 from nonebot import on_command
 from nonebot.log import logger
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
-from nonebot.params import Command, CommandArg
+from nonebot.params import ArgStr, Command, CommandArg
 from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot.adapters.onebot.v11 import (
@@ -51,8 +51,19 @@ usage：
 )
 __plugin_category__ = "群功能"
 
-cool_down = datetime.timedelta(seconds=25)  # 冷却时间
+cool_down = datetime.timedelta(seconds=18)  # 冷却时间
 expire = datetime.timedelta(minutes=2)
+music_select = {}
+last_check = {}
+
+src_func = {
+    "netease": search_netease_music,
+    "qq": search_qq_music,
+    "migu": search_migu_music,
+    "kuwo": search_kuwo_music,
+    "kugo": search_kugo_music,
+}
+
 
 music_handler = on_command(
     "点歌", aliases={"搜歌曲", "我想听"}, priority=5, block=True, permission=GROUP
@@ -66,8 +77,21 @@ music_specfic_source = on_command(
     permission=GROUP,
 )
 
+
+def _music_select_rule(event: GroupMessageEvent) -> bool:
+    return (event.get_session_id() in music_select) or (
+        event.group_id in last_check
+        and datetime.datetime.now() - last_check[event.group_id] < expire
+    )
+
+
 music_select_handler = on_command(
-    "选择", aliases={"选歌"}, priority=5, block=True, permission=GROUP
+    "选择",
+    aliases={"选歌"},
+    priority=5,
+    block=True,
+    permission=GROUP,
+    rule=_music_select_rule,
 )
 music_laiyishou = on_command(
     "来一首",
@@ -76,17 +100,6 @@ music_laiyishou = on_command(
     block=True,
     permission=GROUP,
 )
-
-music_select = {}
-last_check = {}
-
-src_func = {
-    "netease": search_netease_music,
-    "qq": search_qq_music,
-    "migu": search_migu_music,
-    "kuwo": search_kuwo_music,
-    "kugo": search_kugo_music,
-}
 
 
 @music_specfic_source.handle()
@@ -131,26 +144,22 @@ async def _(event: GroupMessageEvent, state: T_State, arg: Message = CommandArg(
 
 @music_select_handler.handle()
 async def _(event: GroupMessageEvent, state: T_State, arg: Message = CommandArg()):
-    key = f"{event.group_id}-{event.user_id}"
-    if key not in music_select:
-        if (
-            event.group_id in last_check
-            and datetime.datetime.now() - last_check[event.group_id] < expire
-        ):
-            await music_select_handler.finish("不可以替他人选歌哦", at_sender=True)
-        else:
-            await music_select_handler.finish()
+    if (
+        (event.get_session_id() not in music_select)
+        and (event.group_id in last_check)
+        and (datetime.datetime.now() - last_check[event.group_id] < expire)
+    ):
+        await music_select_handler.finish("不可以替他人选歌哦", at_sender=True)
     if args := arg.extract_plain_text():
         state["music_id"] = args
 
 
 @music_handler.got("music_name", prompt="你想听什么呀？")
-async def _(event: GroupMessageEvent, state: T_State):
-    music_name = state["music_name"]
+async def _(event: GroupMessageEvent, music_name: str = ArgStr("music_name")):
     music_list = await search_music(music_name)
     if music_list:
         logger.info("成功获取到歌曲列表")
-        key = f"{event.group_id}-{event.user_id}"
+        key = event.get_session_id()
         music_select[key] = {}
         for idx, music in enumerate(music_list):
             music_select[key][idx] = music
@@ -163,12 +172,15 @@ async def _(event: GroupMessageEvent, state: T_State):
 
 
 @music_specfic_source.got("music_name", prompt="你想听什么呀？")
-async def _(event: GroupMessageEvent, state: T_State):
-    music_name = state["music_name"]
+async def _(
+    event: GroupMessageEvent,
+    state: T_State,
+    music_name: str = ArgStr("music_name"),
+):
     music_list = await src_func[state["search_source"]](music_name, 5)
     if music_list:
         logger.info("成功获取到歌曲列表")
-        key = f"{event.group_id}-{event.user_id}"
+        key = event.get_session_id()
         music_select[key] = {}
         for idx, music in enumerate(music_list):
             music_select[key][idx] = music
@@ -181,10 +193,12 @@ async def _(event: GroupMessageEvent, state: T_State):
 
 
 @music_select_handler.got("music_id", prompt="请发送你想听的歌的id哦~")
-async def _(event: GroupMessageEvent, state: T_State):
-    key = f"{event.group_id}-{event.user_id}"
+async def _(event: GroupMessageEvent, music_id: str = ArgStr("music_id")):
+    key = event.get_session_id()
     music_dict = music_select[key]
-    music_idx = int(str(state["music_id"])) - 1
+    if not music_id.isdigit():
+        await music_select_handler.reject(f"序号必须是正整数哦，请重新发送序号")
+    music_idx = int(music_id) - 1
     if music_idx in music_dict:
         song = music_dict[music_idx]
         if song["type"] == "163":
@@ -197,6 +211,8 @@ async def _(event: GroupMessageEvent, state: T_State):
             await music_select_handler.send(music)
         except ActionFailed:
             logger.warning("歌曲发送异常")
+    else:
+        await music_select_handler.reject(f"序号 {music_id} 不存在哦，请重新发送序号")
     del music_select[key]
     del last_check[event.group_id]
 
