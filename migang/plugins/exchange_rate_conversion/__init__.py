@@ -12,7 +12,6 @@ from migang.core import ConfigItem, get_config
 require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import get_new_page
 
-__plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
     name="汇率转换",
     description="快速查询汇率转换",
