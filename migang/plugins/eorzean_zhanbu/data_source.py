@@ -68,7 +68,7 @@ def decrement(text: str) -> List[str]:
 def draw(
     luck: int, yi: str, ji: str, dye: str, append_msg: str, base_img: Union[Path, str]
 ) -> BytesIO:
-    img = BuildImage.open(base_img)
+    img = BuildImage.open(base_img).convert("RGBA")
     # draw luck
     img.draw_text(
         xy=(59, 75, 219, 124),

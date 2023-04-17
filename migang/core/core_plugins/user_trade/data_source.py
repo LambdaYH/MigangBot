@@ -81,7 +81,7 @@ async def draw_trade_window(
             ),
         ]
     )
-    bg = BuildImage.open(trade_bg_path)
+    bg = BuildImage.open(trade_bg_path).convert("RGBA")
     exchange_icon = BuildImage.open(exchange_icon_path).resize((80, 80))
     total_width = (
         one_side_img.width + other_side_img.width + exchange_icon.width + 20 + 30

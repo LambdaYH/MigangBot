@@ -107,7 +107,7 @@ def draw_shop() -> BytesIO:
             BuildImage.open(goods.icon).resize(icon_size).circle()
             if goods.icon
             else BuildImage.open(default_icon).resize(icon_size).circle()
-        )
+        ).convert("RGBA")
         goods_bk.paste(icon, (186, 7), alpha=True)
         # 画名字
         goods_bk.draw_bbcode_text(
@@ -149,7 +149,7 @@ def draw_shop() -> BytesIO:
             )
         # 画日限制
         if goods.purchase_limit is not None:
-            limit_img = BuildImage.open(random.choice(sticky_notes))
+            limit_img = BuildImage.open(random.choice(sticky_notes)).convert("RGBA")
             limit_img = limit_img.resize(
                 (int(120 * (limit_img.width / limit_img.height)), 120)
             )

@@ -192,8 +192,10 @@ def draw(
         lines_align="center",
         fontname="Yozai",
     )
-    bk = BuildImage.open(random.choice(list(SIGN_BACKGROUND_PATH.iterdir()))).resize(
-        (876, 424)
+    bk = (
+        BuildImage.open(random.choice(list(SIGN_BACKGROUND_PATH.iterdir())))
+        .convert("RGBA")
+        .resize((876, 424))
     )
     sub_bk = BuildImage.new("RGBA", (876, 274), (255, 255, 255, 190))
     sub_bk.paste(avatar_border, (25, 80), True)
