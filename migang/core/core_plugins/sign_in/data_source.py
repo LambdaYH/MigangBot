@@ -155,26 +155,11 @@ def draw(
     impression: float,
     time: datetime,
 ):
-    avatar_img = BuildImage.open(BytesIO(avatar)).resize((102, 102))
-    avatar_img = avatar_img.circle()
-    avatar_bk = BuildImage.new("RGBA", (140, 140), (255, 255, 255, 0))
-    avatar_borader = BuildImage.open(SIGN_BORDER_PATH / "ava_border_01.png").resize(
-        (140, 140)
-    )
-    avatar_bk.paste(
-        avatar_img,
-        pos=(
-            int((avatar_bk.width - avatar_img.width) / 2),
-            int((avatar_bk.height - avatar_img.height) / 2),
-        ),
-    )
-    avatar_bk.paste(
-        avatar_borader,
-        alpha=True,
-        pos=(
-            int((avatar_bk.width - avatar_bk.width) / 2),
-            int((avatar_bk.height - avatar_bk.height) / 2),
-        ),
+    avatar_img = BuildImage.open(BytesIO(avatar)).resize((102, 102)).circle()
+    avatar_border = (
+        BuildImage.open(SIGN_BORDER_PATH / "ava_border_01.png")
+        .convert("RGBA")
+        .resize((140, 140))
     )
 
     level, next_impression, previous_impression = get_level_and_next_impression(
@@ -186,7 +171,11 @@ def draw(
         next_impression = impression
         interpolation = 0
 
-    bar_bk = BuildImage.open(SIGN_RESOURCE_PATH / "bar_white.png").resize((220, 20))
+    bar_bk = (
+        BuildImage.open(SIGN_RESOURCE_PATH / "bar_white.png")
+        .convert("RGBA")
+        .resize((220, 20))
+    )
     ratio = 1 - (next_impression - impression) / (next_impression - previous_impression)
     bar = BuildImage.open(SIGN_RESOURCE_PATH / "bar.png").resize((220, 20))
     bar_bk.paste(
@@ -207,7 +196,8 @@ def draw(
         (876, 424)
     )
     sub_bk = BuildImage.new("RGBA", (876, 274), (255, 255, 255, 190))
-    sub_bk.paste(avatar_bk, (25, 80), True)
+    sub_bk.paste(avatar_border, (25, 80), True)
+    sub_bk.paste(avatar_img, (45, 99), True)
     sub_bk.draw_line((200, 70, 200, 250), width=2, fill=(0, 0, 0))
 
     user_id = str(user_id).rjust(12, "0")
