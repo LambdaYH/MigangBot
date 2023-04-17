@@ -31,10 +31,7 @@ epic = on_fullmatch("epic喜加一", priority=5, block=True)
 
 @epic.handle()
 async def handle(bot: Bot, event: MessageEvent):
-    Type_Event = "Private"
-    if isinstance(event, GroupMessageEvent):
-        Type_Event = "Group"
-    msg_list, code = await get_epic_free(event, Type_Event)
+    msg_list, code = await get_epic_free(event.self_id)
     if code == 404:
         await epic.send(msg_list)
     elif isinstance(event, GroupMessageEvent):
@@ -51,7 +48,7 @@ async def handle(bot: Bot, event: MessageEvent):
 )
 async def _():
     bot = get_bot()
-    msg_list, code = await get_epic_free(bot, "Group")
+    msg_list, code = await get_epic_free(int(bot.self_id))
     await broadcast(
         task_name="epic_free_game", msg=msg_list, forward=code == 200, bot=bot
     )
