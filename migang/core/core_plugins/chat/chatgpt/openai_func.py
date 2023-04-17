@@ -73,9 +73,8 @@ class TextGenerator:
                 res = "哎呀，发生了未知错误 (´；ω；`)"
             self.__key_index = (self.__key_index + 1) % len(self.__api_keys)
             logger.warning(
-                f"当前 Api Key({self.__key_index}): [{self.__api_keys[self.__key_index][:4]}...{self.__api_keys[self.__key_index][-4:]}] 请求错误，尝试使用下一个..."
+                f"当前 Api Key({self.__key_index}): [{self.__api_keys[self.__key_index][:4]}...{self.__api_keys[self.__key_index][-4:]}] 请求错误，尝试使用下一个...\n错误原因: {res} => {reason}"
             )
-            logger.error(f"错误原因: {res} => {reason}")
         logger.error("请求 OpenAi 发生错误，请检查 Api Key 是否正确或者查看控制台相关日志")
         return res, False
 
