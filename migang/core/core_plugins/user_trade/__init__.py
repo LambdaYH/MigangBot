@@ -360,7 +360,7 @@ async def _(
             + MessageSegment.image(
                 await draw_trade_window(
                     (target_user, trading_pairs[target_user]),
-                    (event.user_id, trading_pairs[event.user_id].gold),
+                    (event.user_id, trading_pairs[event.user_id]),
                 )
             )
         )
