@@ -59,7 +59,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
                                 **user.next_effect_params[i],
                             )
                         except Exception as e:
-                            logger.warning(f"执行 {effect.name} 的下一次触发签到效果发生异常：{e}")
+                            logger.error(f"执行 {effect.name} 的下一次触发签到效果发生异常：{e}")
                     else:
                         logger.warning(f"签到效果 {effect.name} 不存在下一次签到的效果，但被触发了")
             # 触发随机效果
@@ -86,7 +86,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
                     else:
                         user.next_effect = user.next_effect_params = []
             except Exception as e:
-                logger.warning(f"执行 {effect.name} 的本次签到效果发生异常：{e}")
+                logger.error(f"执行 {effect.name} 的本次签到效果发生异常：{e}")
             await TransactionLog(
                 user_id=user_id, gold_earned=user.gold_diff, description="签到"
             ).save(using_db=connection)
@@ -169,18 +169,15 @@ def draw(
         next_impression = impression
         interpolation = 0
 
-    bar_bk = (
-        BuildImage.open(SIGN_RESOURCE_PATH / "bar_white.png")
-        .convert("RGBA")
-        .resize((220, 20))
-    )
+    bar_bk = BuildImage.open(SIGN_RESOURCE_PATH / "bar_white.png").convert("RGBA")
     ratio = 1 - (next_impression - impression) / (next_impression - previous_impression)
-    bar = BuildImage.open(SIGN_RESOURCE_PATH / "bar.png").resize((220, 20))
+    bar = BuildImage.open(SIGN_RESOURCE_PATH / "bar.png")
     bar_bk.paste(
         bar,
         (int(bar.width * ratio) - bar.width, 0),
         alpha=True,
     )
+    bar_bk = bar_bk.resize((220, 20))
     gift_border = BuildImage.open(SIGN_BORDER_PATH / "gift_border_02.png").resize(
         (270, 100)
     )
