@@ -1,8 +1,8 @@
 import asyncio
 import inspect
 from pathlib import Path
+from datetime import datetime
 from enum import IntEnum, unique
-from datetime import datetime, timedelta
 from typing import Any, Dict, List, Tuple, Union, Callable, Iterable, Optional
 
 from nonebot.log import logger
@@ -267,9 +267,6 @@ class UseStatus(IntEnum):
     """达到单次使用限制"""
 
 
-TIMEDELTA = datetime.now() - datetime.utcnow()
-
-
 class GoodsManager:
     def __init__(self) -> None:
         self.__data: Dict[str, Goods] = {}
@@ -319,13 +316,13 @@ class GoodsManager:
                 return UseStatus.SINGLE_USE_LIMIT, {"count": goods.single_use_limit}
             if user.amount < amount:
                 return UseStatus.INSUFFICIENT_QUANTITY, {"count": user.amount}
-            now = datetime.now()
             today_data = (
                 await GoodsUseLog.filter(
                     user_id=user_id,
                     goods_name=name,
-                    time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
-                    - TIMEDELTA,
+                    time__gte=datetime.now()
+                    .astimezone()
+                    .replace(hour=0, minute=0, second=0, microsecond=0),
                 )
                 .annotate(today_used=Sum("amount"))
                 .using_db(connection)

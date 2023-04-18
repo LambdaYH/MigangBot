@@ -5,8 +5,6 @@ from tortoise import fields
 from tortoise.models import Model
 from tortoise.functions import Sum
 
-TIMEDELTA = datetime.now() - datetime.utcnow()
-
 
 class TransactionLog(Model):
     user_id = fields.BigIntField(null=False)
@@ -29,12 +27,12 @@ class TransactionLog(Model):
         Returns:
             Tuple[int, int,int,int]: 今日获得，今日消耗，总获得，总消耗
         """
-        now = datetime.now()
         today_data = (
             await cls.filter(
                 user_id=user_id,
-                time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
-                - TIMEDELTA,
+                time__gte=datetime.now()
+                .astimezone()
+                .replace(hour=0, minute=0, second=0, microsecond=0),
             )
             .annotate(today_earned=Sum("gold_earned"), today_spent=Sum("gold_spent"))
             .first()

@@ -1,10 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from tortoise import fields
 from tortoise.models import Model
 from tortoise.functions import Sum
-
-TIMEDELTA = datetime.now() - datetime.utcnow()
 
 
 class GoodsUseLog(Model):
@@ -32,8 +30,9 @@ class GoodsUseLog(Model):
             await cls.filter(
                 user_id=user_id,
                 goods_name=goods_name,
-                time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
-                - TIMEDELTA,
+                time__gte=datetime.now()
+                .astimezone()
+                .replace(hour=0, minute=0, second=0, microsecond=0),
             )
             .annotate(today_used=Sum("amount"))
             .first()

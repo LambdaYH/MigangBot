@@ -7,8 +7,6 @@ from tortoise.models import Model
 from tortoise.functions import Sum
 from tortoise.backends.base.client import BaseDBAsyncClient
 
-TIMEDELTA = datetime.now() - datetime.utcnow()
-
 
 @unique
 class DepositType(IntEnum):

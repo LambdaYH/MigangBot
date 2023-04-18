@@ -6,8 +6,6 @@ from tortoise.models import Model
 from tortoise.functions import Sum
 from tortoise.backends.base.client import BaseDBAsyncClient
 
-TIMEDELTA = datetime.now() - datetime.utcnow()
-
 
 class ShopLog(Model):
     user_id = fields.BigIntField(null=False)
@@ -27,13 +25,13 @@ class ShopLog(Model):
         item_name: str,
         connection: Optional[BaseDBAsyncClient] = None,
     ) -> int:
-        now = datetime.now()
         return (
             await cls.filter(
                 user_id=user_id,
                 item_name=item_name,
-                time__gte=now.replace(hour=0, minute=0, second=0, microsecond=0)
-                - TIMEDELTA,
+                time__gte=datetime.now()
+                .astimezone()
+                .replace(hour=0, minute=0, second=0, microsecond=0),
             )
             .annotate(amount=Sum("amount"))
             .using_db(connection)

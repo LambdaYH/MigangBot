@@ -6,7 +6,6 @@ from typing import Tuple
 from decimal import Decimal
 from datetime import datetime
 
-import pytz
 from nonebot.log import logger
 from pil_utils import BuildImage
 from nonebot.utils import run_sync
@@ -34,11 +33,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             await UserProperty.filter(user_id=user_id).using_db(connection).first()
         )
         impression_diff: str
-        if (
-            user
-            and (user.time.astimezone(pytz.timezone("Asia/Shanghai"))).date()
-            == datetime.now().date()
-        ):
+        if user and (user.time.astimezone().date() == datetime.now().date()):
             impression_diff = f"{user.impression_diff:.2f}"
         else:
             if not user:
@@ -119,7 +114,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
         impression_diff=impression_diff,
         windfall=user.windfall,
         impression=user_prop.impression,
-        time=user.time.astimezone(pytz.timezone("Asia/Shanghai")),
+        time=user.time.astimezone(),
     )
 
 

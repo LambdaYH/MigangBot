@@ -1,5 +1,4 @@
 from functools import cache
-from datetime import datetime
 from typing import Any, Dict, List, Tuple
 
 from aiocache import cached
@@ -7,8 +6,6 @@ from pydantic import parse_obj_as
 from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, GroupMessageEvent
 
 from migang.core.models import ChatGPTChatHistory
-
-TIMEDELTA = datetime.now() - datetime.utcnow()
 
 
 @cache
@@ -85,4 +82,5 @@ async def gen_chat_text(event: GroupMessageEvent, bot: Bot) -> Tuple[str, bool]:
 
 
 async def gen_chat_line(chat_history: ChatGPTChatHistory, bot: Bot) -> str:
-    return f"[{(chat_history.time + TIMEDELTA).strftime('%H:%M:%S %p')}] {await get_user_name(group_id=chat_history.group_id,user_id=chat_history.user_id, bot=bot)}: {await uniform_message(deserialize_message(chat_history.message), group_id=chat_history.group_id, bot=bot)}"
+    print(chat_history.time.astimezone().strftime("%H:%M:%S %p"))
+    return f"[{chat_history.time.astimezone().strftime('%H:%M:%S %p')}] {await get_user_name(group_id=chat_history.group_id,user_id=chat_history.user_id, bot=bot)}: {await uniform_message(deserialize_message(chat_history.message), group_id=chat_history.group_id, bot=bot)}"
