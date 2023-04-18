@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 from PIL import ImageFont
 from pil_utils import BuildImage
+from nonebot.utils import run_sync
 
 from migang.core import FONT_PATH
 from migang.core.models import UserBag
@@ -25,6 +26,7 @@ ttf_font = ImageFont.truetype(
 )
 
 
+@run_sync
 def draw_bag(
     user_bag: List[UserBag], gold_status: Tuple[int, int, int, int, int]
 ) -> bytes:

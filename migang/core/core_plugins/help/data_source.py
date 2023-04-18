@@ -6,9 +6,9 @@ from pathlib import Path
 from enum import Enum, unique
 from typing import Dict, List, Optional
 
-import anyio
 from nonebot import require
 from pydantic import BaseModel
+from nonebot.utils import run_sync
 from pil_utils import BuildImage, text2image
 from nonebot.adapters.onebot.v11 import MessageSegment
 
@@ -156,6 +156,7 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
             bg_color=(255, 255, 255),
         )
 
+    @run_sync
     def _draw():
         bk = BuildImage.new(
             "RGBA",
@@ -240,7 +241,7 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
         )
         return bk.save_png()
 
-    return MessageSegment.image(await anyio.to_thread.run_sync(_draw))
+    return MessageSegment.image(await _draw())
 
 
 _sorted_data: Dict[str, List[PluginManager.Plugin]] = {}

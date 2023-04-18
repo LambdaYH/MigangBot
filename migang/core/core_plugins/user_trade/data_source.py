@@ -6,8 +6,8 @@ from pathlib import Path
 from enum import Enum, unique
 from typing import List, Tuple
 
-import anyio
 from pil_utils import BuildImage
+from nonebot.utils import run_sync
 from PIL import ImageFont, ImageFilter
 
 from migang.core import FONT_PATH
@@ -65,15 +65,13 @@ async def draw_trade_window(
     """
     one_side_img, other_side_img = await asyncio.gather(
         *[
-            anyio.to_thread.run_sync(
-                draw,
+            draw(
                 await get_user_avatar(one_side[0]),
                 one_side[1].gold,
                 one_side[1].items,
                 0,
             ),
-            anyio.to_thread.run_sync(
-                draw,
+            draw(
                 await get_user_avatar(other_side[0]),
                 other_side[1].gold,
                 other_side[1].items,
@@ -109,6 +107,7 @@ async def draw_trade_window(
     return bg.save_png()
 
 
+@run_sync
 def draw(
     avatar: bytes, gold: int, items: List[Tuple[str, int]], avatar_pos: int = 0
 ) -> BuildImage:

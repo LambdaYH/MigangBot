@@ -6,9 +6,10 @@ from typing import Tuple
 from decimal import Decimal
 from datetime import datetime
 
-import anyio
+import pytz
 from nonebot.log import logger
 from pil_utils import BuildImage
+from nonebot.utils import run_sync
 from tortoise.transactions import in_transaction
 
 from migang.core.decorator import sign_in_effect
@@ -25,8 +26,6 @@ from .const import (
     level2attitude,
 )
 
-TIMEDELTA = datetime.now() - datetime.utcnow()
-
 
 async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
     async with in_transaction() as connection:
@@ -35,7 +34,11 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             await UserProperty.filter(user_id=user_id).using_db(connection).first()
         )
         impression_diff: str
-        if user and (user.time + TIMEDELTA).date() == datetime.now().date():
+        if (
+            user
+            and (user.time.astimezone(pytz.timezone("Asia/Shanghai"))).date()
+            == datetime.now().date()
+        ):
             impression_diff = f"{user.impression_diff:.2f}"
         else:
             if not user:
@@ -106,18 +109,17 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             await user.save(using_db=connection)
             await user_prop.save(using_db=connection)
     avatar = await get_user_avatar(user_id)
-    return await anyio.to_thread.run_sync(
-        draw,
-        bot_name,
-        avatar,
-        user_id,
-        user_name,
-        user.signin_count,
-        user.gold_diff,
-        impression_diff,
-        user.windfall,
-        user_prop.impression,
-        user.time + TIMEDELTA,
+    return await draw(
+        bot_name=bot_name,
+        avatar=avatar,
+        user_id=user_id,
+        user_name=user_name,
+        count=user.signin_count,
+        gold_diff=user.gold_diff,
+        impression_diff=impression_diff,
+        windfall=user.windfall,
+        impression=user_prop.impression,
+        time=user.time.astimezone(pytz.timezone("Asia/Shanghai")),
     )
 
 
@@ -143,6 +145,7 @@ def get_level_and_next_impression(impression: float) -> Tuple[int, int, int]:
     )
 
 
+@run_sync
 def draw(
     bot_name: str,
     avatar: bytes,

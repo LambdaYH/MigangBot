@@ -4,7 +4,6 @@ import random
 import hashlib
 from typing import Dict
 
-import anyio
 import ujson
 import aiohttp
 from nonebot import get_driver
@@ -270,9 +269,10 @@ async def get_baidu_trans(text: str, to: str = "zh"):
         return "[百度机翻]\n> 出错了~"
 
 
+@run_sync
 async def get_deepl_trans(text: str):
     try:
-        return f"[Deepl机翻]\n> {await anyio.to_thread.run_sync(DeeplTranslator(api_key=await get_config('deepl_api_key'),target='ZH',use_free_api=True,).translate, text)}"
+        return f"[Deepl机翻]\n> {DeeplTranslator(api_key=await get_config('deepl_api_key'),target='ZH',use_free_api=True,).translate(text)}"
     except:
         return "[Deepl机翻]\n> 出错了~"
 

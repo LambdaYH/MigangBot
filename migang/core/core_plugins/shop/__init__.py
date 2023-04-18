@@ -1,4 +1,3 @@
-import anyio
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
@@ -66,9 +65,7 @@ modify = on_startswith("修改商品", priority=5, permission=SUPERUSER, block=T
 
 @show_shop.handle()
 async def _():
-    await show_shop.send(
-        MessageSegment.image(await anyio.to_thread.run_sync(draw_shop))
-    )
+    await show_shop.send(MessageSegment.image(await draw_shop()))
 
 
 @buy.handle()
@@ -148,8 +145,7 @@ async def _(event: MessageEvent):
     user_status = await TransactionLog.get_gold_info(user_id=event.user_id)
     await my_bag.send(
         MessageSegment.image(
-            await anyio.to_thread.run_sync(
-                draw_bag,
+            await draw_bag(
                 user_bag,
                 (gold, user_status[0], user_status[1], user_status[2], user_status[3]),
             )

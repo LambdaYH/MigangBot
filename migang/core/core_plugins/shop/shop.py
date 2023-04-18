@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from pil_utils import BuildImage
+from nonebot.utils import run_sync
 from PIL import ImageFont, ImageFilter
 
 from migang.core import FONT_PATH
@@ -60,6 +61,7 @@ def split_text(
     return ret
 
 
+@run_sync
 def draw_shop() -> BytesIO:
     all_goods = goods_manager.get_all_goods_on_shelves()
     goods_imgs: List[BuildImage] = []

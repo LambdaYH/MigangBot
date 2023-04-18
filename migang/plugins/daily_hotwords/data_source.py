@@ -2,8 +2,8 @@ from io import BytesIO
 from typing import Dict, List, Tuple, Optional
 
 import jieba
-from anyio import to_thread
 from wordcloud import WordCloud
+from nonebot.utils import run_sync
 from nonebot_plugin_wordcloud.data_source import get_mask, pre_precess
 from nonebot_plugin_wordcloud.config import global_config, plugin_config
 
@@ -25,6 +25,7 @@ def analyse_message(msg: str) -> Dict[str, float]:
     return {word: weight for word, weight in words}
 
 
+@run_sync
 def _get_wordcloud_and_hot_words(
     messages: List[str], mask_key: Optional[str] = None
 ) -> Optional[Tuple[List[str], BytesIO]]:
@@ -62,4 +63,4 @@ def _get_wordcloud_and_hot_words(
 async def get_wordcloud_and_hot_words(
     messages: List[str], mask_key: Optional[str] = None
 ) -> Optional[Tuple[List[str], BytesIO]]:
-    return await to_thread.run_sync(_get_wordcloud_and_hot_words, messages, mask_key)
+    return await _get_wordcloud_and_hot_words(messages, mask_key)
