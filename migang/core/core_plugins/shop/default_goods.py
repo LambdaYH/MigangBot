@@ -39,7 +39,7 @@ async def _(goods_name: str, user_id: int, bot: Bot, low: int, high: int):
                 f"好想吃{goods_name}啊，但是家里没有...咦？这是给我的吗！谢谢！！",
             ]
         )
-        + f"\n[{list(bot.config.nickname)[0]}对您的好感度增加了{add_impression:.2f}"
+        + f"\n[{list(bot.config.nickname)[0]}对您的好感度增加了{add_impression:.2f}]"
     )
 
 
