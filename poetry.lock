@@ -2369,14 +2369,14 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "mcstatus"
-version = "10.0.2"
+version = "10.0.3"
 description = "A library to query Minecraft Servers for their status and capabilities."
 category = "main"
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "mcstatus-10.0.2-py3-none-any.whl", hash = "sha256:d3aad8ff98a1b8cf1866b31318d2321cacb70cde819980b34051ac991c79445b"},
-    {file = "mcstatus-10.0.2.tar.gz", hash = "sha256:c112ac5ae114be7faac663628de70179c13ce9b4b136fbf075d02dd91468173f"},
+    {file = "mcstatus-10.0.3-py3-none-any.whl", hash = "sha256:5e67bbd74acb0e258e05c5f9c7442c1e43ba8c8a3028eda259faad0a7b62571e"},
+    {file = "mcstatus-10.0.3.tar.gz", hash = "sha256:23f24a695e3a905dfbf66821a13665251958feb41f9d2cc26ed390242e0177c1"},
 ]
 
 [package.dependencies]
@@ -5417,4 +5417,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5fc5937dd1ce1c51cc85a7e4ed988a36f6309f96a79c8b8d3edf9b5bf3dfe077"
+content-hash = "5056223ce462eaa5fab933360d01b262bfa64f46a652b2834accfaadff89e0c3"
