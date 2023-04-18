@@ -11,7 +11,7 @@ from nonebot.log import logger
 from nonebot.utils import run_sync
 from deep_translator import DeeplTranslator, GoogleTranslator
 
-from migang.core import get_config
+from migang.core import get_config, sync_get_config
 
 
 def get_language_form(language: Dict[str, str], num_per_line: int = 5) -> str:
@@ -270,9 +270,9 @@ async def get_baidu_trans(text: str, to: str = "zh"):
 
 
 @run_sync
-async def get_deepl_trans(text: str):
+def get_deepl_trans(text: str):
     try:
-        return f"[Deepl机翻]\n> {DeeplTranslator(api_key=await get_config('deepl_api_key'),target='ZH',use_free_api=True,).translate(text)}"
+        return f"[Deepl机翻]\n> {DeeplTranslator(api_key=sync_get_config('deepl_api_key'),target='ZH',use_free_api=True,).translate(text)}"
     except:
         return "[Deepl机翻]\n> 出错了~"
 
