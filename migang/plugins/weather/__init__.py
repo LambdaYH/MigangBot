@@ -11,7 +11,7 @@ from migang.core import ConfigItem, get_config
 
 from .render_pic import render
 from .eorzean_weather import get_eorzean_weather
-from .weather_data import Weather, CityNotFoundError
+from .weather_data import Weather, CityNotFoundError, NoWeatherDataError
 
 __plugin_meta__ = PluginMetadata(
     name="天气",
@@ -65,7 +65,7 @@ async def _(matcher: Matcher, reg_group: Tuple[Any, ...] = RegexGroup()):
         )
         try:
             await w_data.load_data()
-        except CityNotFoundError:
+        except (CityNotFoundError, NoWeatherDataError):
             matcher.block = False
             await weather.finish()
 

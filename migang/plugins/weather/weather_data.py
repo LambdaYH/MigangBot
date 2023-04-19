@@ -18,6 +18,10 @@ class CityNotFoundError(Exception):
     ...
 
 
+class NoWeatherDataError(Exception):
+    ...
+
+
 class Weather:
     def __url__(self):
         if self.api_type == 2:
@@ -86,6 +90,8 @@ class Weather:
     def _data_validate(self):
         if self.now.code == "200" and self.daily.code == "200":
             pass
+        elif self.warning.code == "204":
+            raise NoWeatherDataError()
         else:
             raise APIError(
                 "错误! 请检查配置! "
