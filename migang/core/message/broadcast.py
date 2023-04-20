@@ -76,7 +76,13 @@ class SendManager:
                     )
                 except (ActionFailed, NetworkError) as e:
                     logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
-                    self.failed_dict[group] = True
+                    # blocked by server时不处理
+                    if isinstance(
+                        e, ActionFailed
+                    ) and "blocked by server" in e.info.get("message", ""):
+                        pass
+                    else:
+                        self.failed_dict[group] = True
         else:
             for group in self.group_list:
                 for i, m in enumerate(self.msg):
