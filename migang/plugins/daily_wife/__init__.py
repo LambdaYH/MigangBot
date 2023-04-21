@@ -86,6 +86,8 @@ async def _(
                 group_member_set.remove(event.self_id)
             if event.user_id in group_member_set:
                 group_member_set.remove(event.user_id)
+            if not group_member_set:
+                await laopo.finish("所有群友都已经配对了哦~明天早些来吧")
             wife_id = choice(list(group_member_set))
             if not user_wife_info:
                 user_wife_info = DailyWife(
