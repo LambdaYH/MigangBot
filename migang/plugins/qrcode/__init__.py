@@ -1,11 +1,14 @@
 from io import BytesIO
+from typing import Annotated
 
 import aiohttp
 from pyzbar import pyzbar
 from nonebot import on_command
 from nonebot.typing import T_State
 from PIL import Image, ImageEnhance
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11.helpers import extract_image_urls
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Message,
@@ -68,19 +71,21 @@ def decode(file):
 
 @qrcode.handle()
 async def _(
-    event: MessageEvent,
-    state: T_State,
+    event: MessageEvent, state: T_State, args: Annotated[Message, CommandArg()]
 ):
     msg = event.reply.message if event.reply else event.message
-    imgs = [seg.data["url"] for seg in msg["image"]]
+    imgs = extract_image_urls(msg)
     if imgs:
         state["image"] = imgs
+    elif args.extract_plain_text():
+        # 如果没有图片，可能是别人说的话误触
+        await qrcode.finish()
 
 
 @qrcode.got("image", prompt="请发送需要识别的二维码图片")
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     if isinstance(state["image"], Message):
-        imgs = [seg.data["url"] for seg in state["image"]]
+        imgs = extract_image_urls(state["image"])
         if not imgs:
             await qrcode.finish("请发送二维码图片哦~", at_sender=True)
         image_url = imgs
