@@ -91,9 +91,14 @@ class SendManager:
                         await self.bot.send_group_msg(group_id=group, message=m)
                     except (ActionFailed, NetworkError) as e:
                         logger.error(f"GROUP {group} 消息发送失败 {type(e)}: {e}")
-                        if group not in self.failed_dict:
-                            self.failed_dict[group] = set()
-                        self.failed_dict[group].add(i)
+                        if isinstance(
+                            e, ActionFailed
+                        ) and "blocked by server" in e.info.get("message", ""):
+                            pass
+                        else:
+                            if group not in self.failed_dict:
+                                self.failed_dict[group] = set()
+                            self.failed_dict[group].add(i)
         if self.failed_dict:
             logger.warning(f"共 {len(self.failed_dict)} 个消息发送失败，即将重试")
             await asyncio.sleep(self.retry_interval)
