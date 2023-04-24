@@ -1,6 +1,8 @@
 import random
+import traceback
 
 import openai
+from nonebot.log import logger
 from transformers import GPT2TokenizerFast
 
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
@@ -30,14 +32,22 @@ async def _(content: str):
         openai.proxy = proxy
     # style = "anime style, colored-pencil"
     style = random.choice(style_preset)
-    response = await openai.Image.acreate(
-        prompt=content + ", " + style, n=1, size=f"{custom_size[0]}x{custom_size[1]}"
-    )
+    try:
+        response = await openai.Image.acreate(
+            prompt=content + ", " + style,
+            n=1,
+            size=f"{custom_size[0]}x{custom_size[1]}",
+        )
+    except Exception:
+        logger.error(f"调用openai绘图错误：{traceback.format_exc()}")
+        return {
+            "text": "画笔没墨了...",
+        }
     image_url = response["data"][0]["url"]
 
     if image_url is None:
         return {
-            "text": "图片生成错误...",
+            "text": "画笔没墨了...",
         }
     elif "rejected" in response:
         # 返回的信息将会被发送到会话中
