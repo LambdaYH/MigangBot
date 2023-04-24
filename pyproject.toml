@@ -20,7 +20,7 @@ aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 lxml = "^4.9.2"
 tenacity = "^8.2.1"
 fake-useragent = "^1.1.1"
-aiocache = "^0.12.0"
+aiocache = "^0.12.1"
 azure-cognitiveservices-speech = "^1.25.0"
 deep-translator = "^1.10.0"
 pyzbar = "^0.1.9"
