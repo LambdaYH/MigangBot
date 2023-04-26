@@ -3,6 +3,7 @@ import time
 from nonebot.log import logger
 from tortoise.expressions import Q
 from nonebot.adapters.onebot.v11 import Bot
+from tortoise.transactions import in_transaction
 
 from migang.core import sync_get_config
 from migang.core.models import ChatGPTChatHistory, ChatGPTChatImpression
@@ -139,13 +140,26 @@ async def update_impression(bot: Bot, group_id: int, user_id: int) -> None:
     )
     if len(chat_history_user) < impression_length:
         return
-    impression = await ChatGPTChatImpression.filter(
-        group_id=group_id, user_id=user_id, self_id=self_id
-    ).first()
-    if impression and (impression_refresh_length <= impression_length):
-        # 说明目前只有少于impression_refresh_length条的聊天数据
-        if impression.time > chat_history_user[impression_refresh_length - 1].time:
-            return
+    async with in_transaction() as connection:
+        impression = (
+            await ChatGPTChatImpression.filter(
+                group_id=group_id, user_id=user_id, self_id=self_id
+            )
+            .using_db(connection)
+            .first()
+        )
+        if impression and (impression_refresh_length <= impression_length):
+            # 说明目前只有少于impression_refresh_length条的聊天数据
+            if impression.time > chat_history_user[impression_refresh_length - 1].time:
+                return
+        if not impression:
+            impression = ChatGPTChatImpression(
+                group_id=group_id,
+                user_id=user_id,
+                self_id=self_id,
+                impression="",
+            )
+            await impression.save(using_db=connection)
     user_name = await get_user_name(bot=bot, group_id=group_id, user_id=user_id)
     bot_name = get_bot_name(bot=bot)
     pre_impression = f"Last impression:{impression.impression.format(user_name=user_name,bot_name=bot_name) if impression else ''}\n\n"
@@ -160,15 +174,9 @@ async def update_impression(bot: Bot, group_id: int, user_id: int) -> None:
     )
     res, success = await text_generator.get_response(prompt, type="impression")
     if success:
-        if not impression:
-            impression = ChatGPTChatImpression(
-                group_id=group_id,
-                user_id=user_id,
-                self_id=self_id,
-                impression=res.replace(user_name, "{user_name}").replace(
-                    bot_name, "{bot_name}"
-                ),
-            )
+        impression.impression = res.replace(user_name, "{user_name}").replace(
+            bot_name, "{bot_name}"
+        )
         await impression.save()
     else:
         logger.warning(f"生成对话印象失败：{res}")

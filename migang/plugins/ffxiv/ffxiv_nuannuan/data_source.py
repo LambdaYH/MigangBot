@@ -52,7 +52,7 @@ async def get_nuannuan_image() -> None:
                     async with await anyio.open_file(nuannuan_path, "wb") as f:
                         await f.write(buf.getvalue())
     except TimeoutError as e:
-        logger.warning(f"获取暖暖图片失败：{e}")
+        logger.error(f"获取暖暖图片失败：{e}")
 
 
 async def get_video_id(mid: int) -> str:
@@ -68,7 +68,7 @@ async def get_video_id(mid: int) -> str:
                 if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
                     return i["bvid"]
     except Exception as e:
-        logger.warning(f"获取暖暖动态失败：{e}")
+        logger.error(f"获取暖暖动态失败：{e}")
     return None
 
 
@@ -91,7 +91,7 @@ async def extract_nn(bvid: str) -> Dict[str, str]:
                 }
                 return res_data
     except Exception as e:
-        logger.warning(f"获取暖暖动态内容失败: {e}")
+        logger.error(f"获取暖暖动态内容失败: {e}")
     return None
 
 
