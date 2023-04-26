@@ -139,7 +139,7 @@ async def _():
 
 @scheduler.scheduled_job(
     "cron",
-    hour=2,
+    hour="*/2",
     minute=8,
 )
 async def _():
