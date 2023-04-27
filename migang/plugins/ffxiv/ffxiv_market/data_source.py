@@ -6,6 +6,7 @@ from typing import Union, Optional
 from difflib import SequenceMatcher
 
 import aiohttp
+from nonebot.log import logger
 
 
 def localize_world_name(world_name: str):
