@@ -35,7 +35,7 @@ async def download_url(url: str) -> Union[httpx.Response, None]:
     async with httpx.AsyncClient() as client:
         for i in range(3):
             try:
-                response = await client.get(url)
+                response = await client.get(url, follow_redirects=True)
                 if response.status_code != 200:
                     continue
                 return response
