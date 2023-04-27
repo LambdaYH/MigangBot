@@ -1,6 +1,7 @@
 import re
 import time
 import asyncio
+import traceback
 from typing import Union, Optional
 from difflib import SequenceMatcher
 
@@ -54,11 +55,8 @@ async def get_item_id(
     url = "https://xivapi.com/search"
     if name_lang == "cn":
         url = "https://cafemaker.wakingsands.com/search"
-    try:
-        r = await client.get(url=url, timeout=30, params=params)
-        result = (await r.json())["Results"]
-    except asyncio.TimeoutError:
-        return None, -1
+    r = await client.get(url=url, timeout=30, params=params)
+    result = (await r.json())["Results"]
     if len(result) > 0:
         result = max(
             result,
@@ -90,20 +88,24 @@ def handle_item_name_abbr(item_name: str):
 
 async def get_market_data(server_name: str, item_name: str, hq=False) -> str:
     async with aiohttp.ClientSession() as client:
-        new_item_name, item_id = await get_item_id(
-            item_name=item_name, client=client, name_lang="cn"
-        )
-        if item_id < 0:
-            item_name = item_name.replace("_", " ")
-            name_lang = ""
-            for lang in ["ja", "fr", "de"]:
-                if item_name.endswith(f"|{lang}"):
-                    item_name = item_name.replace(f"|{lang}", "")
-                    name_lang = lang
-                    break
-            new_item_name, item_id = await get_item_id(item_name, client, name_lang)
+        try:
+            new_item_name, item_id = await get_item_id(
+                item_name=item_name, client=client, name_lang="cn"
+            )
+            if item_id < 0:
+                item_name = item_name.replace("_", " ")
+                name_lang = ""
+                for lang in ["ja", "fr", "de"]:
+                    if item_name.endswith(f"|{lang}"):
+                        item_name = item_name.replace(f"|{lang}", "")
+                        name_lang = lang
+                        break
+                new_item_name, item_id = await get_item_id(item_name, client, name_lang)
             if item_id < 0:
                 return f'所查询物品"{item_name}"不存在'
+        except asyncio.TimeoutError:
+            logger.error(f"获取物品ID异常：{traceback.format_exc()}")
+            return f"获取物品ID超时...或许相关api网络出现了问题.."
         url = f"https://universalis.app/api/{server_name}/{item_id}"
         try:
             r = await client.get(url, timeout=10)
