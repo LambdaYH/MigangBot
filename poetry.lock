@@ -3354,14 +3354,14 @@ files = [
 
 [[package]]
 name = "pil-utils"
-version = "0.1.6"
+version = "0.1.7"
 description = "A simple PIL wrapper and text-to-image tool"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pil_utils-0.1.6-py3-none-any.whl", hash = "sha256:5fcac8387dd7cec5366a7c3eac3f5501ae60c78d8165f384e8b83ff798d51118"},
-    {file = "pil_utils-0.1.6.tar.gz", hash = "sha256:b1f814d24b611812ab427aa9a437c4d6644f8c5d558353c1ba5b8661babed9ad"},
+    {file = "pil_utils-0.1.7-py3-none-any.whl", hash = "sha256:ee3644fe57f4eaa18a9bb32ba0e07e56600472b60e9291b571edee8885441fdb"},
+    {file = "pil_utils-0.1.7.tar.gz", hash = "sha256:398dfe4c68c17021b93e318a398b78331866d28a7ffa6329204efa575a615dcb"},
 ]
 
 [package.dependencies]
@@ -5420,4 +5420,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5bf80aa39526085d6842804f0fb8dbf2b3fbbb71e9aa68c33d94ceb839e9c002"
+content-hash = "14c74633ae6b99542fef409ff6d37f3531893a0b05e16c668ca1948448ac3c3d"
