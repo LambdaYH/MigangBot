@@ -66,7 +66,7 @@ nonebot-plugin-gsabyss = "^0.1.4"
 nonebot-plugin-gscode = "^0.1.6"
 nonebot-plugin-wordle = "^0.2.1"
 nonebot-plugin-sentry = "^0.3.0"
-nonebot-plugin-bottle = "^1.0.0.2"
+nonebot-plugin-bottle = "^1.0.0.3"
 
 [tool.black]
 line-length = 88
