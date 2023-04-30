@@ -55,41 +55,39 @@ async def get_nuannuan_image() -> None:
         logger.error(f"获取暖暖图片失败：{e}")
 
 
-async def get_video_id(mid: int) -> str:
+async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
     try:
         # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
-        async with aiohttp.ClientSession() as client:
-            headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
-            url = f"https://api.bilibili.com/x/space/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
-            r = await client.head("https://www.bilibili.com/", headers=headers)
-            r = await (await client.get(url, headers=headers, cookies=r.cookies)).json()
-            video_list = r["data"]["list"]["vlist"]
-            for i in video_list:
-                if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
-                    return i["bvid"]
+        headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
+        url = f"https://api.bilibili.com/x/space/wbi/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
+        r = await client.head("https://www.bilibili.com/", headers=headers)
+        r = await (await client.get(url, headers=headers, cookies=r.cookies)).json()
+        video_list = r["data"]["list"]["vlist"]
+        for i in video_list:
+            if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
+                return i["bvid"]
     except Exception as e:
         logger.error(f"获取暖暖动态失败：{e}")
     return None
 
 
-async def extract_nn(bvid: str) -> Dict[str, str]:
+async def extract_nn(bvid: str, client: aiohttp.ClientSession) -> Dict[str, str]:
     try:
         url = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
-        async with aiohttp.ClientSession() as client:
-            r = await (await client.get(url, timeout=5)).json()
-            if r["code"] == 0:
-                url = f"https://www.bilibili.com/video/{bvid}"
-                title = r["data"]["title"]
-                desc = r["data"]["desc"]
-                text = desc.replace("个人攻略网站", "游玩C攻略站")
-                image = r["data"]["pic"]
-                res_data = {
-                    "url": url,
-                    "title": title,
-                    "content": text,
-                    "image": image,
-                }
-                return res_data
+        r = await (await client.get(url, timeout=5)).json()
+        if r["code"] == 0:
+            url = f"https://www.bilibili.com/video/{bvid}"
+            title = r["data"]["title"]
+            desc = r["data"]["desc"]
+            text = desc.replace("个人攻略网站", "游玩C攻略站")
+            image = r["data"]["pic"]
+            res_data = {
+                "url": url,
+                "title": title,
+                "content": text,
+                "image": image,
+            }
+            return res_data
     except Exception as e:
         logger.error(f"获取暖暖动态内容失败: {e}")
     return None
@@ -103,11 +101,14 @@ def format_nn_text(text: str) -> List[str]:
 
 
 async def get_nuannuan_text() -> None:
-    bvid = await get_video_id(15503317)
-    # 获取数据
-    res_data = await extract_nn(bvid)
+    async with aiohttp.ClientSession() as client:
+        bvid = await get_video_id(15503317, client)
+        # 获取数据
+        res_data = await extract_nn(bvid, client)
+    global nuannuan_text
     if not res_data:
-        msg = ["获取暖暖文字信息失败"]
+        if not nuannuan_text:
+            nuannuan_text = ["获取暖暖文字信息失败"]
     else:
         phase = re.search(r"【FF14/时尚品鉴】第(\d+)期[\S\s]*", res_data["title"]).group(1)
         theme_s = res_data["content"].find("主题：")
@@ -125,8 +126,7 @@ async def get_nuannuan_text() -> None:
             + res_data["content"][theme_s : res_data["content"].find("\n", theme_s)]
         ]
         msg += format_nn_text(res_data["content"])
-    global nuannuan_text
-    nuannuan_text = msg
+        nuannuan_text = msg
 
 
 @get_driver().on_startup
