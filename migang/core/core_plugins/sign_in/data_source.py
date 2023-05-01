@@ -266,7 +266,7 @@ def draw(
         fontsize=30,
         fontname="Yozai",
     )
-    bk.draw_text(
+    bk.draw_bbcode_text(
         (580, 220),
         text=f"好感度 + {impression_diff}",
         fontsize=20,
