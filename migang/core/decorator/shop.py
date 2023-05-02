@@ -1,7 +1,7 @@
 from typing import Any, Dict, Tuple, Union, Callable, Iterable, Optional
 
 from migang.core.manager import goods_manager
-from migang.core.manager.goods_manager import (
+from migang.core.manager.goods_manager import (  # noqa
     Goods,
     GoodsGroup,
     CancelGoodsHandle,

@@ -51,7 +51,7 @@ async def init_plugin_config():
             c = plugin.module.__getattribute__("__plugin_config__")
             if isinstance(c, Iterable):
                 configs += c
-            elif type(c) is ConfigItem:
+            elif isinstance(c, ConfigItem):
                 configs.append(c)
         try:
             tasks.append(

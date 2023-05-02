@@ -19,8 +19,6 @@ except ModuleNotFoundError:
 
 from pil_utils import BuildImage
 
-from migang.core import DATA_PATH
-
 from ..util import cn2py, circled_number
 from ..config import DRAW_PATH, draw_config
 

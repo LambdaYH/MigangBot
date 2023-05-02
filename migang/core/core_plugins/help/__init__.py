@@ -164,10 +164,10 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     to_me = True
                     break
 
-            def add_to_commands(type: str, cmds: Union[str, List[str]]):
+            def add_to_commands(type_: str, cmds: Union[str, List[str]]):
                 for perm in matcher_permissions:
-                    if type not in commands[perm]:
-                        commands[perm][type] = set()
+                    if type_ not in commands[perm]:
+                        commands[perm][type_] = set()
                 if isinstance(cmds, str):
                     cmds = [cmds]
                 if isinstance(cmds, re.Pattern):
@@ -183,21 +183,21 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
                     [f"[b]{cmd}[/b]" if to_me else cmd for cmd in cmd_set]
                 )
                 for perm in matcher_permissions:
-                    commands[perm][type].add(cmd_text)
+                    commands[perm][type_].add(cmd_text)
 
             for dep in matcher.rule.checkers:
                 if isinstance(dep.call, FullmatchRule):
-                    add_to_commands(type="完全匹配", cmds=dep.call.msg)
+                    add_to_commands(type_="完全匹配", cmds=dep.call.msg)
                 elif isinstance(dep.call, CommandRule):
-                    add_to_commands(type="指令", cmds=dep.call.cmds)
+                    add_to_commands(type_="指令", cmds=dep.call.cmds)
                 elif isinstance(dep.call, StartswithRule):
-                    add_to_commands(type="前缀匹配", cmds=dep.call.msg)
+                    add_to_commands(type_="前缀匹配", cmds=dep.call.msg)
                 elif isinstance(dep.call, EndswithRule):
-                    add_to_commands(type="后缀匹配", cmds=dep.call.msg)
+                    add_to_commands(type_="后缀匹配", cmds=dep.call.msg)
                 elif isinstance(dep.call, RegexRule):
-                    add_to_commands(type="正则匹配", cmds=dep.call.regex)
+                    add_to_commands(type_="正则匹配", cmds=dep.call.regex)
                 elif isinstance(dep.call, KeywordsRule):
-                    add_to_commands(type="关键词匹配", cmds=dep.call.keywords)
+                    add_to_commands(type_="关键词匹配", cmds=dep.call.keywords)
 
         cmd_text = [f"插件 {name} 可用指令如下，加粗指令表示需要@Bot"]
         for perm_text, cmds in commands.items():

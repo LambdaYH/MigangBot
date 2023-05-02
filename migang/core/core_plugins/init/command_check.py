@@ -20,7 +20,7 @@ from .utils import get_plugin_list
 
 
 def check_command():
-    commands_check: DefaultDict[str, Dict[str, Plugin]] = defaultdict(lambda: dict())
+    commands_check: DefaultDict[str, Dict[str, Plugin]] = defaultdict(dict)
     """类型-命令-插件集
     """
 

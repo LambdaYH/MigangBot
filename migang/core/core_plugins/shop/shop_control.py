@@ -18,9 +18,8 @@ async def adjust_goods(name: str, args: str) -> None:
         kwargs = {}
         key, value = arg.split(":")
         if key in goods_info_fields:
+            # 0：替换，1：增加，2：减少
             mode = 0
-            """0：替换，1：增加，2：减少
-            """
             if key[-1] in ("+", "-"):
                 key = key[:-1]
                 if key[-1] == "+":
@@ -62,9 +61,8 @@ async def adjust_goods_group(name: str, args: str) -> None:
         kwargs = {}
         key, value = arg.split(":")
         if key in goods_group_fields:
+            # 0：替换，1：增加，2：减少
             mode = 0
-            """0：替换，1：增加，2：减少
-            """
             if key[-1] in ("+", "-"):
                 key = key[:-1]
                 if key[-1] == "+":
