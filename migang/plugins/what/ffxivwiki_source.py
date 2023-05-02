@@ -109,9 +109,8 @@ async def parse_item_garland(item_id, name_lang):
         return limitTimes
 
     if "nodes" in item.keys():
-        global NODE_NAME_BY_TYPE
         hasSource = True
-        result.append(f"·采集")
+        result.append("·采集")
         for nodeIndex in item["nodes"]:
             node = partials[("node", str(nodeIndex))]
             result.append(
@@ -178,7 +177,6 @@ async def parse_item_garland(item_id, name_lang):
             elif "node" in fishGroup.keys():
                 result.append(f"- 鱼影大小 {FISH_SHADOW_SIZE[fishGroup['shadow']]}")
                 result.append(f"- 鱼影速度 {FISH_SHADOW_SPEED[fishGroup['speed']]}")
-                pass
         result.append("")
 
     if "reducedFrom" in item.keys():
@@ -194,7 +192,7 @@ async def parse_item_garland(item_id, name_lang):
         for craft in item["craft"]:
             result.append(
                 "  -- {} {}".format(
-                    await gt_core(f"jobs", name_lang)[craft["job"]]["name"],
+                    await gt_core("jobs", name_lang)[craft["job"]]["name"],
                     f"{craft['lvl']}级",
                 )
             )
@@ -319,7 +317,7 @@ async def parse_item_garland(item_id, name_lang):
 
     if "drops" in item.keys():
         hasSource = True
-        result.append(f"·怪物掉落")
+        result.append("·怪物掉落")
         for mobIndex in item["drops"]:
             mob = partials[("mob", str(mobIndex))]
             result.append(
@@ -344,7 +342,7 @@ async def parse_item_garland(item_id, name_lang):
 
     if "quests" in item.keys():
         hasSource = True
-        result.append(f"·任务奖励")
+        result.append("·任务奖励")
         i = 0
         for questIndex in item["quests"]:
             if i > 4:
@@ -365,7 +363,7 @@ async def parse_item_garland(item_id, name_lang):
     status = ""
 
     if "unique" in item.keys():
-        status += f"独占 "
+        status += "独占 "
 
     if "tradeable" in item.keys():
         status += f"{'' if bool(item['tradeable']) else '不'}可交易 "

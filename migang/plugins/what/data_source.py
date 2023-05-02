@@ -40,7 +40,7 @@ async def render_res(question: str, content: str, source: str) -> bytes:
 
 
 async def get_content(
-    keyword: str, sources=["nbnhhsh", "ffxivwiki", "moegirl"]
+    keyword: str, sources=("nbnhhsh", "ffxivwiki", "moegirl")
 ) -> Union[str, Message]:
     result = None
     msgs = await asyncio.gather(

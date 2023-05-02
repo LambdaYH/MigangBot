@@ -14,7 +14,7 @@ from nonebot.log import logger
 from fake_useragent import UserAgent
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_htmlrender import get_new_page
-from playwright.async_api import TimeoutError  # type: ignore
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from migang.core import DATA_PATH
 
@@ -51,7 +51,7 @@ async def get_nuannuan_image() -> None:
                     crop_image.save(buf, format="PNG")
                     async with await anyio.open_file(nuannuan_path, "wb") as f:
                         await f.write(buf.getvalue())
-    except TimeoutError as e:
+    except PlaywrightTimeoutError as e:
         logger.error(f"获取暖暖图片失败：{e}")
 
 

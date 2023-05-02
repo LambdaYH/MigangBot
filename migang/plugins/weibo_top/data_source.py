@@ -40,7 +40,7 @@ async def get_wbtop(url: str) -> Tuple[Union[dict, str], int]:
                     return {"data": data, "time": datetime.datetime.now()}, 200
                 else:
                     if i > 2:
-                        return f"获取失败,请十分钟后再试", 999
+                        return "获取失败,请十分钟后再试", 999
         except TimeoutError:
             return "超时了....", 998
 

@@ -46,7 +46,7 @@ exchange = on_command("汇率转换", priority=5, block=False)
 async def _(args: Annotated[Message, CommandArg()]):
     args = args.extract_plain_text().split(" ")
     if len(args) != 2:
-        await exchange.finish(f"格式错误，请按照【汇率转换 from:to 数额】发送")
+        await exchange.finish("格式错误，请按照【汇率转换 from:to 数额】发送")
     from_to = args[0].split(":")
     if len(from_to) == 1:
         from_ = from_to[0]
@@ -72,5 +72,5 @@ async def _(args: Annotated[Message, CommandArg()]):
             )
             img = await card.screenshot()
     except Exception:
-        await exchange.finish(f"似乎无法实现这种货币的转换呢...试试换个输入吧")
+        await exchange.finish("似乎无法实现这种货币的转换呢...试试换个输入吧")
     await exchange.send(MessageSegment.image(img))

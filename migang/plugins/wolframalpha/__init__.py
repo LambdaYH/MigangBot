@@ -40,7 +40,7 @@ wolfram = on_command("wolfram", aliases={"wolframalpha"}, block=True, priority=1
 async def _(msg: Message = CommandArg()):
     text = msg.extract_plain_text()
     if not text:
-        await wolfram.finish(f"请在指令后接文本哦~")
+        await wolfram.finish("请在指令后接文本哦~")
 
     appid = await get_config("wolframalpha_appid")
     res = await get_wolframalpha_simple(text, appid)

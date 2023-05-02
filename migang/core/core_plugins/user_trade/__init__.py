@@ -1,6 +1,5 @@
 from time import time
-from enum import Enum, unique
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata

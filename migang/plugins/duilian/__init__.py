@@ -8,7 +8,7 @@ from nonebot.params import Startswith, EventPlainText
 __plugin_meta__ = PluginMetadata(
     name="对联",
     description="生成对联",
-    usage=f"""
+    usage="""
 指令：
     /duilian 上联
 由https://ai.binwang.me/couplet提供

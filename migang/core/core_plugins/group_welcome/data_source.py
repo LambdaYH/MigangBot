@@ -32,8 +32,8 @@ async def cache_image_url(seg: MessageSegment, client: aiohttp.ClientSession):
         seg.type = "cached_image"
     else:
         return
-    hash = hashlib.md5(data).hexdigest()
-    filename = f"{hash}.cache"
+    hash_ = hashlib.md5(data).hexdigest()
+    filename = f"{hash_}.cache"
     cache_file_path = data_dir / filename
     cache_files = [f.name for f in data_dir.iterdir() if f.is_file()]
     if filename not in cache_files:

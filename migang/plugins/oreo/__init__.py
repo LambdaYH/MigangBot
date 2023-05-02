@@ -126,19 +126,19 @@ async def _(arg: Message = CommandArg()):
     # 对除去顶层以外的部分进行叠图（因为顶层有可能要叠上半饼，所以后续拉出来单独处理）
     for i in range(0, len(name) - 2):
         if (name[len(name) - i - 1] == "奥") & (name[len(name) - i - 2] == "利"):
-            """底+馅要拓展40像素"""
+            # 底+馅要拓展40像素
             imgt = png_extend(img4, 40)
             img4 = add_re(imgt)
         elif (name[len(name) - i - 1] == "利") & (name[len(name) - i - 2] == "利"):
-            """馅+馅要拓展60像素"""
+            # 馅+馅要拓展60像素
             img4 = png_extend(img4, 60)
             img4 = add_re(img4)
         elif (name[len(name) - i - 1] == "利") & (name[len(name) - i - 2] == "奥"):
-            """馅+底/顶要拓展84像素"""
+            # 馅+底/顶要拓展84像素
             img4 = png_extend(img4, 84)
             img4 = add_b(img4)
         elif (name[len(name) - i - 1] == "奥") & (name[len(name) - i - 2] == "奥"):
-            """底+底/顶要拓展64像素"""
+            # 底+底/顶要拓展64像素
             img4 = png_extend(img4, 64)
             img4 = add_b(img4)
 

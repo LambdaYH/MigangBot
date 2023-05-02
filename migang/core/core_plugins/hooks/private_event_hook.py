@@ -3,13 +3,7 @@ from typing import Union
 from nonebot.matcher import Matcher
 from nonebot.message import run_preprocessor
 from nonebot.exception import IgnoredException
-from nonebot.adapters.onebot.v11 import (
-    GroupRequestEvent,
-    FriendRequestEvent,
-    PrivateMessageEvent,
-    FriendAddNoticeEvent,
-    FriendRecallNoticeEvent,
-)
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent, FriendRecallNoticeEvent
 
 from migang.core.models import UserProperty
 from migang.core.manager import cd_manager, user_manager, count_manager

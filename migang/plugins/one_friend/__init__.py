@@ -13,7 +13,7 @@ from migang.utils.image import get_user_avatar
 __plugin_meta__ = PluginMetadata(
     name="我有一个朋友",
     description="我有一个朋友说xxxx",
-    usage=f"""
+    usage="""
 指令：
     我有一个朋友想问问 [文本] [at]: 当at时你的朋友就是艾特对象（但是有可能会反弹
 """.strip(),

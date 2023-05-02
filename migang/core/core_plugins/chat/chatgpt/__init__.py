@@ -114,7 +114,7 @@ async def _():
 
 # ========================= #
 # 把扩展导入
-from .extensions import paint
+from .extensions import paint  # noqa
 
 # ========================= #
 

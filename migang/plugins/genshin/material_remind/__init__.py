@@ -55,9 +55,9 @@ async def _():
 async def _():
     if await update_image():
         await super_cmd.send("更新成功...")
-        logger.info(f"更新每日天赋素材成功...")
+        logger.info("更新每日天赋素材成功...")
     else:
-        await super_cmd.send(f"更新失败...")
+        await super_cmd.send("更新失败...")
 
 
 async def update_image() -> Optional[Path]:

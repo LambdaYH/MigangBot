@@ -45,7 +45,6 @@ async def read_alter_name():
 
 
 async def update_weather():
-    global weather_idx
     async with aiohttp.ClientSession() as client:
         data = await (await client.get(url=weatherUrl, timeout=15)).text()
     c = csv.reader(StringIO(data))
@@ -58,7 +57,6 @@ async def update_weather():
 
 
 async def update_weather_rate():
-    global weather_rate_idx
     async with aiohttp.ClientSession() as client:
         data = await (await client.get(url=weatherRateUrl, timeout=15)).text()
     c = csv.reader(StringIO(data))
@@ -77,7 +75,6 @@ async def update_weather_rate():
 
 
 async def update_territory_info():
-    global location_idx
     async with aiohttp.ClientSession() as client:
         data = await (await client.get(url=TerritoryTypeUrl, timeout=15)).text()
     c = csv.reader(StringIO(data))

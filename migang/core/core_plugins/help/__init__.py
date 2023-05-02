@@ -89,7 +89,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         img = await get_help_image(
             group_id=group_id,
             user_id=user_id,
-            super=await SUPERUSER(bot, event),
+            super_user=await SUPERUSER(bot, event),
         )
         await simple_help.send(MessageSegment.image(img))
         async with await anyio.open_file(image_file, "wb") as f:

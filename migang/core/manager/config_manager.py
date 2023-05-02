@@ -53,9 +53,9 @@ class ConfigManager:
         """{plugin_name: {"key": value}}
         """
         self.__path: Path = path
-        self.__path.mkdir(exist_ok=True, parents=True)
         """存储配置的路径
         """
+        self.__path.mkdir(exist_ok=True, parents=True)
 
     async def save_default_value(self):
         await async_save_data(

@@ -119,7 +119,7 @@ class GenshinHandle(BaseHandle[GenshinData]):
         count_manager = self.count_manager
         count_manager.check_count(user_id, count)  # 检查次数累计
         pool = self.UP_CHAR_LIST[card_index] if pool_name == "char" else self.UP_ARMS
-        for i in range(count):
+        for _ in range(count):
             count_manager.increase(user_id)
             star = count_manager.check(user_id)  # 是否有四星或五星保底
             if (

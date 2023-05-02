@@ -164,4 +164,4 @@ def anti_zuichou(plain_text: str, user_id: int):
             permission_manager.set_user_perm(
                 user_id=user_id, permission=BLACK, duration=timedelta(hours=1)
             )
-            return f"¿（触发违禁词，拉黑1h）"
+            return "¿（触发违禁词，拉黑1h）"

@@ -19,11 +19,11 @@ from .model import EorzeanZhanbuRecorder
 BG_PATH = Path(__file__).parent / "image"
 
 
-def vertical(str: str) -> str:
-    list = []
-    for s in str:
-        list.append(s)
-    return "\n".join(list)
+def vertical(str_: str) -> str:
+    list_ = []
+    for s in str_:
+        list_.append(s)
+    return "\n".join(list_)
 
 
 def decrement(text: str) -> List[str]:

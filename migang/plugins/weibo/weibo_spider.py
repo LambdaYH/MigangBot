@@ -2,8 +2,8 @@ import sys
 import time
 import random
 import asyncio
+from typing import List
 from pathlib import Path
-from typing import List, Union
 from urllib.parse import unquote
 
 import anyio
@@ -19,7 +19,7 @@ from migang.utils.file import async_save_data
 from ._utils import sinaimgtvax
 from .exception import ParseError, NotFoundError
 
-api_url = f"https://m.weibo.cn/api/container/getIndex"
+api_url = "https://m.weibo.cn/api/container/getIndex"
 PATH = DATA_PATH / "weibo"
 weibo_record_path = PATH / "weibo_records"
 weibo_id_name_file = PATH / "weibo_id_name.json"
@@ -176,7 +176,7 @@ class WeiboSpider(object):
         live_photo_list = []
         live_photo = weibo_info.get("pic_video")
         if live_photo:
-            prefix = f"https://video.weibo.com/media/play?livephoto=//us.sinaimg.cn/"
+            prefix = "https://video.weibo.com/media/play?livephoto=//us.sinaimg.cn/"
             for i in live_photo.split(","):
                 if len(i.split(":")) == 2:
                     url = prefix + i.split(":")[1] + ".mov"

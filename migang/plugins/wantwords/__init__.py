@@ -10,7 +10,7 @@ from nonebot.adapters.onebot.v11 import Message
 __plugin_meta__ = PluginMetadata(
     name="反向找词",
     description="通过描述反向找词",
-    usage=f"""
+    usage="""
 基于https://wantwords.net/
 通过描述反向找词
 指令：

@@ -106,7 +106,7 @@ class PrtsHandle(BaseHandle[Operator]):
 
     def draw(self, count: int, **kwargs) -> Message:
         index2card = self.get_cards(count)
-        """这里cards修复了抽卡图文不符的bug"""
+        # 这里cards修复了抽卡图文不符的bug
         cards = [card[0] for card in index2card]
         up_list = [x.name for x in self.UP_EVENT.up_char] if self.UP_EVENT else []
         result = self.format_result(index2card, up_list=up_list)
@@ -194,7 +194,7 @@ class PrtsHandle(BaseHandle[Operator]):
                 avatar = char.xpath("./td[1]/div/div/div/a/img/@srcset")[0]
                 name = char.xpath("./td[2]/a/text()")[0]
                 star = char.xpath("./td[5]/text()")[0]
-                """这里sources修好了干员获取标签有问题的bug，如三星只能抽到卡缇就是这个原因"""
+                # 这里sources修好了干员获取标签有问题的bug，如三星只能抽到卡缇就是这个原因
                 sources = [_.strip("\n") for _ in char.xpath("./td[8]/text()")]
             except IndexError:
                 continue
@@ -239,7 +239,7 @@ class PrtsHandle(BaseHandle[Operator]):
                 logger.warning(f"{self.game_name_cn}获取公告 {activity_url} 出错")
                 continue
 
-            """因为鹰角的前端太自由了，这里重写了匹配规则以尽可能避免因为前端乱七八糟而导致的重载失败"""
+            # 因为鹰角的前端太自由了，这里重写了匹配规则以尽可能避免因为前端乱七八糟而导致的重载失败
             dom = etree.HTML(result, etree.HTMLParser())
             contents = dom.xpath(
                 "//div[@class='article-content']/p/text() | //div[@class='article-content']/p/span/text() | //div[@class='article-content']/div[@class='media-wrap image-wrap']/img/@src"
@@ -261,13 +261,14 @@ class PrtsHandle(BaseHandle[Operator]):
                         )
                         if match:
                             time = match.group(1)
-                        """因为 <p> 的诡异排版，所以有了下面的一段"""
+                        # 因为 <p> 的诡异排版，所以有了下面的一段
                         if ("★★" in line and "%" in line) or (
                             "★★" in line and "%" in lines[idx + 1]
                         ):
-                            chars.append(line) if (
-                                "★★" in line and "%" in line
-                            ) else chars.append(line + lines[idx + 1])
+                            if "★★" in line and "%" in line:
+                                chars.append(line)
+                            else:
+                                chars.append(line + lines[idx + 1])
                     if not time:
                         continue
                     start, end = (

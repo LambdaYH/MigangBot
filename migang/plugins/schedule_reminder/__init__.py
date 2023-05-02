@@ -264,7 +264,7 @@ async def _(state: T_State, msg_to_sent: Message = Arg("msg_to_sent")):
 
 @add_task.got(
     "time_setting",
-    prompt=f"请根据您所设定的类型输入时间参数",
+    prompt="请根据您所设定的类型输入时间参数",
 )
 async def _(state: T_State, time_setting: str = ArgStr("time_setting")):
     user_id = state["user_id"]

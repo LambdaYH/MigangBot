@@ -402,7 +402,7 @@ class TaskManager:
         Args:
             task_items (Union[TaskItem, LIterable[TaskItem]]): __plugin_task__的值
         """
-        if type(task_items) is TaskItem:
+        if isinstance(task_items, TaskItem):
             task_items: List[TaskItem] = [task_items]
         for item in task_items:
             file_name = f"{item.task_name}.json"

@@ -19,12 +19,12 @@ num          # 使用量
 """
 
 
-def uniform_value(value, len, default_value=None) -> Tuple:
+def uniform_value(value, len_, default_value=None) -> Tuple:
     if value is None:
-        return [default_value] * len
+        return [default_value] * len_
     if isinstance(value, Iterable) and not isinstance(value, str):
         return value
-    return tuple([value] * len)
+    return tuple([value] * len_)
 
 
 class GoodsRegister:

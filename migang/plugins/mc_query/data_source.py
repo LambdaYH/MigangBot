@@ -106,7 +106,7 @@ async def server_status(host: str, port: Optional[int], sv_type: str):
             return MessageSegment.image(draw_bedrock(status))
     except Exception as e:
         logger.warning(f"MC服务器查询失败：\nhost：{host}\nport：{port}\n类型：{sv_type}")
-        return MessageSegment.image(draw_error(e=e, sv_type=sv_type))
+        return MessageSegment.image(draw_error(e=e, svr_type=sv_type))
 
 
 async def get_server_list(group_id: int, user_id: int) -> MessageSegment:

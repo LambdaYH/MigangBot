@@ -42,18 +42,18 @@ async def update_suits_img():
     urls = []
     names = []
     for item in r:
-        id = str(item["id"])
-        if id not in suits:
-            suits[id] = {
+        id_ = str(item["id"])
+        if id_ not in suits:
+            suits[id_] = {
                 "url": item["href"],
                 "name": item["title"].strip()
                 if item["title"].strip()
                 else "不愿意透露姓名的大裙子",
             }
             insert_count += 1
-        if f"{id}.jpg" not in img_set:
+        if f"{id_}.jpg" not in img_set:
             urls.append(item["href"])
-            names.append(f"{id}.jpg")
+            names.append(f"{id_}.jpg")
     download_count = await async_download_files(
         urls=urls, path=path, names=names, stream=True, concurrency_limit=6
     )

@@ -6,10 +6,10 @@ from nonebot.log import logger
 from nonebot.rule import to_me
 from pil_utils import text2image
 from nonebot.permission import SUPERUSER
+from nonebot import get_bot, on_fullmatch
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_htmlrender import get_new_page
-from nonebot import get_bot, get_driver, on_fullmatch
 from tenacity import RetryError, retry, wait_random, stop_after_attempt
 from nonebot.adapters.onebot.v11 import GROUP, MessageSegment, GroupMessageEvent
 
@@ -165,7 +165,7 @@ __plugin_task__ = []
 try:
     _load_config()
 except Exception as e:
-    logger.warning(f"微博推送加载异常，若初次加载微博推送，请等待配置文件生成完成并按需修改后重新启动")
+    logger.warning(f"微博推送加载异常，若初次加载微博推送，请等待配置文件生成完成并按需修改后重新启动：{e}")
 
 weibo_list = on_fullmatch(
     ("可订阅微博列表", "weibo-list"),

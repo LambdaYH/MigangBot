@@ -83,14 +83,16 @@ colors = [
 color_len = len(colors)
 
 
-async def get_help_image(group_id: Optional[int], user_id: Optional[int], super: bool):
+async def get_help_image(
+    group_id: Optional[int], user_id: Optional[int], super_user: bool
+):
     """
     说明:
         生成帮助图片
     参数:
         :param group_id: 群号
     """
-    return await _build_html_image(group_id, user_id, super)
+    return await _build_html_image(group_id, user_id, super_user)
 
 
 def get_plugin_help(name: str) -> Optional[str]:
@@ -274,7 +276,6 @@ class MenuItem(BaseModel):
 
 
 def _sort_data():
-    global _sorted_data
     if not _sorted_data:
         for plugin in plugin_manager.get_plugin_list():
             if plugin.hidden:
@@ -285,14 +286,14 @@ def _sort_data():
 
 
 async def _build_html_image(
-    group_id: Optional[int], user_id: Optional[int], super: bool = False
+    group_id: Optional[int], user_id: Optional[int], super_user: bool = False
 ) -> bytes:
     """生成帮助图片
 
     Args:
         group_id (Optional[int]): _description_
         user_id (Optional[int]): _description_
-        super (bool, optional): _description_. Defaults to False.
+        super_user (bool, optional): _description_. Defaults to False.
 
     Returns:
         bytes: _description_
@@ -337,7 +338,7 @@ async def _build_html_image(
                             PluginType.GroupAdmin,
                             PluginType.SuperUser,
                         }
-                        if super:
+                        if super_user:
                             type_block.remove(PluginType.SuperUser)
                         if plugin.plugin_type in type_block:
                             status = PluginStatus.disabled

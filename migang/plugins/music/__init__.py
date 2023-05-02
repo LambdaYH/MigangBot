@@ -11,7 +11,6 @@ from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
 from nonebot.params import ArgStr, Command, CommandArg
 from nonebot.adapters.onebot.v11.permission import GROUP
-from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot.adapters.onebot.v11 import (
     Message,
     ActionFailed,

@@ -37,8 +37,8 @@ async def cache_image_url(seg: MessageSegment, client: aiohttp.ClientSession):
         seg.type = "cached_image"
     else:
         return
-    hash = hashlib.md5(data).hexdigest()
-    filename = f"{hash}.cache"
+    hash_ = hashlib.md5(data).hexdigest()
+    filename = f"{hash_}.cache"
     cache_file_path = image_dir / filename
     cache_files = [f.name for f in image_dir.iterdir() if f.is_file()]
     if filename not in cache_files:
@@ -80,12 +80,12 @@ def cron_parse(cron):
     if not croniter.is_valid(cron):
         return False, None, None, None
     time = datetime.now()
-    iter = croniter(cron, time)
+    it = croniter(cron, time)
     return (
         True,
-        iter.get_next(datetime),
-        iter.get_next(datetime),
-        iter.get_next(datetime),
+        it.get_next(datetime),
+        it.get_next(datetime),
+        it.get_next(datetime),
     )
 
 

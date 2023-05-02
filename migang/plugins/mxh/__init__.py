@@ -12,7 +12,7 @@ from migang.utils.file import async_load_data
 __plugin_meta__ = PluginMetadata(
     name="梅溪湖cp短打",
     description="生成梅溪湖cp短打",
-    usage=f"""
+    usage="""
 基于https://github.com/mxh-mini-apps/mxh-cp-stories
 指令：
     梅溪湖 攻 受

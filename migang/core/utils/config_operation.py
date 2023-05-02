@@ -14,7 +14,6 @@ plugin_list = set()
 
 @get_driver().on_startup
 async def _():
-    global plugin_list
     plugins = get_loaded_plugins()
     for plugin in plugins:
         plugin_list.add(plugin.name)

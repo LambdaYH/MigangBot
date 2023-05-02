@@ -21,8 +21,7 @@ from .utils import get_plugin_list
 
 def check_command():
     commands_check: DefaultDict[str, Dict[str, Plugin]] = defaultdict(dict)
-    """类型-命令-插件集
-    """
+    """类型-命令-插件集"""
 
     def add(
         type_: str, plugin: Plugin, cmds: Union[str, Tuple[str], Tuple[Tuple[str]]]

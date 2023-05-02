@@ -103,11 +103,11 @@ class RequestManager:
             )
         await self.save()
 
-    def remove(self, id: int, type_: str) -> bool:
+    def remove(self, id_: int, type_: str) -> bool:
         """移除一个请求
 
         Args:
-            id (int): 在list中的下标
+            id_ (int): 在list中的下标
             type_ (str): group或者friend
 
         Returns:
@@ -118,9 +118,9 @@ class RequestManager:
             if type_ == "group"
             else self.__data.friend_request
         )
-        if id >= len(target):
+        if id_ >= len(target):
             return False
-        del target[id]
+        del target[id_]
         return True
 
     async def reset(self, type_: Optional[str]):
@@ -139,7 +139,7 @@ class RequestManager:
         await self.save()
 
     async def __handle_request(
-        self, bot: Bot, id: int, type_: str, approve: bool, reason: str = ""
+        self, bot: Bot, id_: int, type_: str, approve: bool, reason: str = ""
     ) -> str:
         """处理请求
 
@@ -158,9 +158,9 @@ class RequestManager:
             if type_ == "group"
             else self.__data.friend_request
         )
-        if id >= len(target):
+        if id_ >= len(target):
             return f"请输入 0~{len(target) - 1} 之间的id！"
-        request = target[id]
+        request = target[id_]
         try:
             if type_ == "group":
                 await bot.set_group_add_request(
@@ -170,40 +170,40 @@ class RequestManager:
                 await bot.set_friend_add_request(flag=request.flag, approve=approve)
         except ActionFailed:
             logger.info(
-                f"无法{'同意' if approve else '拒绝'}id为{id}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效：\n{request.json(ensure_ascii=False,indent=4)}"
+                f"无法{'同意' if approve else '拒绝'}id为{id_}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效：\n{request.json(ensure_ascii=False,indent=4)}"
             )
-            del target[id]
+            del target[id_]
             await self.save()
-            return f"无法{'同意' if approve else '拒绝'}id为{id}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效"
+            return f"无法{'同意' if approve else '拒绝'}id为{id_}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效"
         logger.info(
             f"已{'同意' if approve else '拒绝'}请求：\n{request.json(ensure_ascii=False,indent=4)}"
         )
-        del target[id]
+        del target[id_]
         await self.save()
         if type_ == "group":
             return f"已{'同意' if approve else '拒绝'}群 {request.group_name}({request.group_id}) 的入群请求"
         else:
             return f"已{'同意' if approve else '拒绝'}用户 {request.user_name}({request.user_id}) 的好友请求"
 
-    async def approve(self, bot: Bot, id: int, type_: str) -> str:
+    async def approve(self, bot: Bot, id_: int, type_: str) -> str:
         """同意请求
 
         Args:
             bot (Bot): bot
-            id (int): id
+            id_ (int): id
             type_ (str): group或friend
 
         Returns:
             str: 提示语
         """
-        return await self.__handle_request(bot=bot, id=id, type_=type_, approve=True)
+        return await self.__handle_request(bot=bot, id_=id_, type_=type_, approve=True)
 
-    async def reject(self, bot: Bot, id: int, type_: str, reason: str = "") -> str:
+    async def reject(self, bot: Bot, id_: int, type_: str, reason: str = "") -> str:
         """_summary_
 
         Args:
             bot (Bot): bot
-            id (int): id
+            id_ (int): id
             type_ (str): group或friend
             reason (str, optional): 拒绝群聊时才有用的. Defaults to "".
 
@@ -211,7 +211,7 @@ class RequestManager:
             str: 提示语
         """
         return await self.__handle_request(
-            bot=bot, id=id, type_=type_, approve=False, reason=reason
+            bot=bot, id_=id_, type_=type_, approve=False, reason=reason
         )
 
     def get_group_request(self, id_: int) -> GroupRequest:

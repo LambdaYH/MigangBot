@@ -8,7 +8,7 @@ from nonebot.plugin import PluginMetadata
 __plugin_meta__ = PluginMetadata(
     name="彩虹屁",
     description="生成彩虹屁",
-    usage=f"""
+    usage="""
 指令：
     /chp
 """.strip(),

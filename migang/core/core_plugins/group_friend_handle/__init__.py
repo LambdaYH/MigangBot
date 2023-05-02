@@ -325,12 +325,12 @@ async def _(bot: Bot, cmds: Tuple[str, ...] = Command(), args: Message = Command
         if cmd == "group":
             allowed_group.add(request_manager.get_group_request(id_=id_).group_id)
         await handle_request.send(
-            await request_manager.approve(bot=bot, id=id_, type_=cmd)
+            await request_manager.approve(bot=bot, id_=id_, type_=cmd)
         )
     else:
         await handle_request.send(
             await request_manager.reject(
-                bot=bot, id=id_, type_=cmd, reason=cmds[0][6:].strip()
+                bot=bot, id_=id_, type_=cmd, reason=cmds[0][6:].strip()
             )
         )
 
@@ -402,7 +402,6 @@ async def _(arg: Message = CommandArg()):
     group_id = arg.extract_plain_text()
     if not group_id.isdigit():
         await allow_group.finish(f"群号 {group_id} 不是一个合法数字！")
-    global allowed_group
     allowed_group.add(int(group_id))
     await allow_group.send(f"已认证群 {group_id}，在下次重启前有效")
 

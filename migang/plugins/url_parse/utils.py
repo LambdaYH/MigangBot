@@ -32,7 +32,7 @@ async def get_url(url):
 
 class GroupCache:
     def __init__(self) -> None:
-        self.__groups: DefaultDict[int, Set[str]] = defaultdict(lambda: set())
+        self.__groups: DefaultDict[int, Set[str]] = defaultdict(set)
 
     def __delete(self, group_id: int, url: str) -> None:
         if url in self.__groups[group_id]:

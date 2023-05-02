@@ -1,6 +1,6 @@
 import asyncio
 from pathlib import Path
-from typing import Set, Dict, List, Union, Optional
+from typing import Set, Dict, List, Tuple, Union, Optional
 
 import anyio
 from pydantic import BaseModel
@@ -535,7 +535,7 @@ class PluginManager:
         self,
         plugin_name: str,
         name: str,
-        aliases: List[str] = [],
+        aliases: List[str] | Tuple[str, ...] | Set[str] | None = None,
         author: Optional[str] = None,
         version: Union[str, int, None] = None,
         category: Optional[str] = None,
@@ -570,6 +570,10 @@ class PluginManager:
         file_name = f"{plugin_name}.json"
         new_plugin = file_name not in self.__files
         if new_plugin:
+            if aliases is None:
+                aliases = set()
+            else:
+                aliases = set(aliases)
             async with await anyio.open_file(self.__file_path / file_name, "w") as f:
                 await f.write(
                     PluginManager.PluginAttr(
