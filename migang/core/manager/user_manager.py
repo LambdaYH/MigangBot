@@ -9,6 +9,21 @@ from migang.core.permission import NORMAL, Permission
 from migang.core.manager.plugin_manager import PluginManager
 
 
+class User:
+    __slots__ = "permission"
+
+    def __init__(self, permission: Permission) -> None:
+        self.permission = permission
+
+    def set_permission(self, permission: Permission):
+        """设定用户权限
+
+        Args:
+            permission (Permission): 新权限
+        """
+        self.permission = permission
+
+
 class UserManager:
     """管理用户能否调用插件与任务以及群机器人的状态
 
@@ -22,36 +37,46 @@ class UserManager:
         Args:
             plugin_manager (PluginManager): 插件管理器
         """
-        self.__user: Dict[int, UserManager.TotalData.User] = {}
+        self.__user: Dict[int, User] = {}
         """记录user_id对应的User类
         """
 
         self.__plugin_manager = plugin_manager
         """管理插件
         """
-        self.__save_query: DefaultDict[UserStatus, Set[str]] = defaultdict(
-            lambda: set()
-        )
+        self.__save_query: DefaultDict[int, Set[str]] = defaultdict(set)
 
     async def init(self) -> None:
         """初始化，从数据库中载入"""
         all_users = await UserStatus.all()
         for user in all_users:
-            self.__user[user.user_id] = user
+            self.__user[user.user_id] = User(permission=user.permission)
 
     async def save(self) -> None:
         """写进数据库"""
         if self.__save_query:
             async with in_transaction() as connection:
                 tasks = []
-                for user_status, fields in self.__save_query.items():
+                for user_id, fields in self.__save_query.items():
+                    user_status = await UserStatus.filter(user_id=user_id).first()
+                    if not user_status:
+                        # 若数据库中没有，创建
+                        user_status = UserStatus(
+                            user_id=user_id, permission=self.__user[user_id].permission
+                        )
+                    else:
+                        # 更新修改过的项
+                        for field in fields:
+                            user_status.__setattr__(
+                                field, self.__user[user_id].__getattribute__(field)
+                            )
                     tasks.append(
                         user_status.save(update_fields=fields, using_db=connection)
                     )
+                self.__save_query.clear()
                 await asyncio.gather(*tasks)
-            self.__save_query.clear()
 
-    def __get_user(self, user_id: int) -> UserStatus:
+    def __get_user(self, user_id: int) -> User:
         """获取user_id对应的User类，若无，则创建
 
         Args:
@@ -62,8 +87,8 @@ class UserManager:
         """
         user = self.__user.get(user_id)
         if not user:
-            user = self.__user[user_id] = UserStatus(user_id=user_id, permission=NORMAL)
-            self.__save_query[user].update()
+            user = self.__user[user_id] = User(permission=NORMAL)
+            self.__save_query[user_id].update()
         return user
 
     def check_user_plugin_status(self, plugin_name: str, user_id: int) -> bool:
@@ -105,7 +130,7 @@ class UserManager:
         """
         user = self.__get_user(user_id=user_id)
         user.set_permission(permission=permission)
-        self.__save_query[user].add("permission")
+        self.__save_query[user_id].add("permission")
 
     def get_user_permission(self, user_id: int) -> Permission:
         """获取用户权限

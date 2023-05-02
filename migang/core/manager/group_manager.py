@@ -10,7 +10,7 @@ from migang.core.manager.task_manager import TaskManager
 from migang.core.manager.plugin_manager import PluginManager
 
 
-class GroupInfo:
+class Group:
     __slots__ = "permission", "bot_status"
 
     def __init__(self, permission: Permission, bot_status: bool) -> None:
@@ -66,7 +66,7 @@ class GroupManager:
             plugin_manager (PluginManager): 插件管理器
             task_manager (TaskManager): 任务管理器
         """
-        self.__group: Dict[int, GroupInfo] = {}
+        self.__group: Dict[int, Group] = {}
         """group_id 对应一个group类
         """
         self.__plugin_manager: PluginManager = plugin_manager
@@ -75,13 +75,13 @@ class GroupManager:
         self.__task_manager: TaskManager = task_manager
         """管理任务
         """
-        self.__save_query: DefaultDict[int, Set[str]] = defaultdict(lambda: set())
+        self.__save_query: DefaultDict[int, Set[str]] = defaultdict(set)
 
     async def init(self) -> None:
         """初始化，从数据库中载入"""
         all_groups = await GroupStatus.all()
         for group in all_groups:
-            self.__group[group.group_id] = GroupInfo(group.permission, group.bot_status)
+            self.__group[group.group_id] = Group(group.permission, group.bot_status)
 
     async def save(self) -> None:
         """写进数据库"""
@@ -109,7 +109,7 @@ class GroupManager:
                 self.__save_query.clear()
                 await asyncio.gather(*tasks)
 
-    def __get_group(self, group_id: int) -> GroupStatus:
+    def __get_group(self, group_id: int) -> Group:
         """获取group_id对应的Group类，若无，则创建
 
         Args:
@@ -120,9 +120,7 @@ class GroupManager:
         """
         group = self.__group.get(group_id)
         if not group:
-            group = self.__group[group_id] = GroupInfo(
-                permission=NORMAL, bot_status=True
-            )
+            group = self.__group[group_id] = Group(permission=NORMAL, bot_status=True)
             self.__save_query[group_id].update()
         return group
 
