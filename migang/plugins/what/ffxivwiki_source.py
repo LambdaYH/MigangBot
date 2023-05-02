@@ -33,8 +33,6 @@ def craft_garland_url(item_category, item_id, name_lang):
 
 
 def parse_xiv_html(string):
-    global XIV_TAG_REGEX
-
     def handle_tag(tag_match):
         tag = tag_match.group(1)
         return "\n" if tag == "br" else ""

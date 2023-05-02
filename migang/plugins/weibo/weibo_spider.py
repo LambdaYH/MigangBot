@@ -164,7 +164,7 @@ class WeiboSpider(object):
             pic_list = [pic["large"]["url"] for pic in pic_info]
         else:
             pic_list = []
-        """获取文章封面图片url"""
+        # 获取文章封面图片url
         if "page_info" in weibo_info and weibo_info["page_info"]["type"] == "article":
             if "page_pic" in weibo_info["page_info"]:
                 pic_list.append(weibo_info["page_info"]["page_pic"]["url"])
@@ -310,10 +310,10 @@ class WeiboSpider(object):
         )
         return js
 
-    async def get_long_weibo(self, id):
+    async def get_long_weibo(self, id_):
         """获取长微博"""
         weibo_info = await self.get_json(
-            f"https://m.weibo.cn/statuses/show", params={"id": id}
+            f"https://m.weibo.cn/statuses/show", params={"id": id_}
         )
         if not weibo_info or weibo_info["ok"] != 1:
             return None

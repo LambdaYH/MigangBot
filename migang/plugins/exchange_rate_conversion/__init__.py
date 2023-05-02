@@ -54,7 +54,7 @@ async def _(args: Annotated[Message, CommandArg()]):
     elif len(from_to) == 2:
         from_, to_ = from_to[0], from_to[1]
     else:
-        await exchange.finish(f"输入转换的货币必须为 from:to")
+        await exchange.finish("输入转换的货币必须为 from:to")
     if not is_number(args[1]):
         await exchange.finish("用于转换的数额必须为数字")
     params = {}

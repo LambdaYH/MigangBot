@@ -3,7 +3,7 @@ https://github.com/pcrbot/music
 """
 import asyncio
 import datetime
-from typing import List, Tuple
+from typing import Tuple
 
 from nonebot import on_command
 from nonebot.log import logger
@@ -217,7 +217,9 @@ async def _(event: GroupMessageEvent, music_id: str = ArgStr("music_id")):
     del last_check[event.group_id]
 
 
-async def search_music(music_name, sources: List[str] = ["netease", "qq", "migu"]):
+async def search_music(
+    music_name, sources: Tuple[str, ...] = ("netease", "qq", "migu")
+):
     tasks = [src_func[s](music_name) for s in sources]
     r = await asyncio.gather(*tasks, return_exceptions=True)
     result = []

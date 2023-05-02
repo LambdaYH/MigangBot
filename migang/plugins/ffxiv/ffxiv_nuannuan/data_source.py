@@ -12,9 +12,9 @@ from PIL import Image
 from nonebot import get_driver
 from nonebot.log import logger
 from fake_useragent import UserAgent
-from playwright.async_api import TimeoutError
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_htmlrender import get_new_page
+from playwright.async_api import TimeoutError  # type: ignore
 
 from migang.core import DATA_PATH
 
