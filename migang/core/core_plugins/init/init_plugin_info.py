@@ -22,7 +22,7 @@ async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
                 )
             ).json(content_type=None)
     except asyncio.TimeoutError:
-        logger.warning(f"连接Nonebot2商店超时，无法加载商店插件信息")
+        logger.warning("连接Nonebot2商店超时，无法加载商店插件信息")
         return {}
     ret = {}
     for plugin in r:

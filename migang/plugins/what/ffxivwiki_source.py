@@ -231,7 +231,6 @@ async def parse_item_garland(item_id, name_lang):
                 )
             )
             i += 1
-        pass
 
     if "tradeCurrency" in item.keys() or "tradeShops" in item.keys():
         hasSource = True

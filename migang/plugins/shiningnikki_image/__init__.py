@@ -58,10 +58,10 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
     num = int(reg_group[0] or 1)
     suits = await get_data()
     if num <= 1:
-        id = random.choice(list(suits.keys()))
+        id_ = random.choice(list(suits.keys()))
         await suit_draw.finish(
-            MessageSegment.image(DATA_PATH / "suits" / f"{id}.jpg")
-            + f"\n套装名：{suits[id]['name']}"
+            MessageSegment.image(DATA_PATH / "suits" / f"{id_}.jpg")
+            + f"\n套装名：{suits[id_]['name']}"
         )
     msgs = []
     suits_list = list(suits.keys())
