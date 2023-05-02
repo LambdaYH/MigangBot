@@ -25,7 +25,6 @@ class GoodsUseLog(Model):
         Returns:
             Tuple[int, int,int,int]: 今日获得，今日消耗，总获得，总消耗
         """
-        now = datetime.now()
         today_data = (
             await cls.filter(
                 user_id=user_id,

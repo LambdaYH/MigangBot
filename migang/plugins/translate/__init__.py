@@ -107,7 +107,7 @@ async def _(
             tasks.append(get_baidu_trans(text, to=to))
     msg = await asyncio.gather(*tasks)
     if not msg:
-        await translate.finish(f"没有返回任何翻译结果...")
+        await translate.finish("没有返回任何翻译结果...")
     if msg and len(max(msg, key=len)) < 60:
         await translate.finish("\n".join(msg))
     msg = [

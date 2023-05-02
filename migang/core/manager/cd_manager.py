@@ -1,13 +1,7 @@
 from time import time
 from typing import Dict, List, Union, Callable, Iterable
 
-from nonebot.adapters.onebot.v11 import (
-    Event,
-    Message,
-    MessageEvent,
-    PokeNotifyEvent,
-    GroupMessageEvent,
-)
+from nonebot.adapters.onebot.v11 import Event, Message, MessageEvent, PokeNotifyEvent
 
 from .data_class import CheckType, LimitType
 

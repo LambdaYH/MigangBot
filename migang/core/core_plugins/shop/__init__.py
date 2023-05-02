@@ -24,8 +24,8 @@ from migang.core.models import (
 )
 
 from .bag import draw_bag
-from . import default_goods
 from .shop import draw_shop
+from . import default_goods  # noqa
 from .shop_control import adjust_goods, adjust_goods_group
 
 __plugin_meta__ = PluginMetadata(
@@ -208,7 +208,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         gold = gold[1:]
         sign = -1
     if not gold.isdigit():
-        await give_gold.finish(f"金币数必须为整数")
+        await give_gold.finish("金币数必须为整数")
     gold = int(gold) * sign
     for seg in event.message:
         if seg.type == "at" and seg.data["qq"] != "all":
@@ -233,7 +233,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
         elif type_ == "goods" and goods_manager.get_goods(item[1]):
             await adjust_goods(item[1], " ".join(args[1:]))
         else:
-            await modify.finish(f"商品/商品组不存在，请检查")
+            await modify.finish("商品/商品组不存在，请检查")
     except Exception as e:
         if e != FinishedException:
             await modify.send(f"调整异常：{e}")

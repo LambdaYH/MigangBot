@@ -153,7 +153,7 @@ games = (
 
 __plugin_config__ = [
     ConfigItem(
-        key="semaphore", initial_value=5, default_value=5, description=f"异步数据下载数量限制"
+        key="semaphore", initial_value=5, default_value=5, description="异步数据下载数量限制"
     )
 ]
 

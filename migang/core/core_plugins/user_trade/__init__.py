@@ -67,24 +67,6 @@ def check_timeout(user_id: int) -> bool:
     return True
 
 
-@unique
-class TradeState(Enum):
-    INITIATOR = 0
-    WAIT_FOR_ESTABLISH = 1
-    WAIT_FOR_PUT_CONTENT = 2
-    WAIT_FOR_CONFIRM = 3
-    CONFIRMED = 4
-
-
-class TradingStatus:
-    def __init__(self, target: int, state: TradeState) -> None:
-        self.target = target
-        self.state: TradeState = state
-        self.gold: int = 0
-        self.items: List[Tuple[str, int]] = []
-        self.start_time = time()
-
-
 trading_pairs: Dict[int, TradingStatus] = {}
 
 

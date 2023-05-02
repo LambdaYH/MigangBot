@@ -1,5 +1,4 @@
 from typing import Optional
-from datetime import datetime
 from enum import IntEnum, unique
 
 from tortoise import fields

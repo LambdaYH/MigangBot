@@ -3,7 +3,7 @@ from io import BytesIO
 
 from PIL import Image
 
-from migang.core.utils.image import get_user_avatar
+from migang.core.utils.image import get_user_avatar  # noqa
 
 
 def pic_to_bytes(pic: Image) -> str:

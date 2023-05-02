@@ -21,39 +21,6 @@ class UserProperty(Model):
         table = "user_property"
         table_description = "与用户相关的各项可变动属性记录"
 
-    async def modify_gold(
-        self,
-        gold_diff: int,
-        description: Optional[str] = None,
-        connection: Optional[BaseDBAsyncClient] = None,
-    ):
-        """修改金币
-
-        Args:
-            gold_diff (int): 金币变动，可正可负
-            description (Optional[str], optional): 记录在交易日志. Defaults to None.
-            connection (Optional[BaseDBAsyncClient], optional): 事务. Defaults to None.
-        """
-        self.gold += gold_diff
-        if not description:
-            file_path = Path(sys._getframe(1).f_code.co_filename)
-            description = f"由 {file_path} 调用"
-        if gold_diff >= 0:
-            await TransactionLog(
-                user_id=self.user_id, gold_earned=gold_diff, description=description
-            ).save(using_db=connection)
-        else:
-            await TransactionLog(
-                user_id=self.user_id, gold_spent=-gold_diff, description=description
-            ).save(using_db=connection)
-        await self.save(update_fields=["gold"], using_db=connection)
-
-    async def modify_impression(self, impression_diff: Union[Decimal, float]):
-        if isinstance(impression_diff, float):
-            impression_diff = Decimal(impression_diff)
-        self.impression += impression_diff
-        await self.save(update_fields=["impression"])
-
     @classmethod
     async def modify_gold(
         cls,

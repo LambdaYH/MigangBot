@@ -46,7 +46,7 @@ async def get_weibo_info(url: str) -> Tuple[Message, str]:
                 # )
                 # 去除“小程序看微博热搜”横幅
                 card = await page.wait_for_selector(
-                    f"xpath=//div[@class='card m-panel card9 f-weibo']",
+                    "xpath=//div[@class='card m-panel card9 f-weibo']",
                     timeout=6 * 1000,
                 )
                 try:

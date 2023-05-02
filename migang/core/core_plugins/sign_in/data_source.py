@@ -15,7 +15,7 @@ from migang.core.decorator import sign_in_effect
 from migang.core.utils.image import get_user_avatar
 from migang.core.models import SignIn, UserProperty, TransactionLog
 
-from . import effects
+from . import effects  # noqa
 from .const import (
     SIGN_BORDER_PATH,
     SIGN_RESOURCE_PATH,

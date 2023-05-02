@@ -52,7 +52,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                 group_info = await bot.get_group_info(group_id=group_id)
                 group_name = group_info["group_name"]
             except Exception as e:
-                logger.info(f"获取群 {group_id} 名称失败")
+                logger.info(f"获取群 {group_id} 名称失败：{e}")
 
             feedback_id = await Feedback.add_feedback(
                 user_id=user_id, group_id=group_id, content=text

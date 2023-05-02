@@ -104,7 +104,7 @@ async def _(event: GroupMessageEvent):
             rs_player[event.group_id][1] == event.user_id
             or rs_player[event.group_id][2] == event.user_id
         ):
-            await accept.finish(f"你已经身处决斗之中了啊，给我认真一点啊！", at_sender=True)
+            await accept.finish("你已经身处决斗之中了啊，给我认真一点啊！", at_sender=True)
         else:
             await accept.finish("已经有人接受对决了，你还是乖乖等待下一场吧！", at_sender=True)
     if rs_player[event.group_id][1] == event.user_id:
@@ -379,7 +379,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                     [
                         f"不要打扰 {player1_name} 和 {player2_name} 的决斗啊！",
                         f"给我好好做好一个观众！不然{list(bot.config.nickname)[0]}就要生气了",
-                        f"不要捣乱啊！",
+                        "不要捣乱啊！",
                     ]
                 ),
                 at_sender=True,

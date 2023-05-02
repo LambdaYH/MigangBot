@@ -98,7 +98,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         if help_ := get_plugin_help(args):
             await simple_help.send(await draw_usage(help_))
         else:
-            await simple_help.send(f"没有该插件的帮助信息")
+            await simple_help.send("没有该插件的帮助信息")
 
 
 @task_help.handle()

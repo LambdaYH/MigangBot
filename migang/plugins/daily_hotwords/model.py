@@ -1,5 +1,5 @@
-from datetime import time
 from typing import Optional
+from datetime import time  # noqa
 
 from sqlalchemy import String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column

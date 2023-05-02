@@ -1,2 +1,2 @@
-from .playwright import screenshot
-from .download import async_download_files
+from .playwright import screenshot  # noqa
+from .download import async_download_files  # noqa

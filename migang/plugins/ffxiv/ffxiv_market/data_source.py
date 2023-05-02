@@ -106,7 +106,7 @@ async def get_market_data(server_name: str, item_name: str, hq=False) -> str:
                 return f'所查询物品"{item_name}"不存在'
         except asyncio.TimeoutError:
             logger.error(f"获取物品ID异常：{traceback.format_exc()}")
-            return f"获取物品ID超时...或许相关api网络出现了问题.."
+            return "获取物品ID超时...或许相关api网络出现了问题.."
         url = f"https://universalis.app/api/{server_name}/{item_id}"
         try:
             r = await client.get(url, timeout=10)

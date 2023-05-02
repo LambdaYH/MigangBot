@@ -25,7 +25,7 @@ async def _(user_sign_in: SignIn, user_prop: UserProperty):
     user_prop.impression += Decimal(impression_diff)
     user_sign_in.impression_diff *= 2
 
-    return f"本次签到好感度翻倍！"
+    return "本次签到好感度翻倍！"
 
 
 @sign_in_effect(weight=3, name="下一次签到好感度双倍")

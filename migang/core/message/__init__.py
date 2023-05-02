@@ -1,1 +1,1 @@
-from .broadcast import broadcast
+from .broadcast import broadcast  # noqa

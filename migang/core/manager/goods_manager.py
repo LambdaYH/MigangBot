@@ -11,7 +11,9 @@ from nonebot.matcher import Matcher
 from tortoise.transactions import in_transaction
 from nonebot.adapters.onebot.v11 import Bot, Event
 
-from migang.core.models import UserBag, GoodsInfo, GoodsGroup, GoodsUseLog
+from migang.core.models import GoodsUseLog
+from migang.core.models import UserBag, GoodsInfo
+from migang.core.models import GoodsGroup as GoodsGroupDB
 
 
 class CancelThisGoodsHandle(Exception):
@@ -477,7 +479,7 @@ class GoodsManager:
             name = (name,)
         for goods_group_name in name:
             goods_group = self.__goods_group[goods_group_name]
-            if goods_group_info := await GoodsGroup.filter(
+            if goods_group_info := await GoodsGroupDB.filter(
                 name=goods_group_name
             ).first():
                 goods_group.purchase_limit, goods_group.use_limit = (
@@ -493,7 +495,7 @@ class GoodsManager:
 
         async def save(goods_group_name: str):
             goods_group = self.__data[goods_group_name]
-            if goods_group_info := await GoodsGroup.filter(
+            if goods_group_info := await GoodsGroupDB.filter(
                 name=goods_group_name
             ).first():
                 (
@@ -505,7 +507,7 @@ class GoodsManager:
                 )
                 await goods_group_info.save()
             else:
-                await GoodsGroup(
+                await GoodsGroupDB(
                     name=goods_group.name,
                     purchase_limit=goods_group.purchase_limit,
                     use_limit=goods_group.use_limit,

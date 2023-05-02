@@ -171,7 +171,7 @@ google_language = {
 @run_sync
 def get_google_trans(text: str, to: str = "zh-CN"):
     if to not in google_language:
-        return f"[谷歌机翻]\n> 目标语言不受支持..."
+        return "[谷歌机翻]\n> 目标语言不受支持..."
     try:
         return f"[谷歌机翻]\n> {GoogleTranslator(source='auto', target=to).translate(text=text)}"
     except:

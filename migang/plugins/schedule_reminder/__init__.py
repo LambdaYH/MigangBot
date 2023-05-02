@@ -421,7 +421,7 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
             await show_task.send(ret_msg, at_sender=True)
         else:
             if len(user_jobs) == 0:
-                await show_task.send(f"用户不存在定时任务", at_sender=True)
+                await show_task.send("用户不存在定时任务", at_sender=True)
             else:
                 ret_msgs = []
                 for i, job in enumerate(user_jobs):
@@ -446,7 +446,7 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
                     (
                         f"用户当前在群[{event.group_id}]的所有定时任务"
                         if isinstance(event, GroupMessageEvent)
-                        else f"用户当前所有定时任务"
+                        else "用户当前所有定时任务"
                     )
                     + MessageSegment.image(
                         pic_to_bytes(
@@ -521,7 +521,7 @@ async def _(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent]):
         MessageSegment.node_custom(
             user_id=event.self_id,
             nickname="定时姬",
-            content=f"""
+            content="""
 [添加定时任务 任务类型] 来添加
 [删除定时任务 任务id] 来删除
 [查看定时任务 任务id] 来查看特定定时任务

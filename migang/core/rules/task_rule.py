@@ -1,7 +1,7 @@
 from typing import Callable
 from functools import partial
 
-from nonebot.adapters.onebot.v11 import Event, PokeNotifyEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Event
 
 from migang.core.manager import group_manager
 

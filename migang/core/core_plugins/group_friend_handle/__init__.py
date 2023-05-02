@@ -214,7 +214,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
             for user in bot.config.superusers:
                 await bot.send_private_msg(
                     user_id=int(user),
-                    message=f"我直接光速同意.jpg(๑¯◡¯๑)",
+                    message="我直接光速同意.jpg(๑¯◡¯๑)",
                 )
             await group_request.finish()
         except ActionFailed:

@@ -117,7 +117,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
 async def _(event: MessageEvent, args: Message = CommandArg()):
     params = args.extract_plain_text().split(" ")
     if len(params) != 3:
-        await add_mc.finish(f"参数错误，请按照[添加mcs 服务器名 ip:<port> je/be]重新发送")
+        await add_mc.finish("参数错误，请按照[添加mcs 服务器名 ip:<port> je/be]重新发送")
     group_id, user_id = (
         event.group_id if isinstance(event, GroupMessageEvent) else None,
         event.user_id,

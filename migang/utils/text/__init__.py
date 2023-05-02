@@ -1,6 +1,6 @@
 from typing import Union
 
-from .filter import filt_message
+from .filter import filt_message  # noqa
 
 
 def is_number(s: Union[int, str]) -> bool:

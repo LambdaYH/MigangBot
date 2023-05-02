@@ -25,7 +25,7 @@ about = on_fullmatch("关于", rule=to_me(), priority=1, block=False)
 @about.handle()
 async def _():
     await about.send(
-        f"""
+        """
 基于NoneBot2的米缸Bot
 开源地址：https://github.com/LambdaYH/MigangBot
 """.strip()

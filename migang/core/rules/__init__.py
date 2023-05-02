@@ -1,1 +1,1 @@
-from .task_rule import GroupTaskChecker
+from .task_rule import GroupTaskChecker  # noqa

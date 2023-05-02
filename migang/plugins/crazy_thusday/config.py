@@ -42,7 +42,7 @@ async def download_url(url: str) -> Union[httpx.Response, None]:
             except Exception as e:
                 logger.warning(f"Error occured when downloading {url}, {i+1}/3: {e}")
 
-    logger.warning(f"Abort downloading")
+    logger.warning("Abort downloading")
     return None
 
 

@@ -8,7 +8,7 @@ from nonebot.log import logger
 from tortoise.connection import connections
 from nonebot.utils import run_sync, is_coroutine_callable
 
-from migang.core.models import *
+from migang.core.models import *  # noqa
 from migang.core.utils.file_operation import async_load_data
 
 _post_init_db_func = []

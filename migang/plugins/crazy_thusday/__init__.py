@@ -12,7 +12,6 @@ from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot.params import Depends, RegexMatched
 
-from .config import *
 from .config import crazy_config
 
 __plugin_meta__ = PluginMetadata(

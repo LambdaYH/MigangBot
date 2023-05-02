@@ -50,14 +50,14 @@ bg_path = Path(__file__).parent / "images" / "bg.jpg"
 async def _(event: MessageEvent, cmd: str = Startswith()):
     amount = event.get_plaintext().removeprefix(cmd).strip()
     if not amount.isdigit():
-        await deposit_coins(f"存入金额必须为正整数")
+        await deposit_coins("存入金额必须为正整数")
     amount = int(amount)
     async with in_transaction() as connection:
         now_gold = await UserProperty.get_gold(
             user_id=event.user_id, connection=connection
         )
         if now_gold < amount:
-            await deposit_coins.finish(f"背包里的金币不够存哦~")
+            await deposit_coins.finish("背包里的金币不够存哦~")
         await UserProperty.modify_gold(
             user_id=event.user_id,
             gold_diff=-amount,
@@ -74,7 +74,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
 async def _(event: MessageEvent, cmd: str = Startswith()):
     amount = event.get_plaintext().removeprefix(cmd).strip()
     if not amount.isdigit():
-        await deposit_coins(f"存入金额必须为正整数")
+        await deposit_coins("存入金额必须为正整数")
     amount = int(amount)
     ori_amount = amount
     async with in_transaction() as connection:
@@ -82,7 +82,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
             user_id=event.user_id, connection=connection
         )
         if total_demand_deposit < amount:
-            await take_coins.finish(f"您未在这存放足够的金币哦~")
+            await take_coins.finish("您未在这存放足够的金币哦~")
         # 先把晚存入的取出来
         rate = (await get_config("demand_deposit_rate")) / 100
         total_earned = 0

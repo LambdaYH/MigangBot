@@ -27,7 +27,7 @@ suoxie = on_command(
     cmd="缩写", aliases={"sx", "转义", "/hhsh", "nbnhhsh"}, priority=5, block=True
 )
 
-url = f"https://lab.magiconch.com/api/nbnhhsh/guess/"
+url = "https://lab.magiconch.com/api/nbnhhsh/guess/"
 
 
 @suoxie.handle()
