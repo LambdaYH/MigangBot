@@ -5,8 +5,6 @@
     --bancolor: #b5b2b2;
     /* 禁用颜色 */
     --stopcolor: red;
-    /* 背景图高斯模糊 */
-    --bgblur: 6px;
     /* 插件框高斯模糊 */
     --blur: 4px;
     /* 插件背景色 */
