@@ -2,7 +2,7 @@
 name = "migangbot"
 version = "0.1.0"
 description = "基于Nonebot2与go-cqhttp的机器人"
-authors = ["LambdaYH"]
+authors = ["LambdaYH <mobai@mobai.one>"]
 license = "AGPL-3.0"
 readme = "README.md"
 
