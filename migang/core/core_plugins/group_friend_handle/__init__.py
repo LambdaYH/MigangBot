@@ -207,7 +207,6 @@ async def _(bot: Bot, event: GroupRequestEvent):
         return
     if str(event.user_id) in bot.config.superusers:
         try:
-            global allowed_group
             allowed_group.add(event.group_id)
             await bot.set_group_add_request(
                 flag=event.flag, sub_type="invite", approve=True

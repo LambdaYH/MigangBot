@@ -78,10 +78,10 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     if not args:
         image_file: Path
         group_id, user_id = None, None
-        if type(event) is GroupMessageEvent:
+        if isinstance(event, GroupMessageEvent):
             group_id = event.group_id
             image_file = GROUP_HELP_PATH / f"{group_id}.png"
-        elif type(event) is PrivateMessageEvent:
+        elif isinstance(event, PrivateMessageEvent):
             user_id = event.user_id
             image_file = USER_HELP_PATH / f"{user_id }.png"
         if image_file.exists():

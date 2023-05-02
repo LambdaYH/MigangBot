@@ -147,23 +147,28 @@ class Goods:
         self.__kwargs = [{}, {}, {}]
 
     def __register_handler(
-        self, func_id: int, handler: Callable[..., Optional[str]], kwargs: Dict = {}
+        self,
+        func_id: int,
+        handler: Callable[..., Optional[str]],
+        kwargs: Optional[Dict] = None,
     ):
+        if kwargs is None:
+            kwargs = {}
         self.__handlers[func_id] = handler
         self.__kwargs[func_id] = kwargs
 
     def register_before_handler(
-        self, handler: Callable[..., Optional[str]], kwargs: Dict = {}
+        self, handler: Callable[..., Optional[str]], kwargs: Optional[Dict] = None
     ):
         self.__register_handler(0, handler=handler, kwargs=kwargs)
 
     def register_handler(
-        self, handler: Callable[..., Optional[str]], kwargs: Dict = {}
+        self, handler: Callable[..., Optional[str]], kwargs: Optional[Dict] = None
     ):
         self.__register_handler(1, handler=handler, kwargs=kwargs)
 
     def register_after_handler(
-        self, handler: Callable[..., Optional[str]], kwargs: Dict = {}
+        self, handler: Callable[..., Optional[str]], kwargs: Optional[Dict] = None
     ):
         self.__register_handler(2, handler=handler, kwargs=kwargs)
 

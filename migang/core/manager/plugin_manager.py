@@ -109,13 +109,13 @@ class PluginManager:
             async with await anyio.open_file(self.__file, "w") as f:
                 await f.write(self.__data.json(ensure_ascii=False, indent=4))
 
-        def set_plugin_type(self, type: PluginType):
+        def set_plugin_type(self, type_: PluginType):
             """设置插件类型
 
             Args:
                 type (PluginType): 插件类型
             """
-            self.plugin_type = type
+            self.plugin_type = type_
 
         @property
         def global_status(self) -> bool:
@@ -485,7 +485,7 @@ class PluginManager:
     #         plugin_type (PluginType): 插件类型
     #     """
     #     if plugin := self.__plugin.get(plugin_name):
-    #         plugin.set_plugin_type(type=plugin_type)
+    #         plugin.set_plugin_type(type_=plugin_type)
 
     def set_plugin_attributes(
         self,
@@ -505,7 +505,7 @@ class PluginManager:
         if plugin := self.__plugin.get(plugin_name):
             plugin.set_usage(usage=usage)
             plugin.set_always_on(always_on=always_on)
-            plugin.set_plugin_type(type=plugin_type)
+            plugin.set_plugin_type(type_=plugin_type)
 
     async def enable_plugin(self, plugin_name: str):
         """全局启用插件plugin_name

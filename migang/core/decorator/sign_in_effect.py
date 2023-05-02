@@ -68,8 +68,8 @@ class Effect:
         if "user_prop" in params_required:
             params["user_prop"] = user_prop
         if iscoroutinefunction(self.next_func):
-            return await self.next_func(**params, **kwargs)
-        return self.next_func(**params, **kwargs)
+            return await self.next_func(**params, **kwargs)  # type: ignore
+        return self.next_func(**params, **kwargs)  # type: ignore
 
     def has_next_effect(self) -> bool:
         return self.next_func is not None

@@ -22,7 +22,7 @@ async def init_plugin_task():
         task_items: Iterable[TaskItem] = plugin.module.__getattribute__(
             "__plugin_task__"
         )
-        if type(task_items) is TaskItem:
+        if isinstance(task_items, TaskItem):
             task_items = (task_items,)
         try:
             for item in task_items:

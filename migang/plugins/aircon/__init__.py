@@ -71,7 +71,7 @@ async def check_range(
         if special is not None and msg in special:
             return special[msg]
         val = int(msg)
-    except:
+    except ValueError:
         await matcher.finish(f"⚠️输入有误！只能输入{low}至{high}的整数")
 
     if not low <= val <= high:

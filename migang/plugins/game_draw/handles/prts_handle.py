@@ -166,7 +166,7 @@ class PrtsHandle(BaseHandle[Operator]):
     def load_up_char(self):
         try:
             data = self.load_data(f"draw_card_up/{self.game_name}_up_char.json")
-            """这里的 waring 有点模糊，更新游戏信息时没有up池的情况下也会报错，所以细分了一下"""
+            # 这里的 waring 有点模糊，更新游戏信息时没有up池的情况下也会报错，所以细分了一下
             if not data:
                 logger.warning(f"当前无UP池或 {self.game_name}_up_char.json 文件不存在")
             else:
@@ -276,7 +276,7 @@ class PrtsHandle(BaseHandle[Operator]):
                     start_time = dateparser.parse(start)
                     end_time = dateparser.parse(end)
                     pool_img = contents[index - 2]
-                    r"""两类格式：用/分割，用\分割；★+(概率)+名字，★+名字+(概率)"""
+                    # 两类格式：用/分割，用\分割；★+(概率)+名字，★+名字+(概率)
                     for char in chars:
                         star = char.split("（")[0].count("★")
                         name = (
