@@ -1,8 +1,8 @@
-from .message import broadcast
-from .rules import GroupTaskChecker
-from .utils.task_operation import check_task
-from .permission import BAD, GOOD, BLACK, NORMAL, EXCELLENT, Permission
-from .path import (
+from .message import broadcast  # noqa
+from .rules import GroupTaskChecker  # noqa
+from .utils.task_operation import check_task  # noqa
+from .permission import BAD, GOOD, BLACK, NORMAL, EXCELLENT, Permission  # noqa
+from .path import (  # noqa
     DATA_PATH,
     FONT_PATH,
     TEXT_PATH,
@@ -10,13 +10,13 @@ from .path import (
     RESOURCE_PATH,
     TEMPLATE_PATH,
 )
-from .utils.config_operation import (
+from .utils.config_operation import (  # noqa
     get_config,
     sync_get_config,
     pre_init_manager,
     post_init_manager,
 )
-from .manager import (
+from .manager import (  # noqa
     CDItem,
     TaskItem,
     CheckType,

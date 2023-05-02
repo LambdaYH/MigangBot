@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 import openai
 from nonebot.log import logger
@@ -42,17 +42,17 @@ class TextGenerator:
 
     # 获取文本生成
     async def get_response(
-        self, prompt, type: str = "chat", custom: dict = {}
+        self, prompt, type_: str = "chat", custom: Optional[Dict] = None
     ) -> Tuple[str, bool]:
         # return 'testing...'
         for _ in range(len(self.__api_keys)):
-            if type == "chat":
+            if type_ == "chat":
                 res, success = await self.get_chat_response(
                     self.__api_keys[self.__key_index], prompt, custom
                 )
-            elif type == "impression":
+            elif type_ == "impression":
                 res, success = await self.get_impression_response(
-                    self.__api_keys[self.__key_index], prompt, custom
+                    self.__api_keys[self.__key_index], prompt
                 )
             if success:
                 return res, True
@@ -79,7 +79,7 @@ class TextGenerator:
         return res, False
 
     # 对话文本生成
-    async def get_chat_response(self, key: str, prompt: List | str, custom: dict = {}):
+    async def get_chat_response(self, key: str, prompt: List | str, custom: Dict):
         openai.api_key = key
         try:
             if self.__model.startswith("gpt-3.5-turbo"):
@@ -142,7 +142,7 @@ class TextGenerator:
             return f"请求 OpenAi Api 时发生错误: {e}", False
 
     # 印象文本生成
-    async def get_impression_response(self, key: str, prompt: str, custom: dict = {}):
+    async def get_impression_response(self, key: str, prompt: str):
         openai.api_key = key
         try:
             if self.__model.startswith("gpt-3.5-turbo"):

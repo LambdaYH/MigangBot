@@ -172,7 +172,7 @@ async def update_impression(bot: Bot, group_id: int, user_id: int) -> None:
         f"{history_str}"
         f"\n\n{personality.format(bot_name=bot_name)}\nUpdate {user_name} impressions from the perspective of {bot_name}:"
     )
-    res, success = await text_generator.get_response(prompt, type="impression")
+    res, success = await text_generator.get_response(prompt, type_="impression")
     if success:
         impression.impression = res.replace(user_name, "{user_name}").replace(
             bot_name, "{bot_name}"

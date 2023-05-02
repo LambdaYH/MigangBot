@@ -1,5 +1,3 @@
-import urllib.parse
-
 import aiohttp
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import MessageSegment

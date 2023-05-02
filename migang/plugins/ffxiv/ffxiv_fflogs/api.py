@@ -34,19 +34,13 @@ plugin_data = get_plugin_data()
 class DataException(Exception):
     """数据异常"""
 
-    pass
-
 
 class ParameterException(Exception):
     """参数异常"""
 
-    pass
-
 
 class AuthException(Exception):
     """认证异常"""
-
-    pass
 
 
 class FFLogs:
@@ -144,9 +138,11 @@ class FFLogs:
                 await asyncio.sleep(randint(1, 30))
 
     async def _http_need_client(
-        self, url: str, client: httpx.AsyncClient, params: dict = {}
+        self, url: str, client: httpx.AsyncClient, params: dict | None = None
     ):
         """当需要多次连续请求时候在外面开client复用"""
+        if params is None:
+            params = {}
         try:
             params.setdefault("api_key", await self.get_token())
             # 使用 httpx 库发送最终的请求
@@ -163,7 +159,9 @@ class FFLogs:
             # 抛出上面任何异常，说明调用失败
             return None
 
-    async def _http(self, url: str, params: dict = {}):
+    async def _http(self, url: str, params: dict | None = None):
+        if params is None:
+            params = {}
         async with httpx.AsyncClient() as client:
             return await self._http_need_client(url=url, client=client, params=params)
 

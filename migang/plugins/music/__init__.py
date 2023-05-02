@@ -197,7 +197,7 @@ async def _(event: GroupMessageEvent, music_id: str = ArgStr("music_id")):
     key = event.get_session_id()
     music_dict = music_select[key]
     if not music_id.isdigit():
-        await music_select_handler.reject(f"序号必须是正整数哦，请重新发送序号")
+        await music_select_handler.reject("序号必须是正整数哦，请重新发送序号")
     music_idx = int(music_id) - 1
     if music_idx in music_dict:
         song = music_dict[music_idx]

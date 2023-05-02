@@ -2,8 +2,8 @@ import math
 import random
 import asyncio
 from datetime import datetime
-from asyncio.exceptions import TimeoutError
 from typing import Dict, List, Tuple, Generic, TypeVar, Optional
+from asyncio.exceptions import TimeoutError as AsyncioTimeoutError
 
 import anyio
 import aiohttp
@@ -191,7 +191,6 @@ class BaseHandle(Generic[TC]):
             w = img_w * num_per_line
         h = img_h * math.ceil(len(card_imgs) / num_per_line)
         img = BuildImage.new("RGBA", (w, h), color=self.game_card_color)
-        gap = 10
         last_x = 0
         last_y = 0
         for card_img in card_imgs:
@@ -264,7 +263,7 @@ class BaseHandle(Generic[TC]):
                 async with self.session.get(url, timeout=10) as response:
                     result = await response.text()
                 break
-            except TimeoutError:
+            except AsyncioTimeoutError:
                 logger.warning(f"访问 {url} 超时, 重试 {i + 1}/{retry}")
                 await asyncio.sleep(1)
         return result
@@ -278,7 +277,7 @@ class BaseHandle(Generic[TC]):
                 async with await anyio.open_file(img_path, "wb") as f:
                     await f.write(await response.read())
             return True
-        except TimeoutError:
+        except AsyncioTimeoutError:
             logger.warning(f"下载 {self.game_name_cn} 图片超时，名称：{name}，url：{url}")
             return False
         except:

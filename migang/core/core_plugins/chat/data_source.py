@@ -2,7 +2,7 @@ import random
 from pathlib import Path
 from datetime import timedelta
 from typing import List, Optional
-from asyncio.exceptions import TimeoutError
+from asyncio.exceptions import TimeoutError as AsyncioTimeoutError
 
 import anyio
 import ujson
@@ -64,7 +64,7 @@ async def tu_ling(text: str, img_url: str, user_id: int) -> Optional[str]:
                 if response.status != 200:
                     return None
                 resp_payload = await response.json(content_type=None)
-    except TimeoutError as e:
+    except AsyncioTimeoutError as e:
         logger.warning(f"访问turingapi超时：{e}")
         return None
     if int(resp_payload["intent"]["code"]) in [4003]:

@@ -313,7 +313,7 @@ class WeiboSpider(object):
     async def get_long_weibo(self, id_):
         """获取长微博"""
         weibo_info = await self.get_json(
-            f"https://m.weibo.cn/statuses/show", params={"id": id_}
+            "https://m.weibo.cn/statuses/show", params={"id": id_}
         )
         if not weibo_info or weibo_info["ok"] != 1:
             return None

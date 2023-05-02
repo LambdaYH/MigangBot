@@ -2,7 +2,7 @@ import base64
 import socket
 from io import BytesIO
 from typing import Optional
-from asyncio.exceptions import TimeoutError
+from asyncio.exceptions import TimeoutError as AsyncioTimeoutError
 
 from PIL.Image import Resampling
 from mcstatus.pinger import PingResponse
@@ -201,7 +201,7 @@ def draw_bedrock(res: BedrockStatusResponse) -> BytesIO:
 
 def draw_error(e: Exception, svr_type: ServerType) -> BytesIO:
     extra = ""
-    if isinstance(e, TimeoutError):
+    if isinstance(e, AsyncioTimeoutError):
         reason = "请求超时"
     elif isinstance(e, socket.gaierror):
         reason = "域名解析失败"

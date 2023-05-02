@@ -86,7 +86,7 @@ async def do_chat(
     time_before_request = datetime.now()
     raw_res, success = await text_generator.get_response(
         prompt=prompt_template,
-        type="chat",
+        type_="chat",
         custom={"bot_name": bot_name, "sender_name": sender_name},
     )
     if not success:  # 如果生成对话结果失败，则直接返回

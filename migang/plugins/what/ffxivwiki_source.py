@@ -130,7 +130,7 @@ async def parse_item_garland(item_id, name_lang):
 
     if "fishingSpots" in item.keys():
         hasSource = True
-        result.append(f"·钓鱼")
+        result.append("·钓鱼")
         for spotIndex in item["fishingSpots"]:
             spot = partials[("fishing", str(spotIndex))]
             result.append(
@@ -144,7 +144,7 @@ async def parse_item_garland(item_id, name_lang):
         result.append("")
 
     if "fish" in item.keys():
-        result.append(f"·钓法/刺鱼指引")
+        result.append("·钓法/刺鱼指引")
         for fishGroup in item["fish"]["spots"]:
             if "spot" in fishGroup.keys():
                 result.append(f"  {fishGroup['hookset']} {fishGroup['tug']}")
