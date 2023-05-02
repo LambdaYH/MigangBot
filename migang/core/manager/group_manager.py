@@ -10,6 +10,44 @@ from migang.core.manager.task_manager import TaskManager
 from migang.core.manager.plugin_manager import PluginManager
 
 
+class GroupInfo:
+    __slots__ = "permission", "bot_status"
+
+    def __init__(self, permission: Permission, bot_status: bool) -> None:
+        self.permission = permission
+        self.bot_status = bot_status
+
+    def set_bot_enable(self) -> bool:
+        """启用群机器人
+
+        Returns:
+            bool: 若True，则启用成功，反之则表示处于启用状态
+        """
+        if self.bot_status:
+            return False
+        self.bot_status = True
+        return True
+
+    def set_bot_disable(self) -> bool:
+        """禁用群机器人
+
+        Returns:
+            bool: 若True，则禁用成功，反之则表示处于禁用状态
+        """
+        if not self.bot_status:
+            return False
+        self.bot_status = False
+        return True
+
+    def set_permission(self, permission: Permission):
+        """设定群权限
+
+        Args:
+            permission (Permission): 新权限
+        """
+        self.permission = permission
+
+
 class GroupManager:
     """管理群能否调用插件与任务以及群机器人的状态
 
@@ -28,7 +66,7 @@ class GroupManager:
             plugin_manager (PluginManager): 插件管理器
             task_manager (TaskManager): 任务管理器
         """
-        self.__group: Dict[int, GroupStatus] = {}
+        self.__group: Dict[int, GroupInfo] = {}
         """group_id 对应一个group类
         """
         self.__plugin_manager: PluginManager = plugin_manager
@@ -37,27 +75,39 @@ class GroupManager:
         self.__task_manager: TaskManager = task_manager
         """管理任务
         """
-        self.__save_query: DefaultDict[GroupStatus, Set[str]] = defaultdict(
-            lambda: set()
-        )
+        self.__save_query: DefaultDict[int, Set[str]] = defaultdict(lambda: set())
 
     async def init(self) -> None:
         """初始化，从数据库中载入"""
         all_groups = await GroupStatus.all()
         for group in all_groups:
-            self.__group[group.group_id] = group
+            self.__group[group.group_id] = GroupInfo(group.permission, group.bot_status)
 
     async def save(self) -> None:
         """写进数据库"""
         if self.__save_query:
             async with in_transaction() as connection:
                 tasks = []
-                for group_status, fields in self.__save_query.items():
+                for group_id, fields in self.__save_query.items():
+                    group_status = await GroupStatus.filter(group_id=group_id).first()
+                    if not group_status:
+                        # 若数据库中没有，创建
+                        group_status = GroupStatus(
+                            group_id=group_id,
+                            permission=self.__group[group_id].permission,
+                            bot_status=self.__group[group_id].bot_status,
+                        )
+                    else:
+                        # 更新修改过的项
+                        for field in fields:
+                            group_status.__setattr__(
+                                field, self.__group[group_id].__getattribute__(field)
+                            )
                     tasks.append(
                         group_status.save(update_fields=fields, using_db=connection)
                     )
+                self.__save_query.clear()
                 await asyncio.gather(*tasks)
-            self.__save_query.clear()
 
     def __get_group(self, group_id: int) -> GroupStatus:
         """获取group_id对应的Group类，若无，则创建
@@ -70,10 +120,10 @@ class GroupManager:
         """
         group = self.__group.get(group_id)
         if not group:
-            group = self.__group[group_id] = GroupStatus(
-                group_id=group_id, permission=NORMAL, bot_status=True
+            group = self.__group[group_id] = GroupInfo(
+                permission=NORMAL, bot_status=True
             )
-            self.__save_query[group].update()
+            self.__save_query[group_id].update()
         return group
 
     def check_group_plugin_status(self, plugin_name: str, group_id: int) -> bool:
@@ -231,7 +281,7 @@ class GroupManager:
         """
         group = self.__get_group(group_id=group_id)
         if group.set_bot_enable():
-            self.__save_query[group].add("bot_status")
+            self.__save_query[group_id].add("bot_status")
             return True
         return False
 
@@ -246,7 +296,7 @@ class GroupManager:
         """
         group = self.__get_group(group_id=group_id)
         if group.set_bot_disable():
-            self.__save_query[group].add("bot_status")
+            self.__save_query[group_id].add("bot_status")
             return True
         return False
 
@@ -259,7 +309,7 @@ class GroupManager:
         """
         group = self.__get_group(group_id=group_id)
         group.set_permission(permission=permission)
-        self.__save_query[group].add("permission")
+        self.__save_query[group_id].add("permission")
 
     def get_group_permission(self, group_id: int) -> Permission:
         """获取群权限
