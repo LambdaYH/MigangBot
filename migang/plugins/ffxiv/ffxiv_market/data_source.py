@@ -7,6 +7,7 @@ from difflib import SequenceMatcher
 
 import aiohttp
 from nonebot.log import logger
+from tenacity import RetryError, retry, stop_after_attempt
 
 
 def localize_world_name(world_name: str):
@@ -46,6 +47,7 @@ def localize_world_name(world_name: str):
     return world_name
 
 
+@retry(stop=stop_after_attempt(3))
 async def get_item_id(
     item_name: str, client: aiohttp.ClientSession, name_lang: Optional[str] = None
 ) -> Union[Optional[str], int]:
@@ -57,7 +59,7 @@ async def get_item_id(
     if name_lang == "cn":
         url = "https://cafemaker.wakingsands.com/search"
     r = await client.get(url=url, timeout=30, params=params)
-    result = (await r.json(content_type=None))["Results"]
+    result = (await r.json())["Results"]
     if len(result) > 0:
         result = max(
             result,
@@ -104,9 +106,9 @@ async def get_market_data(server_name: str, item_name: str, hq=False) -> str:
                 new_item_name, item_id = await get_item_id(item_name, client, name_lang)
             if item_id < 0:
                 return f'所查询物品"{item_name}"不存在'
-        except asyncio.TimeoutError:
+        except (asyncio.TimeoutError, RetryError):
             logger.error(f"获取物品ID异常：{traceback.format_exc()}")
-            return "获取物品ID超时...或许相关api网络出现了问题.."
+            return "获取物品ID超时...或许相关api网络出现了问题...请稍后重试..."
         url = f"https://universalis.app/api/{server_name}/{item_id}"
         try:
             r = await client.get(url, timeout=10)
