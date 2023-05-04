@@ -30,14 +30,15 @@ __plugin_meta__ = PluginMetadata(
 usage：
     来看看暖女儿的衣柜吧！
     指令：
+        随机暖暖
+        n连随机暖暖
+
         闪暖套装
         n连闪暖套装（n <= 9）
-
-        随机暖暖
 """.strip(),
     extra={
         "unique_name": "migang_shiningnikki_image",
-        "example": "闪暖套装\nn连闪暖套装（n <= 9）",
+        "example": "闪暖套装\nn连闪暖套装（n <= 9）\n随机暖暖",
         "author": "migang",
         "version": 0.1,
     },
@@ -50,7 +51,7 @@ suit_draw = on_regex(r"^(\d)?连?闪暖套装$", priority=5, block=True)
 update_suits = on_fullmatch(
     "更新闪暖套装", priority=1, rule=to_me(), permission=SUPERUSER, block=True
 )
-random_nikki = on_fullmatch(("随机暖暖", "随机苏暖暖"), priority=5, block=True)
+random_nikki = on_regex(r"^(\d)?连?随机暖暖$", priority=5, block=True)
 
 
 @cached(ttl=600)
@@ -132,16 +133,33 @@ async def _():
 
 
 @random_nikki.handle()
-async def _():
+async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGroup()):
+    num = int(reg_group[0] or 1)
     async with aiohttp.ClientSession() as client:
         r = await client.get(
-            "https://mobai.one/api/v1/photos?count=1&offset=0&s=armiadg17gy2moqf&merged=true&order=random",
+            f"https://mobai.one/api/v1/photos?count={num}&offset=0&s=armiadg17gy2moqf&merged=true&order=random",
             headers={"x-session-id": X_SESSION_ID},
             timeout=6,
         )
         r = await r.json()
-        await random_nikki.send(
-            MessageSegment.image(
-                f"https://mobai.one/api/v1/t/{r[0]['Hash']}/{PREVIEW_TOKEN}/fit_4096"
+        if num == 1:
+            await random_nikki.send(
+                MessageSegment.image(
+                    f"https://mobai.one/api/v1/t/{r[0]['Hash']}/{PREVIEW_TOKEN}/fit_4096"
+                )
             )
-        )
+        else:
+            msgs = [
+                MessageSegment.node_custom(
+                    user_id=event.self_id,
+                    nickname="苏暖暖",
+                    content=MessageSegment.image(
+                        f"https://mobai.one/api/v1/t/{img['Hash']}/{PREVIEW_TOKEN}/fit_4096"
+                    ),
+                )
+                for img in r
+            ]
+            if isinstance(event, GroupMessageEvent):
+                await bot.send_forward_msg(group_id=event.group_id, messages=msgs)
+            else:
+                await bot.send_forward_msg(user_id=event.user_id, messages=msgs)
