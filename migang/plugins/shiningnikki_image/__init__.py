@@ -2,6 +2,7 @@ import random
 import asyncio
 from typing import Any, Tuple
 
+import aiohttp
 from aiocache import cached
 from nonebot.log import logger
 from nonebot.rule import to_me
@@ -9,6 +10,7 @@ from nonebot.params import RegexGroup
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot import on_regex, get_driver, on_fullmatch
+from tenacity import retry, wait_fixed, stop_after_attempt
 from nonebot.adapters.onebot.v11 import (
     Bot,
     MessageEvent,
@@ -30,6 +32,8 @@ usage：
     指令：
         闪暖套装
         n连闪暖套装（n <= 9）
+
+        随机暖暖
 """.strip(),
     extra={
         "unique_name": "migang_shiningnikki_image",
@@ -40,17 +44,41 @@ usage：
 )
 __plugin_category__ = "好看的"
 __plugin_cd__ = CDItem(3, hint="心急穿不了大裙子！")
-__plugin_count__ = CountItem(20, hint="今天看太多啦！留点明天看吧")
+__plugin_count__ = CountItem(126, hint="今天看太多啦！留点明天看吧")
 
 suit_draw = on_regex(r"^(\d)?连?闪暖套装$", priority=5, block=True)
 update_suits = on_fullmatch(
     "更新闪暖套装", priority=1, rule=to_me(), permission=SUPERUSER, block=True
 )
+random_nikki = on_fullmatch(("随机暖暖", "随机苏暖暖"), priority=5, block=True)
 
 
 @cached(ttl=600)
 async def get_data():
     return await async_load_data(DATA_PATH / "suits.json")
+
+
+X_SESSION_ID = ""
+PREVIEW_TOKEN = "32w91x90"
+
+
+# 获取x_session_id
+@get_driver().on_startup
+async def _():
+    # url = "https://mobai.one/s/3p9xd3t1kq/nikki_portraits/"
+    token = "3p9xd3t1kq"
+
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(5))
+    async def get_session_id() -> None:
+        async with aiohttp.ClientSession() as client:
+            r = await client.post(
+                "https://mobai.one/api/v1/session", json={"token": token}
+            )
+            r = await r.json()
+            global X_SESSION_ID
+            X_SESSION_ID = r["id"]
+
+    asyncio.create_task(get_session_id())
 
 
 @suit_draw.handle()
@@ -101,3 +129,19 @@ async def _():
 async def _():
     logger.info("正在检测闪暖套装图片更新...")
     asyncio.create_task(update_suits_img())
+
+
+@random_nikki.handle()
+async def _():
+    async with aiohttp.ClientSession() as client:
+        r = await client.get(
+            "https://mobai.one/api/v1/photos?count=1&offset=0&s=armiadg17gy2moqf&merged=true&order=random",
+            headers={"x-session-id": X_SESSION_ID},
+            timeout=6,
+        )
+        r = await r.json()
+        await random_nikki.send(
+            MessageSegment.image(
+                f"https://mobai.one/api/v1/t/{r[0]['Hash']}/{PREVIEW_TOKEN}/fit_4096"
+            )
+        )
