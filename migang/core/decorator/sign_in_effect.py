@@ -4,6 +4,7 @@ from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Optional, Coroutine
 
 from nonebot.log import logger
+from tortoise.backends.base.client import TransactionContext
 
 from migang.core.models import SignIn, UserProperty
 
@@ -27,7 +28,11 @@ class Effect:
         ] = None
 
     async def __call__(
-        self, user_id: int, user_sign_in: SignIn, user_prop: UserProperty
+        self,
+        user_id: int,
+        user_sign_in: SignIn,
+        user_prop: UserProperty,
+        connection: TransactionContext,
     ) -> Union[str, Tuple[str, Optional[Dict[str, Any]]]]:
         """当该效果存在第二个返回值时，需要返回下一次调用所需的参数，以Dict形式返回
 
@@ -49,12 +54,19 @@ class Effect:
             params["user_sign_in"] = user_sign_in
         if "user_prop" in params_required:
             params["user_prop"] = user_prop
+        if "connection" in params_required:
+            params["connection"] = connection
         if iscoroutinefunction(self.func):
             return await self.func(**params)
         return self.func(**params)
 
     async def next_effect(
-        self, user_id: int, user_sign_in: SignIn, user_prop: UserProperty, **kwargs
+        self,
+        user_id: int,
+        user_sign_in: SignIn,
+        user_prop: UserProperty,
+        connection: TransactionContext,
+        **kwargs,
     ) -> Optional[Any]:
         """下一次签到时自动触发调用"""
         if self.next_func is None:
@@ -67,6 +79,8 @@ class Effect:
             params["user_sign_in"] = user_sign_in
         if "user_prop" in params_required:
             params["user_prop"] = user_prop
+        if "connection" in params_required:
+            params["connection"] = connection
         if iscoroutinefunction(self.next_func):
             return await self.next_func(**params, **kwargs)
         return self.next_func(**params, **kwargs)

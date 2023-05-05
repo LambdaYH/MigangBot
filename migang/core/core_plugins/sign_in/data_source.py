@@ -56,6 +56,7 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
                                 user_id=user_id,
                                 user_sign_in=user,
                                 user_prop=user_prop,
+                                connection=connection,
                                 **user.next_effect_params[i],
                             )
                         except Exception as e:
@@ -66,7 +67,10 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             effect = sign_in_effect.random_effect()
             try:
                 effect_ret = await effect(
-                    user_id=user_id, user_sign_in=user, user_prop=user_prop
+                    user_id=user_id,
+                    user_sign_in=user,
+                    user_prop=user_prop,
+                    connection=connection,
                 )
                 # 记录下一次的
                 if isinstance(effect_ret, str):
