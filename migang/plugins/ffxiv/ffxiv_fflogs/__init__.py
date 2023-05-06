@@ -25,7 +25,7 @@ __plugin_meta__ = PluginMetadata(
 查询输出排行榜：
 /dps 副本名 职业 DPS种类（支持 rdps adps pdps，留空默认为 rdps）
 查询指定角色的排名：
-/dps 副本名 角色名 服务器名
+/dps 副本名 角色名 服务器名（拂晓之间, etc.）
 也可直接查询自己绑定角色的排名：
 /dps 副本名 me
 或查询他人绑定的角色排名
@@ -205,7 +205,7 @@ async def fflogs_handle(
             data = await fflogs.character_dps(*argv)  # type:ignore
         await fflogs_cmd.finish(data)
 
-    await fflogs_cmd.finish(f"{__plugin_meta__.name}\n\n{__plugin_meta__.usage}")
+    await fflogs_cmd.finish(__plugin_meta__.usage)
 
 
 async def get_character_dps_by_user_id(boss_nickname: str, platform: str, user_id: str):
