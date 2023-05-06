@@ -1,15 +1,15 @@
-"""init db
+"""init_db
 
-Revision ID: 619b9e5aa550
+Revision ID: 991f19b9e56a
 Revises:
-Create Date: 2023-03-04 13:33:33.451227
+Create Date: 2023-05-06 16:18:01.209785
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "619b9e5aa550"
+revision = "991f19b9e56a"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,9 +25,7 @@ def upgrade() -> None:
         sa.Column("character_name", sa.String(), nullable=False),
         sa.Column("server_name", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "platform", "user_id", "character_name", "server_name", name="unique-user"
-        ),
+        sa.UniqueConstraint("platform", "user_id"),
     )
     # ### end Alembic commands ###
 
