@@ -3,8 +3,9 @@ import time
 import random
 import asyncio
 from pathlib import Path
+from abc import abstractmethod
 from urllib.parse import unquote, urlencode
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Tuple, Optional
 
 import anyio
 import aiohttp
@@ -37,6 +38,22 @@ async def async_load_data(file: Path) -> List:
                 except ValueError as e:
                     raise Exception(f"json文件 {file} 解析失败：{e}")
     return data if data is not None else []
+
+
+def _validate_config(
+    config: Dict[str, Any],
+    exist_argument_list: Tuple[str, ...],
+    true_false_argument_list: Tuple[str, ...],
+):
+    for argument in true_false_argument_list:
+        if argument not in config:
+            raise NotFoundError(f"未找到参数{argument}")
+        if config[argument] != True and config[argument] != False:
+            raise ParseError(f"{argument} 值应为 True 或 False")
+
+    for argument in exist_argument_list:
+        if argument not in config:
+            raise NotFoundError(f"未找到参数{argument}")
 
 
 class BaseWeiboSpider:
@@ -73,11 +90,13 @@ class BaseWeiboSpider:
 
         self.__received_weibo_ids: List[str] = []
 
+    @abstractmethod
     def get_notice_name(self) -> str:
-        raise NotImplementedError
+        pass
 
-    def validate_config(self) -> None:
-        raise NotImplementedError
+    @abstractmethod
+    def validate_config(self, config: Dict[str, Any]) -> None:
+        pass
 
     async def get_json(self, url, params=None):
         """
@@ -428,18 +447,10 @@ class UserWeiboSpider(BaseWeiboSpider):
 
     def validate_config(self, config):
         """验证配置是否正确"""
-        exist_argument_list = ["user_id", "filter_words", "format"]
-        true_false_argument_list = ["filter_retweet"]
 
-        for argument in true_false_argument_list:
-            if argument not in config:
-                raise NotFoundError(f"未找到参数{argument}")
-            if config[argument] != True and config[argument] != False:
-                raise ParseError(f"{argument} 值应为 True 或 False")
-
-        for argument in exist_argument_list:
-            if argument not in config:
-                raise NotFoundError(f"未找到参数{argument}")
+        _validate_config(
+            config, ("user_id", "filter_words", "format"), ("filter_retweet",)
+        )
 
 
 class KeywordWeiboSpider(BaseWeiboSpider):
@@ -461,18 +472,9 @@ class KeywordWeiboSpider(BaseWeiboSpider):
 
     def validate_config(self, config):
         """验证配置是否正确"""
-        exist_argument_list = ["keyword", "filter_words", "format"]
-        true_false_argument_list = ["filter_retweet"]
-
-        for argument in true_false_argument_list:
-            if argument not in config:
-                raise NotFoundError(f"未找到参数{argument}")
-            if config[argument] != True and config[argument] != False:
-                raise ParseError(f"{argument} 值应为 True 或 False")
-
-        for argument in exist_argument_list:
-            if argument not in config:
-                raise NotFoundError(f"未找到参数{argument}")
+        _validate_config(
+            config, ("keyword", "filter_words", "format"), ("filter_retweet",)
+        )
 
     def get_notice_name(self) -> str:
         """写日志时候用"""
