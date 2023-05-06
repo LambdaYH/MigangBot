@@ -1,6 +1,6 @@
-from typing import Dict
 from asyncio import gather
 from time import strftime, localtime
+from typing import Dict, List, Union
 
 from nonebot.log import logger
 from nonebot.rule import to_me
@@ -26,9 +26,14 @@ from migang.core import (
 )
 
 from ._utils import get_image_cqcode
-from .weibo_spider import WeiboSpider, weibo_record_path, weibo_id_name_file
+from .weibo_spider import (
+    UserWeiboSpider,
+    KeywordWeiboSpider,
+    weibo_record_path,
+    weibo_id_name_file,
+)
 
-tasks_dict = {}
+tasks_dict: Dict[str, List[Union[UserWeiboSpider, KeywordWeiboSpider]]] = {}
 
 
 def _load_config():
@@ -46,7 +51,10 @@ def _load_config():
             for user in users:
                 if "format" not in user:
                     user["format"] = cur_format
-                wb_spider = WeiboSpider(user)
+                if "keyword" in user:
+                    wb_spider = KeywordWeiboSpider(user)
+                elif "user_id" in user:
+                    wb_spider = UserWeiboSpider(user)
                 task_spider_list.append(wb_spider)
             __plugin_task__.append(
                 TaskItem(
@@ -145,6 +153,19 @@ __plugin_config__ = [
                     },
                 ],
             },
+            "weibo-keyword": {
+                "description": "包含关键词的微博推送",
+                "enable_on_default": False,
+                "format": 0,
+                "users": [
+                    {
+                        "keyword": "苏暖暖",
+                        "format": 1,
+                        "filter_retweet": False,
+                        "filter_words": [],
+                    },
+                ],
+            },
         },
         default_value={},
         description="""
@@ -153,7 +174,10 @@ __plugin_config__ = [
 description对应群被动状态中任务名
 format为当前组的模式，若无该项则默认为全局配置
 users为当前推送组的用户，其中：
+
 user_id为https://weibo.com/u/xxxxx的xxxx
+keyword为需要检测的关键词，当存在keyword时，user_id将被忽略
+
 format为当前用户的模式，若无该项则默认为外层配置
 filter_retweet为是否过滤转发的微博
 filter_words为过滤词，包含过滤词的微博不推送
@@ -211,7 +235,7 @@ async def _(event: GroupMessageEvent):
         users = []
         for spider in tasks_dict[task.task_name]:
             users.append(
-                f"{spider.get_username()}[{'图片' if spider.get_format() == 1 else '文本'}]"
+                f"{spider.get_notice_name()}[{'图片' if spider.get_format() == 1 else '文本'}]"
             )
         ret.append(tmp + " ".join(users))
     await weibo_list.finish(
@@ -323,12 +347,12 @@ async def _():
         weibos = []
         for spider in spiders:
             latest_weibos = await spider.get_latest_weibos()
-            format = spider.get_format()
-            formatted_weibos = [(await process_wb(format, wb)) for wb in latest_weibos]
+            format_ = spider.get_format()
+            formatted_weibos = [(await process_wb(format_, wb)) for wb in latest_weibos]
             if weibo_num := len(formatted_weibos):
-                logger.info(f"成功获取@{spider.get_username()}的新微博{weibo_num}条")
+                logger.info(f"成功获取{spider.get_notice_name()}的新微博{weibo_num}条")
             else:
-                logger.info(f"未检测到@{spider.get_username()}的新微博")
+                logger.info(f"未检测到{spider.get_notice_name()}的新微博")
             weibos += formatted_weibos
         if weibos:
             bot = get_bot()
@@ -353,8 +377,12 @@ async def clear_spider_buffer():
 async def update_user_name():
     logger.info("Updating weibo user_name...")
     id_name_map = await async_load_data(weibo_id_name_file)
+    modified = False
     for _, spiders in tasks_dict.items():
         for spider in spiders:
-            if uname := await spider.update_username():
-                id_name_map[spider.get_userid()] = uname
-    await async_save_data(id_name_map, weibo_id_name_file)
+            if isinstance(spider, UserWeiboSpider):
+                if uname := await spider.update_username():
+                    id_name_map[spider.get_userid()] = uname
+                    modified = True
+    if modified:
+        await async_save_data(id_name_map, weibo_id_name_file)

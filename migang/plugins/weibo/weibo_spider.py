@@ -2,9 +2,9 @@ import sys
 import time
 import random
 import asyncio
-from typing import List
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import unquote, urlencode
+from typing import Any, Dict, List, Optional
 
 import anyio
 import aiohttp
@@ -24,8 +24,6 @@ PATH = DATA_PATH / "weibo"
 weibo_record_path = PATH / "weibo_records"
 weibo_id_name_file = PATH / "weibo_id_name.json"
 
-user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/108.0.0.0"
-
 
 async def async_load_data(file: Path) -> List:
     data: List = None
@@ -41,26 +39,45 @@ async def async_load_data(file: Path) -> List:
     return data if data is not None else []
 
 
-class WeiboSpider(object):
-    def __init__(self, config):
+class BaseWeiboSpider:
+    def __init__(
+        self,
+        url: str,
+        params: Dict[str, Any],
+        filter_retweet: bool,
+        filter_words: bool,
+        format_: int,
+        referer: Optional[str] = None,
+        user_id: Optional[int] = None,
+    ):
         """Weibo类初始化"""
-        self.validate_config(config)
-        self.filter_retweet = config["filter_retweet"]
-        self.user_id: str = config["user_id"]
-        self.user_id_int: int = int(self.user_id)
-        self.filter_words = config["filter_words"]
-        self.format = config["format"]
-        self.headers = {
-            "referer": f"https://m.weibo.cn/u/{self.user_id}",
+        self.__filter_retweet = filter_retweet
+        self.__filter_words = filter_words
+        self.__format = format_
+        self.__url = url
+        self.__params = params
+        self.__headers = {
+            "referer": referer if referer is not None else "https://m.weibo.cn/",
             "MWeibo-Pwa": "1",
             "X-Requested-With": "XMLHttpRequest",
             "User-Agent": UserAgent(browsers=["chrome", "edge"]).random,
         }
         self.__recent = False
         self.__init = False
-        self.record_file_path = weibo_record_path / f"{self.user_id}.json"
-        self.user_name = self.user_id
-        self.received_weibo_ids: List[str] = []
+        self.__user_id = user_id
+
+        # 用url参数标记，可读性变差了，但是能用.jpg
+        self.__record_file_path = weibo_record_path / (
+            "_".join([f"{k}_{v}" for k, v in self.__params.items()]) + ".json"
+        )
+
+        self.__received_weibo_ids: List[str] = []
+
+    def get_notice_name(self) -> str:
+        raise NotImplementedError
+
+    def validate_config(self) -> None:
+        raise NotImplementedError
 
     async def get_json(self, url, params=None):
         """
@@ -70,7 +87,7 @@ class WeiboSpider(object):
             for i in range(5):
                 try:
                     r = await client.get(
-                        url, params=params, headers=self.headers, timeout=20
+                        url, params=params, headers=self.__headers, timeout=20
                     )
                     if r.status == 200:
                         return await r.json()
@@ -85,53 +102,22 @@ class WeiboSpider(object):
         """
         self.__init = True
         if cookie := await get_config(key="cookie"):
-            self.headers["cookie"] = cookie
-        id_name_map = await async_load_data(weibo_id_name_file)
-        if self.user_id in id_name_map:
-            self.user_name = id_name_map[self.user_id]
-        self.received_weibo_ids = await async_load_data(self.record_file_path)
-        if not self.record_file_path.exists():
+            self.__headers["cookie"] = cookie
+        self.__received_weibo_ids = await async_load_data(self.__record_file_path)
+        if not self.__record_file_path.exists():
             await self.get_latest_weibos()
-            if not self.received_weibo_ids:
+            if not self.__received_weibo_ids:
                 await self.save()
         self.__init = False
-
-    async def update_username(self):
-        """
-        更新微博用户名
-        """
-        try:
-            js = await self.get_json(
-                api_url, params={"type": "uid", "value": self.user_id}
-            )
-            if js["ok"]:
-                info = js["data"]["userInfo"]
-                self.user_name = info.get("screen_name")
-        except Exception as e:
-            logger.warning(f"微博用户{self.user_id}更新user_name异常: {e}")
-            return None
-        return self.user_name
-
-    def get_userid(self):
-        """
-        获取微博用户id
-        """
-        return self.user_id
-
-    def get_username(self):
-        """
-        获取微博用户名
-        """
-        return self.user_name
 
     def get_format(self):
         """
         获取微博格式，文本或图片
         """
-        return self.format
+        return self.__format
 
     async def save(self):
-        await async_save_data(self.received_weibo_ids, self.record_file_path)
+        await async_save_data(self.__received_weibo_ids, self.__record_file_path)
 
     async def clear_buffer(self):
         """
@@ -139,23 +125,8 @@ class WeiboSpider(object):
         然后清理缓存仅仅保留后 10 条的微博id，因此可能会重复推送前 10 条微博
         当然这种情况通常不会发生
         """
-        self.received_weibo_ids = self.received_weibo_ids[-20:]
+        self.__received_weibo_ids = self.__received_weibo_ids[-20:]
         await self.save()
-
-    def validate_config(self, config):
-        """验证配置是否正确"""
-        exist_argument_list = ["user_id", "filter_words", "format"]
-        true_false_argument_list = ["filter_retweet"]
-
-        for argument in true_false_argument_list:
-            if argument not in config:
-                raise NotFoundError(f"未找到参数{argument}")
-            if config[argument] != True and config[argument] != False:
-                raise ParseError(f"{argument} 值应为 True 或 False")
-
-        for argument in exist_argument_list:
-            if argument not in config:
-                raise NotFoundError(f"未找到参数{argument}")
 
     def get_pics(self, weibo_info):
         """获取微博原始图片url"""
@@ -301,12 +272,8 @@ class WeiboSpider(object):
     async def get_weibo_json(self):
         """获取网页中微博json数据"""
         js = await self.get_json(
-            api_url,
-            params={
-                "type": "uid",
-                "value": self.user_id,
-                "containerid": f"107603{self.user_id}",
-            },
+            self.__url,
+            params=self.__params,
         )
         return js
 
@@ -368,28 +335,31 @@ class WeiboSpider(object):
                 for w in weibos:
                     if (
                         w["card_type"] == 9
-                        and w["mblog"]["user"]["id"] == self.user_id_int
-                        and w["mblog"]["bid"] not in self.received_weibo_ids
+                        and (
+                            self.__user_id is None
+                            or w["mblog"]["user"]["id"] == self.__user_id
+                        )
+                        and w["mblog"]["bid"] not in self.__received_weibo_ids
                     ):
                         wb = await self.get_one_weibo(w)
                         if wb:
                             if not self.__recent:
                                 continue
-                            for word in self.filter_words:
+                            for word in self.__filter_words:
                                 if word in wb["text"] or (
                                     "retweet" in wb and word in wb["retweet"]
                                 ):
-                                    self.received_weibo_ids.append(wb["bid"])
+                                    self.__received_weibo_ids.append(wb["bid"])
                                     break
-                            if wb["bid"] in self.received_weibo_ids:
+                            if wb["bid"] in self.__received_weibo_ids:
                                 continue
-                            if (not self.filter_retweet) or ("retweet" not in wb):
+                            if (not self.__filter_retweet) or ("retweet" not in wb):
                                 wb["pics"] = list(map(sinaimgtvax, wb["pics"]))
                                 wb["video_poster_url"] = list(
                                     map(sinaimgtvax, wb["video_poster_url"])
                                 )
                                 latest_weibos.append(wb)
-                                self.received_weibo_ids.append(wb["bid"])
+                                self.__received_weibo_ids.append(wb["bid"])
                                 # self.print_weibo(wb)
             if latest_weibos:
                 await self.save()
@@ -397,3 +367,113 @@ class WeiboSpider(object):
         except Exception as e:
             logger.exception(e)
             return []
+
+
+class UserWeiboSpider(BaseWeiboSpider):
+    def __init__(self, config: Dict[str, Any]):
+        """Weibo类初始化"""
+        self.validate_config(config)
+        super().__init__(
+            "https://m.weibo.cn/api/container/getIndex",
+            {
+                "type": "uid",
+                "value": config["user_id"],
+                "containerid": f"107603{config['user_id']}",
+            },
+            config["filter_retweet"],
+            config["filter_words"],
+            config["format"],
+            f"https://m.weibo.cn/u/{config['user_id']}",
+            int(config["user_id"]),
+        )
+        self.__user_name = config["user_id"]
+        self.__user_id = config["user_id"]
+
+    async def init(self):
+        """
+        初始化
+        """
+        # 初始化基类
+        await super().init()
+        # 加载用户名
+        id_name_map = await async_load_data(weibo_id_name_file)
+        if self.__user_id in id_name_map:
+            self.__user_name = id_name_map[self.__user_id]
+
+    async def update_username(self):
+        """
+        更新微博用户名
+        """
+        try:
+            js = await self.get_json(
+                api_url, params={"type": "uid", "value": self.__user_id}
+            )
+            if js["ok"]:
+                info = js["data"]["userInfo"]
+                self.__user_name = info.get("screen_name")
+        except Exception as e:
+            logger.warning(f"微博用户{self.__user_id}更新user_name异常: {e}")
+            return None
+        return self.__user_name
+
+    def get_userid(self):
+        """
+        获取微博用户id
+        """
+        return self.__user_id
+
+    def get_notice_name(self):
+        """写日志时候用"""
+        return f"@{self.__user_name}"
+
+    def validate_config(self, config):
+        """验证配置是否正确"""
+        exist_argument_list = ["user_id", "filter_words", "format"]
+        true_false_argument_list = ["filter_retweet"]
+
+        for argument in true_false_argument_list:
+            if argument not in config:
+                raise NotFoundError(f"未找到参数{argument}")
+            if config[argument] != True and config[argument] != False:
+                raise ParseError(f"{argument} 值应为 True 或 False")
+
+        for argument in exist_argument_list:
+            if argument not in config:
+                raise NotFoundError(f"未找到参数{argument}")
+
+
+class KeywordWeiboSpider(BaseWeiboSpider):
+    def __init__(self, config: Dict[str, Any]):
+        self.validate_config(config)
+        keyword = config["keyword"]
+        super().__init__(
+            "https://m.weibo.cn/api/container/getIndex",
+            {
+                "containerid": f"100103type=61&q={keyword}&t=0",
+            },
+            config["filter_retweet"],
+            config["filter_words"],
+            config["format"],
+            f"https://m.weibo.cn/p/searchall?{urlencode({'containerid':f'100103type=1&q={keyword}'})}",
+        )
+        self.__keyword = config["keyword"]
+        self.__notice_name = f"包含关键词：{self.__keyword}"
+
+    def validate_config(self, config):
+        """验证配置是否正确"""
+        exist_argument_list = ["keyword", "filter_words", "format"]
+        true_false_argument_list = ["filter_retweet"]
+
+        for argument in true_false_argument_list:
+            if argument not in config:
+                raise NotFoundError(f"未找到参数{argument}")
+            if config[argument] != True and config[argument] != False:
+                raise ParseError(f"{argument} 值应为 True 或 False")
+
+        for argument in exist_argument_list:
+            if argument not in config:
+                raise NotFoundError(f"未找到参数{argument}")
+
+    def get_notice_name(self) -> str:
+        """写日志时候用"""
+        return self.__notice_name
