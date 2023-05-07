@@ -47,6 +47,15 @@ async def handle_sign_in(user_id: int, user_name: str, bot_name: str):
             user.signin_count += 1
             user_prop.impression += Decimal(user.impression_diff)
             user_prop.gold += user.gold_diff
+            # 执行额外效果（由插件添加）
+            addtional_effects_ret = await sign_in_effect.call_addtional_effect(
+                user_id=user_id,
+                user_sign_in=user,
+                user_prop=user_prop,
+                connection=connection,
+            )
+            # addtional_effects_ret后续将想办法通知出来，提示插件效果，但是现在还没想好怎么处理
+
             # 触发上一次效果
             for i, next_effect in enumerate(user.next_effect):
                 if effect := sign_in_effect.get_effect_by_name(name=next_effect):

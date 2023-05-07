@@ -33,7 +33,7 @@ async def _():
     return "下一次见面时，好感度翻倍~"
 
 
-@sign_in_effect.next(name="下一次签到好感度双倍")
+@sign_in_effect.next_effect(name="下一次签到好感度双倍")
 async def _(user_sign_in: SignIn, user_prop: UserProperty):
     impression_diff = user_sign_in.impression_diff
     user_prop.impression += Decimal(impression_diff)

@@ -374,6 +374,8 @@ async def _build_html_image(
                 math.ceil((plugin_count + len(plugin_list)) / max_column_length), 4
             ),
         },
+        type="jpeg",
+        quality=76,
         pages={
             "viewport": {"width": 1900, "height": 975},
         },
@@ -413,6 +415,8 @@ async def get_task_image(group_id: int) -> bytes:
         template_path=TEMPLATE_PATH / "task_menu",
         template_name="task_menu.html",
         templates={"task_list": task_list},
+        type="jpeg",
+        quality=80,
         pages={
             "viewport": {"width": 850, "height": 975},
         },
