@@ -63,6 +63,7 @@ class BaseWeiboSpider:
         filter_retweet: bool,
         filter_words: bool,
         format_: int,
+        unique_id: str,
         referer: Optional[str] = None,
         user_id: Optional[int] = None,
     ):
@@ -82,10 +83,7 @@ class BaseWeiboSpider:
         self.__init = False
         self.__user_id = user_id
 
-        # 用url参数标记，可读性变差了，但是能用.jpg
-        self.__record_file_path = weibo_record_path / (
-            "_".join([f"{k}_{v}" for k, v in self.__params.items()]) + ".json"
-        )
+        self.__record_file_path = weibo_record_path / f"{unique_id}.json"
 
         self.__received_weibo_ids: List[str] = []
 
@@ -391,21 +389,22 @@ class UserWeiboSpider(BaseWeiboSpider):
     def __init__(self, config: Dict[str, Any]):
         """Weibo类初始化"""
         self.validate_config(config)
+        self.__user_name = config["user_id"]
+        self.__user_id = config["user_id"]
         super().__init__(
-            "https://m.weibo.cn/api/container/getIndex",
-            {
+            url="https://m.weibo.cn/api/container/getIndex",
+            params={
                 "type": "uid",
                 "value": config["user_id"],
                 "containerid": f"107603{config['user_id']}",
             },
-            config["filter_retweet"],
-            config["filter_words"],
-            config["format"],
-            f"https://m.weibo.cn/u/{config['user_id']}",
-            int(config["user_id"]),
+            filter_retweet=config["filter_retweet"],
+            filter_words=config["filter_words"],
+            format_=config["format"],
+            unique_id=f"user_{self.__user_id}",
+            referer=f"https://m.weibo.cn/u/{config['user_id']}",
+            user_id=int(config["user_id"]),
         )
-        self.__user_name = config["user_id"]
-        self.__user_id = config["user_id"]
 
     async def init(self):
         """
@@ -455,19 +454,19 @@ class UserWeiboSpider(BaseWeiboSpider):
 class KeywordWeiboSpider(BaseWeiboSpider):
     def __init__(self, config: Dict[str, Any]):
         self.validate_config(config)
-        keyword = config["keyword"]
-        super().__init__(
-            "https://m.weibo.cn/api/container/getIndex",
-            {
-                "containerid": f"100103type=61&q={keyword}&t=0",
-            },
-            config["filter_retweet"],
-            config["filter_words"],
-            config["format"],
-            f"https://m.weibo.cn/p/searchall?{urlencode({'containerid':f'100103type=1&q={keyword}'})}",
-        )
         self.__keyword = config["keyword"]
         self.__notice_name = f"包含关键词：{self.__keyword}"
+        super().__init__(
+            url="https://m.weibo.cn/api/container/getIndex",
+            params={
+                "containerid": f"100103type=61&q={self.__keyword}&t=0",
+            },
+            filter_retweet=config["filter_retweet"],
+            filter_words=config["filter_words"],
+            format_=config["format"],
+            unique_id=f"keyword_{self.__keyword}",
+            referer=f"https://m.weibo.cn/p/searchall?{urlencode({'containerid':f'100103type=1&q={self.__keyword}'})}",
+        )
 
     def validate_config(self, config):
         """验证配置是否正确"""
