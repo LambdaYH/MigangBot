@@ -119,7 +119,7 @@ class Effect:
     def add_next_effect(
         self, func: Callable[..., Union[str, Coroutine[Any, Any, str]]]
     ) -> None:
-        self.next_effect = BaseEffect(func=func)
+        self.next_func = BaseEffect(func=func)
 
     def has_next_effect(self) -> bool:
         return self.next_func is not None
