@@ -3091,14 +3091,14 @@ sentry-sdk = ">=1.0.0,<2.0.0"
 
 [[package]]
 name = "nonebot-plugin-shindan"
-version = "0.3.3"
+version = "0.3.4"
 description = "Nonebot2 plugin for using ShindanMaker"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_shindan-0.3.3-py3-none-any.whl", hash = "sha256:2cf60875f63551a3500c4e555f812185bd6305e2208943721215ee53f1fa39cd"},
-    {file = "nonebot_plugin_shindan-0.3.3.tar.gz", hash = "sha256:7e26a3eb93f68d95029af329bee5c35153103d8e9f681d5791bb89090a3e0ba8"},
+    {file = "nonebot_plugin_shindan-0.3.4-py3-none-any.whl", hash = "sha256:7a9cbb644f2447c89e70db8eaeb16c87857deeffd604bdebf32e482495fabea1"},
+    {file = "nonebot_plugin_shindan-0.3.4.tar.gz", hash = "sha256:bd089f7066518c2a0f89f55202b0eee13701aa6688e1c186da3eca1050c294df"},
 ]
 
 [package.dependencies]
@@ -5496,4 +5496,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "4ef0daa963753fcaf5a045d3c2a6849cfb8e67206cf0aad36096d8330de457eb"
+content-hash = "894032913bd666b737f9092094f02d5bb99ffd8a02d9773f30a24af412366106"
