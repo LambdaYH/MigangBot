@@ -13,7 +13,7 @@ nonebot-adapter-onebot = "^2.2.3"
 nonebot-plugin-apscheduler = "^0.2.0"
 
 ujson = "^5.7.0"
-ruamel-yaml = "^0.17.24"
+ruamel-yaml = "^0.17.26"
 async-lru = "^2.0.2"
 tortoise-orm = {extras = ["accel", "asyncmy", "asyncpg"], version = "^0.19.3"}
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
@@ -47,7 +47,7 @@ nonebot-bison = "^0.7.1"
 nonebot-plugin-word-bank2 = "^0.1.7"
 nonebot-plugin-htmlrender = "^0.2.0.3"
 nonebot-plugin-memes = "^0.4.5"
-nonebot-plugin-shindan = "^0.3.2"
+nonebot-plugin-shindan = "^0.3.4"
 nonebot-plugin-remake = "^0.2.7"
 nonebot-plugin-emojimix = "^0.2.0"
 nonebot-plugin-wordcloud = "^0.4.8"

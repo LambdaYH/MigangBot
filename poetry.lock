@@ -731,14 +731,14 @@ test = ["flake8", "isort", "pytest"]
 
 [[package]]
 name = "cashews"
-version = "6.0.2"
+version = "6.1.0"
 description = "cache tools with async power"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "cashews-6.0.2-py3-none-any.whl", hash = "sha256:4c5ff02dc57b94b08651787e51691debfca734e79c54a18b35d4ad6ba253bdff"},
-    {file = "cashews-6.0.2.tar.gz", hash = "sha256:f2e4e6fe5aa29a10121c5e5686608d7273bf0b1f7fdeeb101b0110070d194c54"},
+    {file = "cashews-6.1.0-py3-none-any.whl", hash = "sha256:bd620e5fdb947949aca0f107f0275a48d46026c747695186d2507f89a48d1af9"},
+    {file = "cashews-6.1.0.tar.gz", hash = "sha256:6ef7822500b8bc5ceadeaa284021ec7843d066e2f208612ec28a93064eef7d4a"},
 ]
 
 [package.extras]
@@ -3091,14 +3091,14 @@ sentry-sdk = ">=1.0.0,<2.0.0"
 
 [[package]]
 name = "nonebot-plugin-shindan"
-version = "0.3.2"
+version = "0.3.4"
 description = "Nonebot2 plugin for using ShindanMaker"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_shindan-0.3.2-py3-none-any.whl", hash = "sha256:826703b94fb37a751804200e201fd172a2271e5b2397c51533742f4a7966c2f2"},
-    {file = "nonebot_plugin_shindan-0.3.2.tar.gz", hash = "sha256:654bd1c6b11ba54490a10d03db35018b64e9419c3d83ee91ff1594ef7d22e5a1"},
+    {file = "nonebot_plugin_shindan-0.3.4-py3-none-any.whl", hash = "sha256:7a9cbb644f2447c89e70db8eaeb16c87857deeffd604bdebf32e482495fabea1"},
+    {file = "nonebot_plugin_shindan-0.3.4.tar.gz", hash = "sha256:bd089f7066518c2a0f89f55202b0eee13701aa6688e1c186da3eca1050c294df"},
 ]
 
 [package.dependencies]
@@ -3817,14 +3817,14 @@ files = [
 
 [[package]]
 name = "pyjwt"
-version = "2.6.0"
+version = "2.7.0"
 description = "JSON Web Token implementation in Python"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "PyJWT-2.6.0-py3-none-any.whl", hash = "sha256:d83c3d892a77bbb74d3e1a2cfa90afaadb60945205d1095d9221f04466f64c14"},
-    {file = "PyJWT-2.6.0.tar.gz", hash = "sha256:69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd"},
+    {file = "PyJWT-2.7.0-py3-none-any.whl", hash = "sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1"},
+    {file = "PyJWT-2.7.0.tar.gz", hash = "sha256:bd6ca4a3c4285c1a2d4349e5a035fdf8fb94e04ccd0fcbe6ba289dae9cc3e074"},
 ]
 
 [package.extras]
@@ -4395,14 +4395,14 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "ruamel-yaml"
-version = "0.17.24"
+version = "0.17.26"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 category = "main"
 optional = false
 python-versions = ">=3"
 files = [
-    {file = "ruamel.yaml-0.17.24-py3-none-any.whl", hash = "sha256:f251bd9096207af604af69d6495c3c650a3338d0493d27b04bc55477d7a884ed"},
-    {file = "ruamel.yaml-0.17.24.tar.gz", hash = "sha256:90e398ee24524ebe20fc48cd1861cedd25520457b9a36cfb548613e57fde30a0"},
+    {file = "ruamel.yaml-0.17.26-py3-none-any.whl", hash = "sha256:25d0ee82a0a9a6f44683dcf8c282340def4074a4562f3a24f55695bb254c1693"},
+    {file = "ruamel.yaml-0.17.26.tar.gz", hash = "sha256:baa2d0a5aad2034826c439ce61c142c07082b76f4791d54145e131206e998059"},
 ]
 
 [package.dependencies]
@@ -5496,4 +5496,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "127673dc72f878c375af2a4ef114e3108cb4bd8adb7c090c302dc5a4ce49b7c7"
+content-hash = "894032913bd666b737f9092094f02d5bb99ffd8a02d9773f30a24af412366106"
