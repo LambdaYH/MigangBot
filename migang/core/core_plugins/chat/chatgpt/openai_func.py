@@ -3,10 +3,22 @@ from typing import Dict, List, Tuple, Optional
 import openai
 from nonebot.log import logger
 from transformers import GPT2TokenizerFast
+from tenacity import retry, retry_if_exception, stop_after_attempt
 
 from migang.core import sync_get_config
 
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+
+class RetryGetResponse(Exception):
+    """重试获取回复"""
+
+    def __init__(self, error_info):
+        super().__init__(self)
+        self.error_info_ = error_info
+
+    def __str__(self):
+        return self.error_info_
 
 
 class TextGenerator:
@@ -41,6 +53,7 @@ class TextGenerator:
         self.__max_impression_tokens = max_impression_tokens
 
     # 获取文本生成
+    @retry(stop=stop_after_attempt(3), retry=retry_if_exception(RetryGetResponse))
     async def get_response(
         self, prompt, type_: str = "chat", custom: Optional[Dict] = None
     ) -> Tuple[str, bool]:
@@ -68,6 +81,8 @@ class TextGenerator:
             elif "Error communicating with OpenAI" in res:
                 reason = res
                 res = "与 OpenAi 通信时发生错误 (´；ω；`)"
+            elif "retry your request" in res:
+                raise RetryGetResponse("模型过载，重新尝试获取回复")
             else:
                 reason = res
                 res = "哎呀，发生了未知错误 (´；ω；`)"
