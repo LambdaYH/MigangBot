@@ -41,7 +41,7 @@ cairosvg = "^2.7.0"
 cachetools = "^5.3.0"
 dateparser = "^1.1.7"
 feedparser = "^6.0.10"
-transformers = "^4.29.0"
+transformers = "^4.29.1"
 
 nonebot-bison = "^0.7.1"
 nonebot-plugin-word-bank2 = "^0.1.7"
