@@ -51,7 +51,7 @@ nonebot-plugin-shindan = "^0.3.4"
 nonebot-plugin-remake = "^0.2.7"
 nonebot-plugin-emojimix = "^0.2.0"
 nonebot-plugin-wordcloud = "^0.4.8"
-nonebot-plugin-ddcheck = "^0.2.0"
+nonebot-plugin-ddcheck = "^0.2.2"
 nonebot-plugin-handle = "^0.2.0"
 nonebot-plugin-imagetools = "^0.2.1"
 nonebot-plugin-cocdicer = "^0.4.0"
@@ -67,7 +67,7 @@ nonebot-plugin-gscode = "^0.1.6"
 nonebot-plugin-wordle = "^0.2.1"
 nonebot-plugin-sentry = "^0.3.0"
 nonebot-plugin-bottle = "^1.0.0.4"
-nonebot-plugin-arkgacha = "^0.1.5"
+nonebot-plugin-arkgacha = "^0.2.1"
 
 [tool.black]
 line-length = 88

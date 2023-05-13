@@ -294,14 +294,14 @@ nepattern = ">=0.5.0,<0.6.0"
 
 [[package]]
 name = "arknights-toolkit"
-version = "0.5.2"
+version = "0.5.5"
 description = "Arknights-related Toolkit"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "arknights-toolkit-0.5.2.tar.gz", hash = "sha256:41e92ea7a91ebed5ba80782b767128e2cae09bbf9a82a7730783b54664bca1aa"},
-    {file = "arknights_toolkit-0.5.2-py3-none-any.whl", hash = "sha256:7855d0d49644f3edc09a96344bdaa8a3af94d73ca67e8f1c9532dcdb5a2e1598"},
+    {file = "arknights_toolkit-0.5.5-py3-none-any.whl", hash = "sha256:94e57a283ad7cb8724733724a9ae9b9a9d46c4032bd59a567e6c9a52b2162b8f"},
+    {file = "arknights_toolkit-0.5.5.tar.gz", hash = "sha256:9388fef524c708204e9fa5c1e84e3bce52f14a1222efe8aa7781576e09e8e2e3"},
 ]
 
 [package.dependencies]
@@ -2717,14 +2717,14 @@ wcwidth = ">=0.2,<1.0"
 
 [[package]]
 name = "nepattern"
-version = "0.5.6"
+version = "0.5.7"
 description = "a complex pattern, support typing"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "nepattern-0.5.6-py3-none-any.whl", hash = "sha256:d266fdd8e58c83e2e9940ee86a89e0d0a30495b2ff862a67053528644f7b1c4a"},
-    {file = "nepattern-0.5.6.tar.gz", hash = "sha256:6c5100cea2a782f0d1780d0e5bc912b6e9151e18e168c463f01a38dc85752291"},
+    {file = "nepattern-0.5.7-py3-none-any.whl", hash = "sha256:25b026833b4159304e3c134cd124942867bdb37a2d0b5c657fef55be5a23bdd0"},
+    {file = "nepattern-0.5.7.tar.gz", hash = "sha256:ca766585eb15a63211ddad5a72b6ec5b642a804f03a1ff49b0e3a9df28f42c2e"},
 ]
 
 [package.dependencies]
@@ -2824,19 +2824,21 @@ nonebot2 = ">=2.0.0-rc.1,<3.0.0"
 
 [[package]]
 name = "nonebot-plugin-arkgacha"
-version = "0.1.5"
+version = "0.2.1"
 description = "Plugin for Arknights gacha, support multi platform"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "nonebot_plugin_arkgacha-0.1.5-py3-none-any.whl", hash = "sha256:6ec6691a8bab911e0ea69b1bda034975297fb788125a0679f6efbe114521c160"},
-    {file = "nonebot_plugin_arkgacha-0.1.5.tar.gz", hash = "sha256:12ecbc96b637783111266ead110b07c7784e5094d2493490bd635830df17af3b"},
+    {file = "nonebot_plugin_arkgacha-0.2.1-py3-none-any.whl", hash = "sha256:7556d3f6a6d5870224021db42efb936fba8c912bd7fec8ae5b1aa3c147434f84"},
+    {file = "nonebot_plugin_arkgacha-0.2.1.tar.gz", hash = "sha256:94bcf72304bb3eefe6a7488fc2c541feb1d005b11a962e8e88764666142c2407"},
 ]
 
 [package.dependencies]
-arknights-toolkit = ">=0.5.2"
+arknights-toolkit = ">=0.5.5"
+nepattern = ">=0.5.7"
 nonebot-plugin-alconna = ">=0.4.2"
+nonebot-plugin-apscheduler = ">=0.2.0"
 nonebot-plugin-localstore = ">=0.4.1"
 nonebot-plugin-send-anything-anywhere = ">=0.2.4"
 nonebot2 = ">=2.0.0rc4"
@@ -2921,14 +2923,14 @@ yaml = ["pyyaml (>=6.0,<7.0)"]
 
 [[package]]
 name = "nonebot-plugin-ddcheck"
-version = "0.2.1"
+version = "0.2.2"
 description = "Nonebot2 成分姬插件"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_ddcheck-0.2.1-py3-none-any.whl", hash = "sha256:6143e6ef43bca7597754a9b18c43529ffd4d0ddd9a285e69227a34525dd8406d"},
-    {file = "nonebot_plugin_ddcheck-0.2.1.tar.gz", hash = "sha256:956ac2baa757efba3e8d14d6229704349eff1a0b7ae50005306bbfb8652b9be8"},
+    {file = "nonebot_plugin_ddcheck-0.2.2-py3-none-any.whl", hash = "sha256:0041d3c429d23f42a14d69c43a0c210f46bbefad7550ea29c35449590d2edb36"},
+    {file = "nonebot_plugin_ddcheck-0.2.2.tar.gz", hash = "sha256:733dcbbc36a7eb3da1ece6c1c615b86eb021d0bdd590ca4d33aff26cda89c89a"},
 ]
 
 [package.dependencies]
@@ -5703,4 +5705,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b76e9422693bf5b9411a660ac75e632f6bcb1aa4ca7a772532469bde163017d2"
+content-hash = "d921d60122d61fa30d1067f023547f47f4643f4723f94ebcd5f69c0d3d289b4f"
