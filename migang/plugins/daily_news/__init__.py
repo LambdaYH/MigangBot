@@ -46,12 +46,8 @@ async def get_zaobao() -> MessageSegment:
             async with aiohttp.ClientSession() as client:
                 r = await client.get("http://dwz.2xb.cn/zaob", timeout=7)
                 r = await r.json()
-                if r["code"] == 200:
-                    img = await client.get(
-                        r["imageUrl"], headers={"referer": "https://docs.qq.com/"}
-                    )
-                    if img.status == 200:
-                        return MessageSegment.image(await img.read())
+            if r["code"] == 200:
+                return MessageSegment.image(r["imageUrl"])
         except Exception as e:
             logger.warning(f"今日早报获取失败，重试次数: {i}。{e}")
             await asyncio.sleep(0.2)
