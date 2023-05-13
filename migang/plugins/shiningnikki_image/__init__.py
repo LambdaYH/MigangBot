@@ -10,7 +10,6 @@ from nonebot.params import RegexGroup
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot import on_regex, get_driver, on_fullmatch
-from tenacity import retry, wait_fixed, stop_after_attempt
 from nonebot.adapters.onebot.v11 import (
     Bot,
     MessageEvent,
@@ -57,29 +56,6 @@ random_nikki = on_regex(r"^(\d)?连?随机暖暖$", priority=5, block=True)
 @cached(ttl=600)
 async def get_data():
     return await async_load_data(DATA_PATH / "suits.json")
-
-
-X_SESSION_ID = ""
-PREVIEW_TOKEN = "32w91x90"
-
-
-# 获取x_session_id
-@get_driver().on_startup
-async def _():
-    # url = "https://mobai.one/s/3p9xd3t1kq/nikki_portraits/"
-    token = "3p9xd3t1kq"
-
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(5))
-    async def get_session_id() -> None:
-        async with aiohttp.ClientSession() as client:
-            r = await client.post(
-                "https://mobai.one/api/v1/session", json={"token": token}
-            )
-            r = await r.json()
-            global X_SESSION_ID
-            X_SESSION_ID = r["id"]
-
-    asyncio.create_task(get_session_id())
 
 
 @suit_draw.handle()
@@ -137,16 +113,14 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
     num = int(reg_group[0] or 1)
     async with aiohttp.ClientSession() as client:
         r = await client.get(
-            f"https://mobai.one/api/v1/photos?count={num}&offset=0&s=armiadg17gy2moqf&merged=true&order=random",
-            headers={"x-session-id": X_SESSION_ID},
+            f"https://api.sunuannuan.com/api/assets",
+            params={"category": "nikki", "count": num},
             timeout=6,
         )
         r = await r.json()
         if num == 1:
             await random_nikki.send(
-                MessageSegment.image(
-                    f"https://mobai.one/api/v1/t/{r[0]['Hash']}/{PREVIEW_TOKEN}/fit_4096"
-                )
+                MessageSegment.image(f"https://api.sunuannuan.com{r['data'][0]['url']}")
             )
         else:
             msgs = [
@@ -154,10 +128,10 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
                     user_id=event.self_id,
                     nickname="苏暖暖",
                     content=MessageSegment.image(
-                        f"https://mobai.one/api/v1/t/{img['Hash']}/{PREVIEW_TOKEN}/fit_4096"
+                        f"https://api.sunuannuan.com{img['url']}"
                     ),
                 )
-                for img in r
+                for img in r["data"]
             ]
             if isinstance(event, GroupMessageEvent):
                 await bot.send_forward_msg(group_id=event.group_id, messages=msgs)
