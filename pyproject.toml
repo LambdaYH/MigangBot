@@ -43,7 +43,6 @@ dateparser = "^1.1.7"
 feedparser = "^6.0.10"
 transformers = "^4.29.1"
 
-nonebot-bison = "^0.7.1"
 nonebot-plugin-word-bank2 = "^0.1.7"
 nonebot-plugin-htmlrender = "^0.2.0.3"
 nonebot-plugin-memes = "^0.4.5"
@@ -68,6 +67,7 @@ nonebot-plugin-wordle = "^0.2.1"
 nonebot-plugin-sentry = "^0.3.0"
 nonebot-plugin-bottle = "^1.0.0.4"
 nonebot-plugin-arkgacha = "^0.2.1"
+nonebot-bison-migang = "^0.0.2"
 
 [tool.black]
 line-length = 88
