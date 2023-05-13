@@ -113,7 +113,7 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
     num = int(reg_group[0] or 1)
     async with aiohttp.ClientSession() as client:
         r = await client.get(
-            f"https://api.sunuannuan.com/api/assets",
+            "https://api.sunuannuan.com/api/assets",
             params={"category": "nikki", "count": num},
             timeout=6,
         )

@@ -93,7 +93,6 @@ russian_rank = on_command(
 
 @accept.handle()
 async def _(event: GroupMessageEvent):
-    global rs_player
     try:
         if rs_player[event.group_id][1] == 0:
             await accept.finish("目前没有发起对决，你接受个啥？速速装弹！", at_sender=True)

@@ -192,7 +192,6 @@ headers = {
 
 @get_driver().on_startup
 async def _():
-    global headers
     try:
         headers["Ocp-Apim-Subscription-Key"] = await get_config("azure_api_key")
     except Exception:

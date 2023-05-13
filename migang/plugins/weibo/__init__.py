@@ -326,10 +326,10 @@ async def wb_to_image(wb: Dict) -> bytes:
     return None
 
 
-async def process_wb(format: int, wb: Dict):
+async def process_wb(format_: int, wb: Dict):
     if (
         not wb["only_visible_to_fans"]
-        and format == 1
+        and format_ == 1
         and (msg := await wb_to_image(wb))
     ):
         return msg

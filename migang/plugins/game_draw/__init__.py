@@ -22,7 +22,6 @@ from .handles.fgo_handle import FgoHandle
 from .handles.pcr_handle import PcrHandle
 from .handles.azur_handle import AzurHandle
 from .handles.base_handle import BaseHandle
-from .handles.prts_handle import PrtsHandle
 from .handles.pretty_handle import PrettyHandle
 from .handles.genshin_handle import GenshinHandle
 from .handles.onmyoji_handle import OnmyojiHandle
@@ -33,14 +32,13 @@ __plugin_meta__ = PluginMetadata(
     description="就算是模拟抽卡也不能改变自己是个非酋",
     usage="""
 usage：
-    模拟赛马娘，原神，明日方舟，坎公骑冠剑，公主连结(国/台)，碧蓝航线，FGO，阴阳师，碧蓝档案进行抽卡
+    模拟赛马娘，原神，坎公骑冠剑，公主连结(国/台)，碧蓝航线，FGO，阴阳师，碧蓝档案进行抽卡
     指令：
         原神[1-180]抽: 原神常驻池
         原神角色[1-180]抽: 原神角色UP池子
         原神角色2池[1-180]抽: 原神角色UP池子
         原神武器[1-180]抽: 原神武器UP池子
         重置原神抽卡: 清空当前卡池的抽卡次数[即从0开始计算UP概率]
-        方舟[1-300]抽: 方舟卡池，当有当期UP时指向UP池
         赛马娘[1-200]抽: 赛马娘卡池，当有当期UP时指向UP池
         坎公骑冠剑[1-300]抽: 坎公骑冠剑卡池，当有当期UP时指向UP池
         pcr/公主连接[1-300]抽: 公主连接卡池
@@ -53,8 +51,6 @@ usage：
 超级用户指令：
     卡池方面的更新
     指令：
-        更新方舟信息
-        重载方舟卡池
         更新原神信息
         重载原神卡池
         更新赛马娘信息
@@ -136,13 +132,6 @@ games = (
         reload_time=4,
     ),
     Game(
-        {"prts", "方舟", "明日方舟"},
-        PrtsHandle(),
-        sync_get_config("prts_flag", default_value=True),
-        "prts_flag",
-        reload_time=4,
-    ),
-    Game(
         {"ba", "碧蓝档案"},
         BaHandle(),
         sync_get_config("ba_flag", default_value=True),
@@ -159,7 +148,6 @@ __plugin_config__ = [
 
 for game_flag, game_name in zip(
     [
-        "prts_flag",
         "genshin_flag",
         "pretty_flag",
         "guardian_flag",
@@ -171,7 +159,6 @@ for game_flag, game_name in zip(
         "ba_flag",
     ],
     [
-        "明日方舟",
         "原神",
         "赛马娘",
         "坎公骑冠剑",

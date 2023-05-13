@@ -98,7 +98,7 @@ def date_parse(time):
         month = re.search(r"[\d+]+月", time)
         r = re.search(r"[\d+]+[日|号]", time)
         hour = re.search(r"[\d+]+[点|时]", time)
-        min = re.search(r"[\d+]+分", time)
+        min_ = re.search(r"[\d+]+分", time)
         if month:
             timeNow = datetime.now()
             y = timeNow.year
@@ -122,8 +122,8 @@ def date_parse(time):
             else:
                 h = 0
 
-            if min:
-                mi = int(min.group().rstrip("分"))
+            if min_:
+                mi = int(min_.group().rstrip("分"))
             else:
                 mi = 0
 
@@ -146,8 +146,8 @@ def date_parse(time):
                     return False, None
                 timeBase = timeBase.replace(hour=h)
                 timeBase = timeBase.replace(minute=0)
-            if min:
-                m = int(min.group().rstrip("分"))
+            if min_:
+                m = int(min_.group().rstrip("分"))
                 if m < 0 or m > 60:
                     return False, None
                 timeBase = timeBase.replace(minute=m)
@@ -157,7 +157,7 @@ def date_parse(time):
     elif mode == 1:
         day = re.search(r"[\d+]+[天|日]", time)
         hour = re.search(r"[\d+]+[时|小时]", time)
-        min = re.search(r"[\d+]+[分|分钟]", time)
+        min_ = re.search(r"[\d+]+[分|分钟]", time)
         dayDiff = 0
         hourDiff = 0
         minDiff = 0
@@ -165,8 +165,8 @@ def date_parse(time):
             dayDiff = int(day.group().rstrip("天").rstrip("日"))
         if hour:
             hourDiff = int(hour.group().rstrip("时").rstrip("小时"))
-        if min:
-            minDiff = int(min.group().rstrip("分").rstrip("分钟"))
+        if min_:
+            minDiff = int(min_.group().rstrip("分").rstrip("分钟"))
         timeBase = datetime.now() + timedelta(
             days=dayDiff, hours=hourDiff, minutes=minDiff
         )

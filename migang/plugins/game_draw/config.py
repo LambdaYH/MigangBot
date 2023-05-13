@@ -20,14 +20,6 @@ class GenshinConfig(BaseModel, extra=Extra.ignore):
     I72_ADD: float = 0.0585
 
 
-# 明日方舟
-class PrtsConfig(BaseModel, extra=Extra.ignore):
-    PRTS_SIX_P: float = 0.02
-    PRTS_FIVE_P: float = 0.08
-    PRTS_FOUR_P: float = 0.48
-    PRTS_THREE_P: float = 0.42
-
-
 # 赛马娘
 class PrettyConfig(BaseModel, extra=Extra.ignore):
     PRETTY_THREE_P: float = 0.03
@@ -97,7 +89,6 @@ class BaConfig(BaseModel, extra=Extra.ignore):
 
 class Config(BaseModel, extra=Extra.ignore):
     # 开关
-    PRTS_FLAG: bool = True
     GENSHIN_FLAG: bool = True
     PRETTY_FLAG: bool = True
     GUARDIAN_FLAG: bool = True
@@ -112,7 +103,6 @@ class Config(BaseModel, extra=Extra.ignore):
     SEMAPHORE: int = sync_get_config("semaphore", "game_draw", default_value=5)
 
     # 抽卡概率
-    prts: PrtsConfig = PrtsConfig()
     genshin: GenshinConfig = GenshinConfig()
     pretty: PrettyConfig = PrettyConfig()
     guardian: GuardianConfig = GuardianConfig()

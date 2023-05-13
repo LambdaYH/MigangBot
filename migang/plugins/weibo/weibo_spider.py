@@ -20,6 +20,7 @@ from migang.utils.file import async_save_data
 from ._utils import sinaimgtvax
 from .exception import ParseError, NotFoundError
 
+api_url = "https://m.weibo.cn/api/container/getIndex"
 PATH = DATA_PATH / "weibo"
 weibo_record_path = PATH / "weibo_records"
 weibo_id_name_file = PATH / "weibo_id_name.json"
