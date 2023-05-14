@@ -1,6 +1,7 @@
 import asyncio
 
 import aiohttp
+from yarl import URL
 from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot import on_fullmatch
@@ -46,8 +47,14 @@ async def get_zaobao() -> MessageSegment:
             async with aiohttp.ClientSession() as client:
                 r = await client.get("http://dwz.2xb.cn/zaob", timeout=7)
                 r = await r.json()
-            if r["code"] == 200:
-                return MessageSegment.image(r["imageUrl"])
+                if r["code"] == 200:
+                    url = r["imageUrl"]
+                    img = await client.get(
+                        url,
+                        headers={"referer": f"{URL(url).scheme}://{URL(url).host}/"},
+                    )
+                    if img.status == 200:
+                        return MessageSegment.image(await img.read())
         except Exception as e:
             logger.warning(f"今日早报获取失败，重试次数: {i}。{e}")
             await asyncio.sleep(0.2)
