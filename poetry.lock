@@ -294,14 +294,14 @@ nepattern = ">=0.5.0,<0.6.0"
 
 [[package]]
 name = "arknights-toolkit"
-version = "0.5.5"
+version = "0.5.8"
 description = "Arknights-related Toolkit"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "arknights_toolkit-0.5.5-py3-none-any.whl", hash = "sha256:94e57a283ad7cb8724733724a9ae9b9a9d46c4032bd59a567e6c9a52b2162b8f"},
-    {file = "arknights_toolkit-0.5.5.tar.gz", hash = "sha256:9388fef524c708204e9fa5c1e84e3bce52f14a1222efe8aa7781576e09e8e2e3"},
+    {file = "arknights_toolkit-0.5.8-py3-none-any.whl", hash = "sha256:daf7c46fe30d95d0fb38813cce7e2580e6395b1e54e90626e07091a4c6c022a8"},
+    {file = "arknights_toolkit-0.5.8.tar.gz", hash = "sha256:e9588b6dec15fb02182df3c13e6595593229251dd4b95b60c39cb953bbe6db6c"},
 ]
 
 [package.dependencies]
@@ -2824,18 +2824,18 @@ nonebot2 = ">=2.0.0-rc.1,<3.0.0"
 
 [[package]]
 name = "nonebot-plugin-arkgacha"
-version = "0.2.1"
+version = "0.2.2"
 description = "Plugin for Arknights gacha, support multi platform"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "nonebot_plugin_arkgacha-0.2.1-py3-none-any.whl", hash = "sha256:7556d3f6a6d5870224021db42efb936fba8c912bd7fec8ae5b1aa3c147434f84"},
-    {file = "nonebot_plugin_arkgacha-0.2.1.tar.gz", hash = "sha256:94bcf72304bb3eefe6a7488fc2c541feb1d005b11a962e8e88764666142c2407"},
+    {file = "nonebot_plugin_arkgacha-0.2.2-py3-none-any.whl", hash = "sha256:80ada135a07591b2aa0917577280c2d7e71635aed1ba2a348c64b002c9ccbdbe"},
+    {file = "nonebot_plugin_arkgacha-0.2.2.tar.gz", hash = "sha256:a921bcf59d92d79ab4926c5ef26fc2e16dc097ba5a6257501dc173bb8a3f2e6c"},
 ]
 
 [package.dependencies]
-arknights-toolkit = ">=0.5.5"
+arknights-toolkit = ">=0.5.8,<0.6.0"
 nepattern = ">=0.5.7"
 nonebot-plugin-alconna = ">=0.4.2"
 nonebot-plugin-apscheduler = ">=0.2.0"
@@ -5693,4 +5693,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b31bad71a890e8e58b9c36d2fcbf32139dccbc9e8c858948a8f68a09e91c4eaa"
+content-hash = "af0839af2568315d8000e2fd45466654eec394ab919b4d2487c17d7a0a2c3b31"
