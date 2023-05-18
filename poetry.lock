@@ -2845,14 +2845,14 @@ nonebot2 = ">=2.0.0rc4"
 
 [[package]]
 name = "nonebot-plugin-bottle"
-version = "1.0.0.7"
+version = "1.0.0.8"
 description = "Bottle post plugin in Nonebot"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_bottle-1.0.0.7-py3-none-any.whl", hash = "sha256:832728038f8463eac7b82ef10031ef47098b35edca0bf22dbff23bfa9fb96269"},
-    {file = "nonebot_plugin_bottle-1.0.0.7.tar.gz", hash = "sha256:2435fc9b0ae1ca18c23cf03f1fabc0d15f21e4fae5d698a991b258b70a7e228f"},
+    {file = "nonebot_plugin_bottle-1.0.0.8-py3-none-any.whl", hash = "sha256:3d82b777c1f3802afd9d2bd875bcd15d57a5017b19080dadff96ebb43b9ef3ed"},
+    {file = "nonebot_plugin_bottle-1.0.0.8.tar.gz", hash = "sha256:11f788a60c7add141791c29be60492c14a0a35fd4e7bc51624c7f17000d2598f"},
 ]
 
 [package.dependencies]
@@ -5689,4 +5689,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "c559b1d08688bd30591f027af1e894c3ec096e0a0a4e5122565725c34bb77354"
+content-hash = "92ab2367b1dcd3419f43873eb95c9a63724c6a837f289a1a143a292e4df50e80"
