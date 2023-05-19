@@ -14,6 +14,7 @@ from nonebot.log import logger
 from fake_useragent import UserAgent
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_htmlrender import get_new_page
+from tenacity import retry, wait_fixed, stop_after_attempt
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from migang.core import DATA_PATH
@@ -55,41 +56,38 @@ async def get_nuannuan_image() -> None:
         logger.error(f"获取暖暖图片失败：{e}")
 
 
+@retry(stop=stop_after_attempt(5), wait=wait_fixed(4))
 async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
-    try:
-        # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
-        headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
-        url = f"https://api.bilibili.com/x/space/wbi/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
-        r = await client.head("https://www.bilibili.com/", headers=headers)
-        r = await (await client.get(url, headers=headers, cookies=r.cookies)).json()
+    # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
+    headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
+    url = f"https://api.bilibili.com/x/space/wbi/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
+    r = await client.head("https://www.bilibili.com/", headers=headers)
+    r = await (await client.get(url, headers=headers, cookies=r.cookies)).json()
+    if r["code"] == 0:
         video_list = r["data"]["list"]["vlist"]
         for i in video_list:
             if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
                 return i["bvid"]
-    except Exception as e:
-        logger.error(f"获取暖暖动态失败：{e}")
     return None
 
 
+@retry(stop=stop_after_attempt(5), wait=wait_fixed(4))
 async def extract_nn(bvid: str, client: aiohttp.ClientSession) -> Dict[str, str]:
-    try:
-        url = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
-        r = await (await client.get(url, timeout=5)).json()
-        if r["code"] == 0:
-            url = f"https://www.bilibili.com/video/{bvid}"
-            title = r["data"]["title"]
-            desc = r["data"]["desc"]
-            text = desc.replace("个人攻略网站", "游玩C攻略站")
-            image = r["data"]["pic"]
-            res_data = {
-                "url": url,
-                "title": title,
-                "content": text,
-                "image": image,
-            }
-            return res_data
-    except Exception as e:
-        logger.error(f"获取暖暖动态内容失败: {e}")
+    url = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
+    r = await (await client.get(url, timeout=5)).json()
+    if r["code"] == 0:
+        url = f"https://www.bilibili.com/video/{bvid}"
+        title = r["data"]["title"]
+        desc = r["data"]["desc"]
+        text = desc.replace("个人攻略网站", "游玩C攻略站")
+        image = r["data"]["pic"]
+        res_data = {
+            "url": url,
+            "title": title,
+            "content": text,
+            "image": image,
+        }
+        return res_data
     return None
 
 
