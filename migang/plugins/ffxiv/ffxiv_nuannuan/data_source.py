@@ -63,11 +63,10 @@ async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
     url = f"https://api.bilibili.com/x/space/wbi/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
     r = await client.head("https://www.bilibili.com/", headers=headers)
     r = await (await client.get(url, headers=headers, cookies=r.cookies)).json()
-    if r["code"] == 0:
-        video_list = r["data"]["list"]["vlist"]
-        for i in video_list:
-            if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
-                return i["bvid"]
+    video_list = r["data"]["list"]["vlist"]
+    for i in video_list:
+        if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
+            return i["bvid"]
     return None
 
 
@@ -75,20 +74,18 @@ async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
 async def extract_nn(bvid: str, client: aiohttp.ClientSession) -> Dict[str, str]:
     url = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
     r = await (await client.get(url, timeout=5)).json()
-    if r["code"] == 0:
-        url = f"https://www.bilibili.com/video/{bvid}"
-        title = r["data"]["title"]
-        desc = r["data"]["desc"]
-        text = desc.replace("个人攻略网站", "游玩C攻略站")
-        image = r["data"]["pic"]
-        res_data = {
-            "url": url,
-            "title": title,
-            "content": text,
-            "image": image,
-        }
-        return res_data
-    return None
+    url = f"https://www.bilibili.com/video/{bvid}"
+    title = r["data"]["title"]
+    desc = r["data"]["desc"]
+    text = desc.replace("个人攻略网站", "游玩C攻略站")
+    image = r["data"]["pic"]
+    res_data = {
+        "url": url,
+        "title": title,
+        "content": text,
+        "image": image,
+    }
+    return res_data
 
 
 def format_nn_text(text: str) -> List[str]:
