@@ -294,14 +294,14 @@ nepattern = ">=0.5.0,<0.6.0"
 
 [[package]]
 name = "arknights-toolkit"
-version = "0.5.10"
+version = "0.5.11"
 description = "Arknights-related Toolkit"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "arknights_toolkit-0.5.10-py3-none-any.whl", hash = "sha256:f704d2bba1a4dd5029e522634af2c95db619ade499338deb0b694a61a14c33b9"},
-    {file = "arknights_toolkit-0.5.10.tar.gz", hash = "sha256:54cd395fd8ccf05ddc57e415e51ae45c34b2f22333eea77abd62b714b23134d0"},
+    {file = "arknights_toolkit-0.5.11-py3-none-any.whl", hash = "sha256:c03a948f99fee5c9a37808a4f7623dd26950c68ee16b5d5a2c3469a44be48e2d"},
+    {file = "arknights_toolkit-0.5.11.tar.gz", hash = "sha256:86d9db885ef46fadc1749a65dee13236adb3459eee209d498b74dd7aecb7d09b"},
 ]
 
 [package.dependencies]
@@ -1301,14 +1301,14 @@ langdetect = ["langdetect"]
 
 [[package]]
 name = "deep-translator"
-version = "1.10.1"
+version = "1.11.0"
 description = "A flexible free and unlimited python tool to translate between different languages in a simple way using multiple translators"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "deep_translator-1.10.1-py3-none-any.whl", hash = "sha256:8581e93c4d33746cd6e662607fefb26c457eae9b197de0648e3f25f324ef6534"},
-    {file = "deep_translator-1.10.1.tar.gz", hash = "sha256:e99438dab70e3bebcda932e3f5e86fd3d32b43f87d66ed9f8b6816db146f1d9f"},
+    {file = "deep_translator-1.11.0-py3-none-any.whl", hash = "sha256:2aa6ba5d1597feef9ab7733b14bf98286465d92e8727e2fe53d70821f17ef66a"},
+    {file = "deep_translator-1.11.0.tar.gz", hash = "sha256:9c162001d2302568a57eb7ed30374ca5aa3f908e8ea422bdf9bbd46ab79741b9"},
 ]
 
 [package.dependencies]
@@ -1316,6 +1316,7 @@ beautifulsoup4 = ">=4.9.1,<5.0.0"
 requests = ">=2.23.0,<3.0.0"
 
 [package.extras]
+ai = ["openai (>=0.27.6,<0.28.0)"]
 docx = ["docx2txt (>=0.8,<0.9)"]
 pdf = ["pypdf (>=3.3.0,<4.0.0)"]
 
@@ -2845,14 +2846,14 @@ nonebot2 = ">=2.0.0rc4"
 
 [[package]]
 name = "nonebot-plugin-bottle"
-version = "1.0.1.0"
+version = "1.0.1.1"
 description = "Bottle post plugin in Nonebot"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_bottle-1.0.1.0-py3-none-any.whl", hash = "sha256:d8b465105d33007f12e3c9690e83e3edbe144af2ae39df0ea34b597078b7dc22"},
-    {file = "nonebot_plugin_bottle-1.0.1.0.tar.gz", hash = "sha256:066f6a7c4e6f10e3368755d12e493d9775c027b8315838ef1e6e977280811e6a"},
+    {file = "nonebot_plugin_bottle-1.0.1.1-py3-none-any.whl", hash = "sha256:cce9f5f04d3f15eed4c73b3d7d1cdba1cb2dad03b0c171094885349eb4936fcd"},
+    {file = "nonebot_plugin_bottle-1.0.1.1.tar.gz", hash = "sha256:f8e52c4f8c9a11ae404b775acf8faff980e0cb83b1e4a017c113f7e7c8f42841"},
 ]
 
 [package.dependencies]
@@ -5696,4 +5697,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ede2fca9b8dbf5321493b8656acdd090490191630b1a6fce445e0c9f2ebd3475"
+content-hash = "f0664fa3a7444f48e7c9a8a7e49a997d3726cfe3c9e05cf8594d9f59beae0a59"
