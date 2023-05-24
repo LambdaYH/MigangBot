@@ -119,17 +119,13 @@ async def _(bot: Bot, event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGro
         )
         r = await r.json()
         if num == 1:
-            await random_nikki.send(
-                MessageSegment.image(f"https://api.sunuannuan.com{r['data'][0]['url']}")
-            )
+            await random_nikki.send(MessageSegment.image(r["data"][0]["url"]))
         else:
             msgs = [
                 MessageSegment.node_custom(
                     user_id=event.self_id,
                     nickname="苏暖暖",
-                    content=MessageSegment.image(
-                        f"https://api.sunuannuan.com{img['url']}"
-                    ),
+                    content=MessageSegment.image(img["url"]),
                 )
                 for img in r["data"]
             ]

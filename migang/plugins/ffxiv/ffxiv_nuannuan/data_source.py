@@ -61,7 +61,7 @@ async def get_nuannuan_image() -> None:
 async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
     # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
     headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
-    url = f"https://api.bilibili.com/x/space/wbi/arc/search"
+    url = "https://api.bilibili.com/x/space/wbi/arc/search"
     r = await (
         await client.get(
             url,
