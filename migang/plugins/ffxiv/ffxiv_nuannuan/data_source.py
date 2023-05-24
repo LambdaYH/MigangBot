@@ -18,6 +18,7 @@ from tenacity import retry, wait_fixed, stop_after_attempt
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from migang.core import DATA_PATH
+from migang.utils.http import get_signed_params
 
 nuannuan_path = DATA_PATH / "ffxiv" / "nuannuan" / "nuannuan.png"
 nuannuan_path.parent.mkdir(exist_ok=True, parents=True)
@@ -60,9 +61,16 @@ async def get_nuannuan_image() -> None:
 async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
     # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
     headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
-    url = f"https://api.bilibili.com/x/space/wbi/arc/search?mid={mid}&order=pubdate&pn=1&ps=5"
-    r = await client.head("https://www.bilibili.com/", headers=headers)
-    r = await (await client.get(url, headers=headers, cookies=r.cookies)).json()
+    url = f"https://api.bilibili.com/x/space/wbi/arc/search"
+    r = await (
+        await client.get(
+            url,
+            headers=headers,
+            params=await get_signed_params(
+                {"mid": mid, "order": "pubdate", "pn": 1, "ps": 5}
+            ),
+        )
+    ).json()
     video_list = r["data"]["list"]["vlist"]
     for i in video_list:
         if re.match(r"【FF14\/时尚品鉴】第\d+期 满分攻略", i["title"]):
