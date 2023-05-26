@@ -2829,18 +2829,18 @@ tinydb = ">=4.3.0,<5.0.0"
 
 [[package]]
 name = "nonebot-plugin-alconna"
-version = "0.5.1"
+version = "0.6.0"
 description = "Alconna Adapter for Nonebot"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "nonebot-plugin-alconna-0.5.1.tar.gz", hash = "sha256:fbb06f2a2bf5438a70ac9e66ce882f9d64d2e451ef09157f35642afe66a7fa86"},
-    {file = "nonebot_plugin_alconna-0.5.1-py3-none-any.whl", hash = "sha256:03bc1e753851c32bf1794f9ca1b0a611ef8f20e8c002e349c259c6813f7864f2"},
+    {file = "nonebot-plugin-alconna-0.6.0.tar.gz", hash = "sha256:2777d817140d5198071c4b99eefab926d0cb6a8e269d2a88def18450e29e9010"},
+    {file = "nonebot_plugin_alconna-0.6.0-py3-none-any.whl", hash = "sha256:2c6260bb880a2b87bb0ab8ffa02d7a29d27f574de52dc9db1b5a12003b69ce20"},
 ]
 
 [package.dependencies]
-arclet-alconna = ">=1.7.6,<2.0.0"
+arclet-alconna = ">=1.7.7,<2.0.0"
 arclet-alconna-tools = ">=0.6.0,<0.7.0"
 nonebot2 = ">=2.0.0rc4"
 
