@@ -40,7 +40,7 @@ async def render_res(question: str, content: str, source: str) -> bytes:
 
 
 async def get_content(
-    keyword: str, sources=("nbnhhsh", "ffxivwiki", "moegirl")
+    keyword: str, sources=("nbnhhsh", "ffxivwiki", "moegirl", "baidu")
 ) -> Union[str, Message]:
     result = None
     msgs = await asyncio.gather(
@@ -51,7 +51,6 @@ async def get_content(
         for idx, msg in enumerate(msgs)
         if isinstance(msg, Tuple) and msg[0]
     ]
-
     if msgs:
         if len(msgs) > 1:
             msgs = sorted(

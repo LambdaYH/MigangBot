@@ -7,6 +7,8 @@ from nonebot import on_command, on_keyword
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg, EventPlainText
 
+from migang.core import ConfigItem
+
 from .data_source import get_content
 
 __plugin_meta__ = PluginMetadata(
@@ -31,6 +33,11 @@ usage：
     },
 )
 __plugin_category__ = "一些工具"
+__plugin_config__ = ConfigItem(
+    key="baidubaike_key", description="从 https://api.a20safe.com/post/3 获取"
+)
+
+
 commands = {"是啥", "是什么", "是谁"}
 what = on_keyword(commands, priority=14)
 baike = on_command("百科", block=True, priority=13)
