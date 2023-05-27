@@ -27,6 +27,46 @@ API_URL = (
 )
 
 
+async def generate_menu_image(menu: Dict[str, Any]):
+    menu_list: List[str] = list(menu)
+    col_count = 3
+    row_count = math.ceil(len(menu_list) / col_count)
+    cols = []
+    for i in range(3):
+        cols.append("\n".join(menu_list[i * row_count : (i + 1) * row_count]))
+    col_imgs = []
+    for col in cols:
+        col_imgs.append(
+            text2image(
+                col, bg_color=(240, 240, 240), fontsize=30, fontname="FZSJ-QINGCRJ"
+            )
+        )
+    width = 0
+    height = 0
+    for img in col_imgs:
+        width += img.width
+        height = max(height, img.height)
+    col_gap = 20
+    bg = BuildImage.new(
+        "RGB",
+        size=(80 + width + col_gap * (len(col_imgs) - 1), 160 + 20 + height),
+        color=(240, 240, 240),
+    )
+    bg.draw_text(
+        (0, 0, bg.width, 160),
+        text="菜   谱",
+        fontname="DFBuDingW12-GB",
+        fontsize=60,
+        max_fontsize=60,
+    )
+    start_x = 40
+    for img in col_imgs:
+        bg.paste(img, (start_x, 160))
+        start_x += img.width + col_gap
+    async with await anyio.open_file(MENU_IMAGE, "wb") as f:
+        await f.write(bg.save_jpg().getvalue())
+
+
 async def update_menu():
     menu_local = await async_load_data(MENU_FILE)
     if "data" not in menu_local:
@@ -82,46 +122,6 @@ async def update_menu_set(menu: Set[str]):
     if "data" in data:
         for dish in data["data"]:
             menu.add(dish)
-
-
-async def generate_menu_image(menu: Dict[str, Any]):
-    menu_list: List[str] = list(menu)
-    col_count = 3
-    row_count = math.ceil(len(menu_list) / col_count)
-    cols = []
-    for i in range(3):
-        cols.append("\n".join(menu_list[i * row_count : (i + 1) * row_count]))
-    col_imgs = []
-    for col in cols:
-        col_imgs.append(
-            text2image(
-                col, bg_color=(240, 240, 240), fontsize=30, fontname="FZSJ-QINGCRJ"
-            )
-        )
-    width = 0
-    height = 0
-    for img in col_imgs:
-        width += img.width
-        height = max(height, img.height)
-    col_gap = 20
-    bg = BuildImage.new(
-        "RGB",
-        size=(80 + width + col_gap * (len(col_imgs) - 1), 160 + 20 + height),
-        color=(240, 240, 240),
-    )
-    bg.draw_text(
-        (0, 0, bg.width, 160),
-        text="菜   谱",
-        fontname="DFBuDingW12-GB",
-        fontsize=60,
-        max_fontsize=60,
-    )
-    start_x = 40
-    for img in col_imgs:
-        bg.paste(img, (start_x, 160))
-        start_x += img.width + col_gap
-    async with await anyio.open_file(MENU_IMAGE, "wb") as f:
-        await f.write(bg.save_jpg().getvalue())
 
 
 async def update_all(menu: Set[str], need_update_menu: bool = False):
