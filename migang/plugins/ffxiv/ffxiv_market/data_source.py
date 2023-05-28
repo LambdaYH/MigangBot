@@ -118,7 +118,10 @@ async def get_market_data(server_name: str, item_name: str, hq=False) -> str:
             if r.status == 404:
                 msg = "请确认所查询物品可交易且不可在NPC处购买"
             else:
-                msg = f"访问universalis.app时发生错误 (code {r.status}):\n{await r.text()}"
+                logger.warning(
+                    f"访问universalis.app时发生错误 (code {r.status}):\n{await r.text()}"
+                )
+                msg = f"访问universalis.app时发生错误，错误码：{r.status}"
             return msg
         data = await r.json()
     msg = f"{server_name} 的 {new_item_name}{'(HQ)' if hq else ''} 数据如下：\n"
