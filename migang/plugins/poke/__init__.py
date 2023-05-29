@@ -1,3 +1,6 @@
+import random
+import asyncio
+
 from nonebot import on_notice
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import MessageSegment, PokeNotifyEvent
@@ -29,4 +32,6 @@ poke = on_notice(priority=5, block=False, rule=_rule)
 
 @poke.handle()
 async def _(event: PokeNotifyEvent):
+    # 1-4秒延迟
+    await asyncio.sleep(random.random() * 3 + 1)
     await poke.send(MessageSegment("poke", {"qq": event.user_id}))
