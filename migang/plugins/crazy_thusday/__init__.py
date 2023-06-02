@@ -10,7 +10,7 @@ import ujson as json
 from nonebot import on_regex
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
-from nonebot.params import Depends, RegexMatched
+from nonebot.params import Depends, RegexStr
 
 from .config import crazy_config
 
@@ -37,11 +37,11 @@ crazy_cn = on_regex(pattern=r"^疯狂星期\S$", priority=15, block=False)
 crazy_jp = on_regex(pattern=r"^狂乱\S曜日$", priority=15, block=False)
 
 
-async def get_weekday_cn(arg: str = RegexMatched()) -> str:
+async def get_weekday_cn(arg: str = RegexStr()) -> str:
     return arg[-1].replace("天", "日")
 
 
-async def get_weekday_jp(arg: str = RegexMatched()) -> str:
+async def get_weekday_jp(arg: str = RegexStr()) -> str:
     return arg[2]
 
 
