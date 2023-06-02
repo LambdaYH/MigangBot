@@ -808,20 +808,20 @@ tests = ["hypothesis", "pytest", "pytest-asyncio"]
 
 [[package]]
 name = "cattrs"
-version = "23.1.1"
+version = "23.1.2"
 description = "Composable complex class support for attrs and dataclasses."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "cattrs-23.1.1-py3-none-any.whl", hash = "sha256:6558a4ed415bffb202993cdc8ce0ba5b919c6eab19b996251a61a3329f900d62"},
-    {file = "cattrs-23.1.1.tar.gz", hash = "sha256:7d7372fe0156f2868c6b8852e069a0cfa2b493b77850fc7353f45057ac5f5d2d"},
+    {file = "cattrs-23.1.2-py3-none-any.whl", hash = "sha256:b2bb14311ac17bed0d58785e5a60f022e5431aca3932e3fc5cc8ed8639de50a4"},
+    {file = "cattrs-23.1.2.tar.gz", hash = "sha256:db1c821b8c537382b2c7c66678c3790091ca0275ac486c76f3c8f3920e83c657"},
 ]
 
 [package.dependencies]
 attrs = ">=20"
 exceptiongroup = {version = "*", markers = "python_version < \"3.11\""}
-typing_extensions = {version = "*", markers = "python_version < \"3.11\""}
+typing_extensions = {version = ">=4.1.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
 bson = ["pymongo (>=4.2.0,<5.0.0)"]
@@ -5769,4 +5769,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "67cde8c1d876f155ff5a7120d6ac6b3d1e87f8384e661a3075325a193a2184e1"
+content-hash = "ee825aadf317563d4067de5a23cb272d788cdcfa6b2f6016c2884c3a34c60aa6"
