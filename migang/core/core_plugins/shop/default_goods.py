@@ -27,7 +27,13 @@ ICON_PATH = Path(__file__).parent / "images" / "shop_icon"
     kwargs=({"low": 1, "high": 7}, {"low": 3, "high": 23}, {"low": 0, "high": 61}),
 )
 async def _(goods_name: str, user_id: int, bot: Bot, low: int, high: int):
-    add_impression = random.uniform(low, high)
+    if low == 0:
+        # 对榴莲起司单独调整，使2位数的概率略微增大，两头概率减少
+        add_impression = low - 1
+        while add_impression < low or add_impression > high:
+            add_impression = random.gauss((high - low) / 2.5, high)
+    else:
+        add_impression = random.uniform(low, high)
     await UserProperty.modify_impression(
         user_id=user_id, impression_diff=add_impression
     )
