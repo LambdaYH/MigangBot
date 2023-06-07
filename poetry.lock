@@ -2882,24 +2882,23 @@ nonebot2 = ">=2.0.0-rc.1,<3.0.0"
 
 [[package]]
 name = "nonebot-plugin-arkgacha"
-version = "0.2.2"
+version = "0.3.0"
 description = "Plugin for Arknights gacha, support multi platform"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "nonebot_plugin_arkgacha-0.2.2-py3-none-any.whl", hash = "sha256:80ada135a07591b2aa0917577280c2d7e71635aed1ba2a348c64b002c9ccbdbe"},
-    {file = "nonebot_plugin_arkgacha-0.2.2.tar.gz", hash = "sha256:a921bcf59d92d79ab4926c5ef26fc2e16dc097ba5a6257501dc173bb8a3f2e6c"},
+    {file = "nonebot_plugin_arkgacha-0.3.0-py3-none-any.whl", hash = "sha256:b2aee1a28b56e54631b54f001af88a392dc393c6c3c4b4bb2aacef4dc1113ffc"},
+    {file = "nonebot_plugin_arkgacha-0.3.0.tar.gz", hash = "sha256:e673769f21b20430b379821c8acaa3ebc64bfec27c393a3af76f038870193d7c"},
 ]
 
 [package.dependencies]
 arknights-toolkit = ">=0.5.8,<0.6.0"
-nepattern = ">=0.5.7"
-nonebot-plugin-alconna = ">=0.4.2"
+nonebot-plugin-alconna = ">=0.7.0"
 nonebot-plugin-apscheduler = ">=0.2.0"
 nonebot-plugin-localstore = ">=0.4.1"
 nonebot-plugin-send-anything-anywhere = ">=0.2.4"
-nonebot2 = ">=2.0.0rc4"
+nonebot2 = ">=2.0.0"
 
 [[package]]
 name = "nonebot-plugin-bottle"
@@ -5778,4 +5777,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ba10168d0d7d839622ffbd23e49c053521bdd3fbec8050c91b74dc27e9ceae74"
+content-hash = "d686f6bda2f3d1a2ed452a13640e4801bfa28ab318418471c714a7289cefaabb"
