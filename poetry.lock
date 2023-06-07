@@ -1127,14 +1127,14 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cn2an"
-version = "0.5.19"
+version = "0.5.20"
 description = "Convert Chinese numerals and Arabic numerals."
 category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "cn2an-0.5.19-py3-none-any.whl", hash = "sha256:ec86ed4948fb58eb45f36df7f68ee0f123ba898d82ad76ee4015c59730f4ecbe"},
-    {file = "cn2an-0.5.19.tar.gz", hash = "sha256:014d58870e117c997f9c8707a08fc022e6589346bcf78d277ab33b19eab7d675"},
+    {file = "cn2an-0.5.20-py3-none-any.whl", hash = "sha256:3433297119dcceb22ae3c5d7d076de59a94b242a7070bde51cf333325da4b312"},
+    {file = "cn2an-0.5.20.tar.gz", hash = "sha256:6b71e8681bdc22c1d89ab7ac2386078a0bc2adc8d83d9914e6bdaea7dcbbe107"},
 ]
 
 [package.dependencies]
@@ -5777,4 +5777,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "00fcfbf9b04495c1b11e95d94b5d127428dce6b4b3c4e353e9b45c08cb6fe8eb"
+content-hash = "5fab1816dd46e0bb2a29a050d6c96da104408d5428551962e4bb3e1361029187"
