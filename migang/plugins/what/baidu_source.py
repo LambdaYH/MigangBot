@@ -19,7 +19,11 @@ async def get_baidu(keyword: str) -> Tuple[str, str, str]:
             },
         )
         r = await r.json()
-        if r["code"] == 0:
+        if (
+            r["code"] == 0
+            and r["data"][0]["content"] != "词条不存在"
+            and r["data"][0]["content"].strip() != ""
+        ):
             return keyword, r["data"][0]["content"], None
 
     return "", "", None
