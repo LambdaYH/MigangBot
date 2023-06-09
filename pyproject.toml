@@ -15,7 +15,7 @@ nonebot-plugin-apscheduler = "^0.2.0"
 ujson = "^5.7.0"
 ruamel-yaml = "^0.17.31"
 async-lru = "^2.0.2"
-tortoise-orm = {extras = ["accel", "asyncmy", "asyncpg"], version = "^0.19.3"}
+tortoise-orm = {extras = ["accel", "asyncpg"], version = "^0.19.3"}
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 lxml = "^4.9.2"
 tenacity = "^8.2.1"
