@@ -2657,13 +2657,13 @@ nonebot2 = ">=2.0.0-beta.3,<3.0.0"
 
 [[package]]
 name = "nonebot-bison-migang"
-version = "0.0.5"
+version = "0.0.6"
 description = "Subscribe message from social medias"
 optional = false
 python-versions = ">=3.10,<4.0.0"
 files = [
-    {file = "nonebot_bison_migang-0.0.5-py3-none-any.whl", hash = "sha256:152710545585523f698a4d14ec44cc8bfca10bdc5cbe4e7286551ae865405d7b"},
-    {file = "nonebot_bison_migang-0.0.5.tar.gz", hash = "sha256:0ccbf8524cd0dd93a66e9da99c6efce4b6de2aa7bcb5b2e700d53a14cf09c728"},
+    {file = "nonebot_bison_migang-0.0.6-py3-none-any.whl", hash = "sha256:748969c86a65a138f2f46fe69637e8b25974dda20711e6116453fdebbf7fcdfc"},
+    {file = "nonebot_bison_migang-0.0.6.tar.gz", hash = "sha256:6319cdfd2af75945f76d4bb3111e2684d2081cc76c16f4df2655fad1fa1f6db3"},
 ]
 
 [package.dependencies]
@@ -5558,4 +5558,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "90c7bd3ab07b7f8cb627157350c607b861ac1df3755242855d06e08c09293462"
+content-hash = "c119ce2c4f4acfe2913a14a38e97dea09f9b82e556639ea0e9a1bf8aa1c7364b"
