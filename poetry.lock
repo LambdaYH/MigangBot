@@ -3171,19 +3171,19 @@ nonebot2 = ">=2.0.0-beta.4,<3.0.0"
 
 [[package]]
 name = "nonebot-plugin-word-bank2"
-version = "0.1.7.1"
+version = "0.1.8"
 description = "无数据问答插件"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_word_bank2-0.1.7.1-py3-none-any.whl", hash = "sha256:a27438c649780efb9208d735b158678f4216645b905c353e2d973024c1608612"},
-    {file = "nonebot_plugin_word_bank2-0.1.7.1.tar.gz", hash = "sha256:bf967c1e2cab08b7662dc25bef3a1c709b2dc0d47f8528e40f547b5303db76e2"},
+    {file = "nonebot_plugin_word_bank2-0.1.8-py3-none-any.whl", hash = "sha256:d16c1a61315ce68a97ff355acbd245347c482ce32284d5a9a6c82e47b0c30ff2"},
+    {file = "nonebot_plugin_word_bank2-0.1.8.tar.gz", hash = "sha256:95d6c8c7312f557c79cb06482ca451f126b45cd7b66d7497ece047d6e42cf2b0"},
 ]
 
 [package.dependencies]
 httpx = ">=0.18.0,<1.0.0"
 nonebot-adapter-onebot = ">=2.0.0-beta.1"
-nonebot2 = ">=2.0.0-beta.4"
+nonebot2 = ">=2.0.0"
 
 [[package]]
 name = "nonebot-plugin-wordcloud"
@@ -5585,4 +5585,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "90ad56ff586fa30ddb6aaad72ed99a852fb195e65a327c9469252db0937db3d2"
+content-hash = "5d3a280ee910f2907cfaec1192ae40593abd2bda23f39b0201b7e0b774d490a0"
