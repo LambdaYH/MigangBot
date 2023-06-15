@@ -98,12 +98,13 @@ async def get_server_info(group_id: int, user_id: int, name: str):
 
 async def server_status(host: str, port: Optional[int], sv_type: str):
     try:
+        ip = host + (f":{port}" if port is not None else "")
         if sv_type == "je":
             status = await JavaServer(host=host, port=port).async_status()
-            return MessageSegment.image(draw_java(status))
+            return MessageSegment.image(draw_java(status, ip))
         else:
             status = await BedrockServer(host=host, port=port).async_status()
-            return MessageSegment.image(draw_bedrock(status))
+            return MessageSegment.image(draw_bedrock(status, ip))
     except Exception as e:
         logger.warning(f"MC服务器查询失败：\nhost：{host}\nport：{port}\n类型：{sv_type}")
         return MessageSegment.image(draw_error(e=e, svr_type=sv_type))
