@@ -3104,13 +3104,13 @@ strenum = ">=0.4.8,<0.5.0"
 
 [[package]]
 name = "nonebot-plugin-sentry"
-version = "0.4.0"
+version = "0.4.1"
 description = "Push your bot errors to Sentry.io"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "nonebot_plugin_sentry-0.4.0-py3-none-any.whl", hash = "sha256:99b43b10667c645aba9a173e6cf6eec02eb945d35c751b773520dea8eb8ef485"},
-    {file = "nonebot_plugin_sentry-0.4.0.tar.gz", hash = "sha256:3228a4595209ec1ed7ec6b85bd65cb0921165e93188477dfc196d72c77b856b0"},
+    {file = "nonebot_plugin_sentry-0.4.1-py3-none-any.whl", hash = "sha256:150722faf5cee5f62be04d7473f06685d26d7ebeec3de5cb449840be8bbce68c"},
+    {file = "nonebot_plugin_sentry-0.4.1.tar.gz", hash = "sha256:d245e9721e345b4b21d264c33c8564c1527818be37b3b85fdfa0d43fdeb9801a"},
 ]
 
 [package.dependencies]
@@ -5569,4 +5569,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ab1c21b576ae295e4edaa119a66524517b4b37e3dca5c9190afcfc12b8328224"
+content-hash = "1c9f63165b1374c8845006f3ca4a98e9d5f8161ccbcbd82481cbc29a47bcecd5"
