@@ -3057,17 +3057,17 @@ pypinyin = ">=0.44.0,<1.0.0"
 
 [[package]]
 name = "nonebot-plugin-oddtext"
-version = "0.1.2"
+version = "0.2.0"
 description = "Nonebot2 插件，用于抽象话等文本生成"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_oddtext-0.1.2-py3-none-any.whl", hash = "sha256:b6e7b7f01c944efe544a8dc846c490b827f7c7521746ac6e26fc999df31f76e6"},
-    {file = "nonebot_plugin_oddtext-0.1.2.tar.gz", hash = "sha256:b643ce74be94070bc024a57c7e96c23d778e3a99527265ad2c290af38f6defa4"},
+    {file = "nonebot_plugin_oddtext-0.2.0-py3-none-any.whl", hash = "sha256:d6f2af862b7ca42b45f8a0a67dbcc07838bf7dfdd42502a4731403c1f50d1f38"},
+    {file = "nonebot_plugin_oddtext-0.2.0.tar.gz", hash = "sha256:04fa026f6863da5eebebe54b3f8f40aff8c4637c41b5668080947ad959d806b7"},
 ]
 
 [package.dependencies]
-nonebot2 = {version = ">=2.0.0-rc.1,<3.0.0", extras = ["fastapi"]}
+nonebot2 = {version = ">=2.0.0,<3.0.0", extras = ["fastapi"]}
 rcnb = ">=1.0.3,<2.0.0"
 
 [[package]]
@@ -5587,4 +5587,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "7f6222084a56db70ea51066d774ed72a8685dcb52cba7b970370c98004a297f1"
+content-hash = "9b34877150784056b25f80520e8f821b0741ab5076c6ea6596878242cb686ff0"
