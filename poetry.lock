@@ -1192,13 +1192,13 @@ langdetect = ["langdetect"]
 
 [[package]]
 name = "deep-translator"
-version = "1.11.1"
+version = "1.11.4"
 description = "A flexible free and unlimited python tool to translate between different languages in a simple way using multiple translators"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "deep_translator-1.11.1-py3-none-any.whl", hash = "sha256:25cc787c2c54b20260a302dcc42b3879f341500c22bf95f2aadd16a2b0a10417"},
-    {file = "deep_translator-1.11.1.tar.gz", hash = "sha256:43bdec2aa8a7f11f1d52c312f448d85e5c560c24906fd47cc2fbe1e0e5e5e866"},
+    {file = "deep_translator-1.11.4-py3-none-any.whl", hash = "sha256:d635df037e23fa35d12fd42dab72a0b55c9dd19e6292009ee7207e3f30b9e60a"},
+    {file = "deep_translator-1.11.4.tar.gz", hash = "sha256:801260c69231138707ea88a0955e484db7d40e210c9e0ae0f77372ffda5f4bf5"},
 ]
 
 [package.dependencies]
@@ -5588,4 +5588,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "edc61159b64ec1ce6cdac97c3138a32162553564f7d3a720b1945830175e2b8c"
+content-hash = "917c6e75571cee41391256bbeb26f13c2f997ba69da3937fe6e405783f46b53c"
