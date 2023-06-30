@@ -41,6 +41,8 @@ async def init_plugin_info():
     custom_usage = await async_load_data(CUSTOM_USAGE_FILE)
 
     for plugin in plugins:
+        if plugin.metadata and plugin.metadata.type == "library":
+            continue
         plugin_name = plugin.name
         version, author, usage = None, None, None
         # 先填充metadata的数据再用属性
