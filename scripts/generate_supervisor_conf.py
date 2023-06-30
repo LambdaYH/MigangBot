@@ -3,19 +3,6 @@ import getpass
 from pathlib import Path
 
 
-def generate_run_script() -> None:
-    path = Path(__file__).parent.parent / "run.sh"
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(
-            f"""
-#!/bin/bash
-source {Path(sys.executable).parent / "activate"}
-{Path(sys.executable).parent / "nb"} datastore upgrade
-{Path(sys.executable).parent / "nb"} run
-""".strip()
-        )
-
-
 def generate_supervisor_config():
     path = Path(__file__).parent
     if not (path.parent / "run.sh").exists():
@@ -24,7 +11,7 @@ def generate_supervisor_config():
         f.write(
             f"""
 [program:migangbot]
-command=/bin/bash {path.parent.resolve() / "run.sh"}
+command=pdm run all
 numprocs=1
 process_name=migangbot
 directory={path.parent.resolve()}

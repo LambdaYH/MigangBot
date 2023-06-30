@@ -1,0 +1,23 @@
+name: Update dependencies
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update dependencies
+        uses: pdm-project/update-deps-action@main
+        with:
+          # The commit message"
+          commit-message: "chore: Update pdm.lock"
+          # The PR title
+          pr-title: "Update dependencies"
+          # The update strategy, can be 'reuse', 'eager' or 'all'
+          update-strategy: eager
+          # Whether to install PDM plugins before update
+          install-plugins: "false"
