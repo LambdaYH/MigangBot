@@ -531,22 +531,6 @@ requires_python = ">=3.7"
 summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 
 [[package]]
-name = "h2"
-version = "4.1.0"
-requires_python = ">=3.6.1"
-summary = "HTTP/2 State-Machine based protocol implementation"
-dependencies = [
-    "hpack<5,>=4.0",
-    "hyperframe<7,>=6.0",
-]
-
-[[package]]
-name = "hpack"
-version = "4.0.0"
-requires_python = ">=3.6.1"
-summary = "Pure-Python HPACK header compression"
-
-[[package]]
 name = "httpcore"
 version = "0.17.2"
 requires_python = ">=3.7"
@@ -577,17 +561,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "httpx"
-version = "0.24.1"
-extras = ["http2"]
-requires_python = ">=3.7"
-summary = "The next generation HTTP client."
-dependencies = [
-    "h2<5,>=3",
-    "httpx==0.24.1",
-]
-
-[[package]]
 name = "huggingface-hub"
 version = "0.15.1"
 requires_python = ">=3.7.0"
@@ -601,12 +574,6 @@ dependencies = [
     "tqdm>=4.42.1",
     "typing-extensions>=3.7.4.3",
 ]
-
-[[package]]
-name = "hyperframe"
-version = "6.0.1"
-requires_python = ">=3.6.1"
-summary = "HTTP/2 framing layer for Python"
 
 [[package]]
 name = "identify"
@@ -838,7 +805,7 @@ dependencies = [
 
 [[package]]
 name = "nonebot-bison-migang"
-version = "0.0.6"
+version = "0.0.7"
 requires_python = ">=3.10,<4.0.0"
 summary = "Subscribe message from social medias"
 dependencies = [
@@ -846,13 +813,12 @@ dependencies = [
     "expiringdict<2.0.0,>=1.2.1",
     "feedparser<7.0.0,>=6.0.2",
     "httpx>=0.16.1",
-    "lxml<5.0.0,>=4.9.2",
-    "nonebot-adapter-onebot<3.0.0,>=2.0.0-beta.1",
-    "nonebot-plugin-apscheduler<0.3.0,>=0.2.0",
-    "nonebot-plugin-datastore<0.7.0,>=0.6.2",
+    "nonebot-adapter-onebot>=2.0.0",
+    "nonebot-plugin-apscheduler>=0.3.0",
+    "nonebot-plugin-datastore>=0.6.2",
     "nonebot-plugin-htmlrender>=0.2.0",
-    "nonebot-plugin-send-anything-anywhere<0.3.0,>=0.2.6",
-    "nonebot2<3.0.0,>=2.0.0-rc.4",
+    "nonebot-plugin-send-anything-anywhere<0.3.0,>=0.2.7",
+    "nonebot2[fastapi]<3.0.0,>=2.0.0",
     "pillow<10.0,>=8.1",
     "pyjwt<3.0.0,>=2.1.0",
     "python-socketio<6.0.0,>=5.4.0",
@@ -872,12 +838,12 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-apscheduler"
-version = "0.2.0"
+version = "0.3.0"
 requires_python = ">=3.8,<4.0"
 summary = "APScheduler Support for NoneBot2"
 dependencies = [
     "apscheduler<4.0.0,>=3.7.0",
-    "nonebot2<3.0.0,>=2.0.0-rc.1",
+    "nonebot2<3.0.0,>=2.0.0",
 ]
 
 [[package]]
@@ -909,13 +875,12 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-chatrecorder"
-version = "0.2.3"
+version = "0.2.4"
 requires_python = ">=3.8,<4.0"
 summary = "适用于 Nonebot2 的聊天记录插件"
 dependencies = [
-    "nonebot-adapter-onebot<3.0.0,>=2.2.0",
-    "nonebot-plugin-datastore<0.7.0,>=0.6.0a0",
-    "nonebot2[fastapi]<3.0.0,>=2.0.0-rc.1",
+    "nonebot-plugin-datastore<2.0.0,>=1.0.0",
+    "nonebot2[fastapi]<3.0.0,>=2.0.0",
 ]
 
 [[package]]
@@ -932,29 +897,29 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-datastore"
-version = "0.6.3"
+version = "1.0.0"
 requires_python = ">=3.8,<4.0"
 summary = "适用于 Nonebot2 的数据存储插件"
 dependencies = [
     "alembic<2.0.0,>=1.9.1",
-    "nonebot-plugin-localstore!=0.3.0,!=0.4.0,<0.5.0,>=0.2.0",
-    "nonebot2[httpx]<3.0.0,>=2.0.0-rc.1",
+    "nonebot-plugin-localstore!=0.3.0,!=0.4.0,<0.6.0,>=0.2.0",
+    "nonebot2[httpx]<3.0.0,>=2.0.0",
     "sqlalchemy[aiosqlite]<3.0.0,>=2.0.0",
 ]
 
 [[package]]
 name = "nonebot-plugin-ddcheck"
-version = "0.2.2"
+version = "0.3.0"
 requires_python = ">=3.8,<4.0"
 summary = "Nonebot2 成分姬插件"
 dependencies = [
     "Jinja2<4.0.0,>=3.0.0",
-    "httpx>=0.19.0",
-    "nonebot-adapter-onebot<3.0.0,>=2.2.0",
-    "nonebot-plugin-apscheduler<0.3.0,>=0.2.0",
-    "nonebot-plugin-htmlrender>=0.0.4",
-    "nonebot-plugin-localstore<0.5.0,>=0.4.0",
-    "nonebot2[fastapi]<3.0.0,>=2.0.0-rc.1",
+    "httpx<1.0.0,>=0.19.0",
+    "nonebot-plugin-apscheduler<0.4.0,>=0.3.0",
+    "nonebot-plugin-htmlrender<0.3.0,>=0.2.0",
+    "nonebot-plugin-localstore<0.6.0,>=0.5.0",
+    "nonebot-plugin-send-anything-anywhere<0.3.0,>=0.2.7",
+    "nonebot2[fastapi]<3.0.0,>=2.0.0",
 ]
 
 [[package]]
@@ -1060,15 +1025,15 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-htmlrender"
-version = "0.2.1"
-requires_python = "<4.0,>=3.8"
+version = "0.2.0.3"
+requires_python = ">=3.8,<4.0"
 summary = "通过浏览器渲染图片"
 dependencies = [
     "Pygments>=2.10.0",
     "aiofiles>=0.8.0",
     "jinja2>=3.0.3",
     "markdown>=3.3.6",
-    "nonebot2[fastapi]>=2.0.0",
+    "nonebot2>=2.0.0-beta.1",
     "playwright>=1.17.2",
     "pymdown-extensions>=9.1",
     "python-markdown-math>=0.8",
@@ -1166,18 +1131,18 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-shindan"
-version = "0.3.4"
+version = "0.4.0"
 requires_python = ">=3.8,<4.0"
 summary = "Nonebot2 plugin for using ShindanMaker"
 dependencies = [
     "Jinja2<4.0.0,>=3.0.0",
     "beautifulsoup4<5.0.0,>=4.0.0",
-    "httpx>=0.19.0",
+    "httpx<1.0.0,>=0.19.0",
     "lxml<5.0.0,>=4.0.0",
-    "nonebot-adapter-onebot<3.0.0,>=2.2.0",
-    "nonebot-plugin-datastore<0.7.0,>=0.6.0a1",
-    "nonebot-plugin-htmlrender>=0.0.4",
-    "nonebot2[fastapi]<3.0.0,>=2.0.0-rc.1",
+    "nonebot-plugin-datastore<2.0.0,>=1.0.0",
+    "nonebot-plugin-htmlrender<0.3.0,>=0.2.0",
+    "nonebot-plugin-send-anything-anywhere<0.3.0,>=0.2.7",
+    "nonebot2[fastapi]<3.0.0,>=2.0.0",
 ]
 
 [[package]]
@@ -1203,17 +1168,17 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-wordcloud"
-version = "0.4.8"
+version = "0.4.9"
 requires_python = ">=3.8,<4.0"
 summary = "适用于 NoneBot2 的词云插件"
 dependencies = [
     "emoji<3.0.0,>=1.6.3",
     "jieba<0.43.0,>=0.42.1",
     "nonebot-adapter-onebot<3.0.0,>=2.2.0",
-    "nonebot-plugin-apscheduler<0.3.0,>=0.2.0",
+    "nonebot-plugin-apscheduler<0.4.0,>=0.3.0",
     "nonebot-plugin-chatrecorder<0.3.0,>=0.2.3",
-    "nonebot-plugin-datastore<0.7.0,>=0.6.0a2",
-    "nonebot2[fastapi]<3.0.0,>=2.0.0-rc.1",
+    "nonebot-plugin-datastore<2.0.0,>=0.6.0",
+    "nonebot2[fastapi]<3.0.0,>=2.0.0",
     "tzdata",
     "wordcloud<2.0.0,>=1.8.1",
 ]
@@ -1260,12 +1225,15 @@ dependencies = [
 [[package]]
 name = "nonebot2"
 version = "2.0.0"
-extras = ["httpx"]
 requires_python = ">=3.8,<4.0"
 summary = "An asynchronous python bot framework."
 dependencies = [
-    "httpx[http2]<1.0.0,>=0.20.0",
-    "nonebot2==2.0.0",
+    "loguru<1.0.0,>=0.6.0",
+    "pydantic[dotenv]<2.0.0,>=1.10.0",
+    "pygtrie<3.0.0,>=2.4.1",
+    "tomli<3.0.0,>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions<5.0.0,>=4.0.0",
+    "yarl<2.0.0,>=1.7.2",
 ]
 
 [[package]]
@@ -1987,7 +1955,7 @@ dependencies = [
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "format", "git"]
-content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc7972cd87f2"
+content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c462b19e"
 
 [metadata.files]
 "aiocache 0.12.1" = [
@@ -2863,14 +2831,6 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
     {url = "https://files.pythonhosted.org/packages/95/04/ff642e65ad6b90db43e668d70ffb6736436c7ce41fcc549f4e9472234127/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
     {url = "https://files.pythonhosted.org/packages/f5/38/3af3d3633a34a3316095b39c8e8fb4853a28a536e55d347bd8d8e9a14b03/h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
 ]
-"h2 4.1.0" = [
-    {url = "https://files.pythonhosted.org/packages/2a/32/fec683ddd10629ea4ea46d206752a95a2d8a48c22521edd70b142488efe1/h2-4.1.0.tar.gz", hash = "sha256:a83aca08fbe7aacb79fec788c9c0bac936343560ed9ec18b82a13a12c28d2abb"},
-    {url = "https://files.pythonhosted.org/packages/2a/e5/db6d438da759efbb488c4f3fbdab7764492ff3c3f953132efa6b9f0e9e53/h2-4.1.0-py3-none-any.whl", hash = "sha256:03a46bcf682256c95b5fd9e9a99c1323584c3eec6440d379b9903d709476bc6d"},
-]
-"hpack 4.0.0" = [
-    {url = "https://files.pythonhosted.org/packages/3e/9b/fda93fb4d957db19b0f6b370e79d586b3e8528b20252c729c476a2c02954/hpack-4.0.0.tar.gz", hash = "sha256:fc41de0c63e687ebffde81187a948221294896f6bdc0ae2312708df339430095"},
-    {url = "https://files.pythonhosted.org/packages/d5/34/e8b383f35b77c402d28563d2b8f83159319b509bc5f760b15d60b0abf165/hpack-4.0.0-py3-none-any.whl", hash = "sha256:84a076fad3dc9a9f8063ccb8041ef100867b1878b25ef0ee63847a5d53818a6c"},
-]
 "httpcore 0.17.2" = [
     {url = "https://files.pythonhosted.org/packages/4d/32/b908f673ccef12b6425b848a541264ee3d95f5f571f18f6ab0d8c311442e/httpcore-0.17.2-py3-none-any.whl", hash = "sha256:5581b9c12379c4288fe70f43c710d16060c10080617001e6b22a3b6dbcbefd36"},
     {url = "https://files.pythonhosted.org/packages/b3/ad/7002a6f8e6ce0a246c991e00ba79b26ad06d307421a160214df24de5651f/httpcore-0.17.2.tar.gz", hash = "sha256:125f8375ab60036db632f34f4b627a9ad085048eef7cb7d2616fea0f739f98af"},
@@ -2925,10 +2885,6 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
 "huggingface-hub 0.15.1" = [
     {url = "https://files.pythonhosted.org/packages/62/a2/8a416d167216403ceeef3aaf8c22b0c61b1ae571644473d67eb7fecbb69e/huggingface_hub-0.15.1-py3-none-any.whl", hash = "sha256:05b0fb0abbf1f625dfee864648ac3049fe225ac4371c7bafaca0c2d3a2f83445"},
     {url = "https://files.pythonhosted.org/packages/6a/18/42d8bb8a7a87e28f024d4c6ec380ad135836873679e60a641813d22407f7/huggingface_hub-0.15.1.tar.gz", hash = "sha256:a61b7d1a7769fe10119e730277c72ab99d95c48d86a3d6da3e9f3d0f632a4081"},
-]
-"hyperframe 6.0.1" = [
-    {url = "https://files.pythonhosted.org/packages/5a/2a/4747bff0a17f7281abe73e955d60d80aae537a5d203f417fa1c2e7578ebb/hyperframe-6.0.1.tar.gz", hash = "sha256:ae510046231dc8e9ecb1a6586f63d2347bf4c8905914aa84ba585ae85f28a914"},
-    {url = "https://files.pythonhosted.org/packages/d7/de/85a784bcc4a3779d1753a7ec2dee5de90e18c7bcf402e71b51fcf150b129/hyperframe-6.0.1-py3-none-any.whl", hash = "sha256:0ec6bafd80d8ad2195c4f03aacba3a8265e57bc4cff261e802bf39970ed02a15"},
 ]
 "identify 2.5.24" = [
     {url = "https://files.pythonhosted.org/packages/4f/fd/2c46fba2bc032ba4c970bb8de59d25187087d7138a0ebf7c1dcc91d94f01/identify-2.5.24-py2.py3-none-any.whl", hash = "sha256:986dbfb38b1140e763e413e6feb44cd731faf72d1909543178aa79b0e258265d"},
@@ -3494,17 +3450,17 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
     {url = "https://files.pythonhosted.org/packages/60/12/253510c7c117cad35d3c5edc50b6e85898ee7dbf7b25850f9787229e59c0/nonebot_adapter_onebot-2.2.3.tar.gz", hash = "sha256:e0ac165536a24f7c5e620092ab596022e8f85d462c17ec8d7a17b191093b4859"},
     {url = "https://files.pythonhosted.org/packages/eb/37/68ce09f3f10db4487190de8e377bfffd1b8ee94c21e734c2ee0fd52e35c4/nonebot_adapter_onebot-2.2.3-py3-none-any.whl", hash = "sha256:e715e05578cb58cf42adddb0bac6c060a6ea7c9b2f18e6f011786bbc2bc8d0bd"},
 ]
-"nonebot-bison-migang 0.0.6" = [
-    {url = "https://files.pythonhosted.org/packages/62/64/f383b3f5772e7c1dfcbc735cc76219686a51d0806ba841f618f854a9b160/nonebot_bison_migang-0.0.6-py3-none-any.whl", hash = "sha256:748969c86a65a138f2f46fe69637e8b25974dda20711e6116453fdebbf7fcdfc"},
-    {url = "https://files.pythonhosted.org/packages/ea/1d/4ec3830f30676aafc12d64a235d43d197de8f7556a485e070aca01dfedac/nonebot_bison_migang-0.0.6.tar.gz", hash = "sha256:6319cdfd2af75945f76d4bb3111e2684d2081cc76c16f4df2655fad1fa1f6db3"},
+"nonebot-bison-migang 0.0.7" = [
+    {url = "https://files.pythonhosted.org/packages/a0/2f/503c2b8b5e7ce6b870807380839d60972c7405e19f08c7af53a97ad6bea8/nonebot_bison_migang-0.0.7-py3-none-any.whl", hash = "sha256:b3cca9b88b7db11e80b70210ab09c9fbbbd6872bfd3474faedad5e8d86ab49d6"},
+    {url = "https://files.pythonhosted.org/packages/aa/35/da4cd042094d078086b7e44064b7d3764d105d395842b6800e38a3071a1c/nonebot_bison_migang-0.0.7.tar.gz", hash = "sha256:15c495d36faac9add5cd982c5f1b872501ff3a672fd7ac3f0efec3dfaaee3445"},
 ]
 "nonebot-plugin-alconna 0.8.4" = [
     {url = "https://files.pythonhosted.org/packages/4e/aa/41b44259062cc097e7e8076a71039bba596146b945cd08c83bc69f5e8908/nonebot-plugin-alconna-0.8.4.tar.gz", hash = "sha256:7ae6b4b2768acab0cfd78c544c54e227911737c51af06f329398dffafe1c2440"},
     {url = "https://files.pythonhosted.org/packages/be/59/940d7c727b81cb6c66a0f48e35a60db9c56ecd279cdd1f1f702ab5444919/nonebot_plugin_alconna-0.8.4-py3-none-any.whl", hash = "sha256:15c37a8ab01b91cc8977b004ef7c43bbe0795ba51f2209e69e0f99306b44c6fc"},
 ]
-"nonebot-plugin-apscheduler 0.2.0" = [
-    {url = "https://files.pythonhosted.org/packages/77/34/11d54a11bf7c6256bf61598e9f2b93df6bf4b1cc2b58f26ff1140539be81/nonebot-plugin-apscheduler-0.2.0.tar.gz", hash = "sha256:7b63e99a611b657533b48fcf1f8c6627c18c2eb3fa820a906cd4ec4666c0ceb0"},
-    {url = "https://files.pythonhosted.org/packages/b4/e0/08455966af13f69ee39b14ac345f77c5a7c5b2fbd671b0182a18e195173f/nonebot_plugin_apscheduler-0.2.0-py3-none-any.whl", hash = "sha256:9285ee84ca1cfa4db73c86cedb5911bbbd25a21ec0cd5f22447cd12f89e48fb4"},
+"nonebot-plugin-apscheduler 0.3.0" = [
+    {url = "https://files.pythonhosted.org/packages/6e/cc/3d994a7bd814f24981cc05e44772969f5f89c46972765b5f56a6e3a44ecc/nonebot_plugin_apscheduler-0.3.0-py3-none-any.whl", hash = "sha256:ec5e0267293fc9803e543c6086d3e109ac87bf6dccea5473d219cad826238aae"},
+    {url = "https://files.pythonhosted.org/packages/e6/d8/5194c1642c9f13f52e012c5e2d55263760532040e685ef22743e8cf53523/nonebot_plugin_apscheduler-0.3.0.tar.gz", hash = "sha256:7c41cc1d49ea6af7c4518c72cd15f8c2f549071b8bc8bfc4b21fbdd0a4875cfd"},
 ]
 "nonebot-plugin-arkgacha 0.3.0" = [
     {url = "https://files.pythonhosted.org/packages/09/ce/535961d2410356f683e990b4d59b2b9d94de84eae4538d839c6d9b9bf55a/nonebot_plugin_arkgacha-0.3.0-py3-none-any.whl", hash = "sha256:b2aee1a28b56e54631b54f001af88a392dc393c6c3c4b4bb2aacef4dc1113ffc"},
@@ -3514,21 +3470,21 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
     {url = "https://files.pythonhosted.org/packages/77/ea/cd43ca912e3efc32806e4566fc29e92cf5f9b7c2cb43ace0a7da99d8c946/nonebot_plugin_bottle-1.0.1.3-py3-none-any.whl", hash = "sha256:788176354650ffc90305ffd72e31f9ccc5172313b3d32833ab6a9226d68ef5bf"},
     {url = "https://files.pythonhosted.org/packages/a9/6a/5d614ba1fc50ba5f8125754c38bc4356771eed150a5ddf56f83a3d0bea54/nonebot_plugin_bottle-1.0.1.3.tar.gz", hash = "sha256:328bec1874a13e6e841a31f7232febf3d308c2ebc392bb35525398a5efd36dc2"},
 ]
-"nonebot-plugin-chatrecorder 0.2.3" = [
-    {url = "https://files.pythonhosted.org/packages/04/1c/67179faf28166ac1e4e7827cd0665842ef2aeb135a151a44ca9e43b9c621/nonebot_plugin_chatrecorder-0.2.3-py3-none-any.whl", hash = "sha256:b69d93d117ce7ece2ecff6714b07561befd1251db0cbb738d4fb80119b6e5b31"},
-    {url = "https://files.pythonhosted.org/packages/dd/8a/9f04b0a4adfd7adcfdcd053da89b18329fc30ce0db5d4c6a198247226758/nonebot_plugin_chatrecorder-0.2.3.tar.gz", hash = "sha256:86b4b8a51e9e531578b06cf70a8e138e89fb223e7d3d16bde3265b850e82f88d"},
+"nonebot-plugin-chatrecorder 0.2.4" = [
+    {url = "https://files.pythonhosted.org/packages/58/50/d57326d2130101a89620a05a5347bc4fe22938dbafaa4d28e737c017574c/nonebot_plugin_chatrecorder-0.2.4.tar.gz", hash = "sha256:cb0dc30f5503df042c8678ff9f680677b9a3ea01f1919b0fc3981eb4f5ea2d35"},
+    {url = "https://files.pythonhosted.org/packages/e7/a1/c578ad28b868d3d04571a8c20cfec74abcf11729f20f003dc9bfca1b0901/nonebot_plugin_chatrecorder-0.2.4-py3-none-any.whl", hash = "sha256:1e0f27cafe25ed33739e3069bf2494d335e124d2baecdf09e1a9dfe1a2c85f07"},
 ]
 "nonebot-plugin-cocdicer 0.4.0" = [
     {url = "https://files.pythonhosted.org/packages/08/c0/763c096a80edf23d95cedd757d55981138f62643c3487ac946b6f70eb16d/nonebot_plugin_cocdicer-0.4.0-py3-none-any.whl", hash = "sha256:eaeeed559eeacac77fcc0ce55fb55d30669b38ed5a5677cfa91fc3e7267f9eb7"},
     {url = "https://files.pythonhosted.org/packages/f6/43/27696c71ec3beb9c720efe85bad5489d86d317cfea786db98d8e4c359dbc/nonebot_plugin_cocdicer-0.4.0.tar.gz", hash = "sha256:d543d4798854cd2ef4177926d3ce6004df54970c8104479795c75eb107ebbb5b"},
 ]
-"nonebot-plugin-datastore 0.6.3" = [
-    {url = "https://files.pythonhosted.org/packages/a3/16/c36612e4cc02fa1348c4111581a1e7c6288c462de44c35177f440b3cc2e0/nonebot_plugin_datastore-0.6.3.tar.gz", hash = "sha256:f6b2d703e09e29ce1d8f50a752f59738d7d61d31d43b37ec977a8d99d04b990c"},
-    {url = "https://files.pythonhosted.org/packages/b2/cb/fd0449c3526f502f64c0257244ecb60552ffb562f4f32cfacb2df411c21a/nonebot_plugin_datastore-0.6.3-py3-none-any.whl", hash = "sha256:2e917badad0618ea4dcf1b084eb5cd2d859ac2850e5fdabac6e862fded995360"},
+"nonebot-plugin-datastore 1.0.0" = [
+    {url = "https://files.pythonhosted.org/packages/8a/ac/816af38d331fdfd5240d6d35c05503291a50d741f19e8151f57df9fad0cc/nonebot_plugin_datastore-1.0.0-py3-none-any.whl", hash = "sha256:d52185fc711f2f950a2d2868c18d957fde166691f84390ac7bc724b463e4fc1d"},
+    {url = "https://files.pythonhosted.org/packages/b0/78/ea3852086d8052e5f16d78aff69115c04c07557aa38b84b9dd3558482648/nonebot_plugin_datastore-1.0.0.tar.gz", hash = "sha256:b10ebac479563b8dbb0f4fca99b8252d065f368a79bb02d220c7565815dd284c"},
 ]
-"nonebot-plugin-ddcheck 0.2.2" = [
-    {url = "https://files.pythonhosted.org/packages/36/7a/8c0c1b5b15796008983441a5fc168f39bb3549aafe4b80d82aee54195868/nonebot_plugin_ddcheck-0.2.2.tar.gz", hash = "sha256:733dcbbc36a7eb3da1ece6c1c615b86eb021d0bdd590ca4d33aff26cda89c89a"},
-    {url = "https://files.pythonhosted.org/packages/3c/70/bdcade7ce67b0379bfaaa8acc225c4fb0ed27d1de2efef21eedf95b2398a/nonebot_plugin_ddcheck-0.2.2-py3-none-any.whl", hash = "sha256:0041d3c429d23f42a14d69c43a0c210f46bbefad7550ea29c35449590d2edb36"},
+"nonebot-plugin-ddcheck 0.3.0" = [
+    {url = "https://files.pythonhosted.org/packages/51/7c/7cbbdfa23ab4ea10264054439cb9b3dc5f0ba85a978d8dff4f18d02bf7de/nonebot_plugin_ddcheck-0.3.0.tar.gz", hash = "sha256:91d03350bcf4907782a03071dadbf8b380b8eb57611cbd886236a96e1fba0788"},
+    {url = "https://files.pythonhosted.org/packages/f5/b5/5b2fe8800fc970275341ed92b3276273d66f3c0d1ec3f7672073e6198ca7/nonebot_plugin_ddcheck-0.3.0-py3-none-any.whl", hash = "sha256:3940d08bc6e9d08b120bd6814299fb6c6ea4962bb79a6e3084b6c186f625bbc7"},
 ]
 "nonebot-plugin-emojimix 0.3.0" = [
     {url = "https://files.pythonhosted.org/packages/0b/9c/2b09bb9ba11e582f6a78a1f492a5433877c13d1f1e7069998b4255cf1fca/nonebot_plugin_emojimix-0.3.0.tar.gz", hash = "sha256:bbfc061af546a1d38407eb2895ed7d225cc8a582e146aa5117d3ed454f44e839"},
@@ -3562,9 +3518,9 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
     {url = "https://files.pythonhosted.org/packages/63/ec/e0c73e82b29c4c0cb600e8dbeb8c859fc070aeb6d69ec538838ef7efb759/nonebot_plugin_hikarisearch-0.1.7-py3-none-any.whl", hash = "sha256:7242bcf71dac3a8341fa2bc409c884291140b0ade74d65d9ab842cc43c0a3af7"},
     {url = "https://files.pythonhosted.org/packages/ca/ae/be7862e5b17482ceadd75b195d53f65f888d37f7d7eaecf257a464bf195b/nonebot_plugin_hikarisearch-0.1.7.tar.gz", hash = "sha256:abcae504c19d30952236ff963bc7dbd35bd777dd560be03299856bf552da7c40"},
 ]
-"nonebot-plugin-htmlrender 0.2.1" = [
-    {url = "https://files.pythonhosted.org/packages/2c/3a/da1393c7e0fe8c42d2285ef72b02075152f3a13ed1c134bdc4ea29342359/nonebot_plugin_htmlrender-0.2.1-py3-none-any.whl", hash = "sha256:caf26189fdfec1eb20c022a39da2758bf239285ccc3428756ea5446f91125df4"},
-    {url = "https://files.pythonhosted.org/packages/3d/e2/91993a74c1ead832960d4da0fe348660d0563b87edf48908279bf66fd971/nonebot_plugin_htmlrender-0.2.1.tar.gz", hash = "sha256:da5d28366846eccc0037386a08834d234883a933a49f647ea56842fe1aa2e43f"},
+"nonebot-plugin-htmlrender 0.2.0.3" = [
+    {url = "https://files.pythonhosted.org/packages/39/a8/acc4c2424715d2f3510396d396ebb715a4f3200ee234a22043b98f82ea91/nonebot_plugin_htmlrender-0.2.0.3-py3-none-any.whl", hash = "sha256:2a45d811513bd03dfe6825f6229f50f1e65a390d4ae9c5413184d6de42147147"},
+    {url = "https://files.pythonhosted.org/packages/e7/f8/a9dccb4308f4ac1236025806dd13fd3b2d1e954a3e61726e46409b0a5c6d/nonebot_plugin_htmlrender-0.2.0.3.tar.gz", hash = "sha256:d7e0432ebb78abbc7d934141902722d36334ef12921f640da4c90dedb62452fb"},
 ]
 "nonebot-plugin-imagetools 0.2.1" = [
     {url = "https://files.pythonhosted.org/packages/7d/dd/db3ffc82594f9ac0bb2d2beb6bab10f2caa43197f0297c02a0954df5691c/nonebot_plugin_imagetools-0.2.1.tar.gz", hash = "sha256:a991e002e6d61fef58cc33048bc276930fa0814afea824a9cc16d3d27301170e"},
@@ -3598,9 +3554,9 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
     {url = "https://files.pythonhosted.org/packages/33/96/4254200bb1193c8e117151d336d6e5a74931ea70bf4429a2d126ddecc95f/nonebot_plugin_session-0.0.5.tar.gz", hash = "sha256:bbdf0dd46e411b3213f7473045d95cf62f40e9578e48478de1cf015556a26307"},
     {url = "https://files.pythonhosted.org/packages/d2/c3/845cbfd4a684667c49b2801dfa37e4369b49a7797cba325e2baf54df308d/nonebot_plugin_session-0.0.5-py3-none-any.whl", hash = "sha256:185ec7113bc956bcdadc0892d503802bfff8dc98d0fde674423204f88d49124a"},
 ]
-"nonebot-plugin-shindan 0.3.4" = [
-    {url = "https://files.pythonhosted.org/packages/31/32/7ab660d39b272ab628173ab3a83492a304ed4de35c9191e842e0d1653212/nonebot_plugin_shindan-0.3.4-py3-none-any.whl", hash = "sha256:7a9cbb644f2447c89e70db8eaeb16c87857deeffd604bdebf32e482495fabea1"},
-    {url = "https://files.pythonhosted.org/packages/4b/35/a2ee9fba94034ca564d989b11900292074e970b2b2b28b1e0ef1be5355a6/nonebot_plugin_shindan-0.3.4.tar.gz", hash = "sha256:bd089f7066518c2a0f89f55202b0eee13701aa6688e1c186da3eca1050c294df"},
+"nonebot-plugin-shindan 0.4.0" = [
+    {url = "https://files.pythonhosted.org/packages/56/31/b7671467383f57bf52dc87a66139ead8476e52163386a7179616d516f248/nonebot_plugin_shindan-0.4.0.tar.gz", hash = "sha256:e2b97d9457bb07014628f9f9951bf548a2a08df061b2a6244e4df738f703135c"},
+    {url = "https://files.pythonhosted.org/packages/d9/b0/4247ab9411d5d4e0868e7f529bece9ab425c7cb4d8d0516ef8bc9da194b0/nonebot_plugin_shindan-0.4.0-py3-none-any.whl", hash = "sha256:2c7a6e8125257c373cbf17a336b1a0c1b2936d0871db90f59890b9999ee0d198"},
 ]
 "nonebot-plugin-withdraw 0.2.3" = [
     {url = "https://files.pythonhosted.org/packages/5d/6b/249fcd0c43ab000e1ef9f0aa8e0c8255ea7ef4391b6f2dc8acec00315f85/nonebot_plugin_withdraw-0.2.3-py3-none-any.whl", hash = "sha256:990798f1979c0ccec5dfdcd017174549125f2b13c1d420701e615afbaff5342e"},
@@ -3610,9 +3566,9 @@ content_hash = "sha256:7441c5bb383d31c14c6fc5f09d776d373730d6a237633dbe4070fc797
     {url = "https://files.pythonhosted.org/packages/57/44/5d7885b9d0427f13f4b86e2bb4c0cf1506c6b0e334f0afa87d4470797439/nonebot_plugin_word_bank2-0.1.8-py3-none-any.whl", hash = "sha256:d16c1a61315ce68a97ff355acbd245347c482ce32284d5a9a6c82e47b0c30ff2"},
     {url = "https://files.pythonhosted.org/packages/d6/c1/e3a780b28dd9104ec193b914daed92860b3510a2d5a5030274b44c8e90cf/nonebot_plugin_word_bank2-0.1.8.tar.gz", hash = "sha256:95d6c8c7312f557c79cb06482ca451f126b45cd7b66d7497ece047d6e42cf2b0"},
 ]
-"nonebot-plugin-wordcloud 0.4.8" = [
-    {url = "https://files.pythonhosted.org/packages/1b/ba/9194d062622fdf7915f0278ad1b9c0d3d79315242756dbe8ba934c2f4713/nonebot_plugin_wordcloud-0.4.8-py3-none-any.whl", hash = "sha256:7def16c55afe2ec13f668d6ac4f946b39b6a56bdbc34096610d68d6ca7598d25"},
-    {url = "https://files.pythonhosted.org/packages/af/7d/5d75111cc5b1b412d20fb57fec3d15cc7874b969e02f83510795add896fa/nonebot_plugin_wordcloud-0.4.8.tar.gz", hash = "sha256:61a2332c26b09e9a7cefcbd7e2313d9b713aa88aac4422f3a47d33458c243cc1"},
+"nonebot-plugin-wordcloud 0.4.9" = [
+    {url = "https://files.pythonhosted.org/packages/78/62/2a7acd755e7bd8980eae453e7655195585206a0679511d8ef5df33d75789/nonebot_plugin_wordcloud-0.4.9.tar.gz", hash = "sha256:d03f2ebfef7cddd8cca3864fcd39bef10bddff4f9f392e429a41a06cd537e7da"},
+    {url = "https://files.pythonhosted.org/packages/a7/d5/ee6faa3ea2e27af95149033666b3a920641057550a4818b941e50256292f/nonebot_plugin_wordcloud-0.4.9-py3-none-any.whl", hash = "sha256:1510e6eaeefcfd732a66d7508eb4e24699510f15e20753c30ee6c897bc391717"},
 ]
 "nonebot-plugin-wordle 0.3.1" = [
     {url = "https://files.pythonhosted.org/packages/78/39/39506f628bdd73d577311982bd87fcca6aae7cd33cd5a2e2266ed7e371a2/nonebot_plugin_wordle-0.3.1.tar.gz", hash = "sha256:d3d7f9fed1f30a17f2aa278f36ae559d321d4dc0948d71296331dbb16dfe3fa3"},

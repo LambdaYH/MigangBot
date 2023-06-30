@@ -44,9 +44,9 @@ async def init_plugin_config():
             continue
         configs: List[ConfigItem] = []
         # 兼容metadata的config
-        if plugin.metadata and (c := plugin.metadata.config):
-            if c.__base__ is BaseModel:
-                configs += _parse_basemodel_config(c)
+        # if plugin.metadata and (c := plugin.metadata.config):
+        #     if c.__base__ is BaseModel:
+        #         configs += _parse_basemodel_config(c)
         if hasattr(plugin.module, "__plugin_config__"):
             c = plugin.module.__getattribute__("__plugin_config__")
             if isinstance(c, Iterable):
