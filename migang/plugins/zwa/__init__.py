@@ -19,12 +19,8 @@ __plugin_meta__ = PluginMetadata(
 usage：
     发送早晚安问候，群被动里去设置
 """.strip(),
-    extra={
-        "unique_name": "migang_morning",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "群功能"
 __plugin_task__ = (

@@ -18,12 +18,8 @@ usage：
     示例：
         /mitem 无瑕白 猪
 """.strip(),
-    extra={
-        "unique_name": "migang_ffxiv_market",
-        "example": "/mitem\n/market item",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "FF14"
 __plugin_aliases__ = ["最终幻想14物价查询"]

@@ -21,12 +21,8 @@ __plugin_meta__ = PluginMetadata(
     取金币 数额
     我的存款
 """.strip(),
-    extra={
-        "unique_name": "migang_bank",
-        "example": "rua",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "基础功能"

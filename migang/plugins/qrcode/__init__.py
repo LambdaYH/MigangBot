@@ -26,12 +26,8 @@ usage：
     指令:
         二维码 [图片]
 """.strip(),
-    extra={
-        "unique_name": "migang_qrcode",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_aliases__ = ["二维码", "二维码识别"]

@@ -13,12 +13,8 @@ usage：
     指令：
         鸡汤
 """.strip(),
-    extra={
-        "unique_name": "migang_jitang",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 jitang = on_regex("^毒?鸡汤$", priority=5, block=True)

@@ -24,12 +24,8 @@ __plugin_meta__ = PluginMetadata(
 usage：
     搜pdf xxx
 """.strip(),
-    extra={
-        "unique_name": "migang_pdf_search",
-        "example": "搜pdf xxx",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_aliases__ = ["pdf搜索"]

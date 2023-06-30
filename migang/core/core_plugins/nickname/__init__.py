@@ -24,12 +24,8 @@ usage：
         查询昵称：我叫什么
         删除昵称：取消昵称
 """.strip(),
-    extra={
-        "unique_name": "migang_nickname",
-        "example": "以后叫我 xxx\n我叫什么\n删除昵称",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_always_on__ = True

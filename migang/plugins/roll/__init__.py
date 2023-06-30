@@ -18,12 +18,8 @@ usage：
         roll *[文本]: 随机事件
         示例：roll 吃饭 睡觉 打游戏
 """.strip(),
-    extra={
-        "unique_name": "migang_roll",
-        "example": "",
-        "author": "HibiKier",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 roll = on_command("roll", priority=5, block=True)

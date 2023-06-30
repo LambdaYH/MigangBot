@@ -14,12 +14,8 @@ __plugin_meta__ = PluginMetadata(
     name="pcr风格整点报时_",
     description="pcr风格整点报时",
     usage="",
-    extra={
-        "unique_name": "migang_pcr_hourcall",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_task__ = TaskItem(task_name="pcr_hourcall", name="pcr风格整点报时")
 

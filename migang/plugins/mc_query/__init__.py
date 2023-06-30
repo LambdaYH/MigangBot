@@ -61,12 +61,8 @@ usage：
         mcavatar A_Pi
         mcmodel A_Pi
 """.strip(),
-    extra={
-        "unique_name": "migang_mcquery",
-        "example": "添加mcs hypixel mc.hypixel.net je\n添加mcs 假的服务器 example.mc.com:1206 be\n查询mcs hypixel\n查询mcs mc.hypixel.net je\n查询mcs example.mc.com:1206 be\n删除mcs hypixel\nmcavatar A_Pi",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_aliases__ = ["mc查询"]

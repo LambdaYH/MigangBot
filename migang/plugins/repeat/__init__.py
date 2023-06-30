@@ -22,12 +22,8 @@ __plugin_meta__ = PluginMetadata(
 usage：
     几率性复读
 """.strip(),
-    extra={
-        "unique_name": "migang_repeat",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "群功能"
 __plugin_config__ = ConfigItem(

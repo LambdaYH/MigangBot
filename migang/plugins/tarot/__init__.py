@@ -26,12 +26,8 @@ usage：
         塔罗牌/塔罗占卜
         /抽卡
 """.strip(),
-    extra={
-        "unique_name": "migang_tarot",
-        "example": "/抽卡",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 IMG_PATH = Path(__file__).parent / "image"

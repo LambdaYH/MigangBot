@@ -39,12 +39,8 @@ __plugin_meta__ = PluginMetadata(
     usage="""
 usage：
 """.strip(),
-    extra={
-        "unique_name": "migang_group_friend_handle",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_always_on__ = True

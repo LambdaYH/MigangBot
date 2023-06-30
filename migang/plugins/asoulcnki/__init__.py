@@ -15,12 +15,8 @@ usage：
         [发病 对象]  对发病对象发病
         [发病小作文] 随机发送一篇发病小作文
 """.strip(),
-    extra={
-        "unique_name": "migang_asoulcnki",
-        "example": "发病\n发病小作文",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

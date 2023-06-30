@@ -22,12 +22,8 @@ usage：
     指令：
         查看今日早报：@Bot + 今日早报
 """.strip(),
-    extra={
-        "unique_name": "migang_daily_news",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "订阅"

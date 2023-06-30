@@ -20,12 +20,8 @@ usage：
         /ping
         自检（仅超级用户可用）
 """.strip(),
-    extra={
-        "unique_name": "migang_self_check",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 

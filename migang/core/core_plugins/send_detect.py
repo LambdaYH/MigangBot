@@ -18,12 +18,8 @@ __plugin_meta__ = PluginMetadata(
     name="发送消息检测_",
     description="防止bot刷屏",
     usage="",
-    extra={
-        "unique_name": "migang_send_detect",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_config__ = (

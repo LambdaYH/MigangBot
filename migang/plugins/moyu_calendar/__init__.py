@@ -18,12 +18,8 @@ usage：
     指令：
         查看今日摸鱼日历：@Bot + 摸鱼日历
 """.strip(),
-    extra={
-        "unique_name": "migang_moyu_calendar",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "订阅"
 __plugin_task__ = TaskItem(task_name="moyu_calendar", name="摸鱼日历推送")

@@ -44,12 +44,8 @@ usage：
         示例：装弹 3 100 @sdd
         * 注：同一时间群内只能有一场对决 *
 """.strip(),
-    extra={
-        "unique_name": "migang_russian",
-        "example": "",
-        "author": "HibiKier",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "群内小游戏"
 

@@ -25,12 +25,8 @@ usage：
         百科 xxx
         xxx是什么/是谁/是啥
 """.strip(),
-    extra={
-        "unique_name": "migang_what",
-        "example": "鲁迅是谁",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "一些工具"
 __plugin_config__ = ConfigItem(

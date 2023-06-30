@@ -13,12 +13,8 @@ usage：
     指令：
         网易云热评
 """.strip(),
-    extra={
-        "unique_name": "migang_comments_163",
-        "example": "",
-        "author": "HibiKier",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 comment_163 = on_fullmatch("网易云热评", priority=5, block=True)

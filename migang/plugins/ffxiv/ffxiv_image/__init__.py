@@ -27,12 +27,8 @@ usage：
         /(猫男，猫娘，龙男，龙娘，人女，人男，母肥，公肥，女精，男精，鲁加男，鲁加女，兔娘，兔男，大猫)   云吸xx
         (例如 /猫娘)
 """.strip(),
-    extra={
-        "unique_name": "migang_ffxiv_image",
-        "example": "/猫娘",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_aliases__ = ["狒狒图库"]

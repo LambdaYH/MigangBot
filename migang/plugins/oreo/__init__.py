@@ -20,12 +20,8 @@ usage：
     指令：
         oreo 奥利奥奥利奥xxx（奥和利可以任意组合）
 """.strip(),
-    extra={
-        "unique_name": "migang_oreo",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

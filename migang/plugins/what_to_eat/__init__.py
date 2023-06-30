@@ -18,12 +18,8 @@ usage：
         直接看正则表达式吧：
             (今|明|后)?(天|日)?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)?(吃|喝)(什么|啥|点啥)
 """.strip(),
-    extra={
-        "unique_name": "migang_what_to_eat",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "好玩的"
 what_eat_drink = on_regex(

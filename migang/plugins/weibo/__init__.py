@@ -78,12 +78,8 @@ usage：
     自动推送微博（可推送范围由维护者设定）
     发送[可订阅微博列表]（需要at）可查看订阅列表
 """.strip(),
-    extra={
-        "unique_name": "migang_weibo",
-        "example": "可订阅微博列表\n开启\关闭 xxxx\n更新微博用户名",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "订阅"
 __plugin_config__ = [

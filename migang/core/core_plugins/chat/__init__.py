@@ -28,12 +28,8 @@ __plugin_meta__ = PluginMetadata(
 usage：
     与Bot普普通通的对话吧！
 """.strip(),
-    extra={
-        "unique_name": "migang_chat",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_config__ = (

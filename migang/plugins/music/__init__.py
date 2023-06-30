@@ -41,12 +41,8 @@ usage：
         搜酷狗 [歌名]
         来一首xxxx
 """.strip(),
-    extra={
-        "unique_name": "migang_music",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "群功能"
 

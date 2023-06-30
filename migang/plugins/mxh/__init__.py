@@ -18,12 +18,8 @@ __plugin_meta__ = PluginMetadata(
     梅溪湖 攻 受
     /mxh 攻 受
 """.strip(),
-    extra={
-        "unique_name": "migang_mxh",
-        "example": "",
-        "author": "migang",
-        "version": "0.0.1",
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "好玩的"
 __plugin_aliases__ = ["梅溪湖短打"]

@@ -11,12 +11,8 @@ usage：
     指令：
         关于
 """.strip(),
-    extra={
-        "unique_name": "migang_about",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 about = on_fullmatch("关于", rule=to_me(), priority=1, block=False)

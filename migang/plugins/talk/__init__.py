@@ -17,12 +17,8 @@ usage：
     指令：
         说xxxx，需要@bot
 """.strip(),
-    extra={
-        "unique_name": "migang_talk",
-        "example": "缩写 hhsh",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

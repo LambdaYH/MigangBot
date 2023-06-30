@@ -24,12 +24,8 @@ usage：
     如：/hh 公肥 item:巫骨低吟者短衣
     Powered by https://www.ffxivsc.cn
 """.strip(),
-    extra={
-        "unique_name": "migang_ffxiv_huanhua",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "FF14"

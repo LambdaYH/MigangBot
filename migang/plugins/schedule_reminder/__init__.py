@@ -61,12 +61,8 @@ usage：
     具体参考提示来进行
     可发送[定时任务帮助]查看例子
 """.strip(),
-    extra={
-        "unique_name": "migang_schedule_reminder",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "群功能"

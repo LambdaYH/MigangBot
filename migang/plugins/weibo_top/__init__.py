@@ -25,12 +25,8 @@ usage：
         微博热搜 [id]：截图该热搜页面
         示例：微博热搜 5
 """.strip(),
-    extra={
-        "unique_name": "migang_weibo_top",
-        "example": "",
-        "author": "HibiKier & yajiwa",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 wbtop = on_command("微博热搜", priority=5, block=True)

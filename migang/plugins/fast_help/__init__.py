@@ -11,12 +11,8 @@ __plugin_meta__ = PluginMetadata(
 usage：
     /插件名
 """.strip(),
-    extra={
-        "unique_name": "migang_fast_help",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 require("help")

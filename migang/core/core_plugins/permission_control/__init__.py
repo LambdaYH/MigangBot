@@ -26,12 +26,8 @@ usage：
         设置用户权限 用户 等级 时长（可选）
         设置群权限 群 等级 时长（可选）
 """.strip(),
-    extra={
-        "unique_name": "migang_permission_control",
-        "example": "设置用户/群权限",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 perm_ctl = on_regex(

@@ -12,12 +12,8 @@ usage：
     指令（需@）：
         二次元语录
 """.strip(),
-    extra={
-        "unique_name": "migang_quotation",
-        "example": "",
-        "author": "HibiKier",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 quotations = on_fullmatch("二次元语录", priority=5, block=True, rule=to_me())

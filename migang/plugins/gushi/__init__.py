@@ -13,12 +13,8 @@ usage：
     指令：
         念诗/来首诗/念首诗
 """.strip(),
-    extra={
-        "unique_name": "migang_gushi",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 

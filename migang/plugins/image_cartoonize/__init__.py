@@ -28,12 +28,8 @@ usage：
 
         或对带图片消息回复“卡通化”，请注意删除回复的前导@
 """.strip(),
-    extra={
-        "unique_name": "migang_image_cartoonize",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

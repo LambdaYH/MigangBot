@@ -19,12 +19,8 @@ usage：
     说明：
         文本开头可带 [width=xxx]，指定生成的markdown图片宽度，默认为500
 """.strip(),
-    extra={
-        "unique_name": "migang_md_to_pic",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_aliases__ = ["markdown转图片"]

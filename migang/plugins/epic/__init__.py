@@ -16,12 +16,8 @@ usage：
     指令：
         epic喜加一
 """.strip(),
-    extra={
-        "unique_name": "migang_epic",
-        "example": "",
-        "author": "AkashiCoin",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_task__ = TaskItem(task_name="epic_free_game", name="epic免费游戏推送")
 

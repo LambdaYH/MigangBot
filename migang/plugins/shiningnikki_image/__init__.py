@@ -35,12 +35,8 @@ usage：
         闪暖套装
         n连闪暖套装（n <= 9）
 """.strip(),
-    extra={
-        "unique_name": "migang_shiningnikki_image",
-        "example": "闪暖套装\nn连闪暖套装（n <= 9）\n随机暖暖",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "好看的"
 __plugin_cd__ = CDItem(3, hint="心急穿不了大裙子！")

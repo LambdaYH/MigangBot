@@ -26,12 +26,8 @@ usage：
     发送[今日老婆]
     随机抓取群友作为老婆
 """.strip(),
-    extra={
-        "unique_name": "migang_daily_wife",
-        "example": "今日老婆",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

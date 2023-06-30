@@ -23,12 +23,8 @@ usage：
         微博
         Github
 """.strip(),
-    extra={
-        "unique_name": "migang_url_parse",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 BILIBILI_TASK = "url_parse_bilibili"

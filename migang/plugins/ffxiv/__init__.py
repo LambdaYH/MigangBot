@@ -11,12 +11,8 @@ __plugin_meta__ = PluginMetadata(
 usage：
     时尚品鉴作业：/nn
 """.strip(),
-    extra={
-        "unique_name": "migang_ffxiv",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 nonebot.load_plugins(str(Path(__file__).parent.resolve()))

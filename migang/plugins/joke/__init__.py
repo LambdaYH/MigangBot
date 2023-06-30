@@ -25,12 +25,8 @@ usage：
     说明：
         关键词不超过五个字
 """.strip(),
-    extra={
-        "unique_name": "migang_joke",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 joke = on_regex(r"^来点([\S\s]{1,5})笑话$", priority=5, block=True)

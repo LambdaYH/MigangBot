@@ -25,12 +25,8 @@ __plugin_meta__ = PluginMetadata(
 说明：
     当to为空时，默认为cny
 """.strip(),
-    extra={
-        "unique_name": "migang_exchange_rate_conversion",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "一些工具"

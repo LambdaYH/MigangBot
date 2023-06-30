@@ -20,12 +20,8 @@ __plugin_meta__ = PluginMetadata(
 说明：
     模式中的zh表示中文，en表示英文，zhen就表示使用中文描述找英文词，其他同理
 """.strip(),
-    extra={
-        "unique_name": "migang_wantwords",
-        "example": "",
-        "author": "migang",
-        "version": "0.0.1",
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "一些工具"
 

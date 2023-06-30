@@ -21,12 +21,8 @@ usage：
     指令：
         /nn
 """.strip(),
-    extra={
-        "unique_name": "migang_ffxiv_nuannuan",
-        "example": "/nn\n/暖暖\n/nuannuan",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_category__ = "FF14"
 

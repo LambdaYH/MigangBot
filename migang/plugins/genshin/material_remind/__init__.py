@@ -23,12 +23,8 @@ usage：
     指令：
         今日素材/今天素材
 """.strip(),
-    extra={
-        "unique_name": "migang_gushi",
-        "example": "",
-        "author": "HibiKier",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "原神相关"

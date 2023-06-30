@@ -30,12 +30,8 @@ __plugin_meta__ = PluginMetadata(
     前两个指令会修改欢迎语
     后两个指令仅改变欢迎语的启用状态
 """.strip(),
-    extra={
-        "unique_name": "migang_group_welcome",
-        "example": "rua",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "群功能"

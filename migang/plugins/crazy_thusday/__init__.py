@@ -24,12 +24,8 @@ usage：
         疯狂星期[一|二|三|四|五|六|日]
         狂乱[月|火|水|木|金|土|日]曜日
 """.strip(),
-    extra={
-        "unique_name": "migang_crazy_thusday",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

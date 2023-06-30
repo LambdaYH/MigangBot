@@ -17,12 +17,8 @@ usage：
     指令：
         .dismiss [bot QQ号后四位] 使bot退群
 """.strip(),
-    extra={
-        "unique_name": "migang_dismiss",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 __plugin_config__ = ConfigItem(
     key="leave_msg", initial_value="哼！走了", default_value="", description="退群前最后说的话（"

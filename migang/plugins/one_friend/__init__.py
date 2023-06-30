@@ -17,12 +17,8 @@ __plugin_meta__ = PluginMetadata(
 指令：
     我有一个朋友想问问 [文本] [at]: 当at时你的朋友就是艾特对象（但是有可能会反弹
 """.strip(),
-    extra={
-        "unique_name": "migang_one_friend",
-        "example": "",
-        "author": "migang",
-        "version": "0.0.1",
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

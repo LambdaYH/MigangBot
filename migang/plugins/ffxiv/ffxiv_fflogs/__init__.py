@@ -36,9 +36,8 @@ __plugin_meta__ = PluginMetadata(
 /dps me 角色名 服务器名
 查询他人绑定的角色
 /dps @他人""",
-    extra={
-        "adapters": ["OneBot V11", "OneBot V12"],
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "FF14"

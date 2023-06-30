@@ -27,12 +27,8 @@ usage：
         /house 拂晓之间 森都
         /house 拂晓之间 部队 森都 s
 """.strip(),
-    extra={
-        "unique_name": "migang_ffxiv_house",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "FF14"

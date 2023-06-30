@@ -40,12 +40,8 @@ usage：
 
         任何时候发送取消交易都能取消当前交易
 """.strip(),
-    extra={
-        "unique_name": "migang_user_trade",
-        "example": "交易系统",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "基础功能"

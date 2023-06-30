@@ -25,12 +25,8 @@ usage：
     指令:
         翻看答案 + 问题
 """.strip(),
-    extra={
-        "unique_name": "migang_answers_book",
-        "example": "翻看答案",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"

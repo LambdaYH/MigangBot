@@ -13,12 +13,8 @@ __plugin_meta__ = PluginMetadata(
     /duilian 上联
 由https://ai.binwang.me/couplet提供
 """.strip(),
-    extra={
-        "unique_name": "migang_duilian",
-        "example": "",
-        "author": "migang",
-        "version": "0.0.1",
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 duilian = on_startswith("/duilian", priority=5, block=True)

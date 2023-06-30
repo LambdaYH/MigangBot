@@ -44,12 +44,8 @@ usage：
         修改商品 goods:商品名 设置名:参数
         修改商品 group:组名 设置名:参数
 """.strip(),
-    extra={
-        "unique_name": "migang_shop",
-        "example": "rua",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "基础功能"

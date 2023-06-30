@@ -18,12 +18,8 @@ usage：
     指令：
         .send xxx
 """.strip(),
-    extra={
-        "unique_name": "migang_feedback",
-        "example": ".send 早上好",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "基础功能"

@@ -28,12 +28,8 @@ usage：
         [空调类型] 查看空调类型
         [升级空调/降级空调] 调整空调类型
 """.strip(),
-    extra={
-        "unique_name": "migang_aircon",
-        "example": "开空调",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "群功能"

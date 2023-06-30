@@ -28,12 +28,8 @@ usage：
 支持的语言：
 {list_supp_lang(7)}
 """.strip(),
-    extra={
-        "unique_name": "migang_code_runner",
-        "example": "",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 _flmt_notice = choice(["稍微慢一点哦~", "不要这么着急！", "歇会歇会~~"])

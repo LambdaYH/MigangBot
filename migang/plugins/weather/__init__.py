@@ -22,12 +22,8 @@ usage：
         查询天气：xx天气/天气xx，支持地名和艾欧泽亚地名
         查询艾欧泽亚时间：/et
 """.strip(),
-    extra={
-        "unique_name": "migang_weather",
-        "example": "宁波天气\n海都天气\n天气森都\n/et",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 

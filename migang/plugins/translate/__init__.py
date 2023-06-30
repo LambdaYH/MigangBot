@@ -42,12 +42,8 @@ __plugin_meta__ = PluginMetadata(
 #### 百度翻译支持的语言有
 {get_language_form(baidu_language)}
 """.strip(),
-    extra={
-        "unique_name": "migang_translate",
-        "example": "翻译 hello",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "一些工具"

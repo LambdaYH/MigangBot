@@ -10,12 +10,8 @@ __plugin_meta__ = PluginMetadata(
     name="退群提醒_",
     description="群员退出时提醒",
     usage="",
-    extra={
-        "unique_name": "migang_group_leave",
-        "example": "rua",
-        "author": "migang",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "群功能"

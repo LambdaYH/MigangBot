@@ -60,12 +60,8 @@ usage：
         更新fgo信息
         更新阴阳师信息
 """.strip(),
-    extra={
-        "unique_name": "migang_game_draw",
-        "example": "",
-        "author": "HibiKier",
-        "version": 0.1,
-    },
+    type="application",
+    supported_adapters={"~onebot.v11"},
 )
 
 __plugin_category__ = "好玩的"
