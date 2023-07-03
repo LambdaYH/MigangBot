@@ -101,7 +101,7 @@ dependencies = [
 
 [[package]]
 name = "arclet-alconna"
-version = "1.7.7"
+version = "1.7.8"
 requires_python = ">=3.8"
 summary = "A High-performance, Generality, Humane Command Line Arguments Parser Library."
 dependencies = [
@@ -112,11 +112,11 @@ dependencies = [
 
 [[package]]
 name = "arclet-alconna-tools"
-version = "0.6.1"
+version = "0.6.2"
 requires_python = ">=3.8"
 summary = "Builtin Tools for Alconna"
 dependencies = [
-    "arclet-alconna>=1.7.7",
+    "arclet-alconna>=1.7.8",
     "nepattern<0.6.0,>=0.5.8",
 ]
 
@@ -179,7 +179,7 @@ summary = "Classes Without Boilerplate"
 
 [[package]]
 name = "azure-cognitiveservices-speech"
-version = "1.29.0"
+version = "1.30.0"
 requires_python = ">=3.7"
 summary = "Microsoft Cognitive Services Speech SDK for Python"
 
@@ -472,12 +472,13 @@ summary = "Up-to-date simple useragent faker with real world database"
 
 [[package]]
 name = "fastapi"
-version = "0.98.0"
+version = "0.99.1"
 requires_python = ">=3.7"
 summary = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 dependencies = [
     "pydantic!=1.8,!=1.8.1,<2.0.0,>=1.7.4",
     "starlette<0.28.0,>=0.27.0",
+    "typing-extensions>=4.5.0",
 ]
 
 [[package]]
@@ -1054,11 +1055,11 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-localstore"
-version = "0.4.1"
+version = "0.5.0"
 requires_python = ">=3.8,<4.0"
 summary = "Local Storage Support for NoneBot2"
 dependencies = [
-    "nonebot2<3.0.0,>=2.0.0-rc.1",
+    "nonebot2<3.0.0,>=2.0.0",
     "typing-extensions>=4.0.0",
 ]
 
@@ -1391,12 +1392,10 @@ dependencies = [
 [[package]]
 name = "pydantic"
 version = "1.10.10"
-extras = ["dotenv"]
 requires_python = ">=3.7"
 summary = "Data validation and settings management using python type hints"
 dependencies = [
-    "pydantic==1.10.10",
-    "python-dotenv>=0.10.4",
+    "typing-extensions>=4.2.0",
 ]
 
 [[package]]
@@ -1819,7 +1818,7 @@ dependencies = [
 
 [[package]]
 name = "typing-extensions"
-version = "4.7.0"
+version = "4.7.1"
 requires_python = ">=3.7"
 summary = "Backported and Experimental Type Hints for Python 3.7+"
 
@@ -2079,13 +2078,13 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/d0/08/952d9570f4897dc2b30166fca5afd3a2cd19b3d408abdb470978484e8a09/APScheduler-3.10.1-py3-none-any.whl", hash = "sha256:e813ad5ada7aff36fb08cdda746b520531eaac7757832abc204868ba78e0c8f6"},
     {url = "https://files.pythonhosted.org/packages/ea/ed/f1ad88e88208c24db80dcaae7a5a339bb283956984f8fa59933d2806413a/APScheduler-3.10.1.tar.gz", hash = "sha256:0293937d8f6051a0f493359440c1a1b93e882c57daf0197afeff0e727777b96e"},
 ]
-"arclet-alconna 1.7.7" = [
-    {url = "https://files.pythonhosted.org/packages/87/f3/ee4aa593a5e12ade6ebe033ca67a66ffa35a57f93e4efd6d460e29129770/arclet_alconna-1.7.7-py3-none-any.whl", hash = "sha256:46f39cacdf85993ca86e88842b697880a6e4662d40b2c05ccb2909ac39cb0320"},
-    {url = "https://files.pythonhosted.org/packages/e0/ee/4d384f1111db814cd91084969f5761e98a6971d33cb6bb6b89995d1bea40/arclet-alconna-1.7.7.tar.gz", hash = "sha256:86c4a6297b005f2ca817e03c02430c2b7da241c856645db56b61a91baa8b14ff"},
+"arclet-alconna 1.7.8" = [
+    {url = "https://files.pythonhosted.org/packages/c6/db/97e0f4658f256f534a6a058447552b56cfa19b7c961c652ed0fbbad0170b/arclet-alconna-1.7.8.tar.gz", hash = "sha256:e378e886c5dec31b9c255f37445d22cb08366a3d92490a326fcc38138c598b24"},
+    {url = "https://files.pythonhosted.org/packages/d1/53/b9b76bc4a0b4a83c4eaf3b77c2ac7af8e26072ed45f5266205b7fcfeff56/arclet_alconna-1.7.8-py3-none-any.whl", hash = "sha256:4bbcc65b43c51dc6919be49916ebe47f518f402bfe38ef93dc2f14e1821eda10"},
 ]
-"arclet-alconna-tools 0.6.1" = [
-    {url = "https://files.pythonhosted.org/packages/94/fd/f576afeab4c890fb1db9311059000406cad140034e5fe1cdfb2195fa2321/arclet-alconna-tools-0.6.1.tar.gz", hash = "sha256:7808b638dd5264c4adc98f35a8b4021196c09f4ea95cd036261a2b7d079f7bde"},
-    {url = "https://files.pythonhosted.org/packages/a0/e9/f2ff6c6e20623da3c675aa1f242108737a83604030001ecdc5707aa95cd7/arclet_alconna_tools-0.6.1-py3-none-any.whl", hash = "sha256:cc46fe361c15f2728c189b5d39db8178ea5e138d5084e3fd705762d1ac722c1b"},
+"arclet-alconna-tools 0.6.2" = [
+    {url = "https://files.pythonhosted.org/packages/5f/78/858e6a9d95405fb6bd36c7a049e1697f7f905f328d0129ec2d2368fd9114/arclet_alconna_tools-0.6.2-py3-none-any.whl", hash = "sha256:28eac57267d6fb3583c311ab01512e9f0d4eb0495ae1b67cb8bdcc1458a260c5"},
+    {url = "https://files.pythonhosted.org/packages/c1/4f/3158e3b613ca5ac9955fdd2a7d97429541cf99cf355ff8f79184822ec9a5/arclet-alconna-tools-0.6.2.tar.gz", hash = "sha256:4513fd8e795b5197156e37c2a2b495f9dc1fea9614f829c0faf5a8f3de0e254d"},
 ]
 "arknights-toolkit 0.5.12" = [
     {url = "https://files.pythonhosted.org/packages/b4/ee/8098399d15bede7c083bb5c92afb640f75c68c6b355043cdd5344082f84c/arknights_toolkit-0.5.12-py3-none-any.whl", hash = "sha256:a3252757bb76b3514875fce2b189973adf8c431576704ab33320e5266832bc4e"},
@@ -2149,13 +2148,13 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/97/90/81f95d5f705be17872843536b1868f351805acf6971251ff07c1b8334dbb/attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
     {url = "https://files.pythonhosted.org/packages/f0/eb/fcb708c7bf5056045e9e98f62b93bd7467eb718b0202e7698eb11d66416c/attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04"},
 ]
-"azure-cognitiveservices-speech 1.29.0" = [
-    {url = "https://files.pythonhosted.org/packages/03/23/fdddbbe236b70a99052ae24957935bc57220f6d30891848f3e6fae15e7fb/azure_cognitiveservices_speech-1.29.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:b189c4248b4adf69fc563abe30780c8f09bad6200414bb2b765abe2d44ed8c96"},
-    {url = "https://files.pythonhosted.org/packages/03/f6/3720452bd543c77e8461e2cb9e3c678be29043daf952154effd86ffc4891/azure_cognitiveservices_speech-1.29.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:e9474e3ea19ed44f80c2aa7bc1c5c5e9711c5dbdf0662cb2eec31ff7821dbfa8"},
-    {url = "https://files.pythonhosted.org/packages/64/4d/c93a9e090e981b7ba6887c3c740387ddff4b0b9912c4d652a41971d8e676/azure_cognitiveservices_speech-1.29.0-py3-none-win32.whl", hash = "sha256:7cdc010e4a4586e78d3a265931520ca0422eed8145d37a7dd1e448e437945e08"},
-    {url = "https://files.pythonhosted.org/packages/7a/b3/dee60afadff09ddf68aa1ab14e908c3fc0b0cad8415e1e3c93a7f469d246/azure_cognitiveservices_speech-1.29.0-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:1beda741dd6e49564e9d970c606f1ea7e007969069842b19327abce119175774"},
-    {url = "https://files.pythonhosted.org/packages/8c/a0/0d9a750a3183d989e5814407c48ece27df81ca1c11a60d51f04c6e86cabf/azure_cognitiveservices_speech-1.29.0-py3-none-win_amd64.whl", hash = "sha256:cdba9d39fd9e7ee7cf49c54e8a3ba2b217469219b3a35cb3c993f32ca00d217c"},
-    {url = "https://files.pythonhosted.org/packages/c5/0e/3aacc204c54aa15250f7dbf2ecc96727716299fe90f1cf64f656b5434cee/azure_cognitiveservices_speech-1.29.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:cea4984bd3fa582c41ba8ec79cd37f55380bb386e09ca155ae2aac343c8bdac5"},
+"azure-cognitiveservices-speech 1.30.0" = [
+    {url = "https://files.pythonhosted.org/packages/32/2a/1e7746ca456e525f50b40be24d1460d151380e86160527d8e48a8b524e5e/azure_cognitiveservices_speech-1.30.0-py3-none-win_amd64.whl", hash = "sha256:317ca6042dc15a29b2d024e1e76010f4a61cdf2c049bc543d84a08353c35d950"},
+    {url = "https://files.pythonhosted.org/packages/66/7a/9af89754406a40b13d2e0a286f263d3cce0027df0da53f08d0d981462fef/azure_cognitiveservices_speech-1.30.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:e5ea3af227fd84049f6fe9f42439c615678ee5fe82f14badde33e4bbc0fab019"},
+    {url = "https://files.pythonhosted.org/packages/7e/37/ed850ad2693fe8e225e0c0dbf6d793e9da9c3bc36fe3efa6881e2000e058/azure_cognitiveservices_speech-1.30.0-py3-none-win32.whl", hash = "sha256:b1c1c3d480a7f30d1999718d765ebb2e1ea85535637b4d5f24c01af903701991"},
+    {url = "https://files.pythonhosted.org/packages/a6/15/7db29837613e9adb4988aac2db1cbef1a886014517830dc8f85496faee44/azure_cognitiveservices_speech-1.30.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:6380074fbc29d5f7ec9d7fe6f5de57628d672381e810860c0904936cad90d59d"},
+    {url = "https://files.pythonhosted.org/packages/d4/2b/3aff3cfb41134738a6a6b5734e736f37a1e249e205555842c1ea7c2e412b/azure_cognitiveservices_speech-1.30.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:120820e54519e50fe9ea4677df0ae3cc39ef432eed9450163238d84e4b2c5b65"},
+    {url = "https://files.pythonhosted.org/packages/d4/38/dab78d48899d47cb92ba631cf2d082b2be0dd190db46fb47be58604d192d/azure_cognitiveservices_speech-1.30.0-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:1d6ab8b6dd50675644e62fd08e6a4dc26a3da9176f9801d9b987a43539acdee0"},
 ]
 "bbcode 1.1.0" = [
     {url = "https://files.pythonhosted.org/packages/2c/6d/18cdee16855ecf972c64969bb920735a4fbebb4f2b0a3b3881acb5fb7728/bbcode-1.1.0-py2.py3-none-any.whl", hash = "sha256:83802f4b40c92426841a98350bd6ff9ea8fdf8f9b37df1968a88c5864fd225fa"},
@@ -2633,9 +2632,9 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/1c/ed/05c6beb88d82c13ae84394604f5a292ddf9a37f088850aa5cbc8a091e711/fake-useragent-1.1.3.tar.gz", hash = "sha256:1c06f0aa7d6e4894b919b30b9c7ebd72ff497325191057fbb5df3d5db06b93fc"},
     {url = "https://files.pythonhosted.org/packages/8d/f3/28e7af53e09c9218140901dc23fdd75cdaf3e64d1d06f61801cf2a841bcb/fake_useragent-1.1.3-py3-none-any.whl", hash = "sha256:695d3b1bf7d11d04ab0f971fb73b0ca8de98b78bbadfbc8bacbc9a48423f7531"},
 ]
-"fastapi 0.98.0" = [
-    {url = "https://files.pythonhosted.org/packages/50/2c/6b94f191519dcc8190e78aff7bcb12c58329d1ab4c8aa11f2def9c214599/fastapi-0.98.0-py3-none-any.whl", hash = "sha256:f4165fb1fe3610c52cb1b8282c1480de9c34bc270f56a965aa93a884c350d605"},
-    {url = "https://files.pythonhosted.org/packages/eb/e4/35797cc07d279206e6b61ff77333b4a50637204c77141f89c829d7318fac/fastapi-0.98.0.tar.gz", hash = "sha256:0d3c18886f652038262b5898fec6b09f4ca92ee23e9d9b1d1d24e429f84bf27b"},
+"fastapi 0.99.1" = [
+    {url = "https://files.pythonhosted.org/packages/22/93/42b9998a6e28eaee90724db439e27a66b7dc6a5b9e85499add1e042141e2/fastapi-0.99.1.tar.gz", hash = "sha256:ac78f717cd80d657bd183f94d33b9bda84aa376a46a9dab513586b8eef1dc6fc"},
+    {url = "https://files.pythonhosted.org/packages/73/eb/03b691afa0b5ffa1e93ed34f97ec1e7855c758efbdcfb16c209af0b0506b/fastapi-0.99.1-py3-none-any.whl", hash = "sha256:976df7bab51ac7beda9f68c4513b8c4490b5c1135c72aafd0a5ee4023ec5282e"},
 ]
 "feedparser 6.0.10" = [
     {url = "https://files.pythonhosted.org/packages/63/9a/824e3c036dec4f0adb4e7c36dcf4cbffc9ee317a4985218cb1663c7ab4ad/feedparser-6.0.10.tar.gz", hash = "sha256:27da485f4637ce7163cdeab13a80312b93b7d0c1b775bef4a47629a3110bca51"},
@@ -3526,9 +3525,9 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/7d/dd/db3ffc82594f9ac0bb2d2beb6bab10f2caa43197f0297c02a0954df5691c/nonebot_plugin_imagetools-0.2.1.tar.gz", hash = "sha256:a991e002e6d61fef58cc33048bc276930fa0814afea824a9cc16d3d27301170e"},
     {url = "https://files.pythonhosted.org/packages/8c/59/b02845ba6e58b8f81db100150e1c2acb8e19431b24607e1a68a98ed4160c/nonebot_plugin_imagetools-0.2.1-py3-none-any.whl", hash = "sha256:ab41505b3dc193e5130b2e8c8e8b7bca63b202b4e5418a0eb545b3f2ee8f242b"},
 ]
-"nonebot-plugin-localstore 0.4.1" = [
-    {url = "https://files.pythonhosted.org/packages/27/d4/c863b32d301825ae9fab59cfbe5c74817df4b19d7a3e150426c25c4d2f75/nonebot_plugin_localstore-0.4.1.tar.gz", hash = "sha256:9b6dcb98f6a4e48c5c80b2319acc2e1c424462261a210491d437f5b96abb5d67"},
-    {url = "https://files.pythonhosted.org/packages/d1/06/bd1ada3f75c6a511f14dc9f2fa836cca75d3ca35b30db5c50e4ef0393bec/nonebot_plugin_localstore-0.4.1-py3-none-any.whl", hash = "sha256:dea442fcf8baa5898c15ccea761703cdde46e6fc6bb1c886261b0ab793db8193"},
+"nonebot-plugin-localstore 0.5.0" = [
+    {url = "https://files.pythonhosted.org/packages/02/b5/d5d93672d6e93c976acc3b48730bbeae06d5c2c6f0f6b9e2407d52e60143/nonebot_plugin_localstore-0.5.0.tar.gz", hash = "sha256:0099d99c427b13c52b6a23588b954dc8651c0b0b556d743f36aa2dd246576611"},
+    {url = "https://files.pythonhosted.org/packages/7c/21/b653d8801ef1172da2a467bbb9d9813787c7343f370e175515f4bff23ba1/nonebot_plugin_localstore-0.5.0-py3-none-any.whl", hash = "sha256:31ada7d363bdc9326e14f054d02f2c8cee58ec7a970e534ac2793d75b818cf95"},
 ]
 "nonebot-plugin-memes 0.4.6" = [
     {url = "https://files.pythonhosted.org/packages/49/8f/c3f7db44d4e4a6b201fc5c69fe9f4d34eda8bf5d5db68146e230f6d780e0/nonebot_plugin_memes-0.4.6-py3-none-any.whl", hash = "sha256:ec77f476093f5f9ab08398cf389f1a3cca2f9c2ceaf0e11d9d010f3b4028a26a"},
@@ -3618,6 +3617,8 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/09/e3/e7078405a326d44ead9a8f24b9ec839ff3bd689545f5a1c7ac0f5bd802a5/opencv_python_headless-4.8.0.74-cp37-abi3-win32.whl", hash = "sha256:b52a6eb2d92fff0f660e6aade958cb4373fbfcbafa0488f7ae88c4e6ce3f47f6"},
     {url = "https://files.pythonhosted.org/packages/60/e7/a6dedca760db7a4686fd3b6053487ad4ad4d8f0591295dc8a9cf35269c42/opencv_python_headless-4.8.0.74-cp37-abi3-win_amd64.whl", hash = "sha256:19d30269ae710f67e0ae549361a68b755e28599a572d5f72d0bbb177ab438a28"},
     {url = "https://files.pythonhosted.org/packages/76/02/f128517f3ade4bb5f71e2afd8461dba70e3f466ce745fa1fd1fade9ad1b7/opencv_python_headless-4.8.0.74-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f8a88620c43a5d17f7df8317767da93b935656ab9236df92e1e2e0dd23195756"},
+    {url = "https://files.pythonhosted.org/packages/9d/df/88bc1f767d880d4629d71d6d3907bf89aea4506b828e9ede7d3846a0912d/opencv_python_headless-4.8.0.74-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:7c88744ce922b81747c86f2b7f1b3ec84ff2f53477ee9219a5e75ae2012b443f"},
+    {url = "https://files.pythonhosted.org/packages/dd/a2/c7f0d3e485962ea646ff749e881256b4633d87cb105c9c0a5df3f8284b7f/opencv_python_headless-4.8.0.74-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:34e92fef90e8f768d92dca875aefaff8b11556427f82484378a3848eb690d4c0"},
     {url = "https://files.pythonhosted.org/packages/e4/73/b46073efb9ab0e07dae64d5b0229825eb19cc393d9f5ba8ec9d693e4e5f3/opencv-python-headless-4.8.0.74.tar.gz", hash = "sha256:a72770b8f2e08358b1faa41c8372b17d040aa9bb3e446ab7090e358f6f4e91ba"},
 ]
 "orjson 3.9.1" = [
@@ -4499,9 +4500,9 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/5b/0b/e45d26ccd28568013523e04f325432ea88a442b4e3020b757cf4361f0120/transformers-4.30.2-py3-none-any.whl", hash = "sha256:c332e3a3097f9ed89ce556b403251235931c00237b8bc2d7adaa19d226c13f1d"},
     {url = "https://files.pythonhosted.org/packages/cf/33/b4b6f44f1d0ccf39de69de2fcbcb98847b42594c8d078e216f5369c1292e/transformers-4.30.2.tar.gz", hash = "sha256:f4a8aac4e1baffab4033f4a345b0d7dc7957d12a4f1ba969afea08205a513045"},
 ]
-"typing-extensions 4.7.0" = [
-    {url = "https://files.pythonhosted.org/packages/57/e3/b37a6b1ce6c1b2b75d05997ec24f73c794bc05a587e0f30a532d0ab13cb2/typing_extensions-4.7.0.tar.gz", hash = "sha256:935ccf31549830cda708b42289d44b6f74084d616a00be651601a4f968e77c82"},
-    {url = "https://files.pythonhosted.org/packages/7e/4d/b0185d077dc1cd070a56859a0ba3bb6e76618393ec693e59faf1368da8f6/typing_extensions-4.7.0-py3-none-any.whl", hash = "sha256:5d8c9dac95c27d20df12fb1d97b9793ab8b2af8a3a525e68c80e21060c161771"},
+"typing-extensions 4.7.1" = [
+    {url = "https://files.pythonhosted.org/packages/3c/8b/0111dd7d6c1478bf83baa1cab85c686426c7a6274119aceb2bd9d35395ad/typing_extensions-4.7.1.tar.gz", hash = "sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2"},
+    {url = "https://files.pythonhosted.org/packages/ec/6b/63cc3df74987c36fe26157ee12e09e8f9db4de771e0f3404263117e75b95/typing_extensions-4.7.1-py3-none-any.whl", hash = "sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36"},
 ]
 "tzdata 2023.3" = [
     {url = "https://files.pythonhosted.org/packages/70/e5/81f99b9fced59624562ab62a33df639a11b26c582be78864b339dafa420d/tzdata-2023.3.tar.gz", hash = "sha256:11ef1e08e54acb0d4f95bdb1be05da659673de4acbd21bf9c69e94cc5e907a3a"},
