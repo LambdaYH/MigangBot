@@ -379,6 +379,7 @@ async def _build_html_image(
         pages={
             "viewport": {"width": 1900, "height": 975},
         },
+        device_scale_factor=None,
     )
     return pic
 
@@ -420,5 +421,6 @@ async def get_task_image(group_id: int) -> bytes:
         pages={
             "viewport": {"width": 850, "height": 975},
         },
+        device_scale_factor=None,
     )
     return pic

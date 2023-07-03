@@ -179,7 +179,7 @@ summary = "Classes Without Boilerplate"
 
 [[package]]
 name = "azure-cognitiveservices-speech"
-version = "1.29.0"
+version = "1.30.0"
 requires_python = ">=3.7"
 summary = "Microsoft Cognitive Services Speech SDK for Python"
 
@@ -1025,15 +1025,15 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-htmlrender"
-version = "0.2.0.3"
-requires_python = ">=3.8,<4.0"
+version = "0.2.1"
+requires_python = "<4.0,>=3.8"
 summary = "通过浏览器渲染图片"
 dependencies = [
     "Pygments>=2.10.0",
     "aiofiles>=0.8.0",
     "jinja2>=3.0.3",
     "markdown>=3.3.6",
-    "nonebot2>=2.0.0-beta.1",
+    "nonebot2[fastapi]>=2.0.0",
     "playwright>=1.17.2",
     "pymdown-extensions>=9.1",
     "python-markdown-math>=0.8",
@@ -1955,7 +1955,7 @@ dependencies = [
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "format", "git"]
-content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c462b19e"
+content_hash = "sha256:ba8d6e5b6f2e9589d4c63a1fed4a166a9d1217f09e9d1e73f0d22e50518e5fb1"
 
 [metadata.files]
 "aiocache 0.12.1" = [
@@ -2149,13 +2149,13 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/97/90/81f95d5f705be17872843536b1868f351805acf6971251ff07c1b8334dbb/attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
     {url = "https://files.pythonhosted.org/packages/f0/eb/fcb708c7bf5056045e9e98f62b93bd7467eb718b0202e7698eb11d66416c/attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04"},
 ]
-"azure-cognitiveservices-speech 1.29.0" = [
-    {url = "https://files.pythonhosted.org/packages/03/23/fdddbbe236b70a99052ae24957935bc57220f6d30891848f3e6fae15e7fb/azure_cognitiveservices_speech-1.29.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:b189c4248b4adf69fc563abe30780c8f09bad6200414bb2b765abe2d44ed8c96"},
-    {url = "https://files.pythonhosted.org/packages/03/f6/3720452bd543c77e8461e2cb9e3c678be29043daf952154effd86ffc4891/azure_cognitiveservices_speech-1.29.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:e9474e3ea19ed44f80c2aa7bc1c5c5e9711c5dbdf0662cb2eec31ff7821dbfa8"},
-    {url = "https://files.pythonhosted.org/packages/64/4d/c93a9e090e981b7ba6887c3c740387ddff4b0b9912c4d652a41971d8e676/azure_cognitiveservices_speech-1.29.0-py3-none-win32.whl", hash = "sha256:7cdc010e4a4586e78d3a265931520ca0422eed8145d37a7dd1e448e437945e08"},
-    {url = "https://files.pythonhosted.org/packages/7a/b3/dee60afadff09ddf68aa1ab14e908c3fc0b0cad8415e1e3c93a7f469d246/azure_cognitiveservices_speech-1.29.0-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:1beda741dd6e49564e9d970c606f1ea7e007969069842b19327abce119175774"},
-    {url = "https://files.pythonhosted.org/packages/8c/a0/0d9a750a3183d989e5814407c48ece27df81ca1c11a60d51f04c6e86cabf/azure_cognitiveservices_speech-1.29.0-py3-none-win_amd64.whl", hash = "sha256:cdba9d39fd9e7ee7cf49c54e8a3ba2b217469219b3a35cb3c993f32ca00d217c"},
-    {url = "https://files.pythonhosted.org/packages/c5/0e/3aacc204c54aa15250f7dbf2ecc96727716299fe90f1cf64f656b5434cee/azure_cognitiveservices_speech-1.29.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:cea4984bd3fa582c41ba8ec79cd37f55380bb386e09ca155ae2aac343c8bdac5"},
+"azure-cognitiveservices-speech 1.30.0" = [
+    {url = "https://files.pythonhosted.org/packages/32/2a/1e7746ca456e525f50b40be24d1460d151380e86160527d8e48a8b524e5e/azure_cognitiveservices_speech-1.30.0-py3-none-win_amd64.whl", hash = "sha256:317ca6042dc15a29b2d024e1e76010f4a61cdf2c049bc543d84a08353c35d950"},
+    {url = "https://files.pythonhosted.org/packages/66/7a/9af89754406a40b13d2e0a286f263d3cce0027df0da53f08d0d981462fef/azure_cognitiveservices_speech-1.30.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:e5ea3af227fd84049f6fe9f42439c615678ee5fe82f14badde33e4bbc0fab019"},
+    {url = "https://files.pythonhosted.org/packages/7e/37/ed850ad2693fe8e225e0c0dbf6d793e9da9c3bc36fe3efa6881e2000e058/azure_cognitiveservices_speech-1.30.0-py3-none-win32.whl", hash = "sha256:b1c1c3d480a7f30d1999718d765ebb2e1ea85535637b4d5f24c01af903701991"},
+    {url = "https://files.pythonhosted.org/packages/a6/15/7db29837613e9adb4988aac2db1cbef1a886014517830dc8f85496faee44/azure_cognitiveservices_speech-1.30.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:6380074fbc29d5f7ec9d7fe6f5de57628d672381e810860c0904936cad90d59d"},
+    {url = "https://files.pythonhosted.org/packages/d4/2b/3aff3cfb41134738a6a6b5734e736f37a1e249e205555842c1ea7c2e412b/azure_cognitiveservices_speech-1.30.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:120820e54519e50fe9ea4677df0ae3cc39ef432eed9450163238d84e4b2c5b65"},
+    {url = "https://files.pythonhosted.org/packages/d4/38/dab78d48899d47cb92ba631cf2d082b2be0dd190db46fb47be58604d192d/azure_cognitiveservices_speech-1.30.0-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:1d6ab8b6dd50675644e62fd08e6a4dc26a3da9176f9801d9b987a43539acdee0"},
 ]
 "bbcode 1.1.0" = [
     {url = "https://files.pythonhosted.org/packages/2c/6d/18cdee16855ecf972c64969bb920735a4fbebb4f2b0a3b3881acb5fb7728/bbcode-1.1.0-py2.py3-none-any.whl", hash = "sha256:83802f4b40c92426841a98350bd6ff9ea8fdf8f9b37df1968a88c5864fd225fa"},
@@ -3518,9 +3518,9 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/63/ec/e0c73e82b29c4c0cb600e8dbeb8c859fc070aeb6d69ec538838ef7efb759/nonebot_plugin_hikarisearch-0.1.7-py3-none-any.whl", hash = "sha256:7242bcf71dac3a8341fa2bc409c884291140b0ade74d65d9ab842cc43c0a3af7"},
     {url = "https://files.pythonhosted.org/packages/ca/ae/be7862e5b17482ceadd75b195d53f65f888d37f7d7eaecf257a464bf195b/nonebot_plugin_hikarisearch-0.1.7.tar.gz", hash = "sha256:abcae504c19d30952236ff963bc7dbd35bd777dd560be03299856bf552da7c40"},
 ]
-"nonebot-plugin-htmlrender 0.2.0.3" = [
-    {url = "https://files.pythonhosted.org/packages/39/a8/acc4c2424715d2f3510396d396ebb715a4f3200ee234a22043b98f82ea91/nonebot_plugin_htmlrender-0.2.0.3-py3-none-any.whl", hash = "sha256:2a45d811513bd03dfe6825f6229f50f1e65a390d4ae9c5413184d6de42147147"},
-    {url = "https://files.pythonhosted.org/packages/e7/f8/a9dccb4308f4ac1236025806dd13fd3b2d1e954a3e61726e46409b0a5c6d/nonebot_plugin_htmlrender-0.2.0.3.tar.gz", hash = "sha256:d7e0432ebb78abbc7d934141902722d36334ef12921f640da4c90dedb62452fb"},
+"nonebot-plugin-htmlrender 0.2.1" = [
+    {url = "https://files.pythonhosted.org/packages/2c/3a/da1393c7e0fe8c42d2285ef72b02075152f3a13ed1c134bdc4ea29342359/nonebot_plugin_htmlrender-0.2.1-py3-none-any.whl", hash = "sha256:caf26189fdfec1eb20c022a39da2758bf239285ccc3428756ea5446f91125df4"},
+    {url = "https://files.pythonhosted.org/packages/3d/e2/91993a74c1ead832960d4da0fe348660d0563b87edf48908279bf66fd971/nonebot_plugin_htmlrender-0.2.1.tar.gz", hash = "sha256:da5d28366846eccc0037386a08834d234883a933a49f647ea56842fe1aa2e43f"},
 ]
 "nonebot-plugin-imagetools 0.2.1" = [
     {url = "https://files.pythonhosted.org/packages/7d/dd/db3ffc82594f9ac0bb2d2beb6bab10f2caa43197f0297c02a0954df5691c/nonebot_plugin_imagetools-0.2.1.tar.gz", hash = "sha256:a991e002e6d61fef58cc33048bc276930fa0814afea824a9cc16d3d27301170e"},
@@ -3618,6 +3618,8 @@ content_hash = "sha256:b3be218c4f16445454f418143e6c53e8a61e7501ee3005f0fbc7af32c
     {url = "https://files.pythonhosted.org/packages/09/e3/e7078405a326d44ead9a8f24b9ec839ff3bd689545f5a1c7ac0f5bd802a5/opencv_python_headless-4.8.0.74-cp37-abi3-win32.whl", hash = "sha256:b52a6eb2d92fff0f660e6aade958cb4373fbfcbafa0488f7ae88c4e6ce3f47f6"},
     {url = "https://files.pythonhosted.org/packages/60/e7/a6dedca760db7a4686fd3b6053487ad4ad4d8f0591295dc8a9cf35269c42/opencv_python_headless-4.8.0.74-cp37-abi3-win_amd64.whl", hash = "sha256:19d30269ae710f67e0ae549361a68b755e28599a572d5f72d0bbb177ab438a28"},
     {url = "https://files.pythonhosted.org/packages/76/02/f128517f3ade4bb5f71e2afd8461dba70e3f466ce745fa1fd1fade9ad1b7/opencv_python_headless-4.8.0.74-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f8a88620c43a5d17f7df8317767da93b935656ab9236df92e1e2e0dd23195756"},
+    {url = "https://files.pythonhosted.org/packages/9d/df/88bc1f767d880d4629d71d6d3907bf89aea4506b828e9ede7d3846a0912d/opencv_python_headless-4.8.0.74-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:7c88744ce922b81747c86f2b7f1b3ec84ff2f53477ee9219a5e75ae2012b443f"},
+    {url = "https://files.pythonhosted.org/packages/dd/a2/c7f0d3e485962ea646ff749e881256b4633d87cb105c9c0a5df3f8284b7f/opencv_python_headless-4.8.0.74-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:34e92fef90e8f768d92dca875aefaff8b11556427f82484378a3848eb690d4c0"},
     {url = "https://files.pythonhosted.org/packages/e4/73/b46073efb9ab0e07dae64d5b0229825eb19cc393d9f5ba8ec9d693e4e5f3/opencv-python-headless-4.8.0.74.tar.gz", hash = "sha256:a72770b8f2e08358b1faa41c8372b17d040aa9bb3e446ab7090e358f6f4e91ba"},
 ]
 "orjson 3.9.1" = [
