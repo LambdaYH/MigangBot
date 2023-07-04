@@ -61,16 +61,15 @@ sudo make altinstall
 不知道哪个发行版的默认python3是python3.10
 </details>
 
-4.  安装poetry
+4.  安装pdm
 ```
-pip3.10 install poetry
+pip3.10 install pdm
 ```
 5.  下载MigangBot并安装依赖
 ```
 git clone https://github.com/LambdaYH/MigangBot.git
 cd MigangBot
-poetry shell
-poetry install
+pdm install
 ```
 6.  配置数据库（若跳过这步则使用sqlite）
 ```
@@ -98,7 +97,7 @@ sudo supervisorctl update
 sudo apt install screen
 python scripts/generate_run_script.py
 screen -S migangbot
-bash run.sh
+pdm run all
 ```
 </details>
 
