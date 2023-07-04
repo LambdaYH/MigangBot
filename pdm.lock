@@ -1026,15 +1026,15 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-htmlrender"
-version = "0.2.0.3"
-requires_python = ">=3.8,<4.0"
+version = "0.2.1"
+requires_python = "<4.0,>=3.8"
 summary = "通过浏览器渲染图片"
 dependencies = [
     "Pygments>=2.10.0",
     "aiofiles>=0.8.0",
     "jinja2>=3.0.3",
     "markdown>=3.3.6",
-    "nonebot2>=2.0.0-beta.1",
+    "nonebot2[fastapi]>=2.0.0",
     "playwright>=1.17.2",
     "pymdown-extensions>=9.1",
     "python-markdown-math>=0.8",
@@ -1392,10 +1392,12 @@ dependencies = [
 [[package]]
 name = "pydantic"
 version = "1.10.10"
+extras = ["dotenv"]
 requires_python = ">=3.7"
 summary = "Data validation and settings management using python type hints"
 dependencies = [
-    "typing-extensions>=4.2.0",
+    "pydantic==1.10.10",
+    "python-dotenv>=0.10.4",
 ]
 
 [[package]]
@@ -1953,8 +1955,8 @@ dependencies = [
 [metadata]
 lock_version = "4.2"
 cross_platform = true
-groups = ["default", "format", "git"]
-content_hash = "sha256:1cf07ae29f63862f2370a52b73dfd311cc69c693e89e31843a9042783cbd4c65"
+groups = ["default", "plugins"]
+content_hash = "sha256:769753882bba9a055a0ec53a338cc9968e334206b17a801f9f36770991800ffd"
 
 [metadata.files]
 "aiocache 0.12.1" = [
@@ -3517,9 +3519,9 @@ content_hash = "sha256:1cf07ae29f63862f2370a52b73dfd311cc69c693e89e31843a9042783
     {url = "https://files.pythonhosted.org/packages/63/ec/e0c73e82b29c4c0cb600e8dbeb8c859fc070aeb6d69ec538838ef7efb759/nonebot_plugin_hikarisearch-0.1.7-py3-none-any.whl", hash = "sha256:7242bcf71dac3a8341fa2bc409c884291140b0ade74d65d9ab842cc43c0a3af7"},
     {url = "https://files.pythonhosted.org/packages/ca/ae/be7862e5b17482ceadd75b195d53f65f888d37f7d7eaecf257a464bf195b/nonebot_plugin_hikarisearch-0.1.7.tar.gz", hash = "sha256:abcae504c19d30952236ff963bc7dbd35bd777dd560be03299856bf552da7c40"},
 ]
-"nonebot-plugin-htmlrender 0.2.0.3" = [
-    {url = "https://files.pythonhosted.org/packages/39/a8/acc4c2424715d2f3510396d396ebb715a4f3200ee234a22043b98f82ea91/nonebot_plugin_htmlrender-0.2.0.3-py3-none-any.whl", hash = "sha256:2a45d811513bd03dfe6825f6229f50f1e65a390d4ae9c5413184d6de42147147"},
-    {url = "https://files.pythonhosted.org/packages/e7/f8/a9dccb4308f4ac1236025806dd13fd3b2d1e954a3e61726e46409b0a5c6d/nonebot_plugin_htmlrender-0.2.0.3.tar.gz", hash = "sha256:d7e0432ebb78abbc7d934141902722d36334ef12921f640da4c90dedb62452fb"},
+"nonebot-plugin-htmlrender 0.2.1" = [
+    {url = "https://files.pythonhosted.org/packages/2c/3a/da1393c7e0fe8c42d2285ef72b02075152f3a13ed1c134bdc4ea29342359/nonebot_plugin_htmlrender-0.2.1-py3-none-any.whl", hash = "sha256:caf26189fdfec1eb20c022a39da2758bf239285ccc3428756ea5446f91125df4"},
+    {url = "https://files.pythonhosted.org/packages/3d/e2/91993a74c1ead832960d4da0fe348660d0563b87edf48908279bf66fd971/nonebot_plugin_htmlrender-0.2.1.tar.gz", hash = "sha256:da5d28366846eccc0037386a08834d234883a933a49f647ea56842fe1aa2e43f"},
 ]
 "nonebot-plugin-imagetools 0.2.1" = [
     {url = "https://files.pythonhosted.org/packages/7d/dd/db3ffc82594f9ac0bb2d2beb6bab10f2caa43197f0297c02a0954df5691c/nonebot_plugin_imagetools-0.2.1.tar.gz", hash = "sha256:a991e002e6d61fef58cc33048bc276930fa0814afea824a9cc16d3d27301170e"},
