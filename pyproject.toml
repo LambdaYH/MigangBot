@@ -39,7 +39,6 @@ dependencies = [
     "cachetools<6.0.0,>=5.3.0",
     "dateparser<2.0.0,>=1.1.7",
     "feedparser<7.0.0,>=6.0.10",
-    "transformers<5.0.0,>=4.30.2",
 ]
 requires-python = ">=3.10,<4.0"
 readme = "README.md"
