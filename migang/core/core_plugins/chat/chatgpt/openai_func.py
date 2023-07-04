@@ -2,12 +2,9 @@ from typing import Dict, List, Tuple, Optional
 
 import openai
 from nonebot.log import logger
-from transformers import GPT2TokenizerFast
 from tenacity import retry, retry_if_exception, stop_after_attempt
 
 from migang.core import sync_get_config
-
-tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
 
 class RetryGetResponse(Exception):
@@ -196,14 +193,6 @@ class TextGenerator:
             return res, True
         except Exception as e:
             return f"请求 OpenAi Api 时发生错误: {e}", False
-
-    # 计算字符串的token数量
-    @staticmethod
-    def cal_token_count(msg: str) -> int:
-        try:
-            return len(tokenizer.encode(msg))
-        except:
-            return 2048
 
 
 text_generator: TextGenerator = TextGenerator(

@@ -178,12 +178,6 @@ async def do_chat(
                     await matcher.send(Message(reply.get(key).strip()))
         await asyncio.sleep(random.random() + 1.5)  # 每条回复之间间隔至少1.5秒
 
-    cost_token = text_generator.cal_token_count(
-        str(prompt_template) + raw_res
-    )  # 计算对话结果的 token 数量
-
-    logger.debug(f'token消耗: {cost_token} | 对话响应: "{raw_res}"')
-
     # 记录回复
     await ChatGPTChatHistory(
         user_id=event.self_id,
