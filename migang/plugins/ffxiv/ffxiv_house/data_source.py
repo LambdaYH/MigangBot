@@ -224,6 +224,8 @@ async def get_house_info(
             houses[-1]["time"] = f"{lottery_end_time(house)} 截止"
         elif house["EndTime"] and lottery_is_prepareing(house):
             houses[-1]["time"] = f"{lottery_end_time(house)} 开始"
+    if len(houses) > 80:
+        raise TimeoutError
     return await template_to_pic(
         template_path=template_path,
         template_name="house.html",

@@ -55,12 +55,15 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
             house_size_id = size
         elif (region := get_region_type_id(arg)) is not None:
             region_type_id = region
-    ret = await get_house_info(
-        server_id=server_id,
-        area=area_id,
-        house_size=house_size_id,
-        region=region_type_id,
-    )
+    try:
+        ret = await get_house_info(
+            server_id=server_id,
+            area=area_id,
+            house_size=house_size_id,
+            region=region_type_id,
+        )
+    except TimeoutError:
+        await house.finish("剩余的空房子太多了，还是前往网页端查看吧https://house.ffxiv.cyou/")
     if ret is None:
         await house.finish("似乎没有空房子了...")
     await house.send(MessageSegment.image(ret))
