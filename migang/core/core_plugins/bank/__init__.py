@@ -46,7 +46,7 @@ bg_path = Path(__file__).parent / "images" / "bg.jpg"
 async def _(event: MessageEvent, cmd: str = Startswith()):
     amount = event.get_plaintext().removeprefix(cmd).strip()
     if not amount.isdigit():
-        await deposit_coins("存入金额必须为正整数")
+        await deposit_coins.finish("存入金额必须为正整数")
     amount = int(amount)
     async with in_transaction() as connection:
         now_gold = await UserProperty.get_gold(
@@ -70,7 +70,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
 async def _(event: MessageEvent, cmd: str = Startswith()):
     amount = event.get_plaintext().removeprefix(cmd).strip()
     if not amount.isdigit():
-        await deposit_coins("存入金额必须为正整数")
+        await deposit_coins.finish("存入金额必须为正整数")
     amount = int(amount)
     ori_amount = amount
     async with in_transaction() as connection:
