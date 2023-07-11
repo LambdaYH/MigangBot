@@ -366,7 +366,7 @@ dependencies = [
 
 [[package]]
 name = "cookiecutter"
-version = "2.2.0"
+version = "2.2.2"
 requires_python = ">=3.7"
 summary = "A command-line utility that creates projects from project templates, e.g. creating a Python package project from a Python package project template."
 dependencies = [
@@ -907,7 +907,7 @@ dependencies = [
 
 [[package]]
 name = "nonebot-plugin-gachalogs"
-version = "0.2.12"
+version = "0.2.13"
 requires_python = ">=3.8.1,<4.0"
 summary = "Genshin gacha history analysis plugin for NoneBot2"
 dependencies = [
@@ -1594,7 +1594,7 @@ summary = "C version of reader, parser and emitter for ruamel.yaml derived from 
 
 [[package]]
 name = "sentry-sdk"
-version = "1.27.1"
+version = "1.28.0"
 summary = "Python client for Sentry (https://sentry.io)"
 dependencies = [
     "certifi",
@@ -2509,9 +2509,9 @@ content_hash = "sha256:d240f57c3704eb7da3127e405904fdd240ac887715e40127444938bef
     {url = "https://files.pythonhosted.org/packages/f4/41/674384fc46e8a45f4e170cadd1796cf9b7266a45c57df80db4a2dda12301/contourpy-1.1.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:89f06eff3ce2f4b3eb24c1055a26981bffe4e7264acd86f15b97e40530b794bc"},
     {url = "https://files.pythonhosted.org/packages/ff/dd/5d44bc3a5993c25b75b7aef4f810ebd74ef9057dd2a4eab37eba240ee401/contourpy-1.1.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:bcb41692aa09aeb19c7c213411854402f29f6613845ad2453d30bf421fe68fed"},
 ]
-"cookiecutter 2.2.0" = [
-    {url = "https://files.pythonhosted.org/packages/2a/89/aeecd1fcbb95ced583519aebccf02451f8900f7d9b55a368e131f8110f2e/cookiecutter-2.2.0.tar.gz", hash = "sha256:b3437f49d04d359a200b03b63fb9e51be9eb0e751372c318a712a868d72c4f82"},
-    {url = "https://files.pythonhosted.org/packages/fc/aa/499380170dfb2973eccc2353ce27a7563c976f2e03f0540f934e90ec19d6/cookiecutter-2.2.0-py3-none-any.whl", hash = "sha256:6e1bb4a641e1fc86754a7c55da6ff740e81c1cfb0b3e2fb5699296a395ea2ce2"},
+"cookiecutter 2.2.2" = [
+    {url = "https://files.pythonhosted.org/packages/4f/19/6a371bbc955dc12dad03f79108c8fe8c6ae90c2bc1fe772124aad25b160c/cookiecutter-2.2.2.tar.gz", hash = "sha256:3b475d17573a7785b4a22fab693be249840e235a92c93c0fa088b39e9193f194"},
+    {url = "https://files.pythonhosted.org/packages/6b/9d/cc7143ee7f6ff774aa18389b12f906a49728a592f360b8578106ab29b916/cookiecutter-2.2.2-py3-none-any.whl", hash = "sha256:4feb7485520dd7453e3094d8f3955601156a0fab0d0b90a2c8c74f6dc2cbaac6"},
 ]
 "croniter 1.4.1" = [
     {url = "https://files.pythonhosted.org/packages/96/56/f8500161d9ab57ea5ad29c203b85989f87af13a367b3178ade0cd34d8d3a/croniter-1.4.1.tar.gz", hash = "sha256:1a6df60eacec3b7a0aa52a8f2ef251ae3dd2a7c7c8b9874e73e791636d55a361"},
@@ -3038,6 +3038,7 @@ content_hash = "sha256:d240f57c3704eb7da3127e405904fdd240ac887715e40127444938bef
     {url = "https://files.pythonhosted.org/packages/1e/28/7a484fe7f3861070393a9ee0ce4aa410a2631e76c559e59154533b8e491c/lxml-4.9.3-cp35-cp35m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:56dc1f1ebccc656d1b3ed288f11e27172a01503fc016bcabdcbc0978b19352b7"},
     {url = "https://files.pythonhosted.org/packages/1f/89/afb20bc0750383dadc28ed82783a346e6dc474891cbac6dc179a97aed5a4/lxml-4.9.3-pp38-pypy38_pp73-macosx_11_0_x86_64.whl", hash = "sha256:5c245b783db29c4e4fbbbfc9c5a78be496c9fea25517f90606aa1f6b2b3d5f7b"},
     {url = "https://files.pythonhosted.org/packages/20/56/36fa38255306236b3cebb109c83002d29eddbf5e0f969a311e5e25aa38d6/lxml-4.9.3-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl", hash = "sha256:8d7e43bd40f65f7d97ad8ef5c9b1778943d02f04febef12def25f7583d19baac"},
+    {url = "https://files.pythonhosted.org/packages/2a/4f/b996a0f79433af201db5b00424b23eeda0b1c2ec0454cec38513ff6edfa2/lxml-4.9.3-cp27-cp27m-win32.whl", hash = "sha256:2c74524e179f2ad6d2a4f7caf70e2d96639c0954c943ad601a9e146c76408ed7"},
     {url = "https://files.pythonhosted.org/packages/2d/55/05a3b72a5c02121be3224fe0155322c1f8c781b696ef80ecd86cbe5fb11e/lxml-4.9.3-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:1247694b26342a7bf47c02e513d32225ededd18045264d40758abeb3c838a51f"},
     {url = "https://files.pythonhosted.org/packages/30/39/7305428d1c4f28282a4f5bdbef24e0f905d351f34cf351ceb131f5cddf78/lxml-4.9.3.tar.gz", hash = "sha256:48628bd53a426c9eb9bc066a923acaa0878d1e86129fd5359aee99285f4eed9c"},
     {url = "https://files.pythonhosted.org/packages/31/58/e3b3dd6bb2ab7404f1f4992e2d0e6926ed40cef8ce1b3bbefd95877499e1/lxml-4.9.3-cp311-cp311-win_amd64.whl", hash = "sha256:25f32acefac14ef7bd53e4218fe93b804ef6f6b92ffdb4322bb6d49d94cad2bc"},
@@ -3091,6 +3092,7 @@ content_hash = "sha256:d240f57c3704eb7da3127e405904fdd240ac887715e40127444938bef
     {url = "https://files.pythonhosted.org/packages/ac/1c/004715613a74cefc27d1227c9eff5299762ad45e2b92753713b62b9cc9d6/lxml-4.9.3-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:17a753023436a18e27dd7769e798ce302963c236bc4114ceee5b25c18c52c693"},
     {url = "https://files.pythonhosted.org/packages/ac/6d/7124edcc105e9ed42010c679678d41fa9a3ecfea36771a0bea9c9f04bdc6/lxml-4.9.3-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:9e28c51fa0ce5674be9f560c6761c1b441631901993f76700b1b30ca6c8378d6"},
     {url = "https://files.pythonhosted.org/packages/ad/cc/e232d54754704edac66ebaf0f9acc176037ace6f2f5fb32dd133377c4d6d/lxml-4.9.3-cp36-cp36m-win_amd64.whl", hash = "sha256:bef4e656f7d98aaa3486d2627e7d2df1157d7e88e7efd43a65aa5dd4714916cf"},
+    {url = "https://files.pythonhosted.org/packages/b0/7a/b3e6500808e0fa4115e47a07ecdea65e2ae415a3f29d25feab306816f3ae/lxml-4.9.3-cp27-cp27m-win_amd64.whl", hash = "sha256:4f1026bc732b6a7f96369f7bfe1a4f2290fb34dce00d8644bc3036fb351a4ca1"},
     {url = "https://files.pythonhosted.org/packages/b2/9a/3222015b0d835aa6d98497fe4a1ed02cb29f1849db0a228e87b0aacb1851/lxml-4.9.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:b4e4bc18382088514ebde9328da057775055940a1f2e18f6ad2d78aa0f3ec5b9"},
     {url = "https://files.pythonhosted.org/packages/b2/d7/415d594535f81bd4fb90ebd16a38b9c98b619567fd1ba9e1dbb5e57b018b/lxml-4.9.3-cp311-cp311-win32.whl", hash = "sha256:0bfd0767c5c1de2551a120673b72e5d4b628737cb05414f03c3277bf9bed3305"},
     {url = "https://files.pythonhosted.org/packages/b6/4b/8964ca1238c6952d33afdcd89771a95a7e4ac7949e543c6685a6bd7b47c2/lxml-4.9.3-pp39-pypy39_pp73-macosx_11_0_x86_64.whl", hash = "sha256:ed667f49b11360951e201453fc3967344d0d0263aa415e1619e85ae7fd17b4e0"},
@@ -3434,9 +3436,9 @@ content_hash = "sha256:d240f57c3704eb7da3127e405904fdd240ac887715e40127444938bef
     {url = "https://files.pythonhosted.org/packages/0b/9c/2b09bb9ba11e582f6a78a1f492a5433877c13d1f1e7069998b4255cf1fca/nonebot_plugin_emojimix-0.3.0.tar.gz", hash = "sha256:bbfc061af546a1d38407eb2895ed7d225cc8a582e146aa5117d3ed454f44e839"},
     {url = "https://files.pythonhosted.org/packages/98/c8/132963687ea478d3ae622ad50adc6361d6fb24d461a7b36318b480d99b4b/nonebot_plugin_emojimix-0.3.0-py3-none-any.whl", hash = "sha256:e84bd3bb2f23e5f37f74657d5f0624cb5793e1c82005d4f3a76e56483c56856c"},
 ]
-"nonebot-plugin-gachalogs 0.2.12" = [
-    {url = "https://files.pythonhosted.org/packages/0c/58/842b29304f57a0e3e2a729762f00bac6c1ef9b91c1a5ce67f95c6710655a/nonebot_plugin_gachalogs-0.2.12-py3-none-any.whl", hash = "sha256:c58448dba5c6862010ad893f784f9e40994a1610b63a81c7714ef638cb459da9"},
-    {url = "https://files.pythonhosted.org/packages/bc/ff/787e4b286c3680e152e81f9cbd1d2bed68fe24124f7e4a124f23cd2c619e/nonebot_plugin_gachalogs-0.2.12.tar.gz", hash = "sha256:7df91552c2473e261d49b0d948b3ed9f9a37cf8df1e5a9210008a9b09f4081b4"},
+"nonebot-plugin-gachalogs 0.2.13" = [
+    {url = "https://files.pythonhosted.org/packages/40/0f/442721b8cad6973f5be9448c6d8fe5793efa8fac6079e9fb686c3bd73b1e/nonebot_plugin_gachalogs-0.2.13.tar.gz", hash = "sha256:4c57b2f67cfd3113f332742ad55eb1d65bcbfde334b0f4a608d8cb1747d83636"},
+    {url = "https://files.pythonhosted.org/packages/fd/98/817305b26ed9bfa5732022a67a562dd82924b465e556e2137120a3406d51/nonebot_plugin_gachalogs-0.2.13-py3-none-any.whl", hash = "sha256:4974a2d11a3a3cef37823b491336369889ea7bbf26b73061ee839d994271bd80"},
 ]
 "nonebot-plugin-gsabyss 0.1.4" = [
     {url = "https://files.pythonhosted.org/packages/29/ac/7af453fb683bcd5f4177518dd18afdf8a3674bca4599a2486a2c9c869fae/nonebot_plugin_gsabyss-0.1.4.tar.gz", hash = "sha256:a7232f4fce9b33ab4bc86a29ce7a51040d994e66f57e962c7117d0dbea6d057d"},
@@ -4203,9 +4205,9 @@ content_hash = "sha256:d240f57c3704eb7da3127e405904fdd240ac887715e40127444938bef
     {url = "https://files.pythonhosted.org/packages/fb/c0/de69d49a6d0a346fb27ddf3114d807380b08a40d8e22e0fbaf19be8b6044/ruamel.yaml.clib-0.2.7-cp37-cp37m-macosx_12_0_arm64.whl", hash = "sha256:f01da5790e95815eb5a8a138508c01c758e5f5bc0ce4286c4f7028b8dd7ac3d0"},
     {url = "https://files.pythonhosted.org/packages/ff/66/4c05485243e24c6db5d7305063304c410b5539577becc89e4539d2897e41/ruamel.yaml.clib-0.2.7-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:bf9a6bc4a0221538b1a7de3ed7bca4c93c02346853f44e1cd764be0023cd3640"},
 ]
-"sentry-sdk 1.27.1" = [
-    {url = "https://files.pythonhosted.org/packages/75/a2/3e9e5e2fec1a97dac0963bcdc86a37bd233c7d0f45624698a63a2cb8b6f4/sentry-sdk-1.27.1.tar.gz", hash = "sha256:53f36293a0da271a22f476259d2fda76c0b8a1cb96b16d6e6e6aca490d7f3451"},
-    {url = "https://files.pythonhosted.org/packages/b9/1a/1edf053d6adcd99be83cb27ee809996a18d8458b8a16a802102bec0e5c36/sentry_sdk-1.27.1-py2.py3-none-any.whl", hash = "sha256:24308bd05a1f7d65e40acc68a768b4e5c35462039bfd6ae2ca116b92a7b53c78"},
+"sentry-sdk 1.28.0" = [
+    {url = "https://files.pythonhosted.org/packages/b9/97/0e504c7dcbaca87890ebe4d14cd54637ab2953fb942163ff4576682690b3/sentry_sdk-1.28.0-py2.py3-none-any.whl", hash = "sha256:b8b363aaa3f3d6a3acc1aa571efa4db29fb440339fed03560bb1276b8d2c2509"},
+    {url = "https://files.pythonhosted.org/packages/ce/1f/c22088427faddd6aa27a64e115829e11072fad6d829130f3bccfc5438a18/sentry-sdk-1.28.0.tar.gz", hash = "sha256:2281ba98011cfa9bc9bb15c1074b6dd9f7fdfce94033cd25b50f18f078ffed4c"},
 ]
 "setuptools 68.0.0" = [
     {url = "https://files.pythonhosted.org/packages/c7/42/be1c7bbdd83e1bfb160c94b9cafd8e25efc7400346cf7ccdbdb452c467fa/setuptools-68.0.0-py3-none-any.whl", hash = "sha256:11e52c67415a381d10d6b462ced9cfb97066179f0e871399e006c4ab101fc85f"},
