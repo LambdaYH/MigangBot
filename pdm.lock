@@ -366,7 +366,7 @@ dependencies = [
 
 [[package]]
 name = "cookiecutter"
-version = "2.2.2"
+version = "2.2.3"
 requires_python = ">=3.7"
 summary = "A command-line utility that creates projects from project templates, e.g. creating a Python package project from a Python package project template."
 dependencies = [
@@ -2509,9 +2509,9 @@ content_hash = "sha256:d240f57c3704eb7da3127e405904fdd240ac887715e40127444938bef
     {url = "https://files.pythonhosted.org/packages/f4/41/674384fc46e8a45f4e170cadd1796cf9b7266a45c57df80db4a2dda12301/contourpy-1.1.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:89f06eff3ce2f4b3eb24c1055a26981bffe4e7264acd86f15b97e40530b794bc"},
     {url = "https://files.pythonhosted.org/packages/ff/dd/5d44bc3a5993c25b75b7aef4f810ebd74ef9057dd2a4eab37eba240ee401/contourpy-1.1.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:bcb41692aa09aeb19c7c213411854402f29f6613845ad2453d30bf421fe68fed"},
 ]
-"cookiecutter 2.2.2" = [
-    {url = "https://files.pythonhosted.org/packages/4f/19/6a371bbc955dc12dad03f79108c8fe8c6ae90c2bc1fe772124aad25b160c/cookiecutter-2.2.2.tar.gz", hash = "sha256:3b475d17573a7785b4a22fab693be249840e235a92c93c0fa088b39e9193f194"},
-    {url = "https://files.pythonhosted.org/packages/6b/9d/cc7143ee7f6ff774aa18389b12f906a49728a592f360b8578106ab29b916/cookiecutter-2.2.2-py3-none-any.whl", hash = "sha256:4feb7485520dd7453e3094d8f3955601156a0fab0d0b90a2c8c74f6dc2cbaac6"},
+"cookiecutter 2.2.3" = [
+    {url = "https://files.pythonhosted.org/packages/57/60/904b0f8076e425f0be1169838c52feb8b7663c9c2a6d2ae2ed8de7262bbc/cookiecutter-2.2.3-py3-none-any.whl", hash = "sha256:17ad6751aef0a39d004c5ecacbd18176de6e83505343073fd7e48b60bdac5254"},
+    {url = "https://files.pythonhosted.org/packages/9d/84/b97f68b925cab6af93302af4e4536e211fd7f9c931382fc776f08e853158/cookiecutter-2.2.3.tar.gz", hash = "sha256:d56f18c0c01c09804450b501ac43e8f6104cfa7cdd93610359c68b1ba9fd84d2"},
 ]
 "croniter 1.4.1" = [
     {url = "https://files.pythonhosted.org/packages/96/56/f8500161d9ab57ea5ad29c203b85989f87af13a367b3178ade0cd34d8d3a/croniter-1.4.1.tar.gz", hash = "sha256:1a6df60eacec3b7a0aa52a8f2ef251ae3dd2a7c7c8b9874e73e791636d55a361"},
