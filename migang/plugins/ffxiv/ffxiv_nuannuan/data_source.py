@@ -42,22 +42,30 @@ async def get_nuannuan_image() -> None:
     try:
         async with get_new_page(viewport={"width": 2560, "height": 2560}) as page:
             await page.goto(url)
-            card = await page.wait_for_selector(".operate-board", timeout=60 * 1000)
+            card = await page.wait_for_selector(".main-board", timeout=60 * 1000)
             img = await card.screenshot()
             if img:
-                crop_image = Image.open(BytesIO(img))
-                crop_image = crop_image.crop(
-                    (80, 33, 779, min(1074, crop_image.size[1] - 33))
-                )
+                img = Image.open(BytesIO(img))
+                height = img.height
+                width = img.width
+                for i in range(width - 1, -1, -1):
+                    if img.getpixel((i, 0)) == (255, 255, 255, 255):
+                        width = i
+                        break
+                for i in range(height):
+                    if img.getpixel((width, i)) != (255, 255, 255, 255):
+                        height = i
+                        break
+                img = img.crop(((0, 0, width, height)))
                 with BytesIO() as buf:
-                    crop_image.save(buf, format="PNG")
+                    img.save(buf, format="PNG")
                     async with await anyio.open_file(nuannuan_path, "wb") as f:
                         await f.write(buf.getvalue())
     except PlaywrightTimeoutError as e:
         logger.error(f"获取暖暖图片失败：{e}")
 
 
-@retry(stop=stop_after_attempt(5), wait=wait_fixed(4))
+@retry(stop=stop_after_attempt(5), wait=wait_fixed(120))
 async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
     # 获取用户信息最新视频的前五个，避免第一个视频不是攻略ps=5处修改
     headers = {"user-agent": UserAgent(browsers=["chrome", "edge"]).random}
@@ -78,7 +86,7 @@ async def get_video_id(mid: int, client: aiohttp.ClientSession) -> str:
     return None
 
 
-@retry(stop=stop_after_attempt(5), wait=wait_fixed(4))
+@retry(stop=stop_after_attempt(5), wait=wait_fixed(120))
 async def extract_nn(bvid: str, client: aiohttp.ClientSession) -> Dict[str, str]:
     url = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
     r = await (await client.get(url, timeout=5)).json()
