@@ -48,6 +48,7 @@ async def get_nuannuan_image() -> None:
                 img = Image.open(BytesIO(img))
                 height = img.height
                 width = img.width
+                # 二分似乎容易受干扰
                 for i in range(width - 1, -1, -1):
                     if img.getpixel((i, 0)) == (255, 255, 255, 255):
                         width = i

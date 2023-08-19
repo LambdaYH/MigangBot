@@ -6,7 +6,7 @@ authors = [
     {name = "LambdaYH", email = "mobai@mobai.one"},
 ]
 dependencies = [
-    "nonebot2[fastapi]>=2.0.0",
+    "nonebot2[fastapi,httpx]>=2.0.0",
     "pydantic[dotenv]>=1.10.10",
     "nonebot-adapter-onebot<3.0.0,>=2.2.3",
     "nonebot-plugin-apscheduler<1.0.0,>=0.2.0",
@@ -39,6 +39,7 @@ dependencies = [
     "cachetools<6.0.0,>=5.3.0",
     "dateparser<2.0.0,>=1.1.7",
     "feedparser<7.0.0,>=6.0.10",
+    "uvicorn[standard]>=0.23.2",
 ]
 requires-python = ">=3.10,<4.0"
 readme = "README.md"
@@ -132,9 +133,9 @@ includes = []
 
 [tool.pdm.options]
 update = ["--update-eager"]
-install = ["--prod", "-G plugins"]
 
 [tool.pdm.scripts]
+install = "pdm install --prod -G plugins"
 update_db = "nb datastore upgrade"
 start = "nb run"
 all = {composite = ["update_db", "start"]}
@@ -147,11 +148,7 @@ format = [
 git = [
     "pre-commit>=3.3.3",
 ]
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
-
-[project.group.dev.dependencies]
-black = "^23.1.0"
-isort = "^5.12.0"
-pre-commit = "^3.3.3"

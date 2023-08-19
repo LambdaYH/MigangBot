@@ -3,9 +3,6 @@ import traceback
 
 import openai
 from nonebot.log import logger
-from transformers import GPT2TokenizerFast
-
-tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
 from migang.core import get_config
 
