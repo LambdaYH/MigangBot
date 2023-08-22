@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+    db:
+        image: postgres:15-alpine
+        restart: unless-stopped
+        networks:
+            - migangbot
+        environment:
+            POSTGRES_USER: migangbot_user # 数据库用户
+            POSTGRES_PASSWORD: 1206 # 数据库用户密码
+            POSTGRES_DB: migangbot_db # 默认数据库
+        volumes:
+            - ./db:/var/lib/postgresql/data
+
+    migangbot:
+        restart: unless-stopped
+        image: lambdayh/migangbot:latest
+        environment:
+            - TZ=Asia/Shanghai
+        volumes:
+            - ./migangbot/data:/migangbot/data
+            - ./migangbot/configs:/migangbot/configs
+            - ./.env.prod:/migangbot/.env.prod
+        depends_on:
+            - db
+        networks:
+            - migangbot
+        # 如果使用非docker的gocq，则取消注释
+        # ports:
+        #     - 8080:1206
+
+    # 如果使用非docker的gocq，注释掉下面的
+
+    # key: 114514
+    qsign:
+        restart: unless-stopped
+        image: xzhouqd/qsign:core-1.1.7
+        environment:
+            - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
+        networks:
+            - go-cqhttp
+
+    # qsign地址填 http://qsign:8080
+    go-cqhttp:
+        restart: unless-stopped
+        image: ghcr.io/mrs4s/go-cqhttp:dev
+        depends_on:
+            - qsign
+        networks:
+            - go-cqhttp
+            - migangbot
+        volumes:
+            - ./gocqhttp:/data
+
+networks:
+    migangbot:
+    go-cqhttp:
