@@ -15,6 +15,19 @@
 思路和素材很大程度上来自[HibiKier/zhenxun_bot](https://github.com/HibiKier/zhenxun_bot)
 
 # 部署
+<details><summary>Docker Compose</summary>
+
+1. 新建目录，例如`bot`
+
+2. 下载`docker/docker-compose.yml`至bot目录。
+
+3. bot目录中新建`migangbot`目录，下载`docker/.env.prod`至`bot/migangbot`目录下。
+
+4. 使用现成的go-cqhttp配置文件或独立go-cqhttp生成配置文件，放置在`bot/gocqhttp`目录下。
+
+5. `docker compose up -d`，（首次启动需要处理go-cqhttp的各种，可以使用docker logs或者docker attach处理）
+</details>
+
 <details><summary>Debian/Ubuntu下的部署</summary>
 ⚠️ 仅在Debian11 + Python3.10 + Postgres 下测试过
 
