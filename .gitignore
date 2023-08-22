@@ -162,8 +162,8 @@ migrate_from_zhenxun
 # env
 .env.dev
 .env
-!docker/*
 db_config.yaml
+!docker/*
 
 # The downloaded resources
 
