@@ -1,0 +1,9 @@
+# sqlite/postgresql/mysql
+db_type: postgresql
+host: db
+port: 5432
+user: migangbot_user
+password: 1206
+database: migangbot_db
+
+db_url:
