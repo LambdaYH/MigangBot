@@ -21,7 +21,9 @@
 
 2. 下载`docker/docker-compose.yml`至`bot`，`docker/.env.prod`至`bot/migangbot`，`docker/config.yml`至`bot/gocqhttp`。
 
-5. `docker compose up -d`，（首次启动需要处理go-cqhttp的各种，可以进入容器处理，例如`docker exec -it xxx /bin/bash`）
+3. 修改`config.yml`与`.env.prod`
+
+4. `docker compose up -d`，（首次启动需要处理go-cqhttp的各种，可以进入容器处理，例如`docker exec -it xxx /bin/bash`）
 </details>
 
 <details><summary>Debian/Ubuntu下的部署</summary>

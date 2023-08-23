@@ -16,18 +16,18 @@ services:
         restart: unless-stopped
         image: lambdayh/migangbot:latest
         environment:
-            - TZ=Asia/Shanghai
+            TZ: Asia/Shanghai
         volumes:
             - ./migangbot/data:/migangbot/data
             - ./migangbot/configs:/migangbot/configs
-            - ./.env.prod:/migangbot/.env.prod
+            - ./migangbot/.env.prod:/migangbot/.env.prod
         depends_on:
             - db
         networks:
             - migangbot
-        # 如果使用非docker的gocq，则取消注释
-        # ports:
-        #     - 8080:1206
+    # 如果使用非docker的gocq，则取消注释
+    # ports:
+    #     - 8080:1206
 
     # 如果使用非docker的gocq，注释掉下面的
 
@@ -36,7 +36,7 @@ services:
         restart: unless-stopped
         image: xzhouqd/qsign:core-1.1.7
         environment:
-            - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
+            BASE_PATH: /srv/qsign/qsign/txlib/8.9.63
         networks:
             - go-cqhttp
 
@@ -51,6 +51,17 @@ services:
             - migangbot
         volumes:
             - ./gocqhttp:/data
+
+    # 使用"COMPOSE_PROFILES=update docker compose up -d"启动可实现自动更新
+    watchtower:
+        restart: unless-stopped
+        image: containrrr/watchtower
+        profiles: [ "update" ]
+        environment:
+            WATCHTOWER_CLEANUP: "true"
+            WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
 
 networks:
     migangbot:
