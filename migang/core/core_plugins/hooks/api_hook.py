@@ -21,7 +21,6 @@ async def _replace_res(
         raw_message[index] = MessageSegment.image(await _local_to_bytes(data["file"]))
     elif type == "record":
         raw_message[index] = MessageSegment.record(await _local_to_bytes(data["file"]))
-    print(raw_message)
 
 
 @Bot.on_called_api
