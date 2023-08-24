@@ -12,10 +12,10 @@ async def load_font():
         font_manager.fontManager.addfont(font)
 
     # 生成字体文件与字体名的索引，方便寻找
-    font_index_path = FONT_PATH / "font_index.json"  # 字体文件和字体名的对应，方便找
-    font_index = await async_load_data(font_index_path)
-    for font in font_manager.fontManager.ttflist:
-        font_path = Path(font.fname)
-        if font_path.parent == FONT_PATH and font_path.name not in font_index:
-            font_index[font_path.name] = font.name
-    await async_save_data(font_index, font_index_path)
+    # font_index_path = FONT_PATH / "font_index.json"  # 字体文件和字体名的对应，方便找
+    # font_index = await async_load_data(font_index_path)
+    # for font in font_manager.fontManager.ttflist:
+    #     font_path = Path(font.fname)
+    #     if font_path.parent == FONT_PATH and font_path.name not in font_index:
+    #         font_index[font_path.name] = font.name
+    # await async_save_data(font_index, font_index_path)
