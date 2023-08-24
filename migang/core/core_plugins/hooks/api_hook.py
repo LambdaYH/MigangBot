@@ -1,6 +1,6 @@
 import asyncio
-from typing import Any, Dict, Optional
 from urllib.parse import unquote, urlparse
+from typing import Any, Dict, Iterable, Optional
 
 import anyio
 from nonebot.adapters import Bot
@@ -21,6 +21,24 @@ async def _replace_res(
         raw_message[index] = MessageSegment.image(await _local_to_bytes(data["file"]))
     elif type == "record":
         raw_message[index] = MessageSegment.record(await _local_to_bytes(data["file"]))
+
+
+# 当content为MessageSegment时替换整个content
+async def _replace_node(node: MessageSegment, data: MessageSegment) -> None:
+    if data.type == "image":
+        node.data["content"] = MessageSegment.image(
+            await _local_to_bytes(data.data["file"])
+        )
+    elif data.type == "record":
+        node.data["content"] = MessageSegment.record(
+            await _local_to_bytes(data.data["file"])
+        )
+
+
+def _is_need_process(seg: MessageSegment) -> bool:
+    return (seg.type == "image" or seg.type == "record") and seg.data[
+        "file"
+    ].startswith("file")
 
 
 @Bot.on_called_api
@@ -56,8 +74,7 @@ async def _(
             *[
                 _replace_res(data["message"], i, seg.type, seg.data)
                 for i, seg in enumerate(data["message"])
-                if (seg.type == "image" or seg.type == "record")
-                and seg.data["file"].startswith("file")
+                if _is_need_process(seg)
             ]
         )
     elif (
@@ -67,10 +84,13 @@ async def _(
     ):
         tasks = []
         for msg in data["messages"]:
-            tasks += [
-                _replace_res(msg.data["content"], i, seg.type, seg.data)
-                for i, seg in enumerate(msg.data["content"])
-                if (seg.type == "image" or seg.type == "record")
-                and seg.data["file"].startswith("file")
-            ]
+            content = msg.data["content"]
+            if isinstance(content, MessageSegment) and _is_need_process(content):
+                tasks.append(_replace_node(msg, content))
+            elif not isinstance(content, str) and isinstance(content, Iterable):
+                tasks += [
+                    _replace_res(content, i, seg.type, seg.data)
+                    for i, seg in enumerate(content)
+                    if _is_need_process(seg)
+                ]
         await asyncio.gather(*tasks)
