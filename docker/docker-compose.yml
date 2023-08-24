@@ -20,6 +20,7 @@ services:
         volumes:
             - ./migangbot/data:/migangbot/data
             - ./migangbot/configs:/migangbot/configs
+            - ./migangbot/user_config:/root/.config # 这是~/.config，localstore和meme_generator会在这个文件夹下
             - ./migangbot/.env.prod:/migangbot/.env.prod
         depends_on:
             - db
