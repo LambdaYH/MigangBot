@@ -1,4 +1,6 @@
+import contextlib
 from io import BytesIO
+from random import choice
 from typing import Dict, List, Tuple, Optional
 
 import jieba
@@ -22,7 +24,7 @@ def analyse_message(msg: str) -> Dict[str, float]:
     # 基于 TF-IDF 算法的关键词抽取
     # 返回所有关键词，因为设置了数量其实也只是 tags[:topK]，不如交给词云库处理
     words = jieba.analyse.extract_tags(msg, topK=30, withWeight=True)
-    return {word: weight for word, weight in words}
+    return dict(words)
 
 
 @run_sync
@@ -43,21 +45,29 @@ def _get_wordcloud_and_hot_words(
     top_words = []
     for i, k in enumerate(list(frequency.keys())[:3]):
         top_words.append(f"Top {i}: {k}")
-    try:
-        wordcloud = WordCloud(
-            font_path=str(plugin_config.wordcloud_font_path),
-            width=plugin_config.wordcloud_width,
-            height=plugin_config.wordcloud_height,
-            background_color=plugin_config.wordcloud_background_color,
-            colormap=plugin_config.wordcloud_colormap,
-            mask=get_mask(mask_key),
-        )
+    # 词云参数
+    wordcloud_options = {}
+    wordcloud_options.update(plugin_config.wordcloud_options)
+    wordcloud_options.setdefault("font_path", str(plugin_config.wordcloud_font_path))
+    wordcloud_options.setdefault("width", plugin_config.wordcloud_width)
+    wordcloud_options.setdefault("height", plugin_config.wordcloud_height)
+    wordcloud_options.setdefault(
+        "background_color", plugin_config.wordcloud_background_color
+    )
+    # 如果 colormap 是列表，则随机选择一个
+    colormap = (
+        plugin_config.wordcloud_colormap
+        if isinstance(plugin_config.wordcloud_colormap, str)
+        else choice(plugin_config.wordcloud_colormap)
+    )
+    wordcloud_options.setdefault("colormap", colormap)
+    wordcloud_options.setdefault("mask", get_mask(mask_key))
+    with contextlib.suppress(ValueError):
+        wordcloud = WordCloud(**wordcloud_options)
         image = wordcloud.generate_from_frequencies(frequency).to_image()
         image_bytes = BytesIO()
         image.save(image_bytes, format="PNG")
-        return top_words, image_bytes
-    except ValueError:
-        pass
+        return top_words, image_bytes.getvalue()
 
 
 async def get_wordcloud_and_hot_words(

@@ -1,22 +1,31 @@
-from typing import Tuple, Union, cast
-
-from nonebot.adapters import Message
-from nonebot import require, on_command
-from nonebot.permission import SUPERUSER
+from nonebot import require
+from nonebot.params import Depends
 from nonebot.plugin import PluginMetadata
-from nonebot.params import Command, CommandArg
-from nonebot.adapters.onebot.v11 import Bot as BotV11
-from nonebot.adapters.onebot.v12 import Bot as BotV12
-from nonebot.adapters.onebot.v12 import ChannelMessageEvent
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
-from nonebot.adapters.onebot.v11 import GroupMessageEvent as GroupMessageEventV11
-from nonebot.adapters.onebot.v12 import GroupMessageEvent as GroupMessageEventV12
 
+require("nonebot_plugin_apscheduler")
+require("nonebot_plugin_apscheduler")
+require("nonebot_plugin_chatrecorder")
 require("nonebot_plugin_datastore")
+require("nonebot_plugin_saa")
+require("nonebot_plugin_alconna")
 require("nonebot_plugin_wordcloud")
+import nonebot_plugin_saa as saa
 from nonebot_plugin_datastore.db import post_db_init
 from nonebot_plugin_wordcloud.config import plugin_config
-from nonebot_plugin_wordcloud.utils import get_time_fromisoformat_with_timezone
+from nonebot_plugin_wordcloud import (
+    ensure_group,
+    admin_permission,
+    get_time_fromisoformat_with_timezone,
+)
+from nonebot_plugin_alconna import (
+    Args,
+    Match,
+    Query,
+    Option,
+    Alconna,
+    AlconnaQuery,
+    on_alconna,
+)
 
 from .schedule import schedule_service
 
@@ -27,86 +36,67 @@ __plugin_meta__ = PluginMetadata(
     description="利用群消息生成每日热词+词云",
     usage="""
 指令：
-    开启热词每日定时发送 23:59
-    关闭热词每日定时发送
+    开启热词定时发送 23:59
+    关闭热词定时发送
 说明：
     调整词云样式请参考词云插件，本插件依赖词云插件生成词云
 """.strip(),
 )
 
-schedule_cmd = on_command(
-    "热词每日定时发送状态",
-    aliases={"开启热词每日定时发送", "关闭热词每日定时发送"},
-    permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN,
-)
-
 __plugin_category__ = "订阅"
 
+schedule_cmd = on_alconna(
+    Alconna(
+        "热词定时发送",
+        Option("--action", Args["action_type", ["状态", "开启", "关闭"]], default="状态"),
+        Args["type", ["每日"]]["time?", str],
+    ),
+    permission=admin_permission(),
+    use_cmd_start=True,
+)
+schedule_cmd.shortcut(
+    r"热词(?P<type>.+)定时发送状态",
+    {
+        "prefix": True,
+        "command": "热词定时发送",
+        "args": ["--action", "状态", "{type}"],
+    },
+)
+schedule_cmd.shortcut(
+    r"(?P<action>.+)热词(?P<type>.+)定时发送",
+    {
+        "prefix": True,
+        "command": "热词定时发送",
+        "args": ["--action", "{action}", "{type}"],
+    },
+)
 
-@schedule_cmd.handle()
+
+@schedule_cmd.handle(parameterless=[Depends(ensure_group)])
 async def _(
-    bot: Union[BotV11, BotV12],
-    event: Union[GroupMessageEventV11, GroupMessageEventV12, ChannelMessageEvent],
-    commands: Tuple[str, ...] = Command(),
-    args: Message = CommandArg(),
+    time: Match[str],
+    action_type: Query[str] = AlconnaQuery("action.action_type.value", "状态"),
+    target: saa.PlatformTarget = Depends(saa.get_target),
 ):
-    command = commands[0]
-
-    group_id = ""
-    guild_id = ""
-    channel_id = ""
-    if isinstance(event, GroupMessageEventV11):
-        group_id = str(event.group_id)
-        platform = "qq"
-    elif isinstance(event, GroupMessageEventV12):
-        bot = cast(BotV12, bot)
-        group_id = event.group_id
-        platform = bot.platform
-    else:
-        bot = cast(BotV12, bot)
-        guild_id = event.guild_id
-        channel_id = event.channel_id
-        platform = bot.platform
-
-    if command == "热词每日定时发送状态":
-        schedule_time = await schedule_service.get_schedule(
-            bot.self_id,
-            platform,
-            group_id=group_id,
-            guild_id=guild_id,
-            channel_id=channel_id,
+    if action_type.result == "状态":
+        schedule_time = await schedule_service.get_schedule(target)
+        await schedule_cmd.finish(
+            f"热词每日定时发送已开启，发送时间为：{schedule_time}" if schedule_time else "热词每日定时发送未开启"
         )
-        if schedule_time:
-            await schedule_cmd.finish(f"热词每日定时发送已开启，发送时间为：{schedule_time}")
-        else:
-            await schedule_cmd.finish("热词每日定时发送未开启")
-    elif command == "开启热词每日定时发送":
+    elif action_type.result == "开启":
         schedule_time = None
-        if time_str := args.extract_plain_text():
-            try:
-                schedule_time = get_time_fromisoformat_with_timezone(time_str)
-            except ValueError:
-                await schedule_cmd.finish("请输入正确的时间，不然我没法理解呢！")
-        await schedule_service.add_schedule(
-            bot.self_id,
-            platform,
-            time=schedule_time,
-            group_id=group_id,
-            guild_id=guild_id,
-            channel_id=channel_id,
+        if time.available:
+            if time_str := time.result:
+                try:
+                    schedule_time = get_time_fromisoformat_with_timezone(time_str)
+                except ValueError:
+                    await schedule_cmd.finish("请输入正确的时间，不然我没法理解呢！")
+        await schedule_service.add_schedule(target, time=schedule_time)
+        await schedule_cmd.finish(
+            f"已开启热词每日定时发送，发送时间为：{schedule_time}"
+            if schedule_time
+            else f"已开启热词每日定时发送，发送时间为：{plugin_config.wordcloud_default_schedule_time}"
         )
-        if schedule_time:
-            await schedule_cmd.finish(f"已开启热词每日定时发送，发送时间为：{schedule_time}")
-        else:
-            await schedule_cmd.finish(
-                f"已开启热词每日定时发送，发送时间为：{plugin_config.wordcloud_default_schedule_time}"
-            )
-    elif command == "关闭热词每日定时发送":
-        await schedule_service.remove_schedule(
-            bot.self_id,
-            platform,
-            group_id=group_id,
-            guild_id=guild_id,
-            channel_id=channel_id,
-        )
+    elif action_type.result == "关闭":
+        await schedule_service.remove_schedule(target)
         await schedule_cmd.finish("已关闭热词每日定时发送")

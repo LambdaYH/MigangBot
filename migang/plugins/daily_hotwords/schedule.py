@@ -1,25 +1,15 @@
-"""https://github.com/he0119/nonebot-plugin-wordcloud/blob/main/nonebot_plugin_wordcloud/schedule.py
-"""
+from datetime import time
+from typing import Dict, Tuple, Optional
 
-from typing import Dict, Optional
-from datetime import time, timedelta
-
-from nonebot import get_bot
-from sqlalchemy import select
 from nonebot.log import logger
+import nonebot_plugin_saa as saa
 from apscheduler.job import Job
 from nonebot_plugin_apscheduler import scheduler
+from sqlalchemy import JSON, Select, cast, select
+from nonebot_plugin_datastore.db import get_engine
 from nonebot_plugin_datastore import create_session
-from nonebot.adapters.onebot.v11 import Bot as BotV11
-from nonebot.adapters.onebot.v12 import Bot as BotV12
-from nonebot.adapters.onebot.v11 import Message as MessageV11
-from nonebot.adapters.onebot.v12 import Message as MessageV12
-from nonebot_plugin_chatrecorder import get_messages_plain_text
-from nonebot.adapters.onebot.v11 import MessageSegment as MessageSegmentV11
-from nonebot.adapters.onebot.v12 import MessageSegment as MessageSegmentV12
+from nonebot_plugin_cesaa import get_messages_plain_text_by_target
 from nonebot_plugin_wordcloud.utils import (
-    get_mask_key,
-    send_message,
     get_datetime_now_with_timezone,
     get_time_with_scheduler_timezone,
 )
@@ -30,10 +20,12 @@ except ImportError:
     from backports.zoneinfo import ZoneInfo  # type: ignore
 
 from nonebot_plugin_wordcloud.config import plugin_config
-from nonebot_plugin_wordcloud.utils import time_astimezone
+from nonebot_plugin_wordcloud.utils import get_mask_key, time_astimezone
 
 from .model import Schedule
 from .data_source import get_wordcloud_and_hot_words
+
+saa.enable_auto_select_bot()
 
 
 class Scheduler:
@@ -96,106 +88,48 @@ class Scheduler:
             if time and not schedules:
                 self.schedules.pop(time.isoformat()).remove()
                 return
-            logger.info(f"开始发送每日热词，时间为 {time if time else '默认时间'}")
+            logger.info(f"开始发送每日热词，时间为 {time or '默认时间'}")
             for schedule in schedules:
-                bot = get_bot(schedule.bot_id)
-                if not isinstance(bot, (BotV11, BotV12)):
-                    logger.warning(f"机器人 {schedule.bot_id} 不是 OneBot 协议，跳过")
-                    continue
-
+                target = schedule.saa_target
                 dt = get_datetime_now_with_timezone()
-                start = dt - timedelta(days=1)
+                start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
                 stop = dt
-                messages = await get_messages_plain_text(
-                    platforms=[schedule.platform],
-                    group_ids=[schedule.group_id] if schedule.group_id else None,
-                    guild_ids=[schedule.guild_id] if schedule.guild_id else None,
-                    channel_ids=[schedule.channel_id] if schedule.channel_id else None,
+                messages = await get_messages_plain_text_by_target(
+                    target=target,
                     types=["message"],
-                    time_start=start.astimezone(ZoneInfo("UTC")),
-                    time_stop=stop.astimezone(ZoneInfo("UTC")),
+                    time_start=start,
+                    time_stop=stop,
+                    exclude_id1s=plugin_config.wordcloud_exclude_user_ids,
                 )
-                mask_key = get_mask_key(
-                    schedule.platform,
-                    group_id=schedule.group_id,
-                    guild_id=schedule.guild_id,
-                )
+                mask_key = get_mask_key(target)
                 words_image = await get_wordcloud_and_hot_words(messages, mask_key)
                 if not words_image:
-                    await send_message(
-                        bot,
-                        "今天群里不够热闹，没有足够的数据生成热词~",
-                        schedule.group_id,
-                        schedule.guild_id,
-                        schedule.channel_id,
-                    )
+                    await saa.Text("今天没有足够的数据生成热词").send_to(target)
                     continue
-                image = words_image[1]
-                if isinstance(bot, BotV11) and schedule.group_id:
-                    message = MessageV11(
-                        "欢迎收看由本日聊天信息生成的今日热词：\n"
-                        + "\n".join(words_image[0])
-                        + MessageSegmentV11.image(image)
-                    )
-                else:
-                    result = await bot.upload_file(
-                        type="data", name="wordcloud.png", data=image.getvalue()
-                    )
-                    file_id = result["file_id"]
-                    message = MessageV12(
-                        "欢迎收看由本日聊天信息生成的今日热词：\n"
-                        + "\n".join(words_image[0])
-                        + MessageSegmentV12.image(file_id)
-                    )
 
-                await send_message(
-                    bot,
-                    message,
-                    schedule.group_id,
-                    schedule.guild_id,
-                    schedule.channel_id,
-                )
+                msg_builder = saa.MessageFactory[
+                    saa.Text("欢迎收看由本日聊天信息生成的今日热词："),
+                    saa.Text("\n".join(words_image[0])),
+                    saa.Image(words_image[1]),
+                ]
+                await msg_builder.send_to(target)
 
-    async def get_schedule(
-        self,
-        bot_id: str,
-        platfrom: str,
-        *,
-        group_id: Optional[str] = None,
-        guild_id: Optional[str] = None,
-        channel_id: Optional[str] = None,
-    ) -> Optional[time]:
+    async def get_schedule(self, target: saa.PlatformTarget) -> Optional[time]:
         """获取定时任务时间"""
         async with create_session() as session:
-            statement = (
-                select(Schedule)
-                .where(Schedule.bot_id == bot_id)
-                .where(Schedule.platform == platfrom)
-                .where(Schedule.group_id == group_id)
-                .where(Schedule.guild_id == guild_id)
-                .where(Schedule.channel_id == channel_id)
-            )
+            statement = self.select_target_statement(target)
             results = await session.scalars(statement)
-            schedule = results.one_or_none()
-            if schedule:
+            if schedule := results.one_or_none():
                 if schedule.time:
                     # 将时间转换为本地时间
-                    local_time = time_astimezone(
+                    return time_astimezone(
                         schedule.time.replace(tzinfo=ZoneInfo("UTC"))
                     )
-                    return local_time
                 else:
                     return plugin_config.wordcloud_default_schedule_time
 
     async def add_schedule(
-        self,
-        bot_id: str,
-        platfrom: str,
-        *,
-        time: Optional[time] = None,
-        group_id: str = "",
-        guild_id: str = "",
-        channel_id: str = "",
+        self, target: saa.PlatformTarget, *, time: Optional[time] = None
     ):
         """添加定时任务
 
@@ -206,55 +140,34 @@ class Scheduler:
             time = time_astimezone(time, ZoneInfo("UTC"))
 
         async with create_session() as session:
-            statement = (
-                select(Schedule)
-                .where(Schedule.bot_id == bot_id)
-                .where(Schedule.platform == platfrom)
-                .where(Schedule.group_id == group_id)
-                .where(Schedule.guild_id == guild_id)
-                .where(Schedule.channel_id == channel_id)
-            )
+            statement = self.select_target_statement(target)
             results = await session.scalars(statement)
-            schedule = results.one_or_none()
-            if schedule:
+            if schedule := results.one_or_none():
                 schedule.time = time
             else:
-                schedule = Schedule(
-                    bot_id=bot_id,
-                    platform=platfrom,
-                    time=time,
-                    group_id=group_id,
-                    guild_id=guild_id,
-                    channel_id=channel_id,
-                )
+                schedule = Schedule(time=time, target=target.dict())
                 session.add(schedule)
             await session.commit()
         await self.update()
 
-    async def remove_schedule(
-        self,
-        bot_id: str,
-        platfrom: str,
-        *,
-        group_id: Optional[str] = None,
-        guild_id: Optional[str] = None,
-        channel_id: Optional[str] = None,
-    ):
+    async def remove_schedule(self, target: saa.PlatformTarget):
         """删除定时任务"""
         async with create_session() as session:
-            statement = (
-                select(Schedule)
-                .where(Schedule.bot_id == bot_id)
-                .where(Schedule.platform == platfrom)
-                .where(Schedule.group_id == group_id)
-                .where(Schedule.guild_id == guild_id)
-                .where(Schedule.channel_id == channel_id)
-            )
+            statement = self.select_target_statement(target)
             results = await session.scalars(statement)
-            schedule = results.first()
-            if schedule:
+            if schedule := results.one_or_none():
                 await session.delete(schedule)
                 await session.commit()
+
+    @staticmethod
+    def select_target_statement(target: saa.PlatformTarget) -> Select[Tuple[Schedule]]:
+        """获取查询目标的语句
+
+        MySQL 需要手动将 JSON 类型的字段转换为 JSON 类型
+        """
+        if get_engine().dialect.name == "mysql":
+            return select(Schedule).where(Schedule.target == cast(target.dict(), JSON))
+        return select(Schedule).where(Schedule.target == target.dict())
 
 
 schedule_service = Scheduler()
