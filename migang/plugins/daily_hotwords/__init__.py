@@ -3,12 +3,12 @@ from nonebot.params import Depends
 from nonebot.plugin import PluginMetadata
 
 require("nonebot_plugin_apscheduler")
-require("nonebot_plugin_apscheduler")
 require("nonebot_plugin_chatrecorder")
 require("nonebot_plugin_datastore")
 require("nonebot_plugin_saa")
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_wordcloud")
+require("nonebot_plugin_cesaa")
 import nonebot_plugin_saa as saa
 from nonebot_plugin_datastore.db import post_db_init
 from nonebot_plugin_wordcloud.config import plugin_config
