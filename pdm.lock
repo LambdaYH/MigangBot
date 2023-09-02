@@ -1800,7 +1800,7 @@ files = [
 
 [[package]]
 name = "nonebot-plugin-bottle"
-version = "1.0.1.4"
+version = "1.0.1.8"
 requires_python = ">=3.8,<4.0"
 summary = "Bottle post plugin in Nonebot"
 dependencies = [
@@ -1811,8 +1811,8 @@ dependencies = [
     "nonebot2[fastapi]<3.0.0,>=2.0.0",
 ]
 files = [
-    {file = "nonebot_plugin_bottle-1.0.1.4-py3-none-any.whl", hash = "sha256:979d83651264f8500ebc8be311c18103a9ded6c3e68cc1eda2392a78cfa95372"},
-    {file = "nonebot_plugin_bottle-1.0.1.4.tar.gz", hash = "sha256:adc27e26a2d37153b8cbbd0c57dabdb9e073311ef888340e19f19f3d4f52e271"},
+    {file = "nonebot_plugin_bottle-1.0.1.8-py3-none-any.whl", hash = "sha256:db523c15cff963f43cbf69be7a80f576f38f76712def399bc2ff7d9caffbd668"},
+    {file = "nonebot_plugin_bottle-1.0.1.8.tar.gz", hash = "sha256:8e409be2e95cde07bb5e6aeed8361db51b803a7241177efbb1cacf0f9aa249a6"},
 ]
 
 [[package]]
