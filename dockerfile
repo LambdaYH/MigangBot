@@ -1,5 +1,5 @@
 # build stage
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim-bullseye AS builder
 
 # install PDM
 RUN pip install pdm
