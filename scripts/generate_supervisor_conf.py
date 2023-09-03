@@ -1,12 +1,9 @@
-import sys
 import getpass
 from pathlib import Path
 
 
 def generate_supervisor_config():
     path = Path(__file__).parent
-    if not (path.parent / "run.sh").exists():
-        generate_run_script()
     with open(path / "migangbot.conf", "w", encoding="utf-8") as f:
         f.write(
             f"""
