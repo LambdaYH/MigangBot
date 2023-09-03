@@ -920,17 +920,18 @@ files = [
 
 [[package]]
 name = "fastapi"
-version = "0.103.0"
+version = "0.103.1"
 requires_python = ">=3.7"
 summary = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 dependencies = [
+    "anyio<4.0.0,>=3.7.1",
     "pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4",
     "starlette<0.28.0,>=0.27.0",
     "typing-extensions>=4.5.0",
 ]
 files = [
-    {file = "fastapi-0.103.0-py3-none-any.whl", hash = "sha256:61ab72c6c281205dd0cbaccf503e829a37e0be108d965ac223779a8479243665"},
-    {file = "fastapi-0.103.0.tar.gz", hash = "sha256:4166732f5ddf61c33e9fa4664f73780872511e0598d4d5434b1816dc1e6d9421"},
+    {file = "fastapi-0.103.1-py3-none-any.whl", hash = "sha256:5e5f17e826dbd9e9b5a5145976c5cd90bcaa61f2bf9a69aca423f2bcebe44d83"},
+    {file = "fastapi-0.103.1.tar.gz", hash = "sha256:345844e6a82062f06a096684196aaf96c1198b25c06b72c1311b882aa2d8a35d"},
 ]
 
 [[package]]
@@ -1657,7 +1658,7 @@ files = [
 
 [[package]]
 name = "nb-cli"
-version = "1.2.2"
+version = "1.2.3"
 requires_python = ">=3.8, <4.0"
 summary = "CLI for nonebot2"
 dependencies = [
@@ -1677,8 +1678,8 @@ dependencies = [
     "wcwidth~=0.2",
 ]
 files = [
-    {file = "nb-cli-1.2.2.tar.gz", hash = "sha256:ecef59e636dd86672beea516932d42c134068572c160ab09d0e541ebe838912f"},
-    {file = "nb_cli-1.2.2-py3-none-any.whl", hash = "sha256:b38079daae7ad97a12ed1f2c58d8e3b611b7b01718b368f893effecfeda7ed09"},
+    {file = "nb-cli-1.2.3.tar.gz", hash = "sha256:b3fc95873852c258fbaaa1979af95a7f83369c67c85d314cb015ee7b1275c4f9"},
+    {file = "nb_cli-1.2.3-py3-none-any.whl", hash = "sha256:db0019bbffcf1004ccc0eae1f1f85453d55f22cb2fbbf21cfb02b9248007fdae"},
 ]
 
 [[package]]
@@ -2559,7 +2560,7 @@ files = [
 
 [[package]]
 name = "pre-commit"
-version = "3.3.3"
+version = "3.4.0"
 requires_python = ">=3.8"
 summary = "A framework for managing and maintaining multi-language pre-commit hooks."
 dependencies = [
@@ -2570,8 +2571,8 @@ dependencies = [
     "virtualenv>=20.10.0",
 ]
 files = [
-    {file = "pre_commit-3.3.3-py2.py3-none-any.whl", hash = "sha256:10badb65d6a38caff29703362271d7dca483d01da88f9d7e05d0b97171c136cb"},
-    {file = "pre_commit-3.3.3.tar.gz", hash = "sha256:a2256f489cd913d575c145132ae196fe335da32d91a8294b7afe6622335dd023"},
+    {file = "pre_commit-3.4.0-py2.py3-none-any.whl", hash = "sha256:96d529a951f8b677f730a7212442027e8ba53f9b04d217c4c67dc56c393ad945"},
+    {file = "pre_commit-3.4.0.tar.gz", hash = "sha256:6bbd5129a64cad4c0dfaeeb12cd8f7ea7e15b77028d985341478c8af3c759522"},
 ]
 
 [[package]]
@@ -2773,16 +2774,16 @@ files = [
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.2.1"
-requires_python = ">=3.7"
+version = "10.3"
+requires_python = ">=3.8"
 summary = "Extension pack for Python Markdown."
 dependencies = [
     "markdown>=3.2",
     "pyyaml",
 ]
 files = [
-    {file = "pymdown_extensions-10.2.1-py3-none-any.whl", hash = "sha256:bded105eb8d93f88f2f821f00108cb70cef1269db6a40128c09c5f48bfc60ea4"},
-    {file = "pymdown_extensions-10.2.1.tar.gz", hash = "sha256:d0c534b4a5725a4be7ccef25d65a4c97dba58b54ad7c813babf0eb5ba9c81591"},
+    {file = "pymdown_extensions-10.3-py3-none-any.whl", hash = "sha256:77a82c621c58a83efc49a389159181d570e370fff9f810d3a4766a75fc678b66"},
+    {file = "pymdown_extensions-10.3.tar.gz", hash = "sha256:94a0d8a03246712b64698af223848fd80aaf1ae4c4be29c8c61939b0467b5722"},
 ]
 
 [[package]]
@@ -3215,12 +3216,12 @@ files = [
 
 [[package]]
 name = "soupsieve"
-version = "2.4.1"
-requires_python = ">=3.7"
+version = "2.5"
+requires_python = ">=3.8"
 summary = "A modern CSS selector implementation for Beautiful Soup."
 files = [
-    {file = "soupsieve-2.4.1-py3-none-any.whl", hash = "sha256:1c1bfee6819544a3447586c889157365a27e10d88cde3ad3da0cf0ddf646feb8"},
-    {file = "soupsieve-2.4.1.tar.gz", hash = "sha256:89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea"},
+    {file = "soupsieve-2.5-py3-none-any.whl", hash = "sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7"},
+    {file = "soupsieve-2.5.tar.gz", hash = "sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690"},
 ]
 
 [[package]]
