@@ -14,25 +14,22 @@ async def _local_to_bytes(path: str) -> bytes:
         return await f.read()
 
 
+async def _gen_new_seg(type: str, path: str) -> MessageSegment:
+    if type == "image":
+        return MessageSegment.image(await _local_to_bytes(path=path))
+    elif type == "record":
+        return MessageSegment.record(await _local_to_bytes(path=path))
+
+
 async def _replace_res(
     raw_message: Message, index: int, type: str, data: MessageSegment
 ) -> None:
-    if type == "image":
-        raw_message[index] = MessageSegment.image(await _local_to_bytes(data["file"]))
-    elif type == "record":
-        raw_message[index] = MessageSegment.record(await _local_to_bytes(data["file"]))
+    raw_message[index] = await _gen_new_seg(type, data["file"])
 
 
 # 当content为MessageSegment时替换整个content
 async def _replace_node(node: MessageSegment, data: MessageSegment) -> None:
-    if data.type == "image":
-        node.data["content"] = MessageSegment.image(
-            await _local_to_bytes(data.data["file"])
-        )
-    elif data.type == "record":
-        node.data["content"] = MessageSegment.record(
-            await _local_to_bytes(data.data["file"])
-        )
+    node.data["content"] = await _gen_new_seg(data.type, data.data["file"])
 
 
 def _is_need_process(seg: MessageSegment) -> bool:
@@ -70,13 +67,18 @@ async def _(
 ):
     # 将本地文件转换成byte后发出
     if api == "send_msg" or api == "send_group_msg" or api == "send_private_msg":
-        await asyncio.gather(
-            *[
-                _replace_res(data["message"], i, seg.type, seg.data)
-                for i, seg in enumerate(data["message"])
-                if _is_need_process(seg)
-            ]
-        )
+        if isinstance(data["message"], MessageSegment):
+            data["message"] = _gen_new_seg(
+                data["message"].type, data["message"].data["file"]
+            )
+        else:
+            await asyncio.gather(
+                *[
+                    _replace_res(data["message"], i, seg.type, seg.data)
+                    for i, seg in enumerate(data["message"])
+                    if _is_need_process(seg)
+                ]
+            )
     elif (
         api == "send_forward_msg"
         or api == "send_group_forward_msg"
