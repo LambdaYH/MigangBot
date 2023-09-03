@@ -14,17 +14,17 @@ async def _local_to_bytes(path: str) -> bytes:
         return await f.read()
 
 
-async def _gen_new_seg(type: str, path: str) -> MessageSegment:
-    if type == "image":
+async def _gen_new_seg(type_: str, path: str) -> MessageSegment:
+    if type_ == "image":
         return MessageSegment.image(await _local_to_bytes(path=path))
-    elif type == "record":
+    elif type_ == "record":
         return MessageSegment.record(await _local_to_bytes(path=path))
 
 
 async def _replace_res(
-    raw_message: Message, index: int, type: str, data: MessageSegment
+    raw_message: Message, index: int, type_: str, data: MessageSegment
 ) -> None:
-    raw_message[index] = await _gen_new_seg(type, data["file"])
+    raw_message[index] = await _gen_new_seg(type_, data["file"])
 
 
 # 当content为MessageSegment时替换整个content
