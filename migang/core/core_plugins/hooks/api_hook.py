@@ -67,12 +67,11 @@ async def _(
 ):
     # 将本地文件转换成byte后发出
     if api == "send_msg" or api == "send_group_msg" or api == "send_private_msg":
-        if isinstance(data["message"], MessageSegment) and _is_need_process(
-            data["message"]
-        ):
-            data["message"] = await _gen_new_seg(
-                data["message"].type, data["message"].data["file"]
-            )
+        if isinstance(data["message"], MessageSegment):
+            if _is_need_process(data["message"]):
+                data["message"] = await _gen_new_seg(
+                    data["message"].type, data["message"].data["file"]
+                )
         else:
             await asyncio.gather(
                 *[
