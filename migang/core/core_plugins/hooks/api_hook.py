@@ -72,6 +72,8 @@ async def _(
                 data["message"] = await _gen_new_seg(
                     data["message"].type, data["message"].data["file"]
                 )
+        elif isinstance(data["message"], str):
+            pass
         else:
             await asyncio.gather(
                 *[
