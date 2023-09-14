@@ -318,8 +318,8 @@ async def _(bot: Bot, cmds: Tuple[str, ...] = Command(), args: Message = Command
     cmd = "group" if cmds[0][2:4] == "入群" else "friend"
     approve = cmds[0][:2] == "同意"
     if approve:
-        if cmd == "group":
-            allowed_group.add(request_manager.get_group_request(id_=id_).group_id)
+        if cmd == "group" and (group := request_manager.get_group_request(id_=id_)):
+            allowed_group.add(group.group_id)
         await handle_request.send(
             await request_manager.approve(bot=bot, id_=id_, type_=cmd)
         )
