@@ -1,7 +1,8 @@
 from time import time
 from typing import Dict, List, Union, Callable, Iterable
 
-from nonebot.adapters.onebot.v11 import Event, Message, MessageEvent, PokeNotifyEvent
+from nonebot.typing import T_State
+from nonebot.adapters import Message
 
 from .data_class import CheckType, LimitType
 
@@ -55,7 +56,7 @@ class CDManager:
                 self.__last_called: Dict[int, float] = {}
                 """该检测器最后的调用时间，{id: time}
                 """
-                self.__func: Callable[[Event], Union[bool, float]]
+                self.__func: Callable[[T_State], Union[bool, float]]
                 """实际的检测函数
                 """
                 limit_type, check_type = cd_item.limit_type, cd_item.check_type
@@ -71,62 +72,62 @@ class CDManager:
                     self.__last_called = last_called["group"]
                     self.__func = self.__check_group
 
-            def check(self, event: Event) -> Union[bool, float]:
+            def check(self, state: T_State) -> Union[bool, float]:
                 """外部可调用的检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
-                return self.__func(event)
+                return self.__func(state)
 
-            def __check_user_private(self, event: Event) -> Union[bool, float]:
+            def __check_user_private(self, state: T_State) -> Union[bool, float]:
                 """limit_type为user，check_type为private时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
-                if not hasattr(event, "group_id"):
-                    return self.__check_user_all(event)
+                if "migang_group_id" not in state:
+                    return self.__check_user_all(state)
                 return True
 
-            def __check_user_group(self, event: Event) -> Union[bool, float]:
+            def __check_user_group(self, state: T_State) -> Union[bool, float]:
                 """limit_type为user，check_type为group时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
-                if hasattr(event, "group_id"):
-                    return self.__check_user_all(event)
+                if "migang_group_id" in state:
+                    return self.__check_user_all(state)
                 return True
 
-            def __check_user_all(self, event: Event) -> Union[bool, float]:
+            def __check_user_all(self, state: T_State) -> Union[bool, float]:
                 """limit_type为user，check_type为all时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
                 if (
-                    (now := time()) - self.__last_called.get(event.user_id, 0)
+                    (now := time()) - self.__last_called.get(state["migang_user_id"], 0)
                 ) > self.__cd:
                     return True
                 else:
-                    return self.__cd - (now - self.__last_called.get(event.user_id, 0))
+                    return self.__cd - (
+                        now - self.__last_called.get(state["migang_user_id"], 0)
+                    )
 
-            def __check_group(
-                self, event: Union[MessageEvent, PokeNotifyEvent]
-            ) -> Union[bool, float]:
+            def __check_group(self, state: T_State) -> Union[bool, float]:
                 """limit_type为group，check_type只能是group时的具体检测函数
 
                 Args:
@@ -135,15 +136,13 @@ class CDManager:
                 Returns:
                     Union[bool, float]: 若CD不在冷却期，返回True，反之返回剩余时间
                 """
-                if hasattr(event, "group_id"):
+                if group_id := state.get("migang_group_id"):
                     if (
-                        (now := time()) - self.__last_called.get(event.group_id, 0)
+                        (now := time()) - self.__last_called.get(group_id, 0)
                     ) > self.__cd:
                         return True
                     else:
-                        return self.__cd - (
-                            now - self.__last_called.get(event.group_id, 0)
-                        )
+                        return self.__cd - (now - self.__last_called.get(group_id, 0))
                 return True
 
         def __init__(self, cd_items: Union[Iterable[CDItem], CDItem]) -> None:
@@ -167,20 +166,18 @@ class CDManager:
                 for cd_item in cd_items
             ]
 
-        def check(
-            self, event: Union[MessageEvent, PokeNotifyEvent]
-        ) -> Union[str, bool, None]:
+        def check(self, state: T_State) -> Union[str, bool, None]:
             """
             检测CD，若CD不在冷却期，返回True，反之返回提示语
 
             Args:
-                event (Union[MessageEvent, PokeNotifyEvent]): 事件
+                state T_state: 包含有migang_id的状态
 
             Returns:
                 Union[str, bool, None]: 若CD不在冷却期，返回True，反之返回提示语
             """
             for checker in self.__cd_checkers:
-                if (ret := checker.check(event)) != True:
+                if (ret := checker.check(state)) != True:
                     if checker.hint != None:
                         if isinstance(checker.hint, Message):
                             return Message(
@@ -192,9 +189,9 @@ class CDManager:
                     return None
             # 更新调用时间，和检测时候可能会有一点点的时间差
             now = time()
-            if hasattr(event, "group_id"):
-                self.__last_called["group"][event.group_id] = now
-            self.__last_called["user"][event.user_id] = now
+            if group_id := state.get("migang_group_id"):
+                self.__last_called["group"][group_id] = now
+            self.__last_called["user"][state["migang_user_id"]] = now
             return True
 
     def __init__(self) -> None:
@@ -216,9 +213,7 @@ class CDManager:
             cd_items = CDItem(cd_items)
         self.__plugin_cd[plugin_name] = CDManager.PluginCD(cd_items=cd_items)
 
-    def check(
-        self, plugin_name: str, event: Union[MessageEvent, PokeNotifyEvent]
-    ) -> Union[str, bool, None]:
+    def check(self, plugin_name: str, state: T_State) -> Union[str, bool, None]:
         """检测plugin_name 的 CD，若CD不在冷却期，返回True，反之返回提示语
 
         Args:
@@ -229,6 +224,6 @@ class CDManager:
             Union[str, bool, None]: 若CD不在冷却期，返回True，反之返回提示语
         """
         if plugin_cd := self.__plugin_cd.get(plugin_name):
-            if (ret := plugin_cd.check(event=event)) != True:
+            if (ret := plugin_cd.check(state=state)) != True:
                 return ret
         return True

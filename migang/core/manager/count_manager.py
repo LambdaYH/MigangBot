@@ -4,7 +4,8 @@ from typing import Dict, List, Union, Callable, Iterable
 
 import anyio
 from pydantic import BaseModel
-from nonebot.adapters.onebot.v11 import Event, Message
+from nonebot.typing import T_State
+from nonebot.adapters import Message
 
 from .data_class import CheckType, LimitType, CountPeriod
 
@@ -66,8 +67,8 @@ class CountManager:
                     data.user if limit_type == LimitType.user else data.group
                 )
                 self.__idx: int = count_item.count_period._value_
-                self.__func: Callable[[Event]]
-                self.__update_func: Callable[[Event]]
+                self.__func: Callable[[T_State]]
+                self.__update_func: Callable[[T_State]]
                 if limit_type is LimitType.user:
                     self.__update_func = self.__update_user
                     if check_type is CheckType.private:
@@ -80,24 +81,24 @@ class CountManager:
                     self.__update_func = self.__update_group
                     self.__func = self.__check_group
 
-            def check(self, event: Event) -> bool:
+            def check(self, state: T_State) -> bool:
                 """外部可调用的检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                return self.__func(event)
+                return self.__func(state)
 
-            def update(self, event: Event):
+            def update(self, state: T_State):
                 """更新计数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
                 """
-                self.__update_func(event)
+                self.__update_func(state)
 
             def __get_user(self, user_id: int) -> List[int]:
                 user = self.__data.get(user_id)
@@ -111,80 +112,80 @@ class CountManager:
                     group = self.__data[group_id] = [0] * 5
                 return group
 
-            def __update_user(self, event: Event) -> None:
+            def __update_user(self, state: T_State) -> None:
                 """更新用户计数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
                 """
-                if hasattr(event, "user_id"):
-                    self.__get_user(user_id=event.user_id)[self.__idx] += 1
+                if user_id := state.get("migang_user_id"):
+                    self.__get_user(user_id=user_id)[self.__idx] += 1
 
-            def __update_group(self, event: Event) -> None:
+            def __update_group(self, state: T_State) -> None:
                 """更新群计数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
                 """
-                if hasattr(event, "group_id"):
-                    self.__get_group(group_id=event.group_id)[self.__idx] += 1
+                if group_id := state.get("migang_group_id"):
+                    self.__get_group(group_id=group_id)[self.__idx] += 1
 
-            def __check_user_private(self, event: Event) -> bool:
+            def __check_user_private(self, state: T_State) -> bool:
                 """limit_type为user，check_type为private时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if not hasattr(event, "group_id"):
-                    return self.__check_user_all(event)
+                if "migang_group_id" not in state:
+                    return self.__check_user_all(state)
                 return True
 
-            def __check_user_group(self, event: Event) -> bool:
+            def __check_user_group(self, state: T_State) -> bool:
                 """limit_type为user，check_type为group时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if hasattr(event, "group_id"):
-                    return self.__check_user_all(event)
+                if "migang_group_id" in state:
+                    return self.__check_user_all(state)
                 return True
 
-            def __check_user_all(self, event: Event) -> bool:
+            def __check_user_all(self, state: T_State) -> bool:
                 """limit_type为user，check_type为all时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if hasattr(event, "user_id"):
+                if user_id := state.get("migang_user_id"):
                     if (
-                        self.__get_user(user_id=event.user_id)[self.__idx]
+                        self.__get_user(user_id=user_id)[self.__idx]
                         < self.__count_limit
                     ):
                         return True
                     return False
                 return True
 
-            def __check_group(self, event: Event) -> bool:
+            def __check_group(self, state: T_State) -> bool:
                 """limit_type为user，check_type只能是group时的具体检测函数数
 
                 Args:
-                    event (Event): 事件
+                    state (T_State): 包含migang_id的状态
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if hasattr(event, "group_id"):
+                if group_id := state.get("migang_group_id"):
                     if (
-                        self.__get_group(group_id=event.group_id)[self.__idx]
+                        self.__get_group(group_id=group_id)[self.__idx]
                         < self.__count_limit
                     ):
                         return True
@@ -229,21 +230,21 @@ class CountManager:
                     )
                 )
 
-        def check(self, event: Event) -> Union[str, bool, None]:
+        def check(self, state: T_State) -> Union[str, bool, None]:
             """检测插件对应的调用次数，若未达到上限，返回True，反之返回提示语
 
             Args:
-                event (Event): 事件
+                state (T_State): 包含migang_id的状态
 
             Returns:
                 Union[str, bool, None]: 若未达到调用次数上限，返回True，反之返回提示语
             """
             for checker in self.__count_checkers:
-                if not checker.check(event):
+                if not checker.check(state):
                     return checker.hint
             # 更新计数
             for checker in self.__count_checkers:
-                checker.update(event)
+                checker.update(state)
             self.__dirty_data = True
             return True
 
@@ -288,18 +289,18 @@ class CountManager:
             count_items = CountItem(count_items)
         await self.__plugin_count[plugin_name].init(count_items=count_items)
 
-    def check(self, plugin_name: str, event: Event) -> Union[str, bool, None]:
+    def check(self, plugin_name: str, state: T_State) -> Union[str, bool, None]:
         """检测插件plugin_name对应的调用次数，若未达到上限，返回True，反之返回提示语
 
         Args:
             plugin_name (str): 插件名
-            event (Event): 事件
+            state (T_State): 包含migang_id的状态
 
         Returns:
             Union[str, bool, None]: 若未达到调用次数上限，返回True，反之返回提示语
         """
         if plugin_count := self.__plugin_count.get(plugin_name):
-            if (ret := plugin_count.check(event=event)) != True:
+            if (ret := plugin_count.check(state=state)) != True:
                 return ret
         return True
 

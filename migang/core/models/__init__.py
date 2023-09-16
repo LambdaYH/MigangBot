@@ -3,8 +3,10 @@ from .sign_in import SignIn  # noqa
 from .shop_log import ShopLog  # noqa
 from .user_bag import UserBag  # noqa
 from .feedback import Feedback  # noqa
+from .migang_id import MigangId  # noqa
 from .goods_info import GoodsInfo  # noqa
 from .goods_group import GoodsGroup  # noqa
+from .platform_id import PlatformId  # noqa
 from .user_status import UserStatus  # noqa
 from .group_status import GroupStatus  # noqa
 from .goods_use_log import GoodsUseLog  # noqa

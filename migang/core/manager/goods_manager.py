@@ -6,6 +6,7 @@ from enum import IntEnum, unique
 from typing import Any, Dict, List, Tuple, Union, Callable, Iterable, Optional
 
 from nonebot.log import logger
+from nonebot.typing import T_State
 from tortoise.functions import Sum
 from nonebot.matcher import Matcher
 from tortoise.transactions import in_transaction
