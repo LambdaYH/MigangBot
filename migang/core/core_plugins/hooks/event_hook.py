@@ -18,6 +18,7 @@ async def _(
     event: Event,
     state: T_State,
 ):
+    print(111)
     if matcher.plugin_name in _ignore_plugins:
         return
     # 提取session
@@ -44,12 +45,12 @@ async def _(
     )
 
     # 提取出migang_id
-    migang_user_id: int = await PlatformId.extract_migang_id(
+    migang_user_id: int = await PlatformId.extract_migang_user_id(
         platform=platform, user_id=user_id
     )
 
     if group_id is not None:
-        migang_group_id: int = await PlatformId.extract_migang_id(
+        migang_group_id: int = await PlatformId.extract_migang_group_id(
             platform=platform, group_id=group_id
         )
         if not group_manager.check_group_plugin_status(
@@ -82,7 +83,7 @@ async def _(
     if (
         hasattr(event, "sender")
         and (
-            name := await UserProperty.filter(user_id=event.user_id)
+            name := await UserProperty.filter(user_id=migang_user_id)
             .first()
             .values_list("nickname")
         )

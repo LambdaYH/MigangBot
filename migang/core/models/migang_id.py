@@ -6,6 +6,7 @@ from tortoise.backends.base.client import BaseDBAsyncClient
 
 class MigangId(Model):
     id = fields.IntField(pk=True)
+    value = fields.IntField(null=True)
 
     class Meta:
         table = "migang_id"
@@ -13,11 +14,10 @@ class MigangId(Model):
 
     @classmethod
     async def get_next_id(cls, connection: BaseDBAsyncClient | None) -> int:
-        await cls.save(using_db=connection)
-        return (
-            await cls.all()
-            .using_db(connection)
-            .annotate(max_id=Max("id"))
-            .first()
-            .values_list("max_id")
-        )[0]
+        item = await cls.filter(id=1).using_db(connection).first()
+        if item is None:
+            item = cls(value=0)
+        else:
+            item.value += 1
+        await item.save(using_db=connection)
+        return item.value

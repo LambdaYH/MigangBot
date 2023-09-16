@@ -1,4 +1,4 @@
-"""管理各类请求
+"""管理各类请求，仅支持Onebot11 qq
 """
 from pathlib import Path
 from datetime import datetime

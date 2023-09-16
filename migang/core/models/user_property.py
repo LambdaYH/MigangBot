@@ -43,7 +43,8 @@ class UserProperty(Model):
             async with in_transaction() as connection:
                 user = await cls.filter(user_id=user_id).using_db(connection).first()
                 if not user:
-                    user = await cls(user_id=user_id).save(using_db=connection)
+                    user = cls(user_id=user_id)
+                    await user.save(using_db=connection)
                 user.gold += gold_diff
                 if gold_diff >= 0:
                     await TransactionLog(
@@ -57,7 +58,8 @@ class UserProperty(Model):
         else:
             user = await cls.filter(user_id=user_id).using_db(connection).first()
             if not user:
-                user = await cls(user_id=user_id).save(using_db=connection)
+                user = cls(user_id=user_id)
+                await user.save(using_db=connection)
             user.gold += gold_diff
             if gold_diff >= 0:
                 await TransactionLog(

@@ -10,7 +10,7 @@ class PlatformId(Model):
     platform = fields.TextField(null=False)
     user_id = fields.TextField(null=True)
     group_id = fields.TextField(null=True)
-    migang_id = fields.BigIntField(null=False)
+    migang_id = fields.IntField(null=False)
 
     class Meta:
         table = "platform_id"
@@ -18,17 +18,30 @@ class PlatformId(Model):
         unique_together = ("platform", "user_id", "group_id")
 
     @classmethod
-    async def extract_migang_id(
-        cls, platform: str, user_id: str | None, group_id: str | None
-    ) -> int:
+    async def extract_migang_group_id(cls, platform: str, group_id: str) -> int:
         if (
-            target := await cls.filter(
-                platform=platform, user_id=user_id, group_id=group_id
-            )
+            target := await cls.filter(group_id=group_id, platform=platform)
             .first()
             .values_list("migang_id")
-            and target[0] is not None
-        ):
+        ) and (target[0] is not None):
+            return target[0]
+        else:
+            async with in_transaction() as connection:
+                new_id = await MigangId.get_next_id(connection=connection)
+                await cls(
+                    platform=platform,
+                    group_id=group_id,
+                    migang_id=new_id,
+                ).save(using_db=connection)
+                return new_id
+
+    @classmethod
+    async def extract_migang_user_id(cls, platform: str, user_id: str) -> int:
+        if (
+            target := await cls.filter(user_id=user_id, platform=platform)
+            .first()
+            .values_list("migang_id")
+        ) and (target[0] is not None):
             return target[0]
         else:
             async with in_transaction() as connection:
@@ -36,7 +49,6 @@ class PlatformId(Model):
                 await cls(
                     platform=platform,
                     user_id=user_id,
-                    group_id=group_id,
                     migang_id=new_id,
                 ).save(using_db=connection)
                 return new_id
