@@ -46,5 +46,6 @@ def get_page_num(user_id: int):
 @ffxiv_luck.handle()
 async def _(event: Union[GroupMessageEvent, PrivateMessageEvent]):
     await ffxiv_luck.send(
-        MessageSegment.image(img_path / path_list[get_page_num(event.user_id)])
+        MessageSegment.image(img_path / path_list[get_page_num(event.user_id)]),
+        at_sender=True,
     )
