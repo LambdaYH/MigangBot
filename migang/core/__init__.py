@@ -1,6 +1,15 @@
+from migang.core.cross_platform import (  # noqa
+    GROUP,
+    SUPERUSER,
+    GROUP_ADMIN,
+    Session,
+    MigangSession,
+)
+
 from .message import broadcast  # noqa
 from .rules import GroupTaskChecker  # noqa
 from .utils.task_operation import check_task  # noqa
+from .utils.config_operation import get_config, sync_get_config  # noqa
 from .permission import BAD, GOOD, BLACK, NORMAL, EXCELLENT, Permission  # noqa
 from .path import (  # noqa
     DATA_PATH,
@@ -10,12 +19,6 @@ from .path import (  # noqa
     RESOURCE_PATH,
     TEMPLATE_PATH,
 )
-from .utils.config_operation import (  # noqa
-    get_config,
-    sync_get_config,
-    pre_init_manager,
-    post_init_manager,
-)
 from .manager import (  # noqa
     CDItem,
     TaskItem,
@@ -24,4 +27,11 @@ from .manager import (  # noqa
     LimitType,
     ConfigItem,
     CountPeriod,
+)
+from .event_register import (  # noqa
+    shutdown,
+    pre_init_manager,
+    post_init_manager,
+    pre_init_manager_l2,
+    post_init_manager_l2,
 )

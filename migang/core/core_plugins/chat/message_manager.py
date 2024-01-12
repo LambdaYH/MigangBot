@@ -5,10 +5,12 @@ from asyncio import iscoroutinefunction
 from typing import Any, Dict, List, Tuple, Union, Callable, Coroutine
 
 from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
+from nonebot_plugin_alconna import UniMessage
+from nonebot.adapters import Bot, Event, Message
 
 from migang.core.permission import BLACK
 from migang.core.manager import permission_manager
+from migang.core.cross_platform import MigangSession
 
 from .exception import BreakSession
 
@@ -17,8 +19,13 @@ class MessageManager:
     def __init__(
         self,
         *get_reply_func: Callable[
-            [Message, int],
-            Union[Coroutine[Any, Any, str], str, Message, Coroutine[Any, Any, Message]],
+            [UniMessage, int],
+            Union[
+                Coroutine[Any, Any, str],
+                str,
+                UniMessage,
+                Coroutine[Any, Any, UniMessage],
+            ],
         ],
     ) -> None:
         self.__same_ret = [
@@ -40,7 +47,7 @@ class MessageManager:
         self.__data: Dict[int, Dict[str, Union[float, int, List[str]]]] = {}
         self.__get_reply: Tuple[
             Callable[
-                [Message, int],
+                [UniMessage, int],
                 Union[
                     Coroutine[Any, Any, str], str, Message, Coroutine[Any, Any, Message]
                 ],
@@ -49,33 +56,38 @@ class MessageManager:
 
     async def reply(
         self,
-        user_id: int,
+        session: MigangSession,
         user_name: str,
         nickname: str,
         bot: Bot,
         plain_text: str,
         matcher: Matcher,
-        event: GroupMessageEvent,
-    ) -> Message:
+        event: Event,
+        message: UniMessage,
+    ) -> UniMessage:
         msg_str = event.get_plaintext()
-        if count := self.__check_repeat(user_id=user_id, msg=msg_str):
+        if count := self.__check_repeat(user_id=session.user_id, msg=msg_str):
             if count >= 3:
                 permission_manager.set_user_perm(
-                    user_id=user_id, permission=BLACK, duration=5 * 60
+                    user_id=session.user_id, permission=BLACK, duration=5 * 60
                 )
                 return "生气了！不和你说话了（5min）"
-            return random.choice(self.__same_ret).format(
-                nickname=nickname, count=count + 1
+            return UniMessage.text(
+                random.choice(self.__same_ret).format(
+                    nickname=nickname, count=count + 1
+                )
             )
-        if self.__check_follow_me(user_id=user_id, msg=msg_str):
-            return random.choice(self.__repeat_ret).format(
-                nickname=nickname, user_name=user_name
+        if self.__check_follow_me(user_id=session.user_id, msg=msg_str):
+            return UniMessage.text(
+                random.choice(self.__repeat_ret).format(
+                    nickname=nickname, user_name=user_name
+                )
             )
         for func in self.__get_reply:
             args = inspect.signature(func).parameters.keys()
             params = {}
             if "user_id" in args:
-                params["user_id"] = user_id
+                params["user_id"] = session.user_id
             if "user_name" in args:
                 params["user_name"] = user_name
             if "bot" in args:
@@ -88,19 +100,26 @@ class MessageManager:
                 params["nickname"] = nickname
             if "matcher" in args:
                 params["matcher"] = matcher
+            if "message" in args:
+                params["message"] = message
+            if "session" in args:
+                params["session"] = session
             try:
                 if (
                     reply_ := await func(**params)
                     if iscoroutinefunction(func)
                     else func(**params)
                 ):
-                    self.__add(user_id=user_id, msg=msg_str, reply=reply_)
-                    return Message(reply_)
+                    self.__add(user_id=session.user_id, msg=msg_str, reply=reply_)
+                    if isinstance(reply_, str):
+                        return UniMessage.text(reply_)
+                    elif isinstance(reply_, UniMessage):
+                        return reply_
             except BreakSession:
                 return None
-        return "......(不知道说什么)"
+        return UniMessage.text("......(不知道说什么)")
 
-    def __get_user(self, user_id: int) -> Dict:
+    def __get_user(self, user_id: str) -> Dict:
         user = self.__data.get(user_id)
         if not user:
             user = self.__data[user_id] = {
@@ -111,14 +130,14 @@ class MessageManager:
             }
         return user
 
-    def __add(self, user_id: int, msg: str, reply: str):
+    def __add(self, user_id: str, msg: str, reply: str):
         user = self.__get_user(user_id=user_id)
         user["last_message"] = msg
         user["last_reply"] = reply
         user["time"] = time.time()
         user["repeat_count"] = 0
 
-    def __check_repeat(self, user_id: int, msg: str) -> int:
+    def __check_repeat(self, user_id: str, msg: str) -> int:
         """检查是否重复问问题，若是，返回重复次数（超过5min就不算重复了）
 
         Args:
@@ -138,7 +157,7 @@ class MessageManager:
             return 0
         return user["repeat_count"]
 
-    def __check_follow_me(self, user_id: int, msg: str) -> bool:
+    def __check_follow_me(self, user_id: str, msg: str) -> bool:
         """检查是否学我说话，不管怎样就是不能学
 
         Args:

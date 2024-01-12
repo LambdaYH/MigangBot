@@ -4,9 +4,11 @@ from tortoise import fields
 from tortoise.models import Model
 from tortoise.backends.base.client import BaseDBAsyncClient
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 class UserBag(Model):
-    user_id = fields.BigIntField(null=False)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     item_name = fields.CharField(255, null=False)
     amount = fields.IntField(null=False, default=0)
 

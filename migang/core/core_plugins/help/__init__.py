@@ -10,6 +10,8 @@ import anyio
 from pil_utils import text2image
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_alconna import UniMessage
+from nonebot.adapters import Bot, Event, Message
 from nonebot import require, get_plugin, on_command
 from nonebot.permission import SUPERUSER, SuperUser
 from nonebot.rule import (
@@ -22,16 +24,10 @@ from nonebot.rule import (
     StartswithRule,
     to_me,
 )
-from nonebot.adapters.onebot.v11 import (
-    GROUP,
-    Bot,
-    Message,
-    MessageEvent,
-    MessageSegment,
-    GroupMessageEvent,
-    PrivateMessageEvent,
-)
 
+from migang.core.utils.image import image_file_to_bytes
+from migang.core.cross_platform import GROUP, SUPERUSER, Session
+from migang.core.cross_platform.adapters import supported_adapters
 from migang.core.manager import user_manager, group_manager, plugin_manager
 
 from .data_source import (
@@ -58,7 +54,7 @@ usage：
         显示插件指令：指令帮助[xxx]
 """.strip(),
     type="application",
-    supported_adapters={"~onebot.v11"},
+    supported_adapters=supported_adapters,
 )
 
 simple_help = on_command("帮助", aliases={"功能"}, priority=1, block=True, rule=to_me())
@@ -69,62 +65,60 @@ command_list = on_command(
 
 
 @simple_help.handle()
-async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, session: Session, event: Event, args: Message = CommandArg()):
     args = args.extract_plain_text()
     if not args:
         image_file: Path
         group_id, user_id = None, None
-        if isinstance(event, GroupMessageEvent):
-            group_id = event.group_id
+        if session.is_group:
+            group_id = session.group_id
             image_file = GROUP_HELP_PATH / f"{group_id}.png"
-        elif isinstance(event, PrivateMessageEvent):
-            user_id = event.user_id
-            image_file = USER_HELP_PATH / f"{user_id }.png"
+        else:
+            user_id = session.user_id
+            image_file = USER_HELP_PATH / f"{user_id}.png"
         if image_file.exists():
-            await simple_help.finish(MessageSegment.image(image_file))
+            await UniMessage.image(await image_file_to_bytes(image_file)).send()
+            await simple_help.finish()
         img = await get_help_image(
             group_id=group_id,
             user_id=user_id,
             super_user=await SUPERUSER(bot, event),
         )
-        await simple_help.send(MessageSegment.image(img))
+        await UniMessage.image(img).send()
         async with await anyio.open_file(image_file, "wb") as f:
             await f.write(img)
     else:
         if help_ := get_plugin_help(args):
-            await simple_help.send(await draw_usage(help_))
+            await (await draw_usage(help_)).send()
         else:
             await simple_help.send("没有该插件的帮助信息")
 
 
 @task_help.handle()
-async def _(event: GroupMessageEvent):
-    image_file = GROUP_TASK_PATH / f"{event.group_id}.png"
+async def _(session: Session):
+    image_file = GROUP_TASK_PATH / f"{session.group_id}.png"
     if image_file.exists():
-        await task_help.finish(MessageSegment.image(image_file))
-    img = await get_task_image(event.group_id)
-    await task_help.send(MessageSegment.image(img))
+        await UniMessage.image(await image_file_to_bytes(image_file)).send()
+        await task_help.finish()
+    img = await get_task_image(session.group_id)
+    await UniMessage.image(img).send()
     async with await anyio.open_file(image_file, "wb") as f:
         await f.write(img)
 
 
 @command_list.handle()
-async def _(event: MessageEvent, args: Message = CommandArg()):
+async def _(session: Session, args: Message = CommandArg()):
     name = args.extract_plain_text()
     if (plugin_name := plugin_manager.get_plugin_name(name)) is None:
         await command_list.finish(f"插件 {name} 不存在！")
     else:
         if (
-            (
-                isinstance(event, GroupMessageEvent)
-                and not group_manager.check_plugin_permission(
-                    plugin_name=plugin_name, group_id=event.group_id
-                )
+            session.is_group
+            and not group_manager.check_plugin_permission(
+                plugin_name=plugin_name, group_id=session.group_id
             )
-            or isinstance(event, PrivateMessageEvent)
-            and not user_manager.check_plugin_permission(
-                plugin_name=plugin_name, user_id=event.user_id
-            )
+        ) or not user_manager.check_plugin_permission(
+            plugin_name=plugin_name, user_id=session.user_id
         ):
             await command_list.finish(f"当前用户/群权限不足，无法查看插件 {name} 的信息")
         plugin = get_plugin(plugin_name)
@@ -211,4 +205,4 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
             cmd_img = text2image(text="\n".join(cmd_text))
         with BytesIO() as buf:
             cmd_img.save(buf, format="PNG")
-            await command_list.send(MessageSegment.image(buf))
+            await UniMessage.image(buf).send()

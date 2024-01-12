@@ -6,6 +6,8 @@ from tortoise.models import Model
 from tortoise.functions import Sum
 from tortoise.backends.base.client import BaseDBAsyncClient
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 @unique
 class DepositType(IntEnum):
@@ -14,7 +16,7 @@ class DepositType(IntEnum):
 
 
 class Bank(Model):
-    user_id = fields.BigIntField(null=False)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     amount = fields.IntField(null=False, default=0)
     time = fields.DatetimeField(auto_now_add=True)
     deposit_type = fields.IntEnumField(

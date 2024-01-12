@@ -84,8 +84,8 @@ class PermissionManager:
             self.__data: TinyPriorityQueue = TinyPriorityQueue.parse_file(file)
         else:
             self.__data: TinyPriorityQueue = TinyPriorityQueue()
-        self.__group_data: Dict[int, GroupPermItem] = {}
-        self.__user_data: Dict[int, UserPermItem] = {}
+        self.__group_data: Dict[str, GroupPermItem] = {}
+        self.__user_data: Dict[str, UserPermItem] = {}
         """用来检测有没有重复添加
         """
         for item in self.__data.data:
@@ -146,14 +146,14 @@ class PermissionManager:
 
     def set_user_perm(
         self,
-        user_id: int,
+        user_id: str,
         permission: Permission,
         duration: Union[int, timedelta, None] = None,
     ) -> None:
         """设定用户权限
 
         Args:
-            user_id (int): 用户id
+            user_id (str): 用户id
             permission (Permission): _权限
             duration (Union[int, timedelta, None], optional): 时长，当为int时，单位为秒，为None时则永久. Defaults to None.
         """
@@ -194,14 +194,14 @@ class PermissionManager:
 
     def set_group_perm(
         self,
-        group_id: int,
+        group_id: str,
         permission: Permission,
         duration: Union[int, timedelta, None] = None,
     ) -> None:
         """设定群权限
 
         Args:
-            group_id (int): 群id
+            group_id (str): 群id
             permission (Permission): _权限
             duration (Union[int, timedelta, None], optional): 时长，当为int时，单位为秒，为None时则永久. Defaults to None.
         """
@@ -239,7 +239,7 @@ class PermissionManager:
                     group_id=group_id, permission=permission
                 )
 
-    def get_user_perm(self, user_id: int) -> Permission:
+    def get_user_perm(self, user_id: str) -> Permission:
         """获取用户权限
 
         Args:
@@ -250,7 +250,7 @@ class PermissionManager:
         """
         return self.__user_manager.get_user_permission(user_id=user_id)
 
-    def get_group_perm(self, group_id: int) -> Permission:
+    def get_group_perm(self, group_id: str) -> Permission:
         """获取群权限
 
         Args:

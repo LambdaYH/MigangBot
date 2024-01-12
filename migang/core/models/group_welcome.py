@@ -1,9 +1,11 @@
 from tortoise import fields
 from tortoise.models import Model
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 class GroupWelcome(Model):
-    group_id = fields.BigIntField()
+    group_id = fields.CharField(max_length=ID_MAX_LENGTH)
     content = fields.JSONField(null=True)
     status = fields.BooleanField(default=True)
 

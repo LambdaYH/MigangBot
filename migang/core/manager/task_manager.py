@@ -49,8 +49,8 @@ class TaskManager:
         permission: Permission
         global_status: bool
         default_status: bool
-        enabled_group: Set[int]
-        disabled_group: Set[int]
+        enabled_group: Set[str]
+        disabled_group: Set[str]
         description: str
 
     class Task:
@@ -72,7 +72,7 @@ class TaskManager:
             self.__permission: Permission
             self.__global_status: bool
             self.__default_status: bool
-            self.__non_default_group: Set[int]
+            self.__non_default_group: Set[str]
 
         async def init(self) -> None:
             """异步初始化Task类"""
@@ -82,7 +82,7 @@ class TaskManager:
             self.__permission: Permission = self.__data.permission
             self.__global_status: bool = self.__data.global_status
             self.__default_status: bool = self.__data.default_status
-            self.__non_default_group: Set[int] = (
+            self.__non_default_group: Set[str] = (
                 self.__data.disabled_group
                 if self.__default_status
                 else self.__data.enabled_group
@@ -119,12 +119,12 @@ class TaskManager:
             self.__data.global_status = self.__global_status = False
 
         def check_group_status(
-            self, group_id: int, group_permission: Permission
+            self, group_id: str, group_permission: Permission
         ) -> bool:
             """检测群是否能调用该任务
 
             Args:
-                group_id (int): 群号
+                group_id (str): 群号
                 group_permission (Permission): 群权限
 
             Returns:
@@ -147,11 +147,11 @@ class TaskManager:
             """
             return permission >= self.__permission
 
-        def set_group_enable(self, group_id: int) -> bool:
+        def set_group_enable(self, group_id: str) -> bool:
             """在群group_id中启用该任务
 
             Args:
-                group_id (int): 群号
+                group_id (str): 群号
 
             Returns:
                 bool: 若全局禁用则无法启用返回False，反之返回True
@@ -170,11 +170,11 @@ class TaskManager:
                     self.__data.disabled_group.remove(group_id)
             return True
 
-        def set_group_disable(self, group_id: int) -> bool:
+        def set_group_disable(self, group_id: str) -> bool:
             """在群group_id中禁用该任务
 
             Args:
-                group_id (int): 群号
+                group_id (str): 群号
 
             Returns:
                 bool: 返回True
@@ -191,11 +191,11 @@ class TaskManager:
                     self.__data.disabled_group.add(group_id)
             return True
 
-        def clean_group(self, group_set: Set[int]) -> None:
+        def clean_group(self, group_set: Set[str]) -> None:
             """清理配置文件中冗余的群
 
             Args:
-                group_set (Set[int]): 当前有效的群
+                group_set (Set[str]): 当前有效的群
             """
             self.__non_default_group &= group_set
 
@@ -235,13 +235,13 @@ class TaskManager:
         return ret
 
     def check_group_status(
-        self, task_name: str, group_id: int, group_permission: Permission
+        self, task_name: str, group_id: str, group_permission: Permission
     ) -> bool:
         """检测任务task_name是否响应该群，由group_manager调用
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
             group_permission (Permission): 群权限
 
         Returns:
@@ -265,12 +265,12 @@ class TaskManager:
             permission=permission
         )
 
-    async def set_group_enable(self, task_name: str, group_id: int) -> bool:
+    async def set_group_enable(self, task_name: str, group_id: str) -> bool:
         """启用group_id中的task_name任务
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若返回False则表示已被全局禁用，反之返回True
@@ -280,12 +280,12 @@ class TaskManager:
             return True
         return False
 
-    async def set_group_disable(self, task_name: str, group_id: int) -> bool:
+    async def set_group_disable(self, task_name: str, group_id: str) -> bool:
         """禁用group_id中的task_name任务
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 返回True
@@ -350,11 +350,11 @@ class TaskManager:
             name = self.__names[name]
         return self.__task[name].usage
 
-    async def clean_group(self, group_list: Union[List[int], Set[int]]) -> None:
+    async def clean_group(self, group_list: Union[List[str], Set[str]]) -> None:
         """清理配置文件中冗余的群
 
         Args:
-            group_list (Union[List[int], Set[int]]): 当前有效的群
+            group_list (Union[List[str], Set[str]]): 当前有效的群
         """
         group_list = set(group_list)
         for task in self.__task.values():

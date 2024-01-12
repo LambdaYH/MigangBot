@@ -4,16 +4,17 @@ from functools import cache
 from typing import Any, Callable, Optional
 
 from nonebot.log import logger
-from nonebot import get_driver, get_loaded_plugins
+from nonebot import get_loaded_plugins
 
 from migang.core.manager import config_manager
 from migang.core.exception import ConfigNoExistError
+from migang.core.event_register import pre_init_manager
 
 plugin_list = set()
 
 
-@get_driver().on_startup
-async def _():
+@pre_init_manager
+async def load_plugin_list():
     plugins = get_loaded_plugins()
     for plugin in plugins:
         plugin_list.add(plugin.name)
@@ -71,19 +72,3 @@ def sync_get_config(
     except ConfigNoExistError:
         logger.info(f"{plugin_name} 的参数项 {key} 不存在，加载默认值 {default_value}")
         return default_value
-
-
-_post_init_manager_func = []
-_pre_init_manager_func = []
-
-
-def post_init_manager(func: Callable):
-    """注册初始化各种管理器后需要执行的函数，适用于一下要获取配置项的时候用"""
-    _post_init_manager_func.append(func)
-    return func
-
-
-def pre_init_manager(func: Callable):
-    """注册初始化各种管理器前需要执行的函数，适用于一下要获取配置项的时候用"""
-    _pre_init_manager_func.append(func)
-    return func

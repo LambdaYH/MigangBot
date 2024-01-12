@@ -9,19 +9,20 @@ import ujson
 import aiohttp
 from nonebot import get_driver
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
+from nonebot_plugin_alconna import Image, UniMessage
 
 from migang.core import get_config
 from migang.core.permission import BLACK
 from migang.core.manager import permission_manager
+from migang.core.utils.image import image_file_to_bytes
 
 
 async def get_turing(
-    nickname: str, plain_text: str, event: GroupMessageEvent, user_id: int
+    nickname: str, plain_text: str, message: UniMessage, user_id: int
 ) -> Optional[str]:
     """获取图灵回复"""
-    img_url = [seg.data["url"] for seg in event.message["image"]]
-    img_url = img_url[0] if img_url else ""
+    img_url = message.get(Image)
+    img_url = img_url[0].name if img_url else ""
     rst = await tu_ling(plain_text, img_url, user_id)
     if not rst:
         return None
@@ -94,7 +95,7 @@ hello_msg = set(
 )
 
 
-def hello(nickname: str, plain_text: str) -> Optional[Message]:
+async def hello(nickname: str, plain_text: str) -> Optional[UniMessage]:
     """
     一些打招呼的内容
     """
@@ -109,7 +110,9 @@ def hello(nickname: str, plain_text: str) -> Optional[Message]:
             "呼呼，叫俺干嘛",
         )
     )
-    return result + MessageSegment.image(random.choice(hello_img))
+    return result + UniMessage.image(
+        await image_file_to_bytes(random.choice(hello_img))
+    )
 
 
 # 没有回答时回复内容
@@ -118,7 +121,7 @@ no_result_img = [
 ]
 
 
-def no_result(nickname: str) -> Message:
+async def no_result(nickname: str) -> UniMessage:
     """
     没有回答时的回复
     """
@@ -130,7 +133,7 @@ def no_result(nickname: str) -> Message:
             "你觉得我听懂了吗？嗯？",
             "我！不！知！道！",
         ]
-    ) + MessageSegment.image(random.choice(no_result_img))
+    ) + UniMessage.image(await image_file_to_bytes(random.choice(no_result_img)))
 
 
 antiinsult: List[str] = []

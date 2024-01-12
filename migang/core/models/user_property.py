@@ -8,11 +8,12 @@ from tortoise.models import Model
 from tortoise.transactions import in_transaction
 from tortoise.backends.base.client import BaseDBAsyncClient
 
+from migang.core.constant import ID_MAX_LENGTH
 from migang.core.models.transaction_log import TransactionLog
 
 
 class UserProperty(Model):
-    user_id = fields.BigIntField(pk=True)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     nickname = fields.TextField(null=True, default=None)
     gold = fields.BigIntField(null=False, default=0)
     impression = fields.DecimalField(12, 3, default=0)
@@ -24,7 +25,7 @@ class UserProperty(Model):
     @classmethod
     async def modify_gold(
         cls,
-        user_id: int,
+        user_id: str,
         gold_diff: int,
         description: Optional[str] = None,
         connection: Optional[BaseDBAsyncClient] = None,
@@ -71,7 +72,7 @@ class UserProperty(Model):
 
     @classmethod
     async def modify_impression(
-        cls, user_id: int, impression_diff: Union[Decimal, float]
+        cls, user_id: str, impression_diff: Union[Decimal, float]
     ):
         user = await cls.filter(user_id=user_id).first()
         if not user:
@@ -83,7 +84,7 @@ class UserProperty(Model):
 
     @classmethod
     async def get_gold(
-        cls, user_id: int, connection: Optional[BaseDBAsyncClient] = None
+        cls, user_id: str, connection: Optional[BaseDBAsyncClient] = None
     ) -> None:
         user = await cls.filter(user_id=user_id).using_db(connection).first()
         if not user:

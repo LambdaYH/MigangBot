@@ -4,9 +4,11 @@ from datetime import datetime, timedelta
 from tortoise import fields
 from tortoise.models import Model
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 class SignIn(Model):
-    user_id = fields.BigIntField(pk=True)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     signin_count = fields.IntField(default=0)
     """签到总次数
     """

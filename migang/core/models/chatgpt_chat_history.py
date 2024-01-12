@@ -1,12 +1,14 @@
 from tortoise import fields
 from tortoise.models import Model
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 class ChatGPTChatHistory(Model):
-    user_id = fields.BigIntField(null=False)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     """对话发起者"""
-    group_id = fields.BigIntField(null=True)
-    target_id = fields.BigIntField(null=True, default=None)
+    group_id = fields.CharField(max_length=ID_MAX_LENGTH, null=True)
+    target_id = fields.CharField(max_length=ID_MAX_LENGTH, null=True, default=None)
     """对话对象"""
     message = fields.JSONField()
     time = fields.DatetimeField(auto_now_add=True)

@@ -4,13 +4,14 @@ import time
 import bisect
 from typing import Any, Dict
 
-from nonebot import on
+from nonebot import on_message
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import Bot, Event, Message
+from nonebot.adapters import Bot, Event, Message
 
 from migang.core.permission import BLACK
+from migang.core.cross_platform import Session
+from migang.core.manager import permission_manager
 from migang.core import ConfigItem, get_config, post_init_manager
-from migang.core.manager import group_manager, permission_manager
 
 __plugin_hidden__ = True
 __plugin_always_on__ = True
@@ -100,9 +101,9 @@ async def _():
 
 class GroupSelfMessage:
     def __init__(self) -> None:
-        self.__data: Dict[int, Dict[str, Any]] = {}
+        self.__data: Dict[str, Dict[str, Any]] = {}
 
-    def __get_group(self, group_id: int) -> Dict[str, Any]:
+    def __get_group(self, group_id: str) -> Dict[str, Any]:
         group = self.__data.get(group_id)
         if not group:
             group = self.__data[group_id] = {
@@ -113,11 +114,11 @@ class GroupSelfMessage:
             }
         return group
 
-    def check_group_repeat(self, group_id: int, message: Message) -> bool:
+    def check_group_repeat(self, group_id: str, message: Message) -> bool:
         """检查，若返回True，则表明发送重复信息超出次数，准备处理
 
         Args:
-            group_id (int): _description_
+            group_id (str): _description_
             message (Message): _description_
 
         Returns:
@@ -137,7 +138,7 @@ class GroupSelfMessage:
                 return True
         return False
 
-    def check_group_send(self, group_id: int) -> bool:
+    def check_group_send(self, group_id: str) -> bool:
         group = self.__get_group(group_id=group_id)
         now = time.time()
         group["message_time"].append(now)
@@ -152,35 +153,31 @@ class GroupSelfMessage:
 group_self_message = GroupSelfMessage()
 
 
-def _rule(event) -> bool:
-    if not hasattr(event, "group_id"):
-        return False
-    # 这个类型的hook不到，所以这里加个检测防止自己的消息触发自己
-    return group_manager.check_group_plugin_status("send_detect", event.group_id)
+def _rule(bot: Bot, session: Session) -> bool:
+    return bot.self_id == session.user_id
 
 
-detect = on(
-    type="message_sent",
+detect = on_message(
     rule=_rule,
-    block=False,
+    block=True,
     priority=0,
 )
 
 
 @detect.handle()
-async def _(bot: Bot, event: Event):
+async def _(bot: Bot, event: Event, session: Session):
     if repeat_check_on and group_self_message.check_group_repeat(
-        group_id=event.group_id, message=event.message
+        group_id=session.group_id, message=event.get_message()
     ):
         permission_manager.set_group_perm(
-            group_id=event.group_id, permission=BLACK, duration=repeat_ban_time
+            group_id=session.group_id, permission=BLACK, duration=repeat_ban_time
         )
         await detect.send(
             f"检测到{list(bot.config.nickname)[0]}在{repeat_check_duration}s内连续发送了{repeat_limit}条相同消息，为防止刷屏，静默{repeat_ban_time}s"
         )
-    elif send_on and group_self_message.check_group_send(group_id=event.group_id):
+    elif send_on and group_self_message.check_group_send(group_id=session.group_id):
         permission_manager.set_group_perm(
-            group_id=event.group_id, permission=BLACK, duration=send_ban_time
+            group_id=session.group_id, permission=BLACK, duration=send_ban_time
         )
         await detect.send(
             f"检测到{list(bot.config.nickname)[0]}在{send_duration}s内发送了{send_limit}条消息，为防止刷屏，静默{send_ban_time}s"

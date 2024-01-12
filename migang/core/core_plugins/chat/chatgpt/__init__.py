@@ -1,9 +1,10 @@
 from nonebot.typing import T_State
 from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters import Bot, Event
+from nonebot_plugin_alconna import UniMsg, UniMessage
 
 from migang.core.manager import config_manager
-from migang.core import ConfigItem, pre_init_manager
+from migang.core import Session, ConfigItem, MigangSession, pre_init_manager
 
 from ..exception import BreakSession
 from .chat import do_chat, pre_check
@@ -119,16 +120,30 @@ from .extensions import paint  # noqa
 # ========================= #
 
 
-async def get_gpt_chat(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
+async def get_gpt_chat(
+    matcher: Matcher,
+    event: Event,
+    bot: Bot,
+    message: UniMessage,
+    session: MigangSession,
+):
     state = {}
-    if await pre_check(event=event, bot=bot, state=state):
-        await do_chat(matcher=matcher, event=event, bot=bot, state=state)
+    if await pre_check(
+        message=message, event=event, bot=bot, state=state, session=session
+    ):
+        await do_chat(
+            matcher=matcher, event=event, bot=bot, state=state, session=session
+        )
     raise BreakSession("由naturel_gpt处理发送逻辑")
 
 
-async def not_at_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
+async def not_at_rule(
+    bot: Bot, event: Event, state: T_State, message: UniMsg, session: Session
+) -> bool:
     # 只响应非at事件，at事件让别的去管
     if event.is_tome():
         return False
 
-    return await pre_check(event=event, bot=bot, state=state)
+    return await pre_check(
+        message=message, event=event, bot=bot, state=state, session=session
+    )

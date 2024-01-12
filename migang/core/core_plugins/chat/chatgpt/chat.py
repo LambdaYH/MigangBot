@@ -5,18 +5,23 @@ import traceback
 from typing import Tuple
 from datetime import datetime
 
+from nonebot import require
 from nonebot.log import logger
 from nonebot.typing import T_State
 from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment, GroupMessageEvent
+from nonebot.adapters import Bot, Event
+from nonebot_plugin_alconna import At, Text, AtAll, UniMessage
 
-from migang.core import sync_get_config
 from migang.core.models import ChatGPTChatHistory
+from migang.core import Session, MigangSession, sync_get_config
 
 from .openai_func import text_generator
 from .extension import extension_manager
+from .utils import get_bot_name, gen_chat_text, get_user_name
 from .prompt import update_impression, get_chat_prompt_template
-from .utils import get_bot_name, gen_chat_text, get_user_name, serialize_message
+
+require("nonebot_plugin_chatrecorder")
+from nonebot_plugin_chatrecorder import serialize_message
 
 ignore_prefix: Tuple[str] = tuple(
     sync_get_config("ignore_prefix", plugin_name="chat_chatgpt", default_value=[]) or []
@@ -29,10 +34,10 @@ max_response_per_msg: int = sync_get_config(
 )
 
 
-async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
-    sender_name = await get_user_name(
-        bot=bot, group_id=event.group_id, user_id=event.user_id
-    )
+async def pre_check(
+    message: UniMessage, event: Event, bot: Bot, state: T_State, session: MigangSession
+) -> bool:
+    sender_name = await get_user_name(bot=bot, event=event, user_id=session.user_id)
     plain_text = event.get_plaintext()
     if not plain_text:
         logger.debug("空消息，不处理")
@@ -40,7 +45,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     if plain_text.startswith(ignore_prefix):
         logger.debug("忽略消息前缀")
         return False
-    chat_text, is_tome = await gen_chat_text(event=event, bot=bot)
+    chat_text, is_tome = await gen_chat_text(message=message, event=event, bot=bot)
     is_tome = is_tome or event.is_tome()
     bot_name = get_bot_name(bot=bot)
 
@@ -48,17 +53,14 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     triggered = is_tome or (bot_name.lower() in chat_text.lower())
 
     # 记录消息，虽然可能与我无关，但是记录保证对上下文的理解
-    record_msg = serialize_message(event.message)
+    to_save_msg = message.include(At, AtAll, Text)
     if is_tome:
-        record_msg = [
-            {"type": "at", "data": {"qq": bot.self_id}},
-            {"type": "text", "data": {"text": " "}},
-        ] + record_msg
+        to_save_msg = UniMessage.at(bot.self_id) + to_save_msg
     await ChatGPTChatHistory(
-        user_id=event.user_id,
-        group_id=event.group_id,
-        target_id=event.self_id if triggered else None,
-        message=record_msg,
+        user_id=session.user_id,
+        group_id=session.group_id,
+        target_id=bot.self_id if triggered else None,
+        message=serialize_message(bot, await to_save_msg.export(bot=bot)),
     ).save()
 
     if triggered:
@@ -70,7 +72,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
 
 
 async def do_chat(
-    matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
+    matcher: Matcher, event: Event, bot: Bot, state: T_State, session: Session
 ) -> None:
     trigger_text = state["gpt_trigger_text"]
     sender_name = state["gpt_sender_name"]
@@ -80,7 +82,7 @@ async def do_chat(
 
     # 生成会话模板
     prompt_template = await get_chat_prompt_template(
-        bot=bot, group_id=event.group_id, user_id=event.user_id
+        bot=bot, event=event, group_id=session.group_id, user_id=session.user_id
     )
 
     time_before_request = datetime.now()
@@ -167,26 +169,30 @@ async def do_chat(
                     await matcher.send(reply.get(key).strip())
                     logger.info(f"回复文本消息: {reply.get(key).strip()}")
                 elif key == "image" and reply.get(key):  # 发送图片
-                    await matcher.send(MessageSegment.image(reply.get(key)))
+                    await matcher.send(
+                        await UniMessage.image(reply.get(key).export(bot=bot))
+                    )
                     logger.info(f"回复图片消息: {reply.get(key)}")
                 elif key == "voice" and reply.get(key):  # 发送语音
                     logger.info(f"回复语音消息: {reply.get(key)}")
                     await matcher.send(
-                        Message(MessageSegment.record(file=reply.get(key), cache=0))
+                        await UniMessage.voice(path=reply.get(key)).export(bot=bot)
                     )
                 elif key == "code_block" and reply.get(key):  # 发送代码块
-                    await matcher.send(Message(reply.get(key).strip()))
+                    await matcher.send(reply.get(key).strip())
         await asyncio.sleep(random.random() + 1.5)  # 每条回复之间间隔至少1.5秒
 
     # 记录回复
     await ChatGPTChatHistory(
-        user_id=event.self_id,
-        group_id=event.group_id,
-        target_id=event.user_id,
-        message=serialize_message(raw_res),
+        user_id=bot.self_id,
+        group_id=session.group_id,
+        target_id=session.user_id,
+        message=serialize_message(bot, await UniMessage.text(raw_res).export(bot=bot)),
     ).save()
 
     # 更新印象
-    await update_impression(bot=bot, group_id=event.group_id, user_id=event.user_id)
+    await update_impression(
+        bot=bot, event=event, group_id=session.group_id, user_id=session.user_id
+    )
 
     logger.debug(f"对话响应完成 | 耗时: {(datetime.now() - start_time).seconds}s")

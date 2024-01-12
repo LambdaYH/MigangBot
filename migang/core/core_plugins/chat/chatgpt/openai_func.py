@@ -6,6 +6,12 @@ from tenacity import retry, retry_if_exception, stop_after_attempt
 
 from migang.core import sync_get_config
 
+proxy = "http://192.168.2.9:1096"
+import os
+
+os.environ["HTTP_PROXY"] = proxy
+os.environ["HTTPS_PROXY"] = proxy
+
 
 class RetryGetResponse(Exception):
     """重试获取回复"""

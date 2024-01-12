@@ -10,7 +10,7 @@ from nonebot import require
 from pydantic import BaseModel
 from nonebot.utils import run_sync
 from pil_utils import BuildImage, text2image
-from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot_plugin_alconna import UniMessage
 
 from migang.core.path import DATA_PATH
 from migang.core.manager import (
@@ -120,7 +120,7 @@ min_width = (
 )
 
 
-async def draw_usage(usage: str) -> Optional[MessageSegment]:
+async def draw_usage(usage: str) -> Optional[UniMessage]:
     help_img = text2image(
         text=usage,
         fontname="Yozai",
@@ -243,7 +243,7 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
         )
         return bk.save_png()
 
-    return MessageSegment.image(await _draw())
+    return UniMessage.image(await _draw())
 
 
 _sorted_data: Dict[str, List[PluginManager.Plugin]] = {}
@@ -390,7 +390,7 @@ class TaskMenuItem(BaseModel):
     global_status: bool = False
 
 
-async def get_task_image(group_id: int) -> bytes:
+async def get_task_image(group_id: str) -> bytes:
     """生成群被动图片
 
     Args:

@@ -9,7 +9,8 @@ from tortoise.connection import connections
 from nonebot.utils import run_sync, is_coroutine_callable
 
 from migang.core.models import *  # noqa
-from migang.core.utils.file_operation import async_load_data
+from migang.core.event_register import shutdown, pre_init_manager
+from migang.core.utils.file_operation import load_data, async_load_data
 
 _post_init_db_func = []
 _pre_close_db_func = []
@@ -25,21 +26,12 @@ def pre_close_db(func: Callable):
     return func
 
 
-async def _load_config(path: Path) -> Dict[str, Any]:
-    """从配置文件加载数据库配置
-    Args:
-        path (Path): 数据库配置文件
-    Raises:
-        Exception: 若文件不正确，则...
-    Returns:
-        Dict[str, Any]: config
-    """
-    data = await async_load_data(path)
+def _parse_config(data) -> Dict:
     ret = {
         "connections": {},
         "apps": {
             "migangbot": {
-                "models": ["migang.core.database"],
+                "models": ["migang.core.models", "aerich.models"],
                 # If no default_connection specified, defaults to 'default'
                 "default_connection": "default",
             }
@@ -80,7 +72,37 @@ async def _load_config(path: Path) -> Dict[str, Any]:
     return ret
 
 
-@get_driver().on_startup
+async def _load_config(path: Path) -> Dict[str, Any]:
+    """从配置文件加载数据库配置
+    Args:
+        path (Path): 数据库配置文件
+    Raises:
+        Exception: 若文件不正确，则...
+    Returns:
+        Dict[str, Any]: config
+    """
+    data = await async_load_data(path)
+    return _parse_config(data)
+
+
+def _load_config_sync(path: Path) -> Dict[str, Any]:
+    """从配置文件加载数据库配置
+    Args:
+        path (Path): 数据库配置文件
+    Raises:
+        Exception: 若文件不正确，则...
+    Returns:
+        Dict[str, Any]: config
+    """
+    data = load_data(path)
+    return _parse_config(data)
+
+
+# aerich用
+TORTOISE_ORM = _load_config_sync(Path() / "db_config.yaml")
+
+
+@pre_init_manager
 async def init_db() -> None:
     """初始化数据库，创建不存在的表
 
@@ -153,7 +175,7 @@ async def init_db() -> None:
             raise
 
 
-@get_driver().on_shutdown
+@shutdown
 async def close_db() -> None:
     """程序结束时关闭数据库连接"""
     cors = [

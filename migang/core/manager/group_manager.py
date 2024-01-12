@@ -66,7 +66,7 @@ class GroupManager:
             plugin_manager (PluginManager): 插件管理器
             task_manager (TaskManager): 任务管理器
         """
-        self.__group: Dict[int, Group] = {}
+        self.__group: Dict[str, Group] = {}
         """group_id 对应一个group类
         """
         self.__plugin_manager: PluginManager = plugin_manager
@@ -75,7 +75,7 @@ class GroupManager:
         self.__task_manager: TaskManager = task_manager
         """管理任务
         """
-        self.__save_query: DefaultDict[int, Set[str]] = defaultdict(set)
+        self.__save_query: DefaultDict[str, Set[str]] = defaultdict(set)
 
     async def init(self) -> None:
         """初始化，从数据库中载入"""
@@ -109,11 +109,11 @@ class GroupManager:
                 self.__save_query.clear()
                 await asyncio.gather(*tasks)
 
-    def __get_group(self, group_id: int) -> Group:
+    def __get_group(self, group_id: str) -> Group:
         """获取group_id对应的Group类，若无，则创建
 
         Args:
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             Group: group_id对应的Group类
@@ -124,12 +124,12 @@ class GroupManager:
             self.__save_query[group_id].update()
         return group
 
-    def check_group_plugin_status(self, plugin_name: str, group_id: int) -> bool:
+    def check_group_plugin_status(self, plugin_name: str, group_id: str) -> bool:
         """检测群group_id是否能调用plugin_name插件，若能，返回True
 
         Args:
             plugin_name (str): 插件名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若能调用，返回True
@@ -141,12 +141,12 @@ class GroupManager:
             group_permission=group.permission,
         )
 
-    def check_group_task_status(self, task_name: str, group_id: int) -> bool:
+    def check_group_task_status(self, task_name: str, group_id: str) -> bool:
         """检测群group_id是否能调用task_name任务，若能，返回True
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若能调用，返回True
@@ -158,12 +158,12 @@ class GroupManager:
             group_permission=group.permission,
         )
 
-    def check_plugin_permission(self, plugin_name: str, group_id: int) -> bool:
+    def check_plugin_permission(self, plugin_name: str, group_id: str) -> bool:
         """检测群group_id是否有插件plugin_name的调用权限
 
         Args:
             plugin_name (str): 插件名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若有权限，返回True
@@ -173,12 +173,12 @@ class GroupManager:
             plugin_name=plugin_name, permission=group.permission
         )
 
-    def check_task_permission(self, task_name: str, group_id: int) -> bool:
+    def check_task_permission(self, task_name: str, group_id: str) -> bool:
         """检测群group_id是否有任务task_name的调用权限
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若有权限，返回True
@@ -188,12 +188,12 @@ class GroupManager:
             task_name=task_name, permission=group.permission
         )
 
-    async def set_plugin_enable(self, plugin_name: str, group_id: int) -> bool:
+    async def set_plugin_enable(self, plugin_name: str, group_id: str) -> bool:
         """启用群group_id的plugin_name插件
 
         Args:
             plugin_name (str): 插件名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若启用成功，返回True
@@ -208,12 +208,12 @@ class GroupManager:
                 return True
         return False
 
-    async def set_plugin_disable(self, plugin_name: str, group_id: int) -> bool:
+    async def set_plugin_disable(self, plugin_name: str, group_id: str) -> bool:
         """禁用群group_id的plugin_name插件
 
         Args:
             plugin_name (str): 插件名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若禁用成功，返回True
@@ -228,12 +228,12 @@ class GroupManager:
                 return True
         return False
 
-    async def set_task_enable(self, task_name: str, group_id: int):
+    async def set_task_enable(self, task_name: str, group_id: str):
         """启用群group_id的task_name任务
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             _type_: 若启用成功，返回True
@@ -248,12 +248,12 @@ class GroupManager:
                 return True
         return False
 
-    async def set_task_disable(self, task_name: str, group_id: int):
+    async def set_task_disable(self, task_name: str, group_id: str):
         """禁用群group_id的task_name任务
 
         Args:
             task_name (str): 任务名
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             _type_: 若禁用成功，返回True
@@ -268,11 +268,11 @@ class GroupManager:
             return True
         return False
 
-    def enable_bot(self, group_id: int) -> bool:
+    def enable_bot(self, group_id: str) -> bool:
         """启用群group_id的机器人
 
         Args:
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若启用成功，返回True，反之表示已启用
@@ -283,11 +283,11 @@ class GroupManager:
             return True
         return False
 
-    def disable_bot(self, group_id: int) -> bool:
+    def disable_bot(self, group_id: str) -> bool:
         """禁用群group_id的机器人
 
         Args:
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             bool: 若禁用成功，返回True，反之表示已禁用
@@ -298,22 +298,22 @@ class GroupManager:
             return True
         return False
 
-    def set_group_permission(self, group_id: int, permission: Permission):
+    def set_group_permission(self, group_id: str, permission: Permission):
         """设定群权限
 
         Args:
-            group_id (int): 群号
+            group_id (str): 群号
             permission (Permission): 群权限
         """
         group = self.__get_group(group_id=group_id)
         group.set_permission(permission=permission)
         self.__save_query[group_id].add("permission")
 
-    def get_group_permission(self, group_id: int) -> Permission:
+    def get_group_permission(self, group_id: str) -> Permission:
         """获取群权限
 
         Args:
-            group_id (int): 群号
+            group_id (str): 群号
 
         Returns:
             Permission: 群权限

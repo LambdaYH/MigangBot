@@ -1,0 +1,1 @@
+from nonebot_plugin_chatrecorder.message import serialize_message, deserialize_message

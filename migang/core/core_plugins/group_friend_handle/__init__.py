@@ -1,4 +1,5 @@
 """处理和群还有好友相关的一些邀请，退群事件
+仅适配OB11
 """
 import asyncio
 from io import BytesIO

@@ -2,7 +2,7 @@ import time
 
 from nonebot.log import logger
 from tortoise.expressions import Q
-from nonebot.adapters.onebot.v11 import Bot
+from nonebot.adapters import Bot, Event
 from tortoise.transactions import in_transaction
 
 from migang.core import sync_get_config
@@ -22,13 +22,15 @@ impression_refresh_length: int = sync_get_config(
 )
 
 
-async def get_chat_prompt_template(bot: Bot, group_id: int, user_id: int) -> str:
+async def get_chat_prompt_template(
+    bot: Bot, event: Event, group_id: str, user_id: str
+) -> str:
     """对话 prompt 模板生成"""
     bot_name = get_bot_name(bot=bot)
-    user_name = await get_user_name(bot=bot, group_id=group_id, user_id=user_id)
+    user_name = await get_user_name(bot=bot, event=event, user_id=user_id)
     # 印象描述
     impression = await ChatGPTChatImpression.filter(
-        group_id=group_id, user_id=user_id, self_id=int(bot.self_id)
+        group_id=group_id, user_id=user_id, self_id=bot.self_id
     ).first()
     impression_text = f"[impression]\n{impression.impression.format(user_name=user_name,bot_name=bot_name) if impression else ''}\n\n"
 
@@ -39,7 +41,7 @@ async def get_chat_prompt_template(bot: Bot, group_id: int, user_id: int) -> str
         .limit(memory_short_length)
     )
     chat_history: str = "\n\n\n".join(
-        [await gen_chat_line(chat, bot) for chat in reversed(chat_histories)]
+        [await gen_chat_line(chat, bot, event) for chat in reversed(chat_histories)]
     )
     # 扩展描述
     ext_descs = extension_manager.get_desciption(chat_history=chat_history)
@@ -121,8 +123,10 @@ async def get_chat_prompt_template(bot: Bot, group_id: int, user_id: int) -> str
     ]
 
 
-async def update_impression(bot: Bot, group_id: int, user_id: int) -> None:
-    self_id = int(bot.self_id)
+async def update_impression(
+    bot: Bot, event: Event, group_id: str, user_id: str
+) -> None:
+    self_id = bot.self_id
     chat_history_user = (
         await ChatGPTChatHistory.filter(
             Q(group_id=group_id),
@@ -157,11 +161,11 @@ async def update_impression(bot: Bot, group_id: int, user_id: int) -> None:
                 impression="",
             )
             await impression.save(using_db=connection)
-    user_name = await get_user_name(bot=bot, group_id=group_id, user_id=user_id)
+    user_name = await get_user_name(bot=bot, event=event, user_id=user_id)
     bot_name = get_bot_name(bot=bot)
     pre_impression = f"Last impression:{impression.impression.format(user_name=user_name,bot_name=bot_name) if impression else ''}\n\n"
     history_str = "\n".join(
-        [await gen_chat_line(chat, bot) for chat in reversed(chat_history_user)]
+        [await gen_chat_line(chat, bot, event) for chat in reversed(chat_history_user)]
     )
 
     prompt = (  # 以机器人的视角总结对话

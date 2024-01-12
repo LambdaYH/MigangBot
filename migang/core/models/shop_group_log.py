@@ -6,9 +6,11 @@ from tortoise.models import Model
 from tortoise.functions import Sum
 from tortoise.backends.base.client import BaseDBAsyncClient
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 class ShopGroupLog(Model):
-    user_id = fields.BigIntField(null=False)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     group_name = fields.CharField(255, null=False)
     amount = fields.IntField(null=False)
     time = fields.DatetimeField(auto_now_add=True)

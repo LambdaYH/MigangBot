@@ -1,20 +1,20 @@
 import random
+from typing import List
 from pathlib import Path
 
 from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.matcher import Matcher
+from nonebot.adapters import Bot, Event
 from nonebot.plugin import PluginMetadata
 from nonebot import on_keyword, on_message
-from nonebot.adapters.onebot.v11 import (
-    GROUP,
-    Bot,
-    Message,
-    MessageSegment,
-    GroupMessageEvent,
-)
+from nonebot_plugin_alconna import Text, UniMsg, UniMessage
+from nonebot_plugin_userinfo import UserInfo, EventUserInfo
 
-from migang.core import ConfigItem, get_config
+from migang.core.cross_platform import GROUP
+from migang.core import Session, ConfigItem, get_config
+from migang.core.utils.image import image_file_to_bytes
+from migang.core.cross_platform.adapters import supported_adapters
 
 from .message_manager import MessageManager
 from .chatgpt import do_chat, not_at_rule, get_gpt_chat
@@ -29,7 +29,7 @@ usage：
     与Bot普普通通的对话吧！
 """.strip(),
     type="application",
-    supported_adapters={"~onebot.v11"},
+    supported_adapters=supported_adapters,
 )
 
 __plugin_config__ = (
@@ -51,33 +51,44 @@ __plugin_config__ = (
 chat = on_message(rule=to_me(), priority=998, permission=GROUP)
 message_manager = MessageManager(hello, anti_zuichou, get_gpt_chat, no_result)
 # 没at时候把消息送给naturel_gpt处理
-on_message(priority=998, block=False, rule=not_at_rule).append_handler(do_chat)
+on_message(
+    priority=998, block=False, rule=not_at_rule, permission=GROUP
+).append_handler(do_chat)
 
 
 @chat.handle()
-async def _(matcher: Matcher, bot: Bot, event: GroupMessageEvent):
-    if "CQ:xml" in str(event.message) or event.get_plaintext().startswith("/"):
+async def _(
+    matcher: Matcher,
+    bot: Bot,
+    event: Event,
+    message: UniMsg,
+    session: Session,
+    user_info: UserInfo = EventUserInfo(),
+):
+    plain_text = event.get_plaintext()
+    if "CQ:xml" in str(message) or plain_text.startswith("/"):
         return
-    user_name = event.sender.card or event.sender.nickname
     reply = await message_manager.reply(
-        user_id=event.user_id,
-        user_name=user_name,
+        session=session,
+        user_name=user_info.user_name,
         nickname=list(bot.config.nickname)[0],
         bot=bot,
         matcher=matcher,
         plain_text=event.get_plaintext(),
         event=event,
+        message=message,
     )
     if not reply:
         return
     logger.info(
-        f"用户 {event.user_id} 群 {event.group_id if isinstance(event, GroupMessageEvent) else ''} "
-        f"问题：{event.message} ---- 回答：{reply}"
+        f"用户 {session.user_id} 群 {session.group_id if session.is_group else ''} "
+        f"问题：{message} ---- 回答：{reply}"
     )
-    reply = str(reply)
-    for t in await get_config("text_filter"):
-        reply = reply.replace(t, "*")
-    await chat.send(Message(reply))
+    texts: List[Text] = reply.get(Text)
+    for text in texts:
+        for t in await get_config("text_filter"):
+            text.text = text.text.replace(t, "*")
+    await reply.send()
 
 
 # 加一点祖传回复
@@ -93,16 +104,22 @@ custom_chat_path = Path(__file__).parent / "image" / "custom_chat"
 @wenhao.handle()
 async def _():
     if random.random() < 0.30:
-        await wenhao.send(MessageSegment.image(custom_chat_path / "wenhao.jpg"))
+        await UniMessage.image(
+            await image_file_to_bytes(custom_chat_path / "wenhao.jpg")
+        ).send()
 
 
 @tanhao.handle()
 async def _():
     if random.random() < 0.30:
-        await tanhao.send(MessageSegment.image(custom_chat_path / "tanhao.jpg"))
+        await UniMessage.image(
+            await image_file_to_bytes(custom_chat_path / "tanhao.jpg")
+        ).send()
 
 
 @huoguo.handle()
 async def _():
     if random.random() < 0.30:
-        await huoguo.send(MessageSegment.image(custom_chat_path / "huoguo.jpg"))
+        await UniMessage.image(
+            await image_file_to_bytes(custom_chat_path / "huoguo.jpg")
+        ).send()

@@ -5,9 +5,11 @@ from tortoise import fields
 from tortoise.models import Model
 from tortoise.functions import Sum
 
+from migang.core.constant import ID_MAX_LENGTH
+
 
 class TransactionLog(Model):
-    user_id = fields.BigIntField(null=False)
+    user_id = fields.CharField(max_length=ID_MAX_LENGTH, null=False)
     gold_earned = fields.IntField(null=False, default=0)
     gold_spent = fields.IntField(null=False, default=0)
     description = fields.TextField(null=True)

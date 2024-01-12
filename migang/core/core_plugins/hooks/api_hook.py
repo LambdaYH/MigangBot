@@ -65,6 +65,7 @@ async def _(
     api: str,
     data: Dict[str, Any],
 ):
+    print(data)
     # 将本地文件转换成byte后发出
     if api == "send_msg" or api == "send_group_msg" or api == "send_private_msg":
         if isinstance(data["message"], MessageSegment):

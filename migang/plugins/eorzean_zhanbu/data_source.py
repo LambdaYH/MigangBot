@@ -160,6 +160,9 @@ async def get_luck_num(QID: int) -> int:
     #     return luck_num
     # # 2022 new year update end
 
+    if today.month == 1 and today.day == 1:
+        return random.randint(81, 100)
+
     return random.randint(0, 100)
 
 
@@ -173,6 +176,8 @@ def get_luck_num_event(QID: int, event: str) -> str:
     res = md5.hexdigest()
     random.seed(res)
     randnum = random.randint(0, 100)
+    if today.month == 1 and today.day == 1:
+        randnum = random.randint(81, 100)
     comment = ""
     if randnum <= 20:
         comment = "大凶"

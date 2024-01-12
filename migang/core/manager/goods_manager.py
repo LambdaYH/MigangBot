@@ -8,8 +8,8 @@ from typing import Any, Dict, List, Tuple, Union, Callable, Iterable, Optional
 from nonebot.log import logger
 from tortoise.functions import Sum
 from nonebot.matcher import Matcher
+from nonebot.adapters import Bot, Event
 from tortoise.transactions import in_transaction
-from nonebot.adapters.onebot.v11 import Bot, Event
 
 from migang.core.models import GoodsUseLog
 from migang.core.models import UserBag, GoodsInfo

@@ -4,7 +4,9 @@ from typing import Dict, List, Union, Callable, Iterable
 
 import anyio
 from pydantic import BaseModel
-from nonebot.adapters.onebot.v11 import Event, Message
+from nonebot.adapters import Message
+
+from migang.core.cross_platform import MigangSession
 
 from .data_class import CheckType, LimitType, CountPeriod
 
@@ -39,8 +41,8 @@ class CountItem:
 class Counter(BaseModel):
     """存储单个插件计数数据的数据结构"""
 
-    user: Dict[int, List[int]] = {}
-    group: Dict[int, List[int]] = {}
+    user: Dict[str, List[int]] = {}
+    group: Dict[str, List[int]] = {}
 
 
 class CountManager:
@@ -62,12 +64,12 @@ class CountManager:
                 limit_type, check_type = count_item.limit_type, count_item.check_type
                 self.hint = count_item.hint
                 self.__count_limit = count_item.count
-                self.__data: Dict[int, List[int]] = (
+                self.__data: Dict[str, List[int]] = (
                     data.user if limit_type == LimitType.user else data.group
                 )
                 self.__idx: int = count_item.count_period._value_
-                self.__func: Callable[[Event]]
-                self.__update_func: Callable[[Event]]
+                self.__func: Callable[[MigangSession]]
+                self.__update_func: Callable[[MigangSession]]
                 if limit_type is LimitType.user:
                     self.__update_func = self.__update_user
                     if check_type is CheckType.private:
@@ -80,111 +82,111 @@ class CountManager:
                     self.__update_func = self.__update_group
                     self.__func = self.__check_group
 
-            def check(self, event: Event) -> bool:
+            def check(self, session: MigangSession) -> bool:
                 """外部可调用的检测函数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                return self.__func(event)
+                return self.__func(session)
 
-            def update(self, event: Event):
+            def update(self, session: MigangSession):
                 """更新计数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
                 """
-                self.__update_func(event)
+                self.__update_func(session)
 
-            def __get_user(self, user_id: int) -> List[int]:
+            def __get_user(self, user_id: str) -> List[int]:
                 user = self.__data.get(user_id)
                 if user is None:
                     user = self.__data[user_id] = [0] * 5
                 return user
 
-            def __get_group(self, group_id: int) -> List[int]:
+            def __get_group(self, group_id: str) -> List[int]:
                 group = self.__data.get(group_id)
                 if group is None:
                     group = self.__data[group_id] = [0] * 5
                 return group
 
-            def __update_user(self, event: Event) -> None:
+            def __update_user(self, session: MigangSession) -> None:
                 """更新用户计数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
                 """
-                if hasattr(event, "user_id"):
-                    self.__get_user(user_id=event.user_id)[self.__idx] += 1
+                if session.has_user:
+                    self.__get_user(user_id=session.user_id)[self.__idx] += 1
 
-            def __update_group(self, event: Event) -> None:
+            def __update_group(self, session: MigangSession) -> None:
                 """更新群计数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
                 """
-                if hasattr(event, "group_id"):
-                    self.__get_group(group_id=event.group_id)[self.__idx] += 1
+                if session.is_group:
+                    self.__get_group(group_id=session.group_id)[self.__idx] += 1
 
-            def __check_user_private(self, event: Event) -> bool:
+            def __check_user_private(self, session: MigangSession) -> bool:
                 """limit_type为user，check_type为private时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if not hasattr(event, "group_id"):
-                    return self.__check_user_all(event)
+                if not session.is_group:
+                    return self.__check_user_all(session)
                 return True
 
-            def __check_user_group(self, event: Event) -> bool:
+            def __check_user_group(self, session: MigangSession) -> bool:
                 """limit_type为user，check_type为group时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if hasattr(event, "group_id"):
-                    return self.__check_user_all(event)
+                if session.is_group:
+                    return self.__check_user_all(session)
                 return True
 
-            def __check_user_all(self, event: Event) -> bool:
+            def __check_user_all(self, session: MigangSession) -> bool:
                 """limit_type为user，check_type为all时的具体检测函数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if hasattr(event, "user_id"):
+                if session.has_user:
                     if (
-                        self.__get_user(user_id=event.user_id)[self.__idx]
+                        self.__get_user(user_id=session.user_id)[self.__idx]
                         < self.__count_limit
                     ):
                         return True
                     return False
                 return True
 
-            def __check_group(self, event: Event) -> bool:
+            def __check_group(self, session: MigangSession) -> bool:
                 """limit_type为user，check_type只能是group时的具体检测函数数
 
                 Args:
-                    event (Event): 事件
+                    session (MigangSession): 会话
 
                 Returns:
                     bool: 若未达到调用上限，返回True
                 """
-                if hasattr(event, "group_id"):
+                if session.is_group:
                     if (
-                        self.__get_group(group_id=event.group_id)[self.__idx]
+                        self.__get_group(group_id=session.group_id)[self.__idx]
                         < self.__count_limit
                     ):
                         return True
@@ -229,21 +231,21 @@ class CountManager:
                     )
                 )
 
-        def check(self, event: Event) -> Union[str, bool, None]:
+        def check(self, session: MigangSession) -> Union[str, bool, None]:
             """检测插件对应的调用次数，若未达到上限，返回True，反之返回提示语
 
             Args:
-                event (Event): 事件
+                session (MigangSession): 会话
 
             Returns:
                 Union[str, bool, None]: 若未达到调用次数上限，返回True，反之返回提示语
             """
             for checker in self.__count_checkers:
-                if not checker.check(event):
+                if not checker.check(session):
                     return checker.hint
             # 更新计数
             for checker in self.__count_checkers:
-                checker.update(event)
+                checker.update(session)
             self.__dirty_data = True
             return True
 
@@ -288,18 +290,18 @@ class CountManager:
             count_items = CountItem(count_items)
         await self.__plugin_count[plugin_name].init(count_items=count_items)
 
-    def check(self, plugin_name: str, event: Event) -> Union[str, bool, None]:
+    def check(self, plugin_name: str, session: MigangSession) -> Union[str, bool, None]:
         """检测插件plugin_name对应的调用次数，若未达到上限，返回True，反之返回提示语
 
         Args:
             plugin_name (str): 插件名
-            event (Event): 事件
+            session (MigangSession): 会话
 
         Returns:
             Union[str, bool, None]: 若未达到调用次数上限，返回True，反之返回提示语
         """
         if plugin_count := self.__plugin_count.get(plugin_name):
-            if (ret := plugin_count.check(event=event)) != True:
+            if (ret := plugin_count.check(session=session)) != True:
                 return ret
         return True
 

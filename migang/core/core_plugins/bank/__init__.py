@@ -2,15 +2,16 @@ from pathlib import Path
 from datetime import datetime
 
 from pil_utils import BuildImage
-from nonebot.params import Startswith
+from arclet.alconna import Args, Alconna
 from nonebot.plugin import PluginMetadata
-from nonebot import on_fullmatch, on_startswith
 from tortoise.transactions import in_transaction
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
+from nonebot_plugin_alconna import UniMessage, on_alconna
 
 from migang.core import ConfigItem, get_config
+from migang.core.cross_platform import Session
 from migang.core.models.bank import DepositType
 from migang.core.models import Bank, UserProperty
+from migang.core.cross_platform.adapters import supported_adapters
 
 __plugin_meta__ = PluginMetadata(
     name="银行",
@@ -22,7 +23,7 @@ __plugin_meta__ = PluginMetadata(
     我的存款
 """.strip(),
     type="application",
-    supported_adapters={"~onebot.v11"},
+    supported_adapters=supported_adapters,
 )
 
 __plugin_category__ = "基础功能"
@@ -35,47 +36,43 @@ __plugin_config__ = (
     ),
 )
 
-deposit_coins = on_startswith("存金币", priority=True, block=True)
-take_coins = on_startswith("取金币", priority=5, block=True)
-my_deposit = on_fullmatch("我的存款", priority=5, block=True)
+deposit_coins = on_alconna(Alconna("存金币", Args["amount", int]), priority=5, block=True)
+take_coins = on_alconna(Alconna("取金币", Args["amount", int]), priority=5, block=True)
+my_deposit = on_alconna("我的存款", priority=5, block=True)
 
 bg_path = Path(__file__).parent / "images" / "bg.jpg"
 
 
 @deposit_coins.handle()
-async def _(event: MessageEvent, cmd: str = Startswith()):
-    amount = event.get_plaintext().removeprefix(cmd).strip()
-    if not amount.isdigit():
+async def _(amount: int, session: Session):
+    if amount <= 0:
         await deposit_coins.finish("存入金额必须为正整数")
-    amount = int(amount)
     async with in_transaction() as connection:
         now_gold = await UserProperty.get_gold(
-            user_id=event.user_id, connection=connection
+            user_id=session.user_id, connection=connection
         )
         if now_gold < amount:
             await deposit_coins.finish("背包里的金币不够存哦~")
         await UserProperty.modify_gold(
-            user_id=event.user_id,
+            user_id=session.user_id,
             gold_diff=-amount,
             description="存入银行",
             connection=connection,
         )
-        await Bank(user_id=event.user_id, amount=amount).save(
+        await Bank(user_id=session.user_id, amount=amount).save(
             update_fields=["amount"], using_db=connection
         )
     await deposit_coins.send(f"{amount}金币已经存放妥当了")
 
 
 @take_coins.handle()
-async def _(event: MessageEvent, cmd: str = Startswith()):
-    amount = event.get_plaintext().removeprefix(cmd).strip()
-    if not amount.isdigit():
-        await deposit_coins.finish("存入金额必须为正整数")
-    amount = int(amount)
+async def _(amount: int, session: Session):
+    if amount <= 0:
+        await deposit_coins.finish("取出金额必须为正整数")
     ori_amount = amount
     async with in_transaction() as connection:
         total_demand_deposit = await Bank.get_total_demand_deposit(
-            user_id=event.user_id, connection=connection
+            user_id=session.user_id, connection=connection
         )
         if total_demand_deposit < amount:
             await take_coins.finish("您未在这存放足够的金币哦~")
@@ -85,7 +82,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
         now = datetime.utcnow()
         all_demand_deposit = (
             await Bank.filter(
-                user_id=event.user_id, deposit_type=DepositType.demand_deposit
+                user_id=session.user_id, deposit_type=DepositType.demand_deposit
             )
             .order_by("-time")
             .all()
@@ -109,7 +106,7 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
                 await demand_deposit.delete(using_db=connection)
                 amount -= demand_deposit.amount
         await UserProperty.modify_gold(
-            user_id=event.user_id,
+            user_id=session.user_id,
             gold_diff=ori_amount + total_earned,
             description="从银行中取出",
             connection=connection,
@@ -118,8 +115,8 @@ async def _(event: MessageEvent, cmd: str = Startswith()):
 
 
 @my_deposit.handle()
-async def _(event: MessageEvent):
-    total_demand_deposit = await Bank.get_total_demand_deposit(user_id=event.user_id)
+async def _(session: Session):
+    total_demand_deposit = await Bank.get_total_demand_deposit(user_id=session.user_id)
     # 定期存款，懒得写
     # time_deposit = await Bank.filter(
     #     user_id=event.user_id, deposit_type=DepositType.time_deposit
@@ -148,4 +145,4 @@ async def _(event: MessageEvent):
     )
     bg_img = bg_img.resize_canvas(size=(demand_img.width + 30, demand_img.height + 30))
     bg_img.paste(img=demand_img, pos=(15, 15), alpha=True)
-    await my_deposit.send(MessageSegment.image(bg_img.save_png()))
+    await my_deposit.send(UniMessage.image(bg_img.save_png()))
