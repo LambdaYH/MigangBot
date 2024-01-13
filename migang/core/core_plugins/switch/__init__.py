@@ -1,16 +1,11 @@
 from typing import Tuple
 
-from nonebot.permission import SUPERUSER
+from nonebot.adapters import Message
 from nonebot.params import Command, CommandArg
 from nonebot import Driver, get_driver, on_command
-from nonebot.adapters.onebot.v11 import (
-    GROUP_ADMIN,
-    GROUP_OWNER,
-    Message,
-    GroupMessageEvent,
-)
 
 from migang.core.path import DATA_PATH
+from migang.core.cross_platform import SUPERUSER, GROUP_ADMIN, Session
 from migang.core.manager import task_manager, group_manager, plugin_manager
 
 driver: Driver = get_driver()
@@ -20,7 +15,7 @@ switch = on_command(
     aliases={"关闭", "开启被动", "关闭被动"},
     priority=1,
     block=True,
-    permission=GROUP_ADMIN | GROUP_OWNER,
+    permission=GROUP_ADMIN,
 )
 
 
@@ -49,24 +44,24 @@ def clean_all_task_image():
         img.unlink()
 
 
-def clean_group_help_image(group_id: int):
+def clean_group_help_image(group_id: str):
     if (file := GROUP_HELP_PATH / f"{group_id}.png").exists():
         file.unlink()
 
 
-def clean_group_task_image(group_id: int):
+def clean_group_task_image(group_id: str):
     if (file := GROUP_TASK_PATH / f"{group_id}.png").exists():
         file.unlink()
 
 
-def clean_user_help_image(user_id: int):
+def clean_user_help_image(user_id: str):
     if (file := USER_HELP_PATH / f"{user_id}.png").exists():
         file.unlink()
 
 
 @switch.handle()
 async def _(
-    event: GroupMessageEvent,
+    session: Session,
     cmd: Tuple[str, ...] = Command(),
     arg: Message = CommandArg(),
 ):
@@ -79,16 +74,16 @@ async def _(
         if cmd == "开启":
             for plugin in plugin_manager.get_plugin_name_list():
                 if not await group_manager.set_plugin_enable(
-                    plugin_name=plugin, group_id=event.group_id
+                    plugin_name=plugin, group_id=session.group_id
                 ):
                     count += 1
         else:
             for plugin in plugin_manager.get_plugin_name_list():
                 if not await group_manager.set_plugin_disable(
-                    plugin_name=plugin, group_id=event.group_id
+                    plugin_name=plugin, group_id=session.group_id
                 ):
                     count += 1
-        clean_group_help_image(event.group_id)
+        clean_group_help_image(session.group_id)
         await switch.finish(
             f"已{cmd}全部插件"
             + (f"，不包括{count}个全局禁用与无权限插件" if "cmd" == "开启" and count != 0 else "")
@@ -98,52 +93,52 @@ async def _(
         if cmd == "开启":
             for task in task_manager.get_task_name_list():
                 if not await group_manager.set_task_enable(
-                    task_name=task, group_id=event.group_id
+                    task_name=task, group_id=session.group_id
                 ):
                     count += 1
         else:
             for task in task_manager.get_task_name_list():
                 if not await group_manager.set_task_disable(
-                    task_name=task, group_id=event.group_id
+                    task_name=task, group_id=session.group_id
                 ):
                     count += 1
-        clean_group_task_image(event.group_id)
+        clean_group_task_image(session.group_id)
         await switch.finish(
             f"已{cmd}全部被动"
             + (f"，不包括{count}个全局禁用与无权限被动" if "cmd" == "开启" and count != 0 else "")
         )
     if cmd in ("开启被动", "关闭被动") and (name := task_manager.get_task_name(param)):
         if cmd == "开启被动" and not await group_manager.set_task_enable(
-            task_name=name, group_id=event.group_id
+            task_name=name, group_id=session.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭被动":
             await group_manager.set_task_disable(
-                task_name=name, group_id=event.group_id
+                task_name=name, group_id=session.group_id
             )
-        clean_group_task_image(event.group_id)
+        clean_group_task_image(session.group_id)
         await switch.finish(f"已{cmd}群被动：{param}")
     if name := plugin_manager.get_plugin_name(param):
         if cmd == "开启" and not await group_manager.set_plugin_enable(
-            plugin_name=name, group_id=event.group_id
+            plugin_name=name, group_id=session.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭" and not await group_manager.set_plugin_disable(
-            plugin_name=name, group_id=event.group_id
+            plugin_name=name, group_id=session.group_id
         ):
             await switch.finish(f"插件 {param} 不可被禁用")
-        clean_group_help_image(event.group_id)
+        clean_group_help_image(session.group_id)
         await switch.finish(f"已{cmd}插件：{param}")
     elif name := task_manager.get_task_name(param):
         if cmd == "开启" and not await group_manager.set_task_enable(
-            task_name=name, group_id=event.group_id
+            task_name=name, group_id=session.group_id
         ):
             await switch.finish(f"插件 {param} 已被全局禁用或权限不足，无法开启")
         elif cmd == "关闭":
             await group_manager.set_task_disable(
-                task_name=name, group_id=event.group_id
+                task_name=name, group_id=session.group_id
             )
-        clean_group_task_image(event.group_id)
+        clean_group_task_image(session.group_id)
         await switch.finish(f"已{cmd}群被动：{param}")
     else:
         await switch.finish(f"插件或群被动 {param} 不存在")

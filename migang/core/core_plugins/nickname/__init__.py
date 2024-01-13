@@ -5,12 +5,13 @@ from random import choice, randint
 
 from nonebot.rule import to_me
 from nonebot.params import CommandArg
+from nonebot.adapters import Bot, Message
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command, on_fullmatch
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 
 from migang.core.models import UserProperty
 from migang.core import ConfigItem, get_config
+from migang.core.cross_platform import Session
 
 __plugin_meta__ = PluginMetadata(
     name="昵称系统",
@@ -51,7 +52,7 @@ cancel_nickname = on_fullmatch(("取消昵称", "忘了我吧"), priority=5, blo
 
 
 @set_nickname.handle()
-async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, session: Session, args: Message = CommandArg()):
     name = args.extract_plain_text()
     if not name:
         await set_nickname.finish("....叫你...什么？", at_sender=True)
@@ -79,11 +80,11 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             else:
                 ret += ch
         await set_nickname.finish(f"好哦，以后就叫你{ret}，诶，昵称太长了好像没记住...（昵称不能超过10个字）")
-    if user := await UserProperty.filter(user_id=event.user_id).first():
+    if user := await UserProperty.filter(user_id=session.user_id).first():
         user.nickname = name
         await user.save(update_fields=["nickname"])
     else:
-        await UserProperty(user_id=event.user_id, nickname=name).save()
+        await UserProperty(user_id=session.user_id, nickname=name).save()
     await set_nickname.send(
         choice(
             [
@@ -98,10 +99,10 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
 
 @query_nickname.handle()
-async def _(bot: Bot, event: MessageEvent):
+async def _(bot: Bot, session: Session):
     bot_nickname = list(bot.config.nickname)[0]
     if (
-        name := await UserProperty.filter(user_id=event.user_id)
+        name := await UserProperty.filter(user_id=session.user_id)
         .first()
         .values_list("nickname")
     ) and name[0] != None:
@@ -119,15 +120,15 @@ async def _(bot: Bot, event: MessageEvent):
             ),
             at_sender=True,
         )
-    nickname = (await bot.get_stranger_info(user_id=event.user_id))["nickname"]
+    nickname = (await bot.get_stranger_info(user_id=session.user_id))["nickname"]
     await query_nickname.send(
         choice([f"没..没有昵称嘛，{nickname}", f"你是{nickname}？"]), at_sender=True
     )
 
 
 @cancel_nickname.handle()
-async def _(bot: Bot, event: MessageEvent):
-    user = await UserProperty.filter(user_id=event.user_id).first()
+async def _(bot: Bot, session: Session):
+    user = await UserProperty.filter(user_id=session.user_id).first()
     if not user or not user.nickname:
         await cancel_nickname.finish("你还没有起昵称哦~", at_sender=True)
     bot_nickname = list(bot.config.nickname)[0]

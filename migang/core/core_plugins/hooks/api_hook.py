@@ -3,8 +3,7 @@ from urllib.parse import unquote, urlparse
 from typing import Any, Dict, Iterable, Optional
 
 import anyio
-from nonebot.adapters import Bot
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters import Bot, Message, MessageSegment
 
 from migang.core.models import UserProperty
 
@@ -14,25 +13,25 @@ async def _local_to_bytes(path: str) -> bytes:
         return await f.read()
 
 
-async def _gen_new_seg(type_: str, path: str) -> MessageSegment:
+async def _onebotv11_gen_new_seg(type_: str, path: str) -> MessageSegment:
     if type_ == "image":
         return MessageSegment.image(await _local_to_bytes(path=path))
     elif type_ == "record":
         return MessageSegment.record(await _local_to_bytes(path=path))
 
 
-async def _replace_res(
+async def __onebotv11_replace_res(
     raw_message: Message, index: int, type_: str, data: MessageSegment
 ) -> None:
-    raw_message[index] = await _gen_new_seg(type_, data["file"])
+    raw_message[index] = await _onebotv11_gen_new_seg(type_, data["file"])
 
 
 # 当content为MessageSegment时替换整个content
-async def _replace_node(node: MessageSegment, data: MessageSegment) -> None:
-    node.data["content"] = await _gen_new_seg(data.type, data.data["file"])
+async def _onebotv11_replace_node(node: MessageSegment, data: MessageSegment) -> None:
+    node.data["content"] = await _onebotv11_gen_new_seg(data.type, data.data["file"])
 
 
-def _is_need_process(seg: MessageSegment) -> bool:
+def _onebotv11_is_need_process(seg: MessageSegment) -> bool:
     return (seg.type == "image" or seg.type == "record") and seg.data[
         "file"
     ].startswith("file")
@@ -59,18 +58,16 @@ async def handle_api_result(
         result["nickname"] = name[0]
 
 
-@Bot.on_calling_api
-async def _(
+async def _onebotv11(
     bot: Bot,
     api: str,
     data: Dict[str, Any],
 ):
-    print(data)
     # 将本地文件转换成byte后发出
     if api == "send_msg" or api == "send_group_msg" or api == "send_private_msg":
         if isinstance(data["message"], MessageSegment):
-            if _is_need_process(data["message"]):
-                data["message"] = await _gen_new_seg(
+            if _onebotv11_is_need_process(data["message"]):
+                data["message"] = await _onebotv11_gen_new_seg(
                     data["message"].type, data["message"].data["file"]
                 )
         elif isinstance(data["message"], str):
@@ -78,9 +75,9 @@ async def _(
         else:
             await asyncio.gather(
                 *[
-                    _replace_res(data["message"], i, seg.type, seg.data)
+                    __onebotv11_replace_res(data["message"], i, seg.type, seg.data)
                     for i, seg in enumerate(data["message"])
-                    if _is_need_process(seg)
+                    if _onebotv11_is_need_process(seg)
                 ]
             )
     elif (
@@ -91,12 +88,24 @@ async def _(
         tasks = []
         for msg in data["messages"]:
             content = msg.data["content"]
-            if isinstance(content, MessageSegment) and _is_need_process(content):
-                tasks.append(_replace_node(msg, content))
+            if isinstance(content, MessageSegment) and _onebotv11_is_need_process(
+                content
+            ):
+                tasks.append(_onebotv11_replace_node(msg, content))
             elif not isinstance(content, str) and isinstance(content, Iterable):
                 tasks += [
-                    _replace_res(content, i, seg.type, seg.data)
+                    __onebotv11_replace_res(content, i, seg.type, seg.data)
                     for i, seg in enumerate(content)
-                    if _is_need_process(seg)
+                    if _onebotv11_is_need_process(seg)
                 ]
         await asyncio.gather(*tasks)
+
+
+@Bot.on_calling_api
+async def _(
+    bot: Bot,
+    api: str,
+    data: Dict[str, Any],
+):
+    if bot.adapter.get_name() == "OneBot V11":
+        _onebotv11(bot, api, data)

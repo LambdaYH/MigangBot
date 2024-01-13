@@ -2,10 +2,13 @@ from time import time
 
 import psutil
 from nonebot.rule import to_me
-from nonebot.permission import SUPERUSER
+from nonebot.adapters import Event
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command, on_fullmatch
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
+from nonebot_plugin_alconna import UniMessage
+
+from migang.core.cross_platform import SUPERUSER
+from migang.core.cross_platform.adapters import supported_adapters
 
 from .data_source import check
 
@@ -21,7 +24,7 @@ usage：
         自检（仅超级用户可用）
 """.strip(),
     type="application",
-    supported_adapters={"~onebot.v11"},
+    supported_adapters=supported_adapters,
 )
 
 
@@ -34,7 +37,7 @@ ping = on_command("/ping", aliases={"、ping"}, block=True, priority=1)
 
 @self_check.handle()
 async def _():
-    await self_check.send(MessageSegment.image(await check()))
+    await UniMessage.image(await check()).send()
 
 
 def cpu_status():
@@ -44,6 +47,8 @@ def cpu_status():
 
 
 @ping.handle()
-async def _(event: MessageEvent):
-    latency = f"[延迟] {time() - event.time:0.2f}s"
-    await ping.finish(f"[MigangBot]\n{cpu_status()}\n{latency}")
+async def _(event: Event):
+    if hasattr(Event, "time"):
+        latency = f"[延迟] {time() - event.time:0.2f}s"
+        await ping.finish(f"[MigangBot]\n{cpu_status()}\n{latency}")
+    await ping.send("光速！")
