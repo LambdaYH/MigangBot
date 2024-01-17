@@ -146,7 +146,7 @@ async def _():
     logger.info("正在初始化暖暖数据...")
     if not nuannuan_path.exists():
         asyncio.create_task(get_nuannuan_image())
-    asyncio.create_task(get_nuannuan_text())
+    # asyncio.create_task(get_nuannuan_text())
 
 
 @scheduler.scheduled_job(
@@ -155,4 +155,4 @@ async def _():
     minute=8,
 )
 async def _():
-    await asyncio.gather(*[get_nuannuan_image(), get_nuannuan_text()])
+    await asyncio.gather(*[get_nuannuan_image()])
