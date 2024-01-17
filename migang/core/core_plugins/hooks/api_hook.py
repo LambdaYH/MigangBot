@@ -108,4 +108,4 @@ async def _(
     data: Dict[str, Any],
 ):
     if bot.adapter.get_name() == "OneBot V11":
-        _onebotv11(bot, api, data)
+        await _onebotv11(bot, api, data)
