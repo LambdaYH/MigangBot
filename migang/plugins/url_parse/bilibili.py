@@ -1,11 +1,14 @@
 import re
 import html
+import asyncio
 from typing import Tuple
 
 import aiohttp
 from lxml import etree
 from fake_useragent import UserAgent
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
+
+from migang.utils.http import get_signed_params
 
 from .utils import parser_manager
 
@@ -28,7 +31,13 @@ async def get_video_detail(url: str) -> Tuple[Message, str]:
     else:
         raise Exception("找不到bvid或aid")
     async with aiohttp.ClientSession() as client:
-        details = await (await client.get(api_url, timeout=15)).json()
+        details = await (
+            await client.get(
+                api_url,
+                timeout=15,
+                headers={"User-Agent": UserAgent(browsers=["chrome", "edge"]).random},
+            )
+        ).json()
     if details["code"] != 0:
         raise Exception("cannot fetch video detail")
     details = details["data"]
@@ -130,19 +139,22 @@ async def get_live_summary(url: str) -> Tuple[Message, str]:
             await client.get(
                 f"https://api.live.bilibili.com/room/v1/Room/room_init?id={roomid}",
                 timeout=15,
+                headers=headers,
             )
         ).json()
         if r["code"] == 0:
             uid = r["data"]["uid"]
         else:
             return "↑ 直播间不存在~", link
-        r = await client.head("https://www.bilibili.com/", headers=headers)
+        await asyncio.sleep(0.1)
         r = await (
             await client.get(
-                f"https://api.bilibili.com/x/space/acc/info?mid={uid}",
+                f"https://api.bilibili.com/x/space/acc/info",
                 timeout=15,
                 headers=headers,
-                cookies=r.cookies,
+                params=await get_signed_params(
+                    {"mid": uid, "order": "pubdate", "pn": 1, "ps": 5}
+                ),
             )
         ).json()
     if r["code"] == 0:
