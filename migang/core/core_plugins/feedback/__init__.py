@@ -2,18 +2,19 @@ import traceback
 from datetime import datetime
 
 from nonebot.log import logger
-from nonebot.adapters import Bot
 from nonebot.params import CommandArg
 from nonebot import require, on_command
+from nonebot.adapters import Bot, Event
 from nonebot_plugin_userinfo import UserInfo, EventUserInfo
 from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 from nonebot_plugin_alconna import At, Text, Image, Target, UniMessage
 
+from migang.core.cross_platform.message import serialize_message
 from migang.core.cross_platform.adapters import supported_adapters
 from migang.core.cross_platform import SUPERUSER, Session, UniCmdArg
 
 require("nonebot_plugin_chatrecorder")
-from nonebot_plugin_chatrecorder import serialize_message, deserialize_message
+from nonebot_plugin_chatrecorder import deserialize_message
 
 from migang.core.models import Feedback
 
@@ -43,6 +44,7 @@ reply = on_command(
 @feedback.handle()
 async def _(
     bot: Bot,
+    event: Event,
     session: Session,
     arg: UniMessage = UniCmdArg(),
     user_info: UserInfo = EventUserInfo(),
@@ -67,7 +69,7 @@ async def _(
             feedback_id = await Feedback.add_feedback(
                 user_id=user_id,
                 group_id=group_id,
-                content=serialize_message(bot, await arg.export()),
+                content=serialize_message(bot=bot, event=event, msg=arg),
             )
             await (
                 UniMessage.text(
@@ -77,7 +79,9 @@ async def _(
             ).send(target=Target(id=white, private=True), bot=bot)
         else:
             feedback_id = await Feedback.add_feedback(
-                user_id=user_id, group_id=None, content=serialize_message(bot, arg)
+                user_id=user_id,
+                group_id=None,
+                content=serialize_message(bot=bot, event=event, msg=arg),
             )
             await (
                 UniMessage.text(
