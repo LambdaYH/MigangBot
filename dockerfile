@@ -1,5 +1,5 @@
 # build stage
-FROM python:3.11-slim-bullseye AS builder
+FROM python:3.12-slim-bullseye AS builder
 
 # install PDM
 RUN pip install -U pip setuptools wheel
@@ -13,7 +13,7 @@ WORKDIR /tmp
 RUN mkdir __pypackages__ && pdm sync --prod -G plugins --no-editable
 
 # run stage
-FROM python:3.11-slim-bullseye
+FROM python:3.12-slim-bullseye
 
 # retrieve packages from build stage
 ENV PYTHONPATH=/pkgs
@@ -21,8 +21,8 @@ ENV PYTHONPATH=/pkgs
 WORKDIR /migangbot
 COPY . /migangbot
 COPY docker/build/db_config.yaml docker/build/.env /migangbot/
-COPY --from=builder /tmp/__pypackages__/3.11/lib /pkgs
-COPY --from=builder /tmp/__pypackages__/3.11/bin/* /bin/
+COPY --from=builder /tmp/__pypackages__/3.12/lib /pkgs
+COPY --from=builder /tmp/__pypackages__/3.12/bin/* /bin/
 
 # install deps
 RUN apt-get update \
