@@ -34,4 +34,4 @@ RUN meme download
 RUN arkkit init -SIMG
 
 # set command/entrypoint, adapt to fit your needs
-CMD nb datastore upgrade ; nb orm upgrade; nb run
+CMD nb datastore upgrade ; nb orm upgrade ; nb run
