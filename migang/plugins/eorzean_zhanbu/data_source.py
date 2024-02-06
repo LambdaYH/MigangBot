@@ -150,15 +150,15 @@ async def get_luck_num(QID: int) -> int:
     res = md5.hexdigest()
     random.seed(res)
 
-    # # 2022 new year update
-    # if today == date(2022, 2, 1):
-    #     if random.random() < 0.2:
-    #         return 2022
-    #     luck_num = random.randint(0, 100)
-    #     if luck_num < 50:
-    #         luck_num += 50
-    #     return luck_num
-    # # 2022 new year update end
+    # # 2024 new year update
+    if today == date(2024, 2, 10):
+        if random.random() < 0.1:
+            return 2024
+        luck_num = random.randint(0, 100)
+        if luck_num < 50:
+            luck_num += 50
+        return luck_num
+    # 2024 new year update end
 
     return random.randint(0, 100)
 
