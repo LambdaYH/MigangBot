@@ -5,7 +5,7 @@
 groups = ["default", "format", "plugins", "git"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:4656bad65d86c351d60ed05e4181ee31c1b969ddd298830af74b59c3a5fd6737"
+content_hash = "sha256:8059c3e27a9fd365cbe03c136281178c9c52b46e62cb8d894fa6e2f0ce5f8eee"
 
 [[package]]
 name = "aiocache"
