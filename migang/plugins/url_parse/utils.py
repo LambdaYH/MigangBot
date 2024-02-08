@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from functools import partial
 from collections import defaultdict
 from typing import Any, Set, Dict, List, Tuple, Callable, Optional, DefaultDict
@@ -89,6 +90,7 @@ class ParserManager:
                 ret, ret_url = await func(url)
             except Exception as e:
                 logger.warning(f"解析 url 时发生错误：{e}")
+                traceback.print_exc()
                 return None
             ret = Message(ret)
             if ttl is not None:

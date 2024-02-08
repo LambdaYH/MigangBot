@@ -5,6 +5,7 @@ from typing import Tuple
 
 import aiohttp
 from lxml import etree
+from nonebot.log import logger
 from fake_useragent import UserAgent
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
@@ -14,6 +15,8 @@ from .utils import parser_manager
 
 AID_PATTERN = re.compile(r"(av|AV)\d+")
 BVID_PATTERN = re.compile(r"(BV|bv)([a-zA-Z0-9])+")
+
+BANGUMI_API_URL = "https://api.bilibili.com/pgc/view/web/season"
 
 
 @parser_manager(
@@ -73,40 +76,45 @@ async def get_video_detail(url: str) -> Tuple[Message, str]:
     ttl=240,
 )
 async def get_bangumi_detail(url: str) -> Tuple[Message, str]:
+    ep_id = re.search(r"ep(\d+)", url)
+    ss_id = re.search(r"ss(\d+)", url)
+    md_id = re.search(r"md(\d+)", url)
+    real_url: str
+    if ep_id:
+        real_url = f"{BANGUMI_API_URL}?ep_id={ep_id.group(1)}"
+    elif ss_id:
+        real_url = f"{BANGUMI_API_URL}?season_id={ss_id.group(1)}"
+    elif md_id:
+        real_url = f"{BANGUMI_API_URL}?media_id={md_id.group(1)}"
+    else:
+        raise Exception("无法获取剧集信息")
+
     async with aiohttp.ClientSession() as client:
-        text = await (
+        r = await (
             await client.get(
-                url,
+                real_url,
                 headers={"User-Agent": UserAgent(browsers=["chrome", "edge"]).random},
-                timeout=15,
-                allow_redirects=True,
             )
-        ).text()
-    dom = etree.HTML(text, etree.HTMLParser())
-    title = (
-        dom.xpath("//div[@class='media-wrapper']/h1/text()")[0]
-        + " ["
-        + dom.xpath(
-            "//div[@class='media-wrapper']/div[@id='media_module']/div[@class='media-right']/div[@class='pub-wrapper']/a[@class='home-link']/text()"
-        )[0]
-        + "-"
-        + dom.xpath(
-            "//div[@class='media-wrapper']/div[@id='media_module']/div[@class='media-right']/div[@class='pub-wrapper']/span[@class='pub-info']/text()"
-        )[0]
-        + "]"
-    )
-    description = html.unescape(
-        dom.xpath(
-            "//div[@class='media-wrapper']/div[@id='media_module']/div[@class='media-right']/div/a/span[@class='absolute']/text()"
-        )[0]
-    )
-    cover = dom.xpath("/html/head/meta[@property='og:image']/@content")[0]
-    ep = re.search(r"(ss|ep)\d+", url).group()
-    link = re.sub(
-        r"(ss|ep)\d+",
-        ep,
-        dom.xpath("/html/head/meta[@property='og:url']/@content")[0],
-    )
+        ).json()
+        res = r.get("result")
+        if not res:
+            logger.warning(f"获取剧集信息：{url}失败：{r}")
+            raise Exception("无法获取剧集详细信息")
+    title = res["title"]
+    description = res["evaluate"]
+    if ss_id:
+        link = f"https://www.bilibili.com/bangumi/play/{ss_id.group()}"
+    elif md_id:
+        link = f"https://www.bilibili.com/bangumi/media/{md_id.group()}"
+    else:
+        epid = ep_id.group(1)
+        for i in res["episodes"]:
+            if str(i["ep_id"]) == epid:
+                title += f"-{i['long_title']}"
+                break
+        link = f"https://www.bilibili.com/bangumi/play/ep{epid}"
+    cover = res["cover"]
+
     msg = (
         f"[标题] {title}\n"
         + (
