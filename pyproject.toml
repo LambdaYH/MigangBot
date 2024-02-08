@@ -73,7 +73,6 @@ plugins = [
     "nonebot-bison-migang>=0.1.4",
     "YetAnotherPicSearch>=1.9.4",
     "nonebot-plugin-charpic>=0.1.3",
-    "nonebot-plugin-capoo>=0.1.5",
     "nonebot-plugin-pingti>=0.1.3",
 ]
 
@@ -117,7 +116,6 @@ plugins = [
     "nonebot_plugin_arkgacha",
     "YetAnotherPicSearch",
     "nonebot_plugin_charpic",
-    "nonebot_plugin_capoo",
     "nonebot_plugin_pingti"
 ]
 plugin_dirs = ["migang/core/core_plugins", "migang/plugins"]
