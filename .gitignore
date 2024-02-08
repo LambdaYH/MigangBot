@@ -158,6 +158,7 @@ ext_cache
 migangbot.conf
 run.sh
 migrate_from_zhenxun
+pic_search_cache.db
 
 # env
 .env.dev
