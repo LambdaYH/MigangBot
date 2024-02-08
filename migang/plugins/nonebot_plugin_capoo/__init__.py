@@ -13,11 +13,19 @@ from nonebot.adapters.onebot.v11 import (
     GROUP_ADMIN,
     GROUP_OWNER,
     Message,
+    ActionFailed,
     MessageSegment,
 )
 
-from .download import *
 from .config import Config, capoo_path, capoo_pic2, capoo_pic2_path
+from .download import (
+    hashlib,
+    sqlite3,
+    check_md5,
+    capoo_filename,
+    capoo_list_len,
+    check_resources,
+)
 
 __plugin_meta__ = PluginMetadata(
     name="猫猫虫图片发送",
@@ -36,7 +44,6 @@ driver = get_driver()
 
 @driver.on_startup
 async def _():
-    global capoo_download
     if capoo_download:
         logger.info("配置项选择了本地存储图片，正在检查资源文件...")
         asyncio.create_task(check_resources())
@@ -49,7 +56,6 @@ picture = on_fullmatch("capoo", permission=GROUP, priority=1, block=True)
 
 @picture.handle()
 async def pic():
-    global capoo_download
     if capoo_download:
         conn = sqlite3.connect(capoo_path / "md5.db")
         cursor = conn.cursor()
@@ -69,7 +75,7 @@ async def pic():
         img = capoo_path / file_name
         try:
             await picture.send(MessageSegment.image(img))
-        except:
+        except Ac:
             await picture.send(f"capoo出不来了，稍后再试试吧~")
     else:
         async with AsyncClient() as client:
@@ -81,7 +87,7 @@ async def pic():
         try:
             await picture.send(MessageSegment.image(picbytes))
         except:
-            await picture.send(f"capoo出不来了，稍后再试试吧~")
+            await picture.send("capoo出不来了，稍后再试试吧~")
 
 
 def reply_rule():
@@ -113,7 +119,8 @@ async def add_pic(pic_list: Message = Arg("pic")):
     for pic in pic_list:
         if pic.type != "image":
             await add.send(
-                pic + MessageSegment.text("\n输入格式有误，请重新触发指令！"), at_sender=True
+                pic + MessageSegment.text("\n输入格式有误，请重新触发指令！"),
+                at_sender=True,
             )
             continue
         pic_url = pic.data["url"]
@@ -123,7 +130,7 @@ async def add_pic(pic_list: Message = Arg("pic")):
 
         try:
             resp.raise_for_status()
-        except:
+        except ActionFailed:
             await add.send(pic + MessageSegment.text("\n保存出错了，这张请重试"))
             continue
 
@@ -143,9 +150,6 @@ async def add_pic(pic_list: Message = Arg("pic")):
             file_name = capoo_filename.format(index=str(capoo_cur_picnum))
             file_path = capoo_pic2_path / file_name
 
-            try:
-                with file_path.open("wb") as f:
-                    f.write(data)
-                await add.send(pic + Message("\n导入成功！"), at_sender=True)
-            except:
-                await add.send(pic + Message("\n导入失败！"), at_sender=True)
+            with file_path.open("wb") as f:
+                f.write(data)
+            await add.send(pic + Message("\n导入成功！"), at_sender=True)

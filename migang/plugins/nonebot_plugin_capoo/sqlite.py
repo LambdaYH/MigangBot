@@ -26,7 +26,7 @@ def check_md5_force(
         )
         conn.commit()
 
-    except Exception as e:
+    except Exception:
         return False
 
     return True

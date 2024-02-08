@@ -42,11 +42,11 @@ async def download_resources(path: str) -> bytes:
 
 async def check_resources():
     if not capoo_pic_path.exists():
-        logger.info(f"未找到capoo文件夹，准备创建/capoo/picture文件夹...")
+        logger.info("未找到capoo文件夹，准备创建/capoo/picture文件夹...")
         capoo_pic_path.mkdir(parents=True, exist_ok=True)
 
     if not capoo_pic2_path.exists():
-        logger.info(f"未找到capoo2文件夹，准备创建/capoo/your_picture文件夹...")
+        logger.info("未找到capoo2文件夹，准备创建/capoo/your_picture文件夹...")
         capoo_pic2_path.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(capoo_path / "md5.db")
     cursor = conn.cursor()
@@ -78,7 +78,7 @@ async def check_resources():
             if not check_md5(
                 conn, cursor, fmd5, f"{capoo_pic}/{capoo_filename.format(index=str(i))}"
             ):
-                logger.info(f"文件夹中有相同的图片，本张照片跳过")
+                logger.info("文件夹中有相同的图片，本张照片跳过")
                 continue
 
             with file_path.open("wb") as f:
