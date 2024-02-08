@@ -5,7 +5,7 @@
 groups = ["default", "format", "plugins", "git"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:24407f8039077a23c1f51d95711bdc63e3b1d2682a53b8ffd9ebc6c4866cb8b0"
+content_hash = "sha256:dbd30c0e118c3db06908d41958516a52f66253e162d1ed49e5c968030ed7f0f7"
 
 [[package]]
 name = "aiocache"
@@ -263,21 +263,21 @@ files = [
 
 [[package]]
 name = "arknights-toolkit"
-version = "0.5.12"
+version = "0.6.3"
 requires_python = ">=3.8"
 summary = "Arknights-related Toolkit"
 dependencies = [
-    "Pillow>=9.2.0",
-    "cli-lite>=0.7.0",
-    "httpx>=0.23.0",
-    "loguru>=0.6.0",
-    "lxml>=4.9.1",
-    "matplotlib>=3.6.2",
-    "xlsxwriter>=3.0.3",
+    "Pillow>=10.1.0",
+    "cli-lite>=0.7.1",
+    "httpx!=0.25.1",
+    "loguru>=0.7.2",
+    "lxml>=4.9.3",
+    "matplotlib>=3.7.3",
+    "msgpack>=1.0.7",
 ]
 files = [
-    {file = "arknights_toolkit-0.5.12-py3-none-any.whl", hash = "sha256:a3252757bb76b3514875fce2b189973adf8c431576704ab33320e5266832bc4e"},
-    {file = "arknights_toolkit-0.5.12.tar.gz", hash = "sha256:cbcacfb4fc3665727282d6cb7762406ae005eba23a42fcbcfda3250470c1af5a"},
+    {file = "arknights_toolkit-0.6.3-py3-none-any.whl", hash = "sha256:f7e326dcd56f8e39068ad68f57d03fe219e29119e5ee1e128e17d8633b09cc25"},
+    {file = "arknights_toolkit-0.6.3.tar.gz", hash = "sha256:904f7a9a40afd739531f001e71fce5abe40f78460380cb5350861d40c334b146"},
 ]
 
 [[package]]
@@ -315,6 +315,15 @@ summary = "Timeout context manager for asyncio programs"
 files = [
     {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
     {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
+]
+
+[[package]]
+name = "asyncio"
+version = "3.4.3"
+summary = "reference implementation of PEP 3156"
+files = [
+    {file = "asyncio-3.4.3-py3-none-any.whl", hash = "sha256:c4d18b22701821de07bd6aea8b53d21449ec0ec5680645e5317062ea21817d2d"},
+    {file = "asyncio-3.4.3.tar.gz", hash = "sha256:83360ff8bc97980e4ff25c964c7bd3923d333d177aa4f7fb736b019f26c7cb41"},
 ]
 
 [[package]]
@@ -1085,36 +1094,36 @@ files = [
 
 [[package]]
 name = "fonttools"
-version = "4.47.2"
+version = "4.48.1"
 requires_python = ">=3.8"
 summary = "Tools to manipulate font files"
 files = [
-    {file = "fonttools-4.47.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3b629108351d25512d4ea1a8393a2dba325b7b7d7308116b605ea3f8e1be88df"},
-    {file = "fonttools-4.47.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c19044256c44fe299d9a73456aabee4b4d06c6b930287be93b533b4737d70aa1"},
-    {file = "fonttools-4.47.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b8be28c036b9f186e8c7eaf8a11b42373e7e4949f9e9f370202b9da4c4c3f56c"},
-    {file = "fonttools-4.47.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f83a4daef6d2a202acb9bf572958f91cfde5b10c8ee7fb1d09a4c81e5d851fd8"},
-    {file = "fonttools-4.47.2-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:4a5a5318ba5365d992666ac4fe35365f93004109d18858a3e18ae46f67907670"},
-    {file = "fonttools-4.47.2-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:8f57ecd742545362a0f7186774b2d1c53423ed9ece67689c93a1055b236f638c"},
-    {file = "fonttools-4.47.2-cp310-cp310-win32.whl", hash = "sha256:a1c154bb85dc9a4cf145250c88d112d88eb414bad81d4cb524d06258dea1bdc0"},
-    {file = "fonttools-4.47.2-cp310-cp310-win_amd64.whl", hash = "sha256:3e2b95dce2ead58fb12524d0ca7d63a63459dd489e7e5838c3cd53557f8933e1"},
-    {file = "fonttools-4.47.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:29495d6d109cdbabe73cfb6f419ce67080c3ef9ea1e08d5750240fd4b0c4763b"},
-    {file = "fonttools-4.47.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:0a1d313a415eaaba2b35d6cd33536560deeebd2ed758b9bfb89ab5d97dc5deac"},
-    {file = "fonttools-4.47.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:90f898cdd67f52f18049250a6474185ef6544c91f27a7bee70d87d77a8daf89c"},
-    {file = "fonttools-4.47.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3480eeb52770ff75140fe7d9a2ec33fb67b07efea0ab5129c7e0c6a639c40c70"},
-    {file = "fonttools-4.47.2-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:0255dbc128fee75fb9be364806b940ed450dd6838672a150d501ee86523ac61e"},
-    {file = "fonttools-4.47.2-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:f791446ff297fd5f1e2247c188de53c1bfb9dd7f0549eba55b73a3c2087a2703"},
-    {file = "fonttools-4.47.2-cp311-cp311-win32.whl", hash = "sha256:740947906590a878a4bde7dd748e85fefa4d470a268b964748403b3ab2aeed6c"},
-    {file = "fonttools-4.47.2-cp311-cp311-win_amd64.whl", hash = "sha256:63fbed184979f09a65aa9c88b395ca539c94287ba3a364517698462e13e457c9"},
-    {file = "fonttools-4.47.2-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:4ec558c543609e71b2275c4894e93493f65d2f41c15fe1d089080c1d0bb4d635"},
-    {file = "fonttools-4.47.2-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:e040f905d542362e07e72e03612a6270c33d38281fd573160e1003e43718d68d"},
-    {file = "fonttools-4.47.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6dd58cc03016b281bd2c74c84cdaa6bd3ce54c5a7f47478b7657b930ac3ed8eb"},
-    {file = "fonttools-4.47.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:32ab2e9702dff0dd4510c7bb958f265a8d3dd5c0e2547e7b5f7a3df4979abb07"},
-    {file = "fonttools-4.47.2-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:3a808f3c1d1df1f5bf39be869b6e0c263570cdafb5bdb2df66087733f566ea71"},
-    {file = "fonttools-4.47.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:ac71e2e201df041a2891067dc36256755b1229ae167edbdc419b16da78732c2f"},
-    {file = "fonttools-4.47.2-cp312-cp312-win32.whl", hash = "sha256:69731e8bea0578b3c28fdb43dbf95b9386e2d49a399e9a4ad736b8e479b08085"},
-    {file = "fonttools-4.47.2-cp312-cp312-win_amd64.whl", hash = "sha256:b3e1304e5f19ca861d86a72218ecce68f391646d85c851742d265787f55457a4"},
-    {file = "fonttools-4.47.2-py3-none-any.whl", hash = "sha256:7eb7ad665258fba68fd22228a09f347469d95a97fb88198e133595947a20a184"},
-    {file = "fonttools-4.47.2.tar.gz", hash = "sha256:7df26dd3650e98ca45f1e29883c96a0b9f5bb6af8d632a6a108bc744fa0bd9b3"},
+    {file = "fonttools-4.48.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:702ae93058c81f46461dc4b2c79f11d3c3d8fd7296eaf8f75b4ba5bbf813cd5f"},
+    {file = "fonttools-4.48.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:97f0a49fa6aa2d6205c6f72f4f98b74ef4b9bfdcb06fd78e6fe6c7af4989b63e"},
+    {file = "fonttools-4.48.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d3260db55f1843e57115256e91247ad9f68cb02a434b51262fe0019e95a98738"},
+    {file = "fonttools-4.48.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e740a7602c2bb71e1091269b5dbe89549749a8817dc294b34628ffd8b2bf7124"},
+    {file = "fonttools-4.48.1-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:4108b1d247953dd7c90ec8f457a2dec5fceb373485973cc852b14200118a51ee"},
+    {file = "fonttools-4.48.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:56339ec557f0c342bddd7c175f5e41c45fc21282bee58a86bd9aa322bec715f2"},
+    {file = "fonttools-4.48.1-cp310-cp310-win32.whl", hash = "sha256:bff5b38d0e76eb18e0b8abbf35d384e60b3371be92f7be36128ee3e67483b3ec"},
+    {file = "fonttools-4.48.1-cp310-cp310-win_amd64.whl", hash = "sha256:f7449493886da6a17472004d3818cc050ba3f4a0aa03fb47972e4fa5578e6703"},
+    {file = "fonttools-4.48.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:18b35fd1a850ed7233a99bbd6774485271756f717dac8b594958224b54118b61"},
+    {file = "fonttools-4.48.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:cad5cfd044ea2e306fda44482b3dd32ee47830fa82dfa4679374b41baa294f5f"},
+    {file = "fonttools-4.48.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6f30e605c7565d0da6f0aec75a30ec372072d016957cd8fc4469721a36ea59b7"},
+    {file = "fonttools-4.48.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aee76fd81a8571c68841d6ef0da750d5ff08ff2c5f025576473016f16ac3bcf7"},
+    {file = "fonttools-4.48.1-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:5057ade278e67923000041e2b195c9ea53e87f227690d499b6a4edd3702f7f01"},
+    {file = "fonttools-4.48.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:b10633aafc5932995a391ec07eba5e79f52af0003a1735b2306b3dab8a056d48"},
+    {file = "fonttools-4.48.1-cp311-cp311-win32.whl", hash = "sha256:0d533f89819f9b3ee2dbedf0fed3825c425850e32bdda24c558563c71be0064e"},
+    {file = "fonttools-4.48.1-cp311-cp311-win_amd64.whl", hash = "sha256:d20588466367f05025bb1efdf4e5d498ca6d14bde07b6928b79199c588800f0a"},
+    {file = "fonttools-4.48.1-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:0a2417547462e468edf35b32e3dd06a6215ac26aa6316b41e03b8eeaf9f079ea"},
+    {file = "fonttools-4.48.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:cf5a0cd974f85a80b74785db2d5c3c1fd6cc09a2ba3c837359b2b5da629ee1b0"},
+    {file = "fonttools-4.48.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0452fcbfbce752ba596737a7c5ec5cf76bc5f83847ce1781f4f90eab14ece252"},
+    {file = "fonttools-4.48.1-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:578c00f93868f64a4102ecc5aa600a03b49162c654676c3fadc33de2ddb88a81"},
+    {file = "fonttools-4.48.1-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:63dc592a16cd08388d8c4c7502b59ac74190b23e16dfc863c69fe1ea74605b68"},
+    {file = "fonttools-4.48.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:9b58638d8a85e3a1b32ec0a91d9f8171a877b4b81c408d4cb3257d0dee63e092"},
+    {file = "fonttools-4.48.1-cp312-cp312-win32.whl", hash = "sha256:d10979ef14a8beaaa32f613bb698743f7241d92f437a3b5e32356dfb9769c65d"},
+    {file = "fonttools-4.48.1-cp312-cp312-win_amd64.whl", hash = "sha256:cdfd7557d1bd294a200bd211aa665ca3b02998dcc18f8211a5532da5b8fad5c5"},
+    {file = "fonttools-4.48.1-py3-none-any.whl", hash = "sha256:e3e33862fc5261d46d9aae3544acb36203b1a337d00bdb5d3753aae50dac860e"},
+    {file = "fonttools-4.48.1.tar.gz", hash = "sha256:8b8a45254218679c7f1127812761e7854ed5c8e34349aebf581e8c9204e7495a"},
 ]
 
 [[package]]
@@ -1219,43 +1228,17 @@ files = [
 ]
 
 [[package]]
-name = "h2"
-version = "4.1.0"
-requires_python = ">=3.6.1"
-summary = "HTTP/2 State-Machine based protocol implementation"
-dependencies = [
-    "hpack<5,>=4.0",
-    "hyperframe<7,>=6.0",
-]
-files = [
-    {file = "h2-4.1.0-py3-none-any.whl", hash = "sha256:03a46bcf682256c95b5fd9e9a99c1323584c3eec6440d379b9903d709476bc6d"},
-    {file = "h2-4.1.0.tar.gz", hash = "sha256:a83aca08fbe7aacb79fec788c9c0bac936343560ed9ec18b82a13a12c28d2abb"},
-]
-
-[[package]]
-name = "hpack"
-version = "4.0.0"
-requires_python = ">=3.6.1"
-summary = "Pure-Python HPACK header compression"
-files = [
-    {file = "hpack-4.0.0-py3-none-any.whl", hash = "sha256:84a076fad3dc9a9f8063ccb8041ef100867b1878b25ef0ee63847a5d53818a6c"},
-    {file = "hpack-4.0.0.tar.gz", hash = "sha256:fc41de0c63e687ebffde81187a948221294896f6bdc0ae2312708df339430095"},
-]
-
-[[package]]
 name = "httpcore"
-version = "0.17.3"
-requires_python = ">=3.7"
+version = "1.0.2"
+requires_python = ">=3.8"
 summary = "A minimal low-level HTTP client."
 dependencies = [
-    "anyio<5.0,>=3.0",
     "certifi",
     "h11<0.15,>=0.13",
-    "sniffio==1.*",
 ]
 files = [
-    {file = "httpcore-0.17.3-py3-none-any.whl", hash = "sha256:c2789b767ddddfa2a5782e3199b2b7f6894540b17b16ec26b2c4d8e103510b87"},
-    {file = "httpcore-0.17.3.tar.gz", hash = "sha256:a6f30213335e34c1ade7be6ec7c47f19f50c56db36abef1a9dfa3815b1cb3888"},
+    {file = "httpcore-1.0.2-py3-none-any.whl", hash = "sha256:096cc05bca73b8e459a1fc3dcf585148f63e534eae4339559c9b8a8d6399acc7"},
+    {file = "httpcore-1.0.2.tar.gz", hash = "sha256:9fc092e4799b26174648e54b74ed5f683132a464e95643b226e00c2ed2fa6535"},
 ]
 
 [[package]]
@@ -1283,43 +1266,19 @@ files = [
 
 [[package]]
 name = "httpx"
-version = "0.24.1"
-requires_python = ">=3.7"
+version = "0.26.0"
+requires_python = ">=3.8"
 summary = "The next generation HTTP client."
 dependencies = [
+    "anyio",
     "certifi",
-    "httpcore<0.18.0,>=0.15.0",
+    "httpcore==1.*",
     "idna",
     "sniffio",
 ]
 files = [
-    {file = "httpx-0.24.1-py3-none-any.whl", hash = "sha256:06781eb9ac53cde990577af654bd990a4949de37a28bdb4a230d434f3a30b9bd"},
-    {file = "httpx-0.24.1.tar.gz", hash = "sha256:5853a43053df830c20f8110c5e69fe44d035d850b2dfe795e196f00fdb774bdd"},
-]
-
-[[package]]
-name = "httpx"
-version = "0.24.1"
-extras = ["http2"]
-requires_python = ">=3.7"
-summary = "The next generation HTTP client."
-dependencies = [
-    "h2<5,>=3",
-    "httpx==0.24.1",
-]
-files = [
-    {file = "httpx-0.24.1-py3-none-any.whl", hash = "sha256:06781eb9ac53cde990577af654bd990a4949de37a28bdb4a230d434f3a30b9bd"},
-    {file = "httpx-0.24.1.tar.gz", hash = "sha256:5853a43053df830c20f8110c5e69fe44d035d850b2dfe795e196f00fdb774bdd"},
-]
-
-[[package]]
-name = "hyperframe"
-version = "6.0.1"
-requires_python = ">=3.6.1"
-summary = "HTTP/2 framing layer for Python"
-files = [
-    {file = "hyperframe-6.0.1-py3-none-any.whl", hash = "sha256:0ec6bafd80d8ad2195c4f03aacba3a8265e57bc4cff261e802bf39970ed02a15"},
-    {file = "hyperframe-6.0.1.tar.gz", hash = "sha256:ae510046231dc8e9ecb1a6586f63d2347bf4c8905914aa84ba585ae85f28a914"},
+    {file = "httpx-0.26.0-py3-none-any.whl", hash = "sha256:8915f5a3627c4d47b73e8202457cb28f1266982d1159bd5779d86a80c0eab1cd"},
+    {file = "httpx-0.26.0.tar.gz", hash = "sha256:451b55c30d5185ea6b23c2c793abf9bb237d2a7dfb901ced6ff69ad37ec1dfaf"},
 ]
 
 [[package]]
@@ -1340,6 +1299,20 @@ summary = "Internationalized Domain Names in Applications (IDNA)"
 files = [
     {file = "idna-3.6-py3-none-any.whl", hash = "sha256:c05567e9c24a6b9faaa835c4821bad0590fbb9d5779e7caa6e1cc4978e7eb24f"},
     {file = "idna-3.6.tar.gz", hash = "sha256:9ecdbbd083b06798ae1e86adcbfe8ab1479cf864e4ee30fe4e46a003d12491ca"},
+]
+
+[[package]]
+name = "imageio"
+version = "2.33.1"
+requires_python = ">=3.8"
+summary = "Library for reading and writing a wide range of image, video, scientific, and volumetric data formats."
+dependencies = [
+    "numpy",
+    "pillow>=8.3.2",
+]
+files = [
+    {file = "imageio-2.33.1-py3-none-any.whl", hash = "sha256:c5094c48ccf6b2e6da8b4061cd95e1209380afafcbeae4a4e280938cce227e1d"},
+    {file = "imageio-2.33.1.tar.gz", hash = "sha256:78722d40b137bd98f5ec7312119f8aea9ad2049f76f434748eb306b6937cc1ce"},
 ]
 
 [[package]]
@@ -1977,18 +1950,18 @@ files = [
 
 [[package]]
 name = "nonebot-plugin-alconna"
-version = "0.36.2"
+version = "0.36.3"
 requires_python = ">=3.8"
 summary = "Alconna Adapter for Nonebot"
 dependencies = [
-    "arclet-alconna-tools<0.7.0,>=0.6.7",
-    "arclet-alconna<2.0.0,>=1.7.38",
+    "arclet-alconna-tools<0.7.0,>=0.6.11",
+    "arclet-alconna<2.0.0,>=1.7.42",
     "nepattern<0.6.0,>=0.5.14",
     "nonebot2>=2.1.0",
 ]
 files = [
-    {file = "nonebot_plugin_alconna-0.36.2-py3-none-any.whl", hash = "sha256:8c7590a72cb05e5a194364436116bf4a3e0f6920bb39796367de8cc92aedb334"},
-    {file = "nonebot_plugin_alconna-0.36.2.tar.gz", hash = "sha256:b706eb26ecb67ae4a46e03ff840eaa804fb12fd25eb6bf3ab1dce5277567395b"},
+    {file = "nonebot_plugin_alconna-0.36.3-py3-none-any.whl", hash = "sha256:8f26f96c711d3adadc538ebf40d51ba2249c18fe1689bf36baed0e4d1e05246a"},
+    {file = "nonebot_plugin_alconna-0.36.3.tar.gz", hash = "sha256:ed8e4f2fd845d0c3d8becdd68678c203ee76109b9104a3b1c18f63525e85c6d4"},
 ]
 
 [[package]]
@@ -2007,20 +1980,19 @@ files = [
 
 [[package]]
 name = "nonebot-plugin-arkgacha"
-version = "0.4.1"
+version = "0.5.0"
 requires_python = ">=3.8"
 summary = "Plugin for Arknights gacha, support multi platform"
 dependencies = [
-    "arknights-toolkit<0.6.0,>=0.5.8",
-    "nonebot-plugin-alconna>=0.7.0",
-    "nonebot-plugin-apscheduler>=0.2.0",
-    "nonebot-plugin-localstore>=0.4.1",
-    "nonebot-plugin-send-anything-anywhere>=0.2.4",
-    "nonebot2>=2.0.0",
+    "arknights-toolkit>=0.6.2",
+    "nonebot-plugin-alconna>=0.33.3",
+    "nonebot-plugin-apscheduler>=0.3.0",
+    "nonebot-plugin-localstore>=0.5.1",
+    "nonebot2>=2.1.0",
 ]
 files = [
-    {file = "nonebot_plugin_arkgacha-0.4.1-py3-none-any.whl", hash = "sha256:180a2b0484f3d26880b0f61664c893612cffc73d2c0da4448035a54b02340afe"},
-    {file = "nonebot_plugin_arkgacha-0.4.1.tar.gz", hash = "sha256:683627fab5b8ed795f1adbd6b3ebe823c8ebb5e6f025b54dbc4cacd62be5f53c"},
+    {file = "nonebot_plugin_arkgacha-0.5.0-py3-none-any.whl", hash = "sha256:624452e4800c947ae8c2515d71ed428753fcd21ec2caf092b74070191e00a390"},
+    {file = "nonebot_plugin_arkgacha-0.5.0.tar.gz", hash = "sha256:cfeed6446305135db16782dabaaacbf7a5f6ac966fc7d48e2b6a832882a3fe8f"},
 ]
 
 [[package]]
@@ -2041,6 +2013,22 @@ files = [
 ]
 
 [[package]]
+name = "nonebot-plugin-capoo"
+version = "0.1.5"
+requires_python = ">=3.8"
+summary = "一个发送 capoo 表情包的插件"
+dependencies = [
+    "asyncio>=3.4.3",
+    "httpx<1.0.0,>=0.20.0",
+    "nonebot-adapter-onebot>=2.1.5",
+    "nonebot2>=2.0.0",
+]
+files = [
+    {file = "nonebot_plugin_capoo-0.1.5-py3-none-any.whl", hash = "sha256:98cd8583f3436463c25f2fd7370e03ca58864e552901efd120d629d81b2531ad"},
+    {file = "nonebot_plugin_capoo-0.1.5.tar.gz", hash = "sha256:61f62b28fdadab644cc4639854248befde5be6b4070f78bb1f5c14912458b191"},
+]
+
+[[package]]
 name = "nonebot-plugin-cesaa"
 version = "0.3.0"
 requires_python = ">=3.8,<4.0"
@@ -2053,6 +2041,23 @@ dependencies = [
 files = [
     {file = "nonebot_plugin_cesaa-0.3.0-py3-none-any.whl", hash = "sha256:7172b4b0c551e5f3169ca5754946d264580123bdbe397aeaa169b2c39c54167a"},
     {file = "nonebot_plugin_cesaa-0.3.0.tar.gz", hash = "sha256:557031b79588a26c161b04eda972eb70f4cf2d1460773c9184a6e0c50d4ebd75"},
+]
+
+[[package]]
+name = "nonebot-plugin-charpic"
+version = "0.1.3"
+requires_python = ">=3.8"
+summary = "Generate picture(or GIF) by characters"
+dependencies = [
+    "Pillow<10.0,>=9.0.0",
+    "aiohttp<4.0,>=3.8.0",
+    "imageio<3.0,>=2.9.0",
+    "nonebot-adapter-onebot<3.0,>=2.0",
+    "nonebot2<3.0,>=2.0",
+]
+files = [
+    {file = "nonebot_plugin_charpic-0.1.3-py3-none-any.whl", hash = "sha256:54b03df0b54e4934c08606de7546601b4155d495caf3aa7a528172eb7b126cd6"},
+    {file = "nonebot_plugin_charpic-0.1.3.tar.gz", hash = "sha256:07aa55ee210f804381011e495b781217e2cc8e42a1bc806c40a0ff8ae9164c45"},
 ]
 
 [[package]]
@@ -2349,6 +2354,22 @@ files = [
 ]
 
 [[package]]
+name = "nonebot-plugin-pingti"
+version = "0.1.3"
+requires_python = "<4.0,>=3.8"
+summary = "Shop with lower prices by searching with alternative keywords."
+dependencies = [
+    "httpx>=0.26.0",
+    "nonebot-plugin-alconna>=0.33.8",
+    "nonebot2>=2.0.0",
+    "pydantic<2,>=1.10.4",
+]
+files = [
+    {file = "nonebot_plugin_pingti-0.1.3-py3-none-any.whl", hash = "sha256:b948d8298cdaf86144c586e9ca6373499fd82bc758e4244a13ce037fa6a00dca"},
+    {file = "nonebot_plugin_pingti-0.1.3.tar.gz", hash = "sha256:8e3a34e4aac2134f26a8bcd54523c1566e458f3a13a88fc5fc11a8cb29b5be83"},
+]
+
+[[package]]
 name = "nonebot-plugin-remake"
 version = "0.3.3"
 requires_python = ">=3.8,<4.0"
@@ -2552,14 +2573,15 @@ files = [
 [[package]]
 name = "nonebot2"
 version = "2.1.3"
-extras = ["fastapi", "httpx"]
 requires_python = ">=3.8,<4.0"
 summary = "An asynchronous python bot framework."
 dependencies = [
-    "fastapi<1.0.0,>=0.93.0",
-    "httpx[http2]<1.0.0,>=0.20.0",
-    "nonebot2==2.1.3",
-    "uvicorn[standard]<1.0.0,>=0.20.0",
+    "loguru<1.0.0,>=0.6.0",
+    "pydantic[dotenv]<2.0.0,>=1.10.0",
+    "pygtrie<3.0.0,>=2.4.1",
+    "tomli<3.0.0,>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions<5.0.0,>=4.4.0",
+    "yarl<2.0.0,>=1.7.2",
 ]
 files = [
     {file = "nonebot2-2.1.3-py3-none-any.whl", hash = "sha256:c36c1a60ce4355d9777fee431c08619f22ffd60f7060993fbbbd1fe67b6368f7"},
@@ -2569,13 +2591,15 @@ files = [
 [[package]]
 name = "nonebot2"
 version = "2.1.3"
-extras = ["fastapi"]
 requires_python = ">=3.8,<4.0"
 summary = "An asynchronous python bot framework."
 dependencies = [
-    "fastapi<1.0.0,>=0.93.0",
-    "nonebot2==2.1.3",
-    "uvicorn[standard]<1.0.0,>=0.20.0",
+    "loguru<1.0.0,>=0.6.0",
+    "pydantic[dotenv]<2.0.0,>=1.10.0",
+    "pygtrie<3.0.0,>=2.4.1",
+    "tomli<3.0.0,>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions<5.0.0,>=4.4.0",
+    "yarl<2.0.0,>=1.7.2",
 ]
 files = [
     {file = "nonebot2-2.1.3-py3-none-any.whl", hash = "sha256:c36c1a60ce4355d9777fee431c08619f22ffd60f7060993fbbbd1fe67b6368f7"},
@@ -2585,12 +2609,15 @@ files = [
 [[package]]
 name = "nonebot2"
 version = "2.1.3"
-extras = ["httpx"]
 requires_python = ">=3.8,<4.0"
 summary = "An asynchronous python bot framework."
 dependencies = [
-    "httpx[http2]<1.0.0,>=0.20.0",
-    "nonebot2==2.1.3",
+    "loguru<1.0.0,>=0.6.0",
+    "pydantic[dotenv]<2.0.0,>=1.10.0",
+    "pygtrie<3.0.0,>=2.4.1",
+    "tomli<3.0.0,>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions<5.0.0,>=4.4.0",
+    "yarl<2.0.0,>=1.7.2",
 ]
 files = [
     {file = "nonebot2-2.1.3-py3-none-any.whl", hash = "sha256:c36c1a60ce4355d9777fee431c08619f22ffd60f7060993fbbbd1fe67b6368f7"},
@@ -2746,17 +2773,17 @@ files = [
 
 [[package]]
 name = "picimagesearch"
-version = "3.9.5"
-requires_python = ">=3.7,<4.0"
+version = "3.9.7"
+requires_python = ">=3.8,<4.0"
 summary = "PicImageSearch APIs for Python 3.x 适用于 Python 3 以图搜源整合API"
 dependencies = [
-    "httpx<0.25.0,>=0.24.1",
+    "httpx<0.26.0,>=0.25.2",
     "lxml<5.0.0,>=4.9.3",
     "pyquery<3.0.0,>=2.0.0",
 ]
 files = [
-    {file = "picimagesearch-3.9.5-py3-none-any.whl", hash = "sha256:2d3299691fe9b6be7749931330006a67bef080d36fc1eb18b14727b0f7308975"},
-    {file = "picimagesearch-3.9.5.tar.gz", hash = "sha256:8ff554f81033e1cc5747461e0d788510e9f7a33cab43bddcaf88625785033d94"},
+    {file = "picimagesearch-3.9.7-py3-none-any.whl", hash = "sha256:6b687d9272ab09d499184fb92b010fc79f28ad761247b04345fab2fd29f835ed"},
+    {file = "picimagesearch-3.9.7.tar.gz", hash = "sha256:a057a00572797ae254b567542a57326dc8f0dc3a73400d45b0f8c33fb67ca3ce"},
 ]
 
 [[package]]
@@ -2779,46 +2806,57 @@ files = [
 
 [[package]]
 name = "pillow"
-version = "9.5.0"
-requires_python = ">=3.7"
+version = "10.2.0"
+requires_python = ">=3.8"
 summary = "Python Imaging Library (Fork)"
 files = [
-    {file = "Pillow-9.5.0-cp310-cp310-macosx_10_10_x86_64.whl", hash = "sha256:ace6ca218308447b9077c14ea4ef381ba0b67ee78d64046b3f19cf4e1139ad16"},
-    {file = "Pillow-9.5.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:d3d403753c9d5adc04d4694d35cf0391f0f3d57c8e0030aac09d7678fa8030aa"},
-    {file = "Pillow-9.5.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5ba1b81ee69573fe7124881762bb4cd2e4b6ed9dd28c9c60a632902fe8db8b38"},
-    {file = "Pillow-9.5.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:fe7e1c262d3392afcf5071df9afa574544f28eac825284596ac6db56e6d11062"},
-    {file = "Pillow-9.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8f36397bf3f7d7c6a3abdea815ecf6fd14e7fcd4418ab24bae01008d8d8ca15e"},
-    {file = "Pillow-9.5.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:252a03f1bdddce077eff2354c3861bf437c892fb1832f75ce813ee94347aa9b5"},
-    {file = "Pillow-9.5.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:85ec677246533e27770b0de5cf0f9d6e4ec0c212a1f89dfc941b64b21226009d"},
-    {file = "Pillow-9.5.0-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:b416f03d37d27290cb93597335a2f85ed446731200705b22bb927405320de903"},
-    {file = "Pillow-9.5.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:1781a624c229cb35a2ac31cc4a77e28cafc8900733a864870c49bfeedacd106a"},
-    {file = "Pillow-9.5.0-cp310-cp310-win32.whl", hash = "sha256:8507eda3cd0608a1f94f58c64817e83ec12fa93a9436938b191b80d9e4c0fc44"},
-    {file = "Pillow-9.5.0-cp310-cp310-win_amd64.whl", hash = "sha256:d3c6b54e304c60c4181da1c9dadf83e4a54fd266a99c70ba646a9baa626819eb"},
-    {file = "Pillow-9.5.0-cp311-cp311-macosx_10_10_x86_64.whl", hash = "sha256:7ec6f6ce99dab90b52da21cf0dc519e21095e332ff3b399a357c187b1a5eee32"},
-    {file = "Pillow-9.5.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:560737e70cb9c6255d6dcba3de6578a9e2ec4b573659943a5e7e4af13f298f5c"},
-    {file = "Pillow-9.5.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:96e88745a55b88a7c64fa49bceff363a1a27d9a64e04019c2281049444a571e3"},
-    {file = "Pillow-9.5.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d9c206c29b46cfd343ea7cdfe1232443072bbb270d6a46f59c259460db76779a"},
-    {file = "Pillow-9.5.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cfcc2c53c06f2ccb8976fb5c71d448bdd0a07d26d8e07e321c103416444c7ad1"},
-    {file = "Pillow-9.5.0-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:a0f9bb6c80e6efcde93ffc51256d5cfb2155ff8f78292f074f60f9e70b942d99"},
-    {file = "Pillow-9.5.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:8d935f924bbab8f0a9a28404422da8af4904e36d5c33fc6f677e4c4485515625"},
-    {file = "Pillow-9.5.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:fed1e1cf6a42577953abbe8e6cf2fe2f566daebde7c34724ec8803c4c0cda579"},
-    {file = "Pillow-9.5.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:c1170d6b195555644f0616fd6ed929dfcf6333b8675fcca044ae5ab110ded296"},
-    {file = "Pillow-9.5.0-cp311-cp311-win32.whl", hash = "sha256:54f7102ad31a3de5666827526e248c3530b3a33539dbda27c6843d19d72644ec"},
-    {file = "Pillow-9.5.0-cp311-cp311-win_amd64.whl", hash = "sha256:cfa4561277f677ecf651e2b22dc43e8f5368b74a25a8f7d1d4a3a243e573f2d4"},
-    {file = "Pillow-9.5.0-cp311-cp311-win_arm64.whl", hash = "sha256:965e4a05ef364e7b973dd17fc765f42233415974d773e82144c9bbaaaea5d089"},
-    {file = "Pillow-9.5.0-cp312-cp312-win32.whl", hash = "sha256:22baf0c3cf0c7f26e82d6e1adf118027afb325e703922c8dfc1d5d0156bb2eeb"},
-    {file = "Pillow-9.5.0-cp312-cp312-win_amd64.whl", hash = "sha256:432b975c009cf649420615388561c0ce7cc31ce9b2e374db659ee4f7d57a1f8b"},
-    {file = "Pillow-9.5.0-pp38-pypy38_pp73-macosx_10_10_x86_64.whl", hash = "sha256:833b86a98e0ede388fa29363159c9b1a294b0905b5128baf01db683672f230f5"},
-    {file = "Pillow-9.5.0-pp38-pypy38_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:aaf305d6d40bd9632198c766fb64f0c1a83ca5b667f16c1e79e1661ab5060140"},
-    {file = "Pillow-9.5.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0852ddb76d85f127c135b6dd1f0bb88dbb9ee990d2cd9aa9e28526c93e794fba"},
-    {file = "Pillow-9.5.0-pp38-pypy38_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:91ec6fe47b5eb5a9968c79ad9ed78c342b1f97a091677ba0e012701add857829"},
-    {file = "Pillow-9.5.0-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:cb841572862f629b99725ebaec3287fc6d275be9b14443ea746c1dd325053cbd"},
-    {file = "Pillow-9.5.0-pp39-pypy39_pp73-macosx_10_10_x86_64.whl", hash = "sha256:c380b27d041209b849ed246b111b7c166ba36d7933ec6e41175fd15ab9eb1572"},
-    {file = "Pillow-9.5.0-pp39-pypy39_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:7c9af5a3b406a50e313467e3565fc99929717f780164fe6fbb7704edba0cebbe"},
-    {file = "Pillow-9.5.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5671583eab84af046a397d6d0ba25343c00cd50bce03787948e0fff01d4fd9b1"},
-    {file = "Pillow-9.5.0-pp39-pypy39_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:84a6f19ce086c1bf894644b43cd129702f781ba5751ca8572f08aa40ef0ab7b7"},
-    {file = "Pillow-9.5.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:1e7723bd90ef94eda669a3c2c19d549874dd5badaeefabefd26053304abe5799"},
-    {file = "Pillow-9.5.0.tar.gz", hash = "sha256:bf548479d336726d7a0eceb6e767e179fbde37833ae42794602631a070d630f1"},
+    {file = "pillow-10.2.0-cp310-cp310-macosx_10_10_x86_64.whl", hash = "sha256:7823bdd049099efa16e4246bdf15e5a13dbb18a51b68fa06d6c1d4d8b99a796e"},
+    {file = "pillow-10.2.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:83b2021f2ade7d1ed556bc50a399127d7fb245e725aa0113ebd05cfe88aaf588"},
+    {file = "pillow-10.2.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6fad5ff2f13d69b7e74ce5b4ecd12cc0ec530fcee76356cac6742785ff71c452"},
+    {file = "pillow-10.2.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:da2b52b37dad6d9ec64e653637a096905b258d2fc2b984c41ae7d08b938a67e4"},
+    {file = "pillow-10.2.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:47c0995fc4e7f79b5cfcab1fc437ff2890b770440f7696a3ba065ee0fd496563"},
+    {file = "pillow-10.2.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:322bdf3c9b556e9ffb18f93462e5f749d3444ce081290352c6070d014c93feb2"},
+    {file = "pillow-10.2.0-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:51f1a1bffc50e2e9492e87d8e09a17c5eea8409cda8d3f277eb6edc82813c17c"},
+    {file = "pillow-10.2.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:69ffdd6120a4737710a9eee73e1d2e37db89b620f702754b8f6e62594471dee0"},
+    {file = "pillow-10.2.0-cp310-cp310-win32.whl", hash = "sha256:c6dafac9e0f2b3c78df97e79af707cdc5ef8e88208d686a4847bab8266870023"},
+    {file = "pillow-10.2.0-cp310-cp310-win_amd64.whl", hash = "sha256:aebb6044806f2e16ecc07b2a2637ee1ef67a11840a66752751714a0d924adf72"},
+    {file = "pillow-10.2.0-cp310-cp310-win_arm64.whl", hash = "sha256:7049e301399273a0136ff39b84c3678e314f2158f50f517bc50285fb5ec847ad"},
+    {file = "pillow-10.2.0-cp311-cp311-macosx_10_10_x86_64.whl", hash = "sha256:35bb52c37f256f662abdfa49d2dfa6ce5d93281d323a9af377a120e89a9eafb5"},
+    {file = "pillow-10.2.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:9c23f307202661071d94b5e384e1e1dc7dfb972a28a2310e4ee16103e66ddb67"},
+    {file = "pillow-10.2.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:773efe0603db30c281521a7c0214cad7836c03b8ccff897beae9b47c0b657d61"},
+    {file = "pillow-10.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:11fa2e5984b949b0dd6d7a94d967743d87c577ff0b83392f17cb3990d0d2fd6e"},
+    {file = "pillow-10.2.0-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:716d30ed977be8b37d3ef185fecb9e5a1d62d110dfbdcd1e2a122ab46fddb03f"},
+    {file = "pillow-10.2.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:a086c2af425c5f62a65e12fbf385f7c9fcb8f107d0849dba5839461a129cf311"},
+    {file = "pillow-10.2.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:c8de2789052ed501dd829e9cae8d3dcce7acb4777ea4a479c14521c942d395b1"},
+    {file = "pillow-10.2.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:609448742444d9290fd687940ac0b57fb35e6fd92bdb65386e08e99af60bf757"},
+    {file = "pillow-10.2.0-cp311-cp311-win32.whl", hash = "sha256:823ef7a27cf86df6597fa0671066c1b596f69eba53efa3d1e1cb8b30f3533068"},
+    {file = "pillow-10.2.0-cp311-cp311-win_amd64.whl", hash = "sha256:1da3b2703afd040cf65ec97efea81cfba59cdbed9c11d8efc5ab09df9509fc56"},
+    {file = "pillow-10.2.0-cp311-cp311-win_arm64.whl", hash = "sha256:edca80cbfb2b68d7b56930b84a0e45ae1694aeba0541f798e908a49d66b837f1"},
+    {file = "pillow-10.2.0-cp312-cp312-macosx_10_10_x86_64.whl", hash = "sha256:1b5e1b74d1bd1b78bc3477528919414874748dd363e6272efd5abf7654e68bef"},
+    {file = "pillow-10.2.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:0eae2073305f451d8ecacb5474997c08569fb4eb4ac231ffa4ad7d342fdc25ac"},
+    {file = "pillow-10.2.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b7c2286c23cd350b80d2fc9d424fc797575fb16f854b831d16fd47ceec078f2c"},
+    {file = "pillow-10.2.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1e23412b5c41e58cec602f1135c57dfcf15482013ce6e5f093a86db69646a5aa"},
+    {file = "pillow-10.2.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:52a50aa3fb3acb9cf7213573ef55d31d6eca37f5709c69e6858fe3bc04a5c2a2"},
+    {file = "pillow-10.2.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:127cee571038f252a552760076407f9cff79761c3d436a12af6000cd182a9d04"},
+    {file = "pillow-10.2.0-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:8d12251f02d69d8310b046e82572ed486685c38f02176bd08baf216746eb947f"},
+    {file = "pillow-10.2.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:54f1852cd531aa981bc0965b7d609f5f6cc8ce8c41b1139f6ed6b3c54ab82bfb"},
+    {file = "pillow-10.2.0-cp312-cp312-win32.whl", hash = "sha256:257d8788df5ca62c980314053197f4d46eefedf4e6175bc9412f14412ec4ea2f"},
+    {file = "pillow-10.2.0-cp312-cp312-win_amd64.whl", hash = "sha256:154e939c5f0053a383de4fd3d3da48d9427a7e985f58af8e94d0b3c9fcfcf4f9"},
+    {file = "pillow-10.2.0-cp312-cp312-win_arm64.whl", hash = "sha256:f379abd2f1e3dddb2b61bc67977a6b5a0a3f7485538bcc6f39ec76163891ee48"},
+    {file = "pillow-10.2.0-pp310-pypy310_pp73-macosx_10_10_x86_64.whl", hash = "sha256:322209c642aabdd6207517e9739c704dc9f9db943015535783239022002f054a"},
+    {file = "pillow-10.2.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3eedd52442c0a5ff4f887fab0c1c0bb164d8635b32c894bc1faf4c618dd89df2"},
+    {file = "pillow-10.2.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cb28c753fd5eb3dd859b4ee95de66cc62af91bcff5db5f2571d32a520baf1f04"},
+    {file = "pillow-10.2.0-pp310-pypy310_pp73-manylinux_2_28_aarch64.whl", hash = "sha256:33870dc4653c5017bf4c8873e5488d8f8d5f8935e2f1fb9a2208c47cdd66efd2"},
+    {file = "pillow-10.2.0-pp310-pypy310_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:3c31822339516fb3c82d03f30e22b1d038da87ef27b6a78c9549888f8ceda39a"},
+    {file = "pillow-10.2.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:a2b56ba36e05f973d450582fb015594aaa78834fefe8dfb8fcd79b93e64ba4c6"},
+    {file = "pillow-10.2.0-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:d8e6aeb9201e655354b3ad049cb77d19813ad4ece0df1249d3c793de3774f8c7"},
+    {file = "pillow-10.2.0-pp39-pypy39_pp73-macosx_10_10_x86_64.whl", hash = "sha256:2247178effb34a77c11c0e8ac355c7a741ceca0a732b27bf11e747bbc950722f"},
+    {file = "pillow-10.2.0-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:15587643b9e5eb26c48e49a7b33659790d28f190fc514a322d55da2fb5c2950e"},
+    {file = "pillow-10.2.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:753cd8f2086b2b80180d9b3010dd4ed147efc167c90d3bf593fe2af21265e5a5"},
+    {file = "pillow-10.2.0-pp39-pypy39_pp73-manylinux_2_28_aarch64.whl", hash = "sha256:7c8f97e8e7a9009bcacbe3766a36175056c12f9a44e6e6f2d5caad06dcfbf03b"},
+    {file = "pillow-10.2.0-pp39-pypy39_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:d1b35bcd6c5543b9cb547dee3150c93008f8dd0f1fef78fc0cd2b141c5baf58a"},
+    {file = "pillow-10.2.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:fe4c15f6c9285dc54ce6553a3ce908ed37c8f3825b5a51a15c91442bb955b868"},
+    {file = "pillow-10.2.0.tar.gz", hash = "sha256:e87f0b2c78157e12d7686b27d63c070fd65d994e8ddae6f328e0dcf4a0cd007e"},
 ]
 
 [[package]]
@@ -2833,7 +2871,7 @@ files = [
 
 [[package]]
 name = "playwright"
-version = "1.41.1"
+version = "1.41.2"
 requires_python = ">=3.8"
 summary = "A high-level API to automate web browsers"
 dependencies = [
@@ -2841,13 +2879,13 @@ dependencies = [
     "pyee==11.0.1",
 ]
 files = [
-    {file = "playwright-1.41.1-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:b456f25db38e4d93afc3c671e1093f3995afb374f14cee284152a30f84cfff02"},
-    {file = "playwright-1.41.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:53ff152506dbd8527aa815e92757be72f5df60810e8000e9419d29fd4445f53c"},
-    {file = "playwright-1.41.1-py3-none-macosx_11_0_universal2.whl", hash = "sha256:70c432887b8b5e896fa804fb90ca2c8baf05b13a3590fb8bce8b3c3efba2842d"},
-    {file = "playwright-1.41.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:f227a8d616fd3a02d45d68546ee69947dce4a058df134a9e7dc6167c543de3cd"},
-    {file = "playwright-1.41.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:475130f879b4ba38b9db7232a043dd5bc3a8bd1a84567fbea7e21a02ee2fcb13"},
-    {file = "playwright-1.41.1-py3-none-win32.whl", hash = "sha256:ef769414ea0ceb76085c67812ab6bc0cc6fac0adfc45aaa09d54ee161d7f637b"},
-    {file = "playwright-1.41.1-py3-none-win_amd64.whl", hash = "sha256:316e1ba0854a712e9288b3fe49509438e648d43bade77bf724899de8c24848de"},
+    {file = "playwright-1.41.2-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:cf68335a5dfa4038fa797a4ba0105faee0094ebbb372547d7a27feec5b23c672"},
+    {file = "playwright-1.41.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:431e3a05f8c99147995e2b3e8475d07818745294fd99f1510b61756e73bdcf68"},
+    {file = "playwright-1.41.2-py3-none-macosx_11_0_universal2.whl", hash = "sha256:0608717cbf291a625ba6f751061af0fc0cc9bdace217e69d87b1eb1383b03406"},
+    {file = "playwright-1.41.2-py3-none-manylinux1_x86_64.whl", hash = "sha256:4bf214d812092cf5b9b9648ba84611aa35e28685519911342a7da3a3031f9ed6"},
+    {file = "playwright-1.41.2-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:eaa17ab44622c447de26ed8f7d99912719568d8dbc3a9db0e07f0ae1487709d9"},
+    {file = "playwright-1.41.2-py3-none-win32.whl", hash = "sha256:edb210a015e70bb0d328bf1c9b65fa3a08361f33e4d7c4ddd1ad2adb6d9b4479"},
+    {file = "playwright-1.41.2-py3-none-win_amd64.whl", hash = "sha256:71ead0f33e00f5a8533c037c647938b99f219436a1b27d4ba4de4e6bf0567278"},
 ]
 
 [[package]]
@@ -3471,15 +3509,15 @@ files = [
 
 [[package]]
 name = "ruamel-yaml"
-version = "0.18.5"
+version = "0.18.6"
 requires_python = ">=3.7"
 summary = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 dependencies = [
     "ruamel-yaml-clib>=0.2.7; platform_python_implementation == \"CPython\" and python_version < \"3.13\"",
 ]
 files = [
-    {file = "ruamel.yaml-0.18.5-py3-none-any.whl", hash = "sha256:a013ac02f99a69cdd6277d9664689eb1acba07069f912823177c5eced21a6ada"},
-    {file = "ruamel.yaml-0.18.5.tar.gz", hash = "sha256:61917e3a35a569c1133a8f772e1226961bf5a1198bea7e23f06a0841dea1ab0e"},
+    {file = "ruamel.yaml-0.18.6-py3-none-any.whl", hash = "sha256:57b53ba33def16c4f3d807c0ccbc00f8a6081827e81ba2491691b76882d0c636"},
+    {file = "ruamel.yaml-0.18.6.tar.gz", hash = "sha256:8b27e6a217e786c6fbe5634d8f3f11bc63e0f80f6a5890f28863d9c45aac311b"},
 ]
 
 [[package]]
@@ -3517,29 +3555,29 @@ files = [
 
 [[package]]
 name = "sentry-sdk"
-version = "1.40.0"
+version = "1.40.2"
 summary = "Python client for Sentry (https://sentry.io)"
 dependencies = [
     "certifi",
     "urllib3>=1.26.11; python_version >= \"3.6\"",
 ]
 files = [
-    {file = "sentry-sdk-1.40.0.tar.gz", hash = "sha256:34ad8cfc9b877aaa2a8eb86bfe5296a467fffe0619b931a05b181c45f6da59bf"},
-    {file = "sentry_sdk-1.40.0-py2.py3-none-any.whl", hash = "sha256:78575620331186d32f34b7ece6edea97ce751f58df822547d3ab85517881a27a"},
+    {file = "sentry-sdk-1.40.2.tar.gz", hash = "sha256:c98c8e9bb4dc8ff1e67473caf6467acfccf915dadcc26d0efb0d6791a8652610"},
+    {file = "sentry_sdk-1.40.2-py2.py3-none-any.whl", hash = "sha256:696ef61a323a207e6a20b018ddc6591adb81c671434c88d1a4f2e95ffa75556c"},
 ]
 
 [[package]]
 name = "sentry-sdk"
-version = "1.40.0"
+version = "1.40.2"
 extras = ["loguru"]
 summary = "Python client for Sentry (https://sentry.io)"
 dependencies = [
     "loguru>=0.5",
-    "sentry-sdk==1.40.0",
+    "sentry-sdk==1.40.2",
 ]
 files = [
-    {file = "sentry-sdk-1.40.0.tar.gz", hash = "sha256:34ad8cfc9b877aaa2a8eb86bfe5296a467fffe0619b931a05b181c45f6da59bf"},
-    {file = "sentry_sdk-1.40.0-py2.py3-none-any.whl", hash = "sha256:78575620331186d32f34b7ece6edea97ce751f58df822547d3ab85517881a27a"},
+    {file = "sentry-sdk-1.40.2.tar.gz", hash = "sha256:c98c8e9bb4dc8ff1e67473caf6467acfccf915dadcc26d0efb0d6791a8652610"},
+    {file = "sentry_sdk-1.40.2-py2.py3-none-any.whl", hash = "sha256:696ef61a323a207e6a20b018ddc6591adb81c671434c88d1a4f2e95ffa75556c"},
 ]
 
 [[package]]
