@@ -1,15 +1,11 @@
 import re
-import html
-import asyncio
 from typing import Tuple
+from time import strftime, localtime
 
 import aiohttp
-from lxml import etree
 from nonebot.log import logger
 from fake_useragent import UserAgent
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
-
-from migang.utils.http import get_signed_params
 
 from .utils import parser_manager
 
@@ -17,6 +13,7 @@ AID_PATTERN = re.compile(r"(av|AV)\d+")
 BVID_PATTERN = re.compile(r"(BV|bv)([a-zA-Z0-9])+")
 
 BANGUMI_API_URL = "https://api.bilibili.com/pgc/view/web/season"
+LIVE_API_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom"
 
 
 @parser_manager(
@@ -135,53 +132,52 @@ async def get_bangumi_detail(url: str) -> Tuple[Message, str]:
     task_name="url_parse_bilibili", startswith=("https://live.bilibili.com",), ttl=240
 )
 async def get_live_summary(url: str) -> Tuple[Message, str]:
-    link = re.search(r"(https|http)://live.bilibili.com/\d+", url)
+    link = re.search(r"live.bilibili.com/(blanc/|h5/)?(\d+)", url)
     if link:
-        link = link.group()
-        roomid = re.search(r"\d+", link).group()
+        room_id = link.group(2)
     else:
         raise Exception("no link found")
     async with aiohttp.ClientSession() as client:
         headers = {"User-Agent": UserAgent(browsers=["chrome", "edge"]).random}
         r = await (
             await client.get(
-                f"https://api.live.bilibili.com/room/v1/Room/room_init?id={roomid}",
+                f"{LIVE_API_URL}?room_id={room_id}",
                 timeout=15,
                 headers=headers,
             )
         ).json()
-        if r["code"] == 0:
-            uid = r["data"]["uid"]
-        else:
-            return "↑ 直播间不存在~", link
-        await asyncio.sleep(0.1)
-        r = await (
-            await client.get(
-                f"https://api.bilibili.com/x/space/acc/info",
-                timeout=15,
-                headers=headers,
-                params=await get_signed_params(
-                    {"mid": uid, "order": "pubdate", "pn": 1, "ps": 5}
-                ),
-            )
-        ).json()
-    if r["code"] == 0:
-        title = r["data"]["live_room"]["title"]
-        up = r["data"]["name"]
-        cover = r["data"]["live_room"]["cover"]
-        status = r["data"]["live_room"]["liveStatus"]
-        link = f"https://live.bilibili.com/{roomid}"
+        if r["code"] != 0:
+            raise Exception("获取直播间信息失败")
+        res = r["data"]
+
+    title = res["room_info"]["title"]
+    up = res["anchor_info"]["base_info"]["uname"]
+    live_status = res["room_info"]["live_status"]
+    lock_status = res["room_info"]["lock_status"]
+    parent_area_name = res["room_info"]["parent_area_name"]
+    area_name = res["room_info"]["area_name"]
+    real_status: str
+    if lock_status:
+        lock_time = res["room_info"]["lock_time"]
+        lock_time = strftime("%Y-%m-%d %H:%M:%S", localtime(lock_time))
+        real_status = f"[已封禁] 至：{lock_time}\n"
+    elif live_status == 1:
+        real_status = "[直播中]"
+    elif live_status == 2:
+        real_status = "[轮播中]"
     else:
-        raise Exception("cannot fetch the detail of this live room")
+        real_status = "[未开播]"
+    cover = res["room_info"]["cover"]
 
     msg = (
-        ("[直播中]" if status == 1 else "[未开播]")
+        real_status
         + "\n"
         + f"[标题] {title}\n"
         + f"[主播] {up}\n"
+        + f"[分区] {parent_area_name} - {area_name}\n"
         + "[封面] "
         + MessageSegment.image(cover)
         + "\n"
-        + f"URL:{link}"
+        + f"URL:https://live.bilibili.com/{room_id}"
     )
     return msg, link
