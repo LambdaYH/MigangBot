@@ -75,7 +75,7 @@ async def pic():
         img = capoo_path / file_name
         try:
             await picture.send(MessageSegment.image(img))
-        except Ac:
+        except ActionFailed:
             await picture.send(f"capoo出不来了，稍后再试试吧~")
     else:
         async with AsyncClient() as client:
