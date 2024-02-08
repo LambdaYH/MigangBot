@@ -7,12 +7,6 @@
       zoom: 200%;
     }
 
-    .today_title {
-      color: #6c757d;
-      font-size: medium;
-      margin: auto;
-    }
-
     .list {
       display: flex;
       flex-direction: column;
@@ -20,75 +14,76 @@
       overflow: scroll;
     }
 
-    table {
-      border-collapse: collapse;
-      border-spacing: 0;
-      width: 100%;
-      height: min-content;
-      border: 1px solid #ddd;
+    /* 样式化列表项 */
+    .rounded-list {
+      list-style-type: none;
+      padding: 0;
+      margin-top: -10px;
     }
 
-    th,
-    td {
-      text-align: left;
-      padding-top: 3px;
-      padding-bottom: 3px;
-      padding-right: 5px;
+    /* 每一行的样式 */
+    .rounded-list li {
+      list-style-type: none;
+      padding: 5px;
+      margin-bottom: 3px;
       display: flex;
-      flex-direction: column;
-      width: max-content;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f5f5f5;
-    }
-
-    .line {
-      display: flex;
-      flex-direction: row;
       align-items: center;
-      width: max-content;
     }
 
-    .year {
+    /* 圆形样式 */
+    .circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       color: #444444;
-      font-size: x-small;
-      background-color: #f8f8f8;
-      padding-left: 3px;
-      padding-right: 3px;
-      padding-top: 1px;
-      padding-bottom: 1px;
-      border-radius: 5px;
-      border-color: #dee2e6;
-      border-style: solid;
-      border-width: 1px;
-      margin-left: 5px;
+      background-color: #f0f0f0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      margin-right: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: small;
     }
 
-    .title {
+    /* 圆角矩形样式 */
+    .rounded-rectangle {
+      flex: 1;
+      border-radius: 10px;
+      background-color: #f0f0f0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       color: #444444;
-      margin-left: 5px;
+      padding: 10px;
+    }
+
+    /* 标题样式 */
+    h2 {
+      font-family: "Arial Black", sans-serif;
+      font-size: 1em;
+      text-align: center;
+      color: #333;
+      padding: 5px 20px;
+      margin: 0 20px 20px;
+      background-color: #f0f0f0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
     }
   </style>
 </head>
 
 <body>
   <div class="list">
-    <div class="today_title">
-      历史上的{{ today_date }}
-    </div>
-    <table>
+    <h2>历史上的{{ today_date }}</h2>
+    <ul class="rounded-list">
       {% for event in event_list %}
-      <tr>
-        <td>
-          <div class="line">
-            <div class="year">{{ event["year"] }}</div>
-            <div class="title">{{ event["title"] }}</div>
-          </div>
-        </td>
-      </tr>
+      <li>
+        <div class="circle">{{ event["year"] }}</div>
+        <div class="rounded-rectangle">
+          {{ event["title"] }}
+        </div>
+      </li>
       {% endfor %}
-    </table>
+    </ul>
   </div>
 </body>
 
