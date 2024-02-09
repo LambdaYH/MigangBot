@@ -19,11 +19,11 @@
 
 1. 新建文件夹，例如`bot`，bot目录下新建`gocqhttp`和`migangbot`文件夹。
 
-2. 下载`docker/docker-compose.yml`至`bot`，`docker/.env.prod`至`bot/migangbot`，`docker/config.yml`至`bot/gocqhttp`。
+2. 下载`docker/docker-compose.yml`至`bot`，`docker/.env.prod`至`bot/migangbot`。
 
-3. 修改`config.yml`与`.env.prod`
+3. 修改`.env.prod`
 
-4. `docker compose up -d`，（首次启动需要处理go-cqhttp的各种，可以进入容器处理，例如`docker exec -it xxx /bin/bash`）
+4. `docker compose up -d`，若未修改`docker-compose.yml`，bot将开放在本地`1206`端口
 </details>
 
 <details><summary>Debian/Ubuntu下的部署</summary>
