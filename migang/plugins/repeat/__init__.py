@@ -79,6 +79,8 @@ def _rule(event: GroupMessageEvent) -> bool:
     add_msg = uniform_message(event.message)
     if not add_msg:
         return False
+    if "请使用QQ最新版本" in add_msg:
+        return False
     if not _fudu_list.check(event.group_id, add_msg):
         _fudu_list.reset(event.group_id, add_msg)
         return False
