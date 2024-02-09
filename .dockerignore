@@ -16,3 +16,4 @@ package.json
 .pre-commit-config.yaml
 db_config.yaml.example
 db_config.yaml
+.git
