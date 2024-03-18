@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 import aiohttp
 import aiofiles
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 data_dir = Path("data/group_welcome")
@@ -52,4 +52,4 @@ def deserialize_message(message: List[Dict[str, Any]]) -> Message:
         if seg["type"] == "cached_image":
             seg["type"] = "image"
             seg["data"]["file"] = (data_dir / seg["data"]["file"]).resolve().as_uri()
-    return parse_obj_as(Message, message)
+    return TypeAdapter.validate_python(Message, message)

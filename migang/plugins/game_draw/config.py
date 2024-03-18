@@ -136,7 +136,7 @@ def check_config():
         with config_path.open("r", encoding="utf8") as fp:
             data = json.load(fp)
         try:
-            draw_config = Config.parse_obj({**data})
+            draw_config = Config.model_validate({**data})
         except ValidationError:
             draw_config = Config()
             logger.warning("draw_card：配置文件格式错误，已重新生成配置文件.....")

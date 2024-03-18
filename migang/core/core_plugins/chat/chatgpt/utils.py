@@ -2,7 +2,7 @@ from functools import cache
 from typing import Any, Dict, List, Tuple
 
 from aiocache import cached
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, GroupMessageEvent
 
 from migang.core.models import ChatGPTChatHistory
@@ -44,7 +44,7 @@ def serialize_message(message: Message | str) -> List[Dict[str, Any]]:
 
 
 def deserialize_message(message: List[Dict[str, Any]]) -> Message:
-    return parse_obj_as(Message, message)
+    return TypeAdapter.validate_python(Message, message)
 
 
 async def uniform_message(message: Message, group_id: int, bot: Bot) -> str:

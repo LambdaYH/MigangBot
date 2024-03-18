@@ -151,13 +151,13 @@ class AzurHandle(BaseHandle[AzurChar]):
     def load_up_char(self):
         try:
             data = self.load_data(f"draw_card_up/{self.game_name}_up_char.json")
-            self.UP_EVENT = UpEvent.parse_obj(data.get("char", {}))
+            self.UP_EVENT = UpEvent.model_validate(data.get("char", {}))
         except ValidationError:
             logger.warning(f"{self.game_name}_up_char 解析出错")
 
     def dump_up_char(self):
         if self.UP_EVENT:
-            data = {"char": json.loads(self.UP_EVENT.json())}
+            data = {"char": self.UP_EVENT.model_dump()}
             self.dump_data(data, f"draw_card_up/{self.game_name}_up_char.json")
             self.dump_data(data, f"draw_card_up/{self.game_name}_up_char.json")
 

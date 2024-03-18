@@ -234,16 +234,16 @@ class PrettyHandle(BaseHandle[PrettyData]):
     def load_up_char(self):
         try:
             data = self.load_data(f"draw_card_up/{self.game_name}_up_char.json")
-            self.UP_CHAR = UpEvent.parse_obj(data.get("char", {}))
-            self.UP_CARD = UpEvent.parse_obj(data.get("card", {}))
+            self.UP_CHAR = UpEvent.model_validate(data.get("char", {}))
+            self.UP_CARD = UpEvent.model_validate(data.get("card", {}))
         except ValidationError:
             logger.warning(f"{self.game_name}_up_char 解析出错")
 
     def dump_up_char(self):
         if self.UP_CHAR and self.UP_CARD:
             data = {
-                "char": json.loads(self.UP_CHAR.json()),
-                "card": json.loads(self.UP_CARD.json()),
+                "char": self.UP_CHAR.model_dump(),
+                "card": self.UP_CARD.model_dump(),
             }
             self.dump_data(data, f"draw_card_up/{self.game_name}_up_char.json")
 

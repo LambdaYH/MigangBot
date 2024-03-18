@@ -280,20 +280,20 @@ class GenshinHandle(BaseHandle[GenshinData]):
     def load_up_char(self):
         try:
             data = self.load_data(f"draw_card_up/{self.game_name}_up_char.json")
-            self.UP_CHAR_LIST.append(UpEvent.parse_obj(data.get("char", {})))
-            self.UP_CHAR_LIST.append(UpEvent.parse_obj(data.get("char1", {})))
-            self.UP_ARMS = UpEvent.parse_obj(data.get("arms", {}))
+            self.UP_CHAR_LIST.append(UpEvent.model_validate(data.get("char", {})))
+            self.UP_CHAR_LIST.append(UpEvent.model_validate(data.get("char1", {})))
+            self.UP_ARMS = UpEvent.model_validate(data.get("arms", {}))
         except ValidationError:
             logger.warning(f"{self.game_name}_up_char 解析出错")
 
     def dump_up_char(self):
         if self.UP_CHAR_LIST and self.UP_ARMS:
             data = {
-                "char": json.loads(self.UP_CHAR_LIST[0].json()),
-                "arms": json.loads(self.UP_ARMS.json()),
+                "char": self.UP_CHAR_LIST[0].model_dump(),
+                "arms": self.UP_ARMS.model_dump(),
             }
             if len(self.UP_CHAR_LIST) > 1:
-                data["char1"] = json.loads(self.UP_CHAR_LIST[1].json())
+                data["char1"] = self.UP_CHAR_LIST[1].model_dump()
             self.dump_data(data, f"draw_card_up/{self.game_name}_up_char.json")
 
     async def _update_info(self):

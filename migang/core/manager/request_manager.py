@@ -42,13 +42,14 @@ class RequestManager:
         self.__file = file
         self.__data: Requests
         try:
-            self.__data = Requests.parse_file(self.__file)
+            with self.__file.open("r", encoding="utf-8") as f:
+                self.__data = Requests.model_validate_json(f.read())
         except FileNotFoundError:
             self.__data = Requests()
 
     async def save(self) -> None:
         async with await anyio.open_file(self.__file, "w", encoding="utf-8") as f:
-            await f.write(self.__data.json(ensure_ascii=False, indent=4))
+            await f.write(self.__data.model_dump_json(ensure_ascii=False, indent=4))
 
     async def add(
         self,
@@ -170,13 +171,13 @@ class RequestManager:
                 await bot.set_friend_add_request(flag=request.flag, approve=approve)
         except ActionFailed:
             logger.info(
-                f"无法{'同意' if approve else '拒绝'}id为{id_}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效：\n{request.json(ensure_ascii=False,indent=4)}"
+                f"无法{'同意' if approve else '拒绝'}id为{id_}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效：\n{request.model_dump_json(ensure_ascii=False,indent=4)}"
             )
             del target[id_]
             await self.save()
             return f"无法{'同意' if approve else '拒绝'}id为{id_}的{'入群' if type_=='group' else '好友'}请求，或许该请求已失效"
         logger.info(
-            f"已{'同意' if approve else '拒绝'}请求：\n{request.json(ensure_ascii=False,indent=4)}"
+            f"已{'同意' if approve else '拒绝'}请求：\n{request.model_dump_json(ensure_ascii=False,indent=4)}"
         )
         del target[id_]
         await self.save()

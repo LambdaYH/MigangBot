@@ -216,16 +216,16 @@ class GuardianHandle(BaseHandle[GuardianData]):
     def load_up_char(self):
         try:
             data = self.load_data(f"draw_card_up/{self.game_name}_up_char.json")
-            self.UP_CHAR = UpEvent.parse_obj(data.get("char", {}))
-            self.UP_ARMS = UpEvent.parse_obj(data.get("arms", {}))
+            self.UP_CHAR = UpEvent.model_validate(data.get("char", {}))
+            self.UP_ARMS = UpEvent.model_validate(data.get("arms", {}))
         except ValidationError:
             logger.warning(f"{self.game_name}_up_char 解析出错")
 
     def dump_up_char(self):
         if self.UP_CHAR and self.UP_ARMS:
             data = {
-                "char": json.loads(self.UP_CHAR.json()),
-                "arms": json.loads(self.UP_ARMS.json()),
+                "char": self.UP_CHAR.model_dump(),
+                "arms": self.UP_ARMS.model_dump(),
             }
             self.dump_data(data, f"draw_card_up/{self.game_name}_up_char.json")
 

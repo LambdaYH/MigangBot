@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import aiohttp
 import aiofiles
 from croniter import croniter
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from migang.core import DATA_PATH
@@ -57,7 +57,7 @@ def deserialize_message(message: List[Dict[str, Any]]) -> Message:
         if seg["type"] == "cached_image":
             seg["type"] = "image"
             seg["data"]["file"] = (image_dir / seg["data"]["file"]).resolve().as_uri()
-    return parse_obj_as(Message, message)
+    return TypeAdapter.validate_python(Message, message)
 
 
 MONTHDAY = {

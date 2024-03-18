@@ -6,12 +6,12 @@ from datetime import datetime
 import anyio
 import ujson
 import jinja2
-from nonebot import get_driver
+from nonebot import get_driver, get_plugin_config
 from nonebot_plugin_htmlrender import html_to_pic
 
 from .config import Config
 
-fortune_config = Config.parse_obj(get_driver().config.dict())
+fortune_config = get_plugin_config(Config)
 
 dir_path = Path(__file__).parent
 resource_path = dir_path / "resources"

@@ -77,7 +77,7 @@ class TaskManager:
         async def init(self) -> None:
             """异步初始化Task类"""
             async with await anyio.open_file(self.__file, "r") as f:
-                self.__data = TaskManager.TaskAttr.parse_raw(await f.read())
+                self.__data = TaskManager.TaskAttr.model_validate_json(await f.read())
             self.name: str = self.__data.name
             self.__permission: Permission = self.__data.permission
             self.__global_status: bool = self.__data.global_status
@@ -91,7 +91,7 @@ class TaskManager:
         async def save(self) -> None:
             """保存数据进文件"""
             async with await anyio.open_file(self.__file, "w") as f:
-                await f.write(self.__data.json(ensure_ascii=False, indent=4))
+                await f.write(self.__data.model_dump_json(ensure_ascii=False, indent=4))
 
         @property
         def global_status(self) -> bool:
@@ -419,7 +419,7 @@ class TaskManager:
                             enabled_group=set(),
                             disabled_group=set(),
                             description=item.description,
-                        ).json(ensure_ascii=False, indent=4)
+                        ).model_dump_json(ensure_ascii=False, indent=4)
                     )
             self.__task[item.task_name] = TaskManager.Task(
                 file=self.__file_path / file_name, usage=item.usage

@@ -4,9 +4,9 @@ import asyncio
 from io import BytesIO
 
 from httpx import AsyncClient
-from nonebot import get_driver
 from nonebot.log import logger
 from nonebot.params import Arg
+from nonebot import get_driver, get_plugin_config
 from nonebot.plugin import PluginMetadata, on_fullmatch
 from nonebot.adapters.onebot.v11 import (
     GROUP,
@@ -36,7 +36,7 @@ __plugin_meta__ = PluginMetadata(
     config=Config,
     supported_adapters={"nonebot.adapters.onebot.v11"},
 )
-capoo_config = Config.parse_obj(get_driver().config.dict())
+capoo_config = get_plugin_config(Config)
 capoo_download = capoo_config.capoo_download
 
 driver = get_driver()

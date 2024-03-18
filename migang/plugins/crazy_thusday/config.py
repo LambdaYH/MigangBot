@@ -4,9 +4,9 @@ from typing import Dict, List, Union
 
 import anyio
 import httpx
-from nonebot import get_driver
 from nonebot.log import logger
 from pydantic import Extra, BaseModel
+from nonebot import get_driver, get_plugin_config
 
 try:
     import ujson as json
@@ -19,7 +19,7 @@ class PluginConfig(BaseModel, extra=Extra.ignore):
 
 
 driver = get_driver()
-crazy_config: PluginConfig = PluginConfig.parse_obj(driver.config.dict())
+crazy_config: PluginConfig = get_plugin_config(PluginConfig)
 crazy_config.crazy_path.mkdir(exist_ok=True, parents=True)
 
 

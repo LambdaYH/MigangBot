@@ -209,7 +209,7 @@ class CountManager:
             """
             if self.__file.exists():
                 async with await anyio.open_file(self.__file, "r") as f:
-                    self.__count_data = Counter.parse_raw(await f.read())
+                    self.__count_data = Counter.model_validate_json(await f.read())
             else:
                 self.__count_data = Counter()
             if isinstance(count_items, Iterable):
@@ -251,7 +251,7 @@ class CountManager:
             """将调用次数保存在硬盘"""
             if self.__dirty_data:
                 async with await anyio.open_file(self.__file, "w") as f:
-                    await f.write(self.__count_data.json(indent=4))
+                    await f.write(self.__count_data.model_dump_json(indent=4))
                 self.__dirty_data = False
 
         def reset(self, period: CountPeriod) -> None:
