@@ -1,5 +1,3 @@
-"""移植自meetwq/mybot，视网络环境可能有几个源不可用
-"""
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command, on_endswith

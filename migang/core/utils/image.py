@@ -1,8 +1,15 @@
+from pathlib import Path
 from typing import Optional
 
+import anyio
 import aiohttp
 from nonebot.log import logger
 from async_lru import alru_cache
+
+
+async def pic_file_to_bytes(pic: Path | str) -> str:
+    async with await anyio.open_file(pic, "rb") as f:
+        return await f.read()
 
 
 @alru_cache(maxsize=32)

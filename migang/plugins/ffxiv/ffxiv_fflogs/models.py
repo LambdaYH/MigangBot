@@ -1,18 +1,11 @@
+from nonebot_plugin_orm import Model
 from pydantic import Field, BaseModel
-from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from nonebot_plugin_datastore import get_plugin_data
-
-Model = get_plugin_data().Model
 
 
 class User(Model):
-    __table_args__ = (UniqueConstraint("platform", "user_id"),)
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    platform: Mapped[str]
-    user_id: Mapped[str]
+    user_id: Mapped[str] = mapped_column(index=True, unique=True)
     character_name: Mapped[str]
     server_name: Mapped[str]
 

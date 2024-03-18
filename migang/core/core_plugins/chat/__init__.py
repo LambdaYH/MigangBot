@@ -15,6 +15,7 @@ from nonebot.adapters.onebot.v11 import (
 )
 
 from migang.core import ConfigItem, get_config
+from migang.core.utils.image import pic_file_to_bytes
 
 from .message_manager import MessageManager
 from .chatgpt import do_chat, not_at_rule, get_gpt_chat
@@ -93,16 +94,28 @@ custom_chat_path = Path(__file__).parent / "image" / "custom_chat"
 @wenhao.handle()
 async def _():
     if random.random() < 0.30:
-        await wenhao.send(MessageSegment.image(custom_chat_path / "wenhao.jpg"))
+        await wenhao.send(
+            MessageSegment.image(
+                await pic_file_to_bytes(custom_chat_path / "wenhao.jpg")
+            )
+        )
 
 
 @tanhao.handle()
 async def _():
     if random.random() < 0.30:
-        await tanhao.send(MessageSegment.image(custom_chat_path / "tanhao.jpg"))
+        await tanhao.send(
+            MessageSegment.image(
+                await pic_file_to_bytes(custom_chat_path / "tanhao.jpg")
+            )
+        )
 
 
 @huoguo.handle()
 async def _():
     if random.random() < 0.30:
-        await huoguo.send(MessageSegment.image(custom_chat_path / "huoguo.jpg"))
+        await huoguo.send(
+            MessageSegment.image(
+                await pic_file_to_bytes(custom_chat_path / "huoguo.jpg")
+            )
+        )

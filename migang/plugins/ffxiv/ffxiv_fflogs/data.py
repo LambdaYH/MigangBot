@@ -1,7 +1,8 @@
-""" 一些数据
+"""一些数据
 
 副本与职业数据
 """
+
 from nonebot_plugin_datastore import get_plugin_data
 
 from .models import JobInfo, BossInfo, FFlogsDataModel
@@ -11,11 +12,11 @@ plugin_data = get_plugin_data()
 
 def parse_data(data: dict) -> FFlogsDataModel:
     """解析数据"""
-    return FFlogsDataModel.parse_obj(data)
+    return FFlogsDataModel.model_validate(data)
 
 
 FFLOGS_DATA = plugin_data.network_file(
-    "https://mirror.ghproxy.com/https://raw.githubusercontent.com/he0119/CoolQBot/master/src/plugins/ff14/fflogs_data.json",
+    "https://raw.githubusercontent.com/he0119/CoolQBot/master/src/plugins/ff14/fflogs_data.json",
     "fflogs_data.json",
     parse_data,
     cache=True,

@@ -1,9 +1,11 @@
-""" FFLogs API
+"""FFLogs API
 
 v1 版的 API，现在已经废弃，没有维护
 以后可能会失效
 文档网址 https://cn.fflogs.com/v1/docs
 """
+
+import json
 import math
 import asyncio
 from random import randint
@@ -11,13 +13,13 @@ from typing import Literal, cast
 from datetime import datetime, timedelta
 
 import httpx
-import ujson as json
 from sqlalchemy import select
+from nonebot import get_driver
 from nonebot.log import logger
+from nonebot_plugin_orm import get_session
 from nonebot_plugin_apscheduler import scheduler
-from pydantic import ValidationError, parse_obj_as
-from nonebot_plugin_datastore.db import post_db_init
-from nonebot_plugin_datastore import create_session, get_plugin_data
+from pydantic import TypeAdapter, ValidationError
+from nonebot_plugin_datastore import get_plugin_data
 
 from .config import plugin_config
 from .models import User, Class, Zones, Ranking, FFLogsRanking, CharacterRanking
@@ -34,13 +36,19 @@ plugin_data = get_plugin_data()
 class DataException(Exception):
     """数据异常"""
 
+    pass
+
 
 class ParameterException(Exception):
     """参数异常"""
 
+    pass
+
 
 class AuthException(Exception):
     """认证异常"""
+
+    pass
 
 
 class FFLogs:
@@ -85,45 +93,29 @@ class FFLogs:
         else:
             return False
 
-    async def get_token(self) -> str:
-        """获取 token"""
-        token = await plugin_data.config.get("token", "")
-        if not token:
-            raise AuthException("没有设置 token")
-        return token
-
     async def set_character(
-        self, platform: str, user_id: str, character_name: str, server_name: str
+        self, uid: str, character_name: str, server_name: str
     ) -> None:
         """设置角色名和服务器名"""
-        async with create_session() as session:
-            user = await session.scalar(
-                select(User)
-                .where(User.platform == platform)
-                .where(User.user_id == user_id)
-            )
+        async with get_session() as session:
+            user = await session.scalar(select(User).where(User.user_id == uid))
             if user:
                 user.character_name = character_name
                 user.server_name = server_name
             else:
                 session.add(
                     User(
-                        platform=platform,
-                        user_id=user_id,
+                        user_id=uid,
                         character_name=character_name,
                         server_name=server_name,
                     )
                 )
             await session.commit()
 
-    async def get_character(self, platform: str, user_id: str) -> User | None:
+    async def get_character(self, uid: str) -> User | None:
         """获取角色名和服务器名"""
-        async with create_session() as session:
-            user = await session.scalar(
-                select(User)
-                .where(User.platform == platform)
-                .where(User.user_id == user_id)
-            )
+        async with get_session() as session:
+            user = await session.scalar(select(User).where(User.user_id == uid))
             return user
 
     async def cache_data(self) -> None:
@@ -137,33 +129,23 @@ class FFLogs:
                 logger.info(f"{boss} {job.name}的数据缓存完成。")
                 await asyncio.sleep(randint(1, 30))
 
-    async def _http_need_client(
-        self, url: str, client: httpx.AsyncClient, params: dict | None = None
-    ):
-        """当需要多次连续请求时候在外面开client复用"""
-        if params is None:
-            params = {}
+    async def _http(self, url: str, params: dict = {}):
         try:
-            params.setdefault("api_key", await self.get_token())
+            params.setdefault("api_key", plugin_config.fflogs_token)
             # 使用 httpx 库发送最终的请求
-            resp = await client.get(url, params=params)
-            if resp.status_code == 401:
-                raise AuthException("Token 有误，无法获取数据")
-            if resp.status_code == 400:
-                raise ParameterException("参数有误，无法获取数据")
-            if resp.status_code != 200:
-                # 如果 HTTP 响应状态码不是 200，说明调用失败
-                return None
-            return json.loads(resp.text)
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(url, params=params)
+                if resp.status_code == 401:
+                    raise AuthException("Token 有误，无法获取数据")
+                if resp.status_code == 400:
+                    raise ParameterException("参数有误，无法获取数据")
+                if resp.status_code != 200:
+                    # 如果 HTTP 响应状态码不是 200，说明调用失败
+                    return None
+                return json.loads(resp.text)
         except (httpx.HTTPError, json.JSONDecodeError, KeyError):
             # 抛出上面任何异常，说明调用失败
             return None
-
-    async def _http(self, url: str, params: dict | None = None):
-        if params is None:
-            params = {}
-        async with httpx.AsyncClient() as client:
-            return await self._http_need_client(url=url, client=client, params=params)
 
     async def _get_one_day_ranking(
         self, boss: int, difficulty: int, job: int, date: datetime
@@ -175,7 +157,7 @@ class FFLogs:
             data = plugin_data.load_pkl(cache_name, cache=True)
             # 为了兼容以前的数据，以前的数据是字典格式
             if len(data) > 0 and isinstance(data[0], dict):
-                return parse_obj_as(list[Ranking], data)
+                return TypeAdapter(list[Ranking]).validate_python(data)
             return data
 
         page = 1
@@ -188,29 +170,27 @@ class FFLogs:
         end_timestamp = int(end_date.timestamp()) * 1000
 
         # API 只支持获取 50 页以内的数据
-        async with httpx.AsyncClient() as client:
-            while hasMorePages and page < 51:
-                rankings_url = f"{self.base_url}/rankings/encounter/{boss}"
+        while hasMorePages and page < 51:
+            rankings_url = f"{self.base_url}/rankings/encounter/{boss}"
 
-                res = await self._http_need_client(
-                    url=rankings_url,
-                    client=client,
-                    params={
-                        "metric": "rdps",
-                        "difficulty": difficulty,
-                        "spec": job,
-                        "page": page,
-                        "filter": f"date.{start_timestamp}.{end_timestamp}",
-                    },
-                )
-                try:
-                    ranking = FFLogsRanking.parse_obj(res)
-                except ValidationError:
-                    raise DataException("服务器没有正确返回数据")
+            res = await self._http(
+                rankings_url,
+                params={
+                    "metric": "rdps",
+                    "difficulty": difficulty,
+                    "spec": job,
+                    "page": page,
+                    "filter": f"date.{start_timestamp}.{end_timestamp}",
+                },
+            )
+            try:
+                ranking = FFLogsRanking.model_validate(res)
+            except ValidationError:
+                raise DataException("服务器没有正确返回数据")
 
-                hasMorePages = ranking.hasMorePages
-                rankings += ranking.rankings
-                page += 1
+            hasMorePages = ranking.hasMorePages
+            rankings += ranking.rankings
+            page += 1
 
         # 如果获取数据的日期不是当天，则缓存数据
         # 因为今天的数据可能还会增加，不能先缓存
@@ -292,7 +272,7 @@ class FFLogs:
             raise DataException("角色数据被隐藏")
 
         try:
-            rankings = parse_obj_as(list[CharacterRanking], res)
+            rankings = TypeAdapter(list[CharacterRanking]).validate_python(res)
         except ValidationError:
             raise DataException("服务器没有正确返回数据")
 
@@ -313,14 +293,14 @@ class FFLogs:
         """副本"""
         url = f"{self.base_url}/zones"
         data = await self._http(url)
-        zones = parse_obj_as(list[Zones], data)
+        zones = TypeAdapter(list[Zones]).validate_python(data)
         return zones
 
     async def classes(self) -> list[Class]:
         """职业"""
         url = f"{self.base_url}/classes"
         data = await self._http(url)
-        classes = parse_obj_as(list[Class], data)
+        classes = TypeAdapter(list[Class]).validate_python(data)
         return classes
 
     async def dps(
@@ -408,4 +388,4 @@ class FFLogs:
 
 
 fflogs = FFLogs()
-post_db_init(fflogs.init)
+get_driver().on_startup(fflogs.init)
