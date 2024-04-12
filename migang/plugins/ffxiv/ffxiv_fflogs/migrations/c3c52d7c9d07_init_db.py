@@ -26,9 +26,6 @@ def upgrade(name: str = "") -> None:
     insp = inspect(op.get_bind())
     if "ffxiv_fflogs_user" in insp.get_table_names():
         op.rename_table("ffxiv_fflogs_user", "ffxiv_fflogs_user_old")
-        op.drop_constraint(
-            "pk_ffxiv_fflogs_user", "ffxiv_fflogs_user_old", type_="primary"
-        )
         op.drop_table("ffxiv_fflogs_alembic_version")
     op.create_table(
         "ffxiv_fflogs_user",
