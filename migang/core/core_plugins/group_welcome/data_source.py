@@ -52,4 +52,4 @@ def deserialize_message(message: List[Dict[str, Any]]) -> Message:
         if seg["type"] == "cached_image":
             seg["type"] = "image"
             seg["data"]["file"] = (data_dir / seg["data"]["file"]).resolve().as_uri()
-    return TypeAdapter.validate_python(Message, message)
+    return TypeAdapter(Message).validate_python(message)

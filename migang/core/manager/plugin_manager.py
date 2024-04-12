@@ -109,7 +109,7 @@ class PluginManager:
         async def save(self) -> None:
             """将插件数据存储到硬盘"""
             async with await anyio.open_file(self.__file, "w") as f:
-                await f.write(self.__data.model_dump_json(ensure_ascii=False, indent=4))
+                await f.write(self.__data.model_dump_json(indent=4))
 
         def set_plugin_type(self, type_: PluginType):
             """设置插件类型
@@ -591,7 +591,7 @@ class PluginManager:
                         category=category,
                         author=author,
                         version=version,
-                    ).model_dump_json(ensure_ascii=False, indent=4)
+                    ).model_dump_json(indent=4)
                 )
         self.__plugin[plugin_name] = PluginManager.Plugin(
             file=self.__file_path / file_name,

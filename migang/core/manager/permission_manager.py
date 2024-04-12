@@ -108,7 +108,7 @@ class PermissionManager:
         # 反正每次启动时候都会检查，所以关bot和新添加时候保存就行了
         if self.__dirty_data:
             async with await anyio.open_file(self.__file, "w", encoding="utf-8") as f:
-                await f.write(self.__data.model_dump_json(ensure_ascii=False, indent=4))
+                await f.write(self.__data.model_dump_json(indent=4))
             self.__dirty_data = False
 
     async def __permission_setting_task(self) -> None:

@@ -44,7 +44,7 @@ def serialize_message(message: Message | str) -> List[Dict[str, Any]]:
 
 
 def deserialize_message(message: List[Dict[str, Any]]) -> Message:
-    return TypeAdapter.validate_python(Message, message)
+    return TypeAdapter(Message).validate_python(message)
 
 
 async def uniform_message(message: Message, group_id: int, bot: Bot) -> str:
