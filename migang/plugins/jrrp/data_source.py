@@ -6,7 +6,7 @@ from datetime import datetime
 import anyio
 import ujson
 import jinja2
-from nonebot import get_driver, get_plugin_config
+from nonebot import get_plugin_config
 from nonebot_plugin_htmlrender import html_to_pic
 
 from .config import Config
