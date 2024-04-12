@@ -12,6 +12,8 @@ except ModuleNotFoundError:
 
 from pil_utils import BuildImage
 
+from migang.core.utils.image import getsize
+
 from ..config import draw_config
 from .base_handle import BaseData, BaseHandle
 from ..util import cn2py, load_font, remove_prohibited_str
@@ -105,7 +107,7 @@ class FgoHandle(BaseHandle[FgoData]):
         # 加名字
         text = card.name[:6] + "..." if len(card.name) > 7 else card.name
         font = load_font(fontsize=16)
-        text_w, text_h = font.getsize(text)
+        text_w, text_h = getsize(font, text)
         draw = ImageDraw.Draw(bg.image)
         draw.text(
             (sep_w + (w - text_w) / 2, h + sep_t + (sep_b - text_h) / 2),

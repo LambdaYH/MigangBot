@@ -6,6 +6,8 @@ from PIL import ImageDraw
 from nonebot.log import logger
 from pil_utils import BuildImage
 
+from migang.core.utils.image import getsize
+
 from ..config import draw_config
 from ..util import cn2py, load_font
 from .base_handle import BaseData, BaseHandle
@@ -83,7 +85,7 @@ class BaHandle(BaseHandle[BaChar]):
         )
         text = card.name[:5] + "..." if len(card.name) > 6 else card.name
         font = load_font(fontsize=14)
-        text_w, text_h = font.getsize(text)
+        text_w, text_h = getsize(font, text)
         draw = ImageDraw.Draw(bg.image)
         draw.text(
             (sep_w + (img_w - text_w) / 2, sep_h + img_h + (font_h - text_h) / 2),

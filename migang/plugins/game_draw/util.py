@@ -6,6 +6,7 @@ from PIL.ImageFont import FreeTypeFont
 from PIL import Image, ImageDraw, ImageFont
 
 from migang.core import FONT_PATH
+from migang.core.utils.image import getsize
 
 
 def cn2py(word) -> str:
@@ -38,7 +39,7 @@ def load_font(fontname: str = "msyh.ttf", fontsize: int = 16) -> FreeTypeFont:
 def circled_number(num: int) -> IMG:
     font = load_font(fontsize=450)
     text = str(num)
-    text_w = font.getsize(text)[0]
+    text_w = getsize(font, text)[0]
     w = 240 + text_w
     w = w if w >= 500 else 500
     img = Image.new("RGBA", (w, 500))

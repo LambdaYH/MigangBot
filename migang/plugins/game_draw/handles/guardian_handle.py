@@ -18,6 +18,8 @@ except ModuleNotFoundError:
 
 from pil_utils import BuildImage
 
+from migang.core.utils.image import getsize
+
 from ..config import draw_config
 from ..util import cn2py, load_font, remove_prohibited_str
 from .base_handle import UpChar, UpEvent, BaseData, BaseHandle
@@ -191,7 +193,7 @@ class GuardianHandle(BaseHandle[GuardianData]):
         # 加名字
         text = card.name[:4] + "..." if len(card.name) > 5 else card.name
         font = load_font(fontsize=14)
-        text_w, _ = font.getsize(text)
+        text_w, _ = getsize(font, text)
         draw = ImageDraw.Draw(block.image)
         draw.text(
             ((block_w + img_w - text_w) / 2, 55),

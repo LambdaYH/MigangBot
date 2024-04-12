@@ -8,6 +8,7 @@ from pil_utils import BuildImage
 from nonebot.adapters.onebot.v11 import MessageSegment
 
 from migang.core import FONT_PATH
+from migang.core.utils.image import getsize
 
 banner_path = Path(__file__).parent / "image" / "webtop.png"
 
@@ -62,7 +63,7 @@ def gen_wbtop_pic(data: dict) -> MessageSegment:
         title = f"{i + 1}. {data['hot_word']}"
         hot = str(data["hot_word_num"])
         img = BuildImage.new("RGBA", (700, 30), color="white")
-        _, h = ttf_font.getsize(title)
+        _, h = getsize(ttf_font, title)
         img.draw_text((10, int((30 - h) / 2)), title, fontname="Yozai", fontsize=20)
         img.draw_text((580, int((30 - h) / 2)), hot, fontname="Yozai", fontsize=20)
         text_bk.paste(img, (0, height))

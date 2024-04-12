@@ -17,6 +17,8 @@ except ModuleNotFoundError:
 
 from pil_utils import BuildImage
 
+from migang.core.utils.image import getsize
+
 from ..config import draw_config
 from ..count_manager import GenshinCountManager
 from ..util import cn2py, load_font, remove_prohibited_str
@@ -180,7 +182,7 @@ class GenshinHandle(BaseHandle[GenshinData]):
         # 加名字
         text = card.name
         font = load_font(fontsize=14)
-        text_w, text_h = font.getsize(text)
+        text_w, text_h = getsize(font, text)
         draw = ImageDraw.Draw(frame)
         draw.text(
             ((frame_w - text_w) / 2, frame_h - 15 - text_h / 2),

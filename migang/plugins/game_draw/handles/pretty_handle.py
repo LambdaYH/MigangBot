@@ -19,6 +19,8 @@ except ModuleNotFoundError:
 
 from pil_utils import BuildImage
 
+from migang.core.utils.image import getsize
+
 from ..config import draw_config
 from ..util import cn2py, load_font, remove_prohibited_str
 from .base_handle import UpChar, UpEvent, BaseData, BaseHandle
@@ -162,7 +164,7 @@ class PrettyHandle(BaseHandle[PrettyData]):
             # 加名字
             text = card.name[:5] + "..." if len(card.name) > 6 else card.name
             font = load_font(fontsize=30)
-            text_w, _ = font.getsize(text)
+            text_w, _ = getsize(font, text)
             draw = ImageDraw.Draw(bg.image)
             draw.text(
                 ((img_w - text_w) / 2, img_h),
@@ -190,7 +192,7 @@ class PrettyHandle(BaseHandle[PrettyData]):
             texts = []
             font = load_font(fontsize=25)
             for t in card.name:
-                if font.getsize(text + t)[0] > 190:
+                if getsize(font, text + t)[0] > 190:
                     texts.append(text)
                     text = ""
                     if len(texts) >= 2:
@@ -201,7 +203,7 @@ class PrettyHandle(BaseHandle[PrettyData]):
             if text:
                 texts.append(text)
             text = "\n".join(texts)
-            text_w, _ = font.getsize_multiline(text)
+            text_w, _ = getsize(font, text)
             draw = ImageDraw.Draw(bg.image)
             draw.text(
                 ((img_w - text_w) / 2, img_h),

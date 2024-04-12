@@ -13,6 +13,8 @@ except ModuleNotFoundError:
 
 from pil_utils import BuildImage
 
+from migang.core.utils.image import getsize
+
 from ..config import draw_config
 from .base_handle import BaseData, BaseHandle
 from ..util import cn2py, load_font, remove_prohibited_str
@@ -106,7 +108,7 @@ class OnmyojiHandle(BaseHandle[OnmyojiChar]):
         font = load_font("msyh.ttf", 16)
         draw = ImageDraw.Draw(bg.image)
         text = "\n".join([t for t in card.name[:4]])
-        _, text_h = font.getsize_multiline(text, spacing=0)
+        _, text_h = getsize(font, text)
         draw.text(
             (40, 150 + (90 - text_h) / 2), text, font=font, fill="gray", spacing=0
         )

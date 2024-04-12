@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Tuple, Optional
 
 import anyio
 import aiohttp
@@ -22,3 +22,9 @@ async def get_user_avatar(qq: int, size: int = 160) -> Optional[bytes]:
     except Exception as e:
         logger.warning(f"获取用户头像失败 {e}")
         return None
+
+
+# pillow 10+ 中去除了getSize，以此替代
+def getsize(font, text) -> Tuple[int, int]:
+    left, top, right, bottom = font.getbbox(text)
+    return right - left, bottom - top
