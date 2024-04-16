@@ -19,6 +19,7 @@ async def _():
                 default_value="她叫{bot_name}，是一个搭配师",
                 description="chatgpt人格预设",
             ),
+            ConfigItem(key="api_base", description="若使用第三方openai api，填写这个"),
             ConfigItem(
                 key="api_keys",
                 initial_value=[],

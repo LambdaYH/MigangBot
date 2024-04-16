@@ -22,6 +22,7 @@ class TextGenerator:
     def __init__(
         self,
         api_keys: List[str],
+        api_base: str,
         proxy: str,
         model: str,
         temperature: float,
@@ -32,13 +33,16 @@ class TextGenerator:
         timeout: int,
         max_impression_tokens: int,
     ) -> None:
+        # openai异步
+        self.__openai = openai.AsyncOpenAI(api_key="")
         self.__api_keys = api_keys
         self.__key_index = 0
         if proxy:
             if not proxy.startswith("http"):
                 proxy = "http://" + proxy
-            openai.proxy = proxy
-
+            self.__openai.proxy = proxy
+        if api_base != None and api_base.strip() != "":
+            self.__openai.base_url = api_base
         # config
         self.__model = model
         self.__temperature = temperature
@@ -66,7 +70,8 @@ class TextGenerator:
                 )
             if success:
                 return res, True
-
+            print("================")
+            print(res)
             # 请求错误处理
             if "Rate limit" in res:
                 reason = res
@@ -92,104 +97,76 @@ class TextGenerator:
 
     # 对话文本生成
     async def get_chat_response(self, key: str, prompt: List | str, custom: Dict):
-        openai.api_key = key
+        self.__openai.api_key = key
         try:
-            if self.__model.startswith("gpt-3.5-turbo"):
-                response = await openai.ChatCompletion.acreate(
-                    model=self.__model,
-                    messages=prompt
-                    if isinstance(prompt, List)
-                    else [  # 如果是列表则直接使用，否则按照以下格式转换
-                        {
-                            "role": "system",
-                            "content": f"You must strictly follow the user's instructions to give {custom.get('bot_name', 'bot')}'s response.",
-                        },
-                        {"role": "user", "content": prompt},
-                    ],
-                    temperature=self.__temperature,
-                    max_tokens=self.__max_tokens,
-                    top_p=self.__top_p,
-                    frequency_penalty=self.__frequency_penalty,
-                    presence_penalty=self.__presence_penalty,
-                    timeout=self.__timeout,
-                    stop=[
-                        f"\n{custom.get('bot_name', 'AI')}:",
-                        f"\n{custom.get('sender_name', 'Human')}:",
-                    ],
-                )
-                res = ""
-                for choice in response.choices:
-                    res += choice.message.content
-                res = res.strip()
-                # 去掉头尾引号（如果有）
-                if res.startswith('"') and res.endswith('"'):
-                    res = res[1:-1]
-                if res.startswith("'") and res.endswith("'"):
-                    res = res[1:-1]
-                # 去掉可能存在的开头起始标志
-                if res.startswith(f"{custom.get('bot_name', 'AI')}:"):
-                    res = res[len(f"{custom.get('bot_name', 'AI')}:") :]
-                # 去掉可能存在的开头起始标志 (中文)
-                if res.startswith(f"{custom.get('bot_name', 'AI')}："):
-                    res = res[len(f"{custom.get('bot_name', 'AI')}：") :]
-                # 替换多段回应中的回复起始标志
-                res = res.replace(f"\n\n{custom.get('bot_name', 'AI')}:", "*;")
-            else:
-                response = await openai.Completion.acreate(
-                    model=self.__model,
-                    prompt=prompt,
-                    temperature=self.__temperature,
-                    max_tokens=self.__max_tokens,
-                    top_p=self.__top_p,
-                    frequency_penalty=self.__frequency_penalty,
-                    presence_penalty=self.__presence_penalty,
-                    stop=[
-                        f"\n{custom.get('bot_name', 'AI')}:",
-                        f"\n{custom.get('sender_name', 'Human')}:",
-                    ],
-                )
-                res = response["choices"][0]["text"].strip()
+            response = await self.__openai.chat.completions.create(
+                model=self.__model,
+                messages=prompt
+                if isinstance(prompt, List)
+                else [  # 如果是列表则直接使用，否则按照以下格式转换
+                    {
+                        "role": "system",
+                        "content": f"You must strictly follow the user's instructions to give {custom.get('bot_name', 'bot')}'s response.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=self.__temperature,
+                max_tokens=self.__max_tokens,
+                top_p=self.__top_p,
+                frequency_penalty=self.__frequency_penalty,
+                presence_penalty=self.__presence_penalty,
+                timeout=self.__timeout,
+                stop=[
+                    f"\n{custom.get('bot_name', 'AI')}:",
+                    f"\n{custom.get('sender_name', 'Human')}:",
+                ],
+            )
+            res = ""
+            for choice in response.choices:
+                res += choice.message.content
+            res = res.strip()
+            # 去掉头尾引号（如果有）
+            if res.startswith('"') and res.endswith('"'):
+                res = res[1:-1]
+            if res.startswith("'") and res.endswith("'"):
+                res = res[1:-1]
+            # 去掉可能存在的开头起始标志
+            if res.startswith(f"{custom.get('bot_name', 'AI')}:"):
+                res = res[len(f"{custom.get('bot_name', 'AI')}:") :]
+            # 去掉可能存在的开头起始标志 (中文)
+            if res.startswith(f"{custom.get('bot_name', 'AI')}："):
+                res = res[len(f"{custom.get('bot_name', 'AI')}：") :]
+            # 替换多段回应中的回复起始标志
+            res = res.replace(f"\n\n{custom.get('bot_name', 'AI')}:", "*;")
             return res, True
         except Exception as e:
             return f"请求 OpenAi Api 时发生错误: {e}", False
 
     # 印象文本生成
     async def get_impression_response(self, key: str, prompt: str):
-        openai.api_key = key
+        self.__openai.api_key = key
         try:
-            if self.__model.startswith("gpt-3.5-turbo"):
-                response = await openai.ChatCompletion.acreate(
-                    model=self.__model,
-                    messages=[
-                        {"role": "user", "content": prompt},
-                    ],
-                    temperature=0.6,
-                    max_tokens=self.__max_impression_tokens,
-                    top_p=1,
-                    frequency_penalty=0,
-                    presence_penalty=0,
-                    timeout=self.__timeout,
-                )
-                res = ""
-                for choice in response.choices:
-                    res += choice.message.content
-                res = res.strip()
-                # 去掉头尾引号（如果有）
-                if res.startswith('"') and res.endswith('"'):
-                    res = res[1:-1]
-                if res.startswith("'") and res.endswith("'"):
-                    res = res[1:-1]
-            else:
-                response = await openai.Completion.acreate(
-                    model="text-davinci-003",
-                    prompt=prompt,
-                    temperature=0.6,
-                    max_tokens=self.__max_impression_tokens,
-                    top_p=1,
-                    frequency_penalty=0,
-                    presence_penalty=0,
-                )
-                res = response["choices"][0]["text"].strip()
+            response = await self.__openai.chat.completions.create(
+                model=self.__model,
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.6,
+                max_tokens=self.__max_impression_tokens,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                timeout=self.__timeout,
+            )
+            res = ""
+            for choice in response.choices:
+                res += choice.message.content
+            res = res.strip()
+            # 去掉头尾引号（如果有）
+            if res.startswith('"') and res.endswith('"'):
+                res = res[1:-1]
+            if res.startswith("'") and res.endswith("'"):
+                res = res[1:-1]
             return res, True
         except Exception as e:
             return f"请求 OpenAi Api 时发生错误: {e}", False
@@ -197,6 +174,7 @@ class TextGenerator:
 
 text_generator: TextGenerator = TextGenerator(
     api_keys=sync_get_config("api_keys", "chat_chatgpt"),
+    api_base=sync_get_config("api_base", "chat_chatgpt"),
     proxy=sync_get_config("proxy", "chat_chatgpt"),
     model=sync_get_config("model", plugin_name="chat_chatgpt"),
     temperature=sync_get_config("temperature", plugin_name="chat_chatgpt"),
