@@ -1,23 +1,24 @@
+import platform
 from typing import List
 from pathlib import Path
+from datetime import datetime
 
-from nonebot import require
-
-require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import template_to_pic
 
-from .model import Air, Daily
 from .weather_data import Weather
+from .model import Air, Daily, Hourly
 
 
 async def render(weather: Weather) -> bytes:
+    template_path = str(Path(__file__).parent / "template")
+
     air = None
     if weather.air:
         if weather.air.now:
             air = add_tag_color(weather.air.now)
 
     return await template_to_pic(
-        template_path=Path(__file__).parent / "template",
+        template_path=template_path,
         template_name="weather.html",
         templates={
             "now": weather.now.now,
@@ -25,16 +26,34 @@ async def render(weather: Weather) -> bytes:
             "city": weather.city_name,
             "warning": weather.warning,
             "air": air,
+            "hours": add_hour_data(weather.hourly.hourly),
         },
         pages={
             "viewport": {"width": 1000, "height": 300},
+            "base_url": f"file://{template_path}",
         },
     )
 
 
-def add_date(daily: List[Daily]):
-    from datetime import datetime
+def add_hour_data(hourly: List[Hourly]):
+    min_temp = min([int(hour.temp) for hour in hourly])
+    high = max([int(hour.temp) for hour in hourly])
+    low = int(min_temp - (high - min_temp))
+    for hour in hourly:
+        date_time = datetime.fromisoformat(hour.fxTime)
+        if platform.system() == "Windows":
+            hour.hour = date_time.strftime("%#I%p")
+        else:
+            hour.hour = date_time.strftime("%-I%p")
+        if high == low:
+            hour.temp_percent = "100px"
+        else:
+            hour.temp_percent = f"{int((int(hour.temp) - low) / (high - low) * 100)}px"
+        hourly = hourly[:12]
+    return hourly
 
+
+def add_date(daily: List[Daily]):
     week_map = [
         "周日",
         "周一",

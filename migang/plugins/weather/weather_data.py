@@ -1,9 +1,10 @@
 import asyncio
+from typing import Optional
 
 from nonebot.log import logger
-from aiohttp import ClientSession, ClientResponse
+from httpx import Response, AsyncClient
 
-from .model import AirApi, NowApi, DailyApi, WarningApi
+from .model import AirApi, NowApi, DailyApi, HourlyApi, WarningApi
 
 
 class APIError(Exception):
@@ -24,36 +25,40 @@ class NoWeatherDataError(Exception):
 
 class Weather:
     def __url__(self):
-        if self.api_type == 2:
+        self.url_geoapi = "https://geoapi.qweather.com/v2/city/"
+        if self.api_type == 2 or self.api_type == 1:
             self.url_weather_api = "https://api.qweather.com/v7/weather/"
-            self.url_geoapi = "https://geoapi.qweather.com/v2/city/"
             self.url_weather_warning = "https://api.qweather.com/v7/warning/now"
             self.url_air = "https://api.qweather.com/v7/air/now"
-            self.forecast_days = 7
-            logger.info("使用商业版API")
-        elif self.api_type == 0 or self.api_type == 1:
+            self.url_hourly = "https://api.qweather.com/v7/weather/24h"
+
+            logger.info("使用标准订阅API")
+
+        elif self.api_type == 0:
             self.url_weather_api = "https://devapi.qweather.com/v7/weather/"
-            self.url_geoapi = "https://geoapi.qweather.com/v2/city/"
             self.url_weather_warning = "https://devapi.qweather.com/v7/warning/now"
             self.url_air = "https://devapi.qweather.com/v7/air/now"
-            if self.api_type == 0:
-                self.forecast_days = 3
-                logger.info("使用普通版API")
-            elif self.api_type == 1:
-                self.forecast_days = 7
-                logger.info("使用个人开发版API")
+            self.url_hourly = "https://devapi.qweather.com/v7/weather/24h"
+
+            logger.info("使用免费订阅API")
         else:
             raise ConfigError(
-                "api_type 必须是为 (int)0 -> 普通版, (int)1 -> 个人开发版, (int)2 -> 商业版"
+                "api_type 必须是为 (int)0 -> 免费订阅, "
+                "(int)1 -> 标准订阅, (int)2 -> 商业版"
                 f"\n当前为: ({type(self.api_type)}){self.api_type}"
             )
 
-    def __init__(self, city_name: str, api_key: str, api_type: int = 0):
+    def __init__(
+        self, city_name: str, forcast_days: int, api_key: str, api_type: int = 0
+    ):
         self.city_name = city_name
         self.apikey = api_key
         self.api_type = api_type
         self.__url__()
 
+        self.forecast_days = forcast_days
+        if self.api_type == 0 and not (3 <= self.forecast_days <= 7):
+            raise ConfigError("api_type = 0 免费订阅 预报天数必须 3<= x <=7")
         # self.now: Optional[Dict[str, str]] = None
         # self.daily = None
         # self.air = None
@@ -62,23 +67,30 @@ class Weather:
 
     async def load_data(self):
         self.city_id = await self._get_city_id()
-        self.now, self.daily, self.air, self.warning = await asyncio.gather(
-            self._now, self._daily, self._air, self._warning
+        (
+            self.now,
+            self.daily,
+            self.air,
+            self.warning,
+            self.hourly,
+        ) = await asyncio.gather(
+            self._now, self._daily, self._air, self._warning, self._hourly
         )
         self._data_validate()
 
-    async def _get_data(self, url: str, params: dict) -> ClientResponse:
-        async with ClientSession() as client:
+    async def _get_data(self, url: str, params: dict) -> Response:
+        async with AsyncClient() as client:
             res = await client.get(url, params=params)
         return res
 
     async def _get_city_id(self, api_type: str = "lookup"):
         res = await self._get_data(
             url=self.url_geoapi + api_type,
-            params={"location": self.city_name, "key": self.apikey},
+            params={"location": self.city_name, "key": self.apikey, "number": 1},
         )
 
-        res = await res.json()
+        res = res.json()
+        logger.debug(res)
         if res["code"] == "404":
             raise CityNotFoundError()
         elif res["code"] != "200":
@@ -102,11 +114,12 @@ class Weather:
                 + self.__reference
             )
 
-    def _check_response(self, response: ClientResponse) -> bool:
-        if response.status == 200:
+    def _check_response(self, response: Response) -> bool:
+        if response.status_code == 200:
+            logger.debug(f"{response.json()}")
             return True
         else:
-            raise APIError(f"Response code:{response.status}")
+            raise APIError(f"Response code:{response.status_code}")
 
     @property
     async def _now(self) -> NowApi:
@@ -115,7 +128,7 @@ class Weather:
             params={"location": self.city_id, "key": self.apikey},
         )
         self._check_response(res)
-        return NowApi(**(await res.json()))
+        return NowApi(**res.json())
 
     @property
     async def _daily(self) -> DailyApi:
@@ -124,7 +137,7 @@ class Weather:
             params={"location": self.city_id, "key": self.apikey},
         )
         self._check_response(res)
-        return DailyApi(**(await res.json()))
+        return DailyApi(**res.json())
 
     @property
     async def _air(self) -> AirApi:
@@ -133,13 +146,22 @@ class Weather:
             params={"location": self.city_id, "key": self.apikey},
         )
         self._check_response(res)
-        return AirApi(**(await res.json()))
+        return AirApi(**res.json())
 
     @property
-    async def _warning(self) -> WarningApi:
+    async def _warning(self) -> Optional[WarningApi]:
         res = await self._get_data(
             url=self.url_weather_warning,
             params={"location": self.city_id, "key": self.apikey},
         )
         self._check_response(res)
-        return WarningApi(**(await res.json()))
+        return None if res.json().get("code") == "204" else WarningApi(**res.json())
+
+    @property
+    async def _hourly(self) -> HourlyApi:
+        res = await self._get_data(
+            url=self.url_hourly,
+            params={"location": self.city_id, "key": self.apikey},
+        )
+        self._check_response(res)
+        return HourlyApi(**res.json())

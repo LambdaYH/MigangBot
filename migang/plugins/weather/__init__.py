@@ -39,7 +39,10 @@ __plugin_config__ = (
         key="api_type",
         initial_value=0,
         default_value=0,
-        description="0 = 普通版(3天天气预报) 1 = 个人开发版(7天天气预报) 2 = 商业版 (7天天气预报)",
+        description="0 = 免费版 1 = 标准版 2 = 商业版",
+    ),
+    ConfigItem(
+        key="forcast_days", initial_value=7, default_value=7, description="天气预报天数"
     ),
 )
 
@@ -56,6 +59,7 @@ async def _(matcher: Matcher, reg_group: Tuple[Any, ...] = RegexGroup()):
             await weather.finish(w)
         w_data = Weather(
             city_name=city,
+            forcast_days=await get_config("forcast_days"),
             api_key=await get_config("api_key"),
             api_type=await get_config("api_type"),
         )
