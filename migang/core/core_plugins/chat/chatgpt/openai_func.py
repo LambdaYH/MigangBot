@@ -1,10 +1,11 @@
 from typing import Dict, List, Tuple, Optional
 
-import openai
 from nonebot.log import logger
 from tenacity import retry, retry_if_exception, stop_after_attempt
 
 from migang.core import sync_get_config
+
+from .asyncopenai import async_openai
 
 
 class RetryGetResponse(Exception):
@@ -34,7 +35,7 @@ class TextGenerator:
         max_impression_tokens: int,
     ) -> None:
         # openai异步
-        self.__openai = openai.AsyncOpenAI(api_key="")
+        self.__openai = async_openai
         self.__api_keys = api_keys
         self.__key_index = 0
         if proxy:

@@ -1,11 +1,11 @@
 import random
 import traceback
 
-import openai
 from nonebot.log import logger
 
 from migang.core import get_config
 
+from ..asyncopenai import async_openai
 from ..extension import extension_manager
 
 style_preset = (
@@ -13,7 +13,7 @@ style_preset = (
     "anime style, colored-pencil",
     "anime style, colored crayons",
 )
-custom_size = (512, 512)
+custom_size = (1024, 1024)
 
 
 @extension_manager(
@@ -26,11 +26,12 @@ async def _(content: str):
     if proxy:
         if not proxy.startswith("http"):
             proxy = "http://" + proxy
-        openai.proxy = proxy
+        async_openai.proxy = proxy
     # style = "anime style, colored-pencil"
     style = random.choice(style_preset)
     try:
-        response = await openai.Image.acreate(
+        response = await async_openai.images.generate(
+            model="dall-e-3",
             prompt=content + ", " + style,
             n=1,
             size=f"{custom_size[0]}x{custom_size[1]}",
@@ -40,7 +41,7 @@ async def _(content: str):
         return {
             "text": "画笔没墨了...",
         }
-    image_url = response["data"][0]["url"]
+    image_url = response.data[0].url
 
     if image_url is None:
         return {
