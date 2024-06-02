@@ -13,7 +13,7 @@ class SignIn(Model):
     impression_diff = fields.DecimalField(12, 3, default=0)
     """好感度变动
     """
-    gold_diff = fields.IntField(null=False, default=0)
+    gold_diff = fields.BigIntField(null=False, default=0)
     """金钱变动
     """
     windfall = fields.TextField(null=False, default="")

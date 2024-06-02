@@ -15,7 +15,7 @@ class DepositType(IntEnum):
 
 class Bank(Model):
     user_id = fields.BigIntField(null=False)
-    amount = fields.IntField(null=False, default=0)
+    amount = fields.BigIntField(null=False, default=0)
     time = fields.DatetimeField(auto_now_add=True)
     deposit_type = fields.IntEnumField(
         enum_type=DepositType, default=DepositType.demand_deposit

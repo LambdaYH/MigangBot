@@ -8,8 +8,8 @@ from tortoise.functions import Sum
 
 class TransactionLog(Model):
     user_id = fields.BigIntField(null=False)
-    gold_earned = fields.IntField(null=False, default=0)
-    gold_spent = fields.IntField(null=False, default=0)
+    gold_earned = fields.BigIntField(null=False, default=0)
+    gold_spent = fields.BigIntField(null=False, default=0)
     description = fields.TextField(null=True)
     time = fields.DatetimeField(auto_now_add=True)
 

@@ -8,7 +8,7 @@ from tortoise.backends.base.client import BaseDBAsyncClient
 class UserBag(Model):
     user_id = fields.BigIntField(null=False)
     item_name = fields.CharField(255, null=False)
-    amount = fields.IntField(null=False, default=0)
+    amount = fields.BigIntField(null=False, default=0)
 
     class Meta:
         table = "user_bag"

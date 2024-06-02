@@ -10,7 +10,7 @@ from tortoise.backends.base.client import BaseDBAsyncClient
 class ShopLog(Model):
     user_id = fields.BigIntField(null=False)
     item_name = fields.CharField(255, null=False)
-    amount = fields.IntField(null=False)
+    amount = fields.BigIntField(null=False)
     price = fields.FloatField(null=False)
     time = fields.DatetimeField(auto_now_add=True)
 

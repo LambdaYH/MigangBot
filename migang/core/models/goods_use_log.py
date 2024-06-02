@@ -8,7 +8,7 @@ from tortoise.functions import Sum
 class GoodsUseLog(Model):
     user_id = fields.BigIntField(null=False)
     goods_name = fields.TextField(null=False)
-    amount = fields.IntField(null=False, default=1)
+    amount = fields.BigIntField(null=False, default=1)
     time = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
