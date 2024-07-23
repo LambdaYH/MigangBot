@@ -138,7 +138,7 @@ async def init_db() -> None:
         env_values["datastore_cache_dir"] = "data/datastore/cache"
         env_values["datastore_config_dir"] = "data/datastore/config"
         env_values["datastore_data_dir"] = "data/datastore/data"
-        async with await anyio.open_file(env_file, "w") as f:
+        async with await anyio.open_file(env_file, "w", encoding='utf-8') as f:
             await f.write("\n".join(f"{k} = {v}" for k, v in env_values.items()))
         raise Exception("数据库配置初次写入.env，请重启")
     cors = [
