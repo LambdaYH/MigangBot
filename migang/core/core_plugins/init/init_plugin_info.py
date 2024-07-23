@@ -17,7 +17,7 @@ async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
         async with aiohttp.ClientSession() as client:
             r = await (
                 await client.get(
-                    "https://mirror.ghproxy.com/https://github.com/nonebot/nonebot2/blob/master/assets/plugins.json",
+                    "https://registry.nonebot.dev/plugins.json",
                     timeout=30,
                 )
             ).json(content_type=None)
