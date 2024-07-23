@@ -102,7 +102,7 @@ async def init_plugin_config():
         ]
     await asyncio.gather(*tasks)
     env_str = "\n".join(f"{k} = {v}" for k, v in env_values.items())
-    async with await anyio.open_file(env_file, "w", encoding='utf-8') as f:
+    async with await anyio.open_file(env_file, "w", encoding="utf-8") as f:
         await f.write(env_str)
     if modified:
         logger.warning("检测到env文件中变量已更新，建议重新启动Bot以使得插件能获取到最新的配置文件")
