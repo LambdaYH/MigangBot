@@ -1,40 +1,36 @@
-from asyncio import Queue
-from typing import Any
-
-from nonebot.adapters import Event, Bot
-from websockets import WebSocketClientProtocol
-from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
-from nonebot.log import logger
-import websockets
-import asyncio
-import ujson
 import time
+import asyncio
+from typing import Any
+from asyncio import Queue
+
+import ujson
+import websockets
+from nonebot.log import logger
 from pydantic import BaseModel
+from nonebot.adapters import Bot, Event
+from websockets import WebSocketClientProtocol
+from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
 _HEARTBEAT_INTERVAL = 3
+
 
 def _get_heartbeat_event(bot_id: int) -> str:
     data = {
         "post_type": "meta_event",
         "meta_event_type": "heartbeat",
         "interval": _HEARTBEAT_INTERVAL,
-        "status": {
-            "online":True,
-            "good":True}
-        ,"self_id": bot_id,
-        "time": int(time.time())
+        "status": {"online": True, "good": True},
+        "self_id": bot_id,
+        "time": int(time.time()),
     }
     return ujson.dumps(data)
 
+
 def _build_ret_msg(data) -> dict[str, Any]:
-    return {
-        "status": "ok",
-        "retcode": 0,
-        "data": data
-    }
+    return {"status": "ok", "retcode": 0, "data": data}
+
 
 class WebSocketConn:
-
     def __init__(self, bot: Bot, url: str, bot_id: int, access_token: str) -> None:
         self.__queue = Queue()
         self.__url = url
@@ -63,8 +59,12 @@ class WebSocketConn:
                     self.__websocket = websocket
                     self.__send_task = asyncio.create_task(self.__ws_send(websocket))
                     self.__recv_task = asyncio.create_task(self.__ws_recv(websocket))
-                    self.__heartbeat = asyncio.create_task(self.__send_heartbeat(websocket))
-                    await asyncio.gather(self.__send_task, self.__recv_task, self.__heartbeat)
+                    self.__heartbeat = asyncio.create_task(
+                        self.__send_heartbeat(websocket)
+                    )
+                    await asyncio.gather(
+                        self.__send_task, self.__recv_task, self.__heartbeat
+                    )
             except (ConnectionClosedError, ConnectionClosedOK):
                 logger.opt(colors=True).warning(
                     "<y><bg #f8bbd0>WebSocket Closed</bg #f8bbd0></y>"
@@ -80,7 +80,7 @@ class WebSocketConn:
                 await ws.send(_get_heartbeat_event(self.__bot_id))
             except Exception as e:
                 logger.error(f"发送心跳事件失败：{e}")
-    
+
     async def stop(self):
         self.__stop_flag = False
         self.__websocket.close()
@@ -89,7 +89,6 @@ class WebSocketConn:
         if hasattr(event, "self_id"):
             event.self_id = self.__bot_id
         await self.__queue.put(event)
-
 
     async def _call_api(self, data: dict[str, Any]) -> Any:
         echo = data.get("echo", "")

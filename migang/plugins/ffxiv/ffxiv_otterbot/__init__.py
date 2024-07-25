@@ -1,11 +1,14 @@
+import asyncio
 from typing import Union
+
 import websockets
+from nonebot.log import logger
+from nonebot.adapters import Event
+from nonebot.plugin import PluginMetadata
+from nonebot import get_driver, on_message
 from websockets.legacy.client import Connect
 from websockets.exceptions import ConnectionClosedError
-
-from nonebot.log import logger
-from nonebot import on_message
-from nonebot.plugin import PluginMetadata
+from nonebot.drivers import Driver, Request, WebSocketClientMixin
 from nonebot.adapters.onebot.v11 import (
     Bot,
     MessageEvent,
@@ -13,11 +16,9 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
-import asyncio
+
 from migang.core import ConfigItem, get_config
-from nonebot import get_driver, on_message
-from nonebot.adapters import Event
-from nonebot.drivers import WebSocketClientMixin, Driver, Request
+
 from .websocket import WebSocketConn
 
 __plugin_meta__ = PluginMetadata(
@@ -43,14 +44,13 @@ __plugin_config__ = (
         key="bot_id",
         description="獭窝中配置的bot_id",
     ),
-    ConfigItem(
-        key="access_token", description="token"
-    ),
+    ConfigItem(key="access_token", description="token"),
 )
 
 driver: Driver = get_driver()
 
 ws_conn: WebSocketConn
+
 
 @driver.on_bot_connect
 async def setup_ws(bot: Bot):
@@ -64,10 +64,12 @@ async def setup_ws(bot: Bot):
     if not url:
         return
     global ws_conn
-    ws_conn = WebSocketConn(bot=bot, url = url, bot_id=bot_id, access_token=access_token)
+    ws_conn = WebSocketConn(bot=bot, url=url, bot_id=bot_id, access_token=access_token)
     asyncio.gather(ws_conn.connect())
 
+
 handle_message = on_message(block=False)
+
 
 @handle_message.handle()
 async def _(event: MessageEvent):
