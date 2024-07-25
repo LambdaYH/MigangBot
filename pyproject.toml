@@ -64,6 +64,7 @@ plugins = [
     "nonebot-plugin-datastore>=1.0.0",
     "nonebot-plugin-oddtext>=0.2.0",
     "nonebot-plugin-gachalogs>=0.2.13",
+    "nonebot-plugin-arkgacha>=0.5.0",
     "nonebot-plugin-gspanel>=0.2.25",
     "nonebot-plugin-gsmaterial>=0.2.7",
     "nonebot-plugin-gscode>=0.1.8",
