@@ -1,13 +1,10 @@
-from nonebot import on_message
+from nonebot.drivers import Driver
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    MessageEvent
-)
+from nonebot import get_driver, on_message
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 
 from migang.core import ConfigItem, get_config
-from nonebot import get_driver, on_message
-from nonebot.drivers import Driver
+
 from .websocket import WebSocketConn
 
 __plugin_meta__ = PluginMetadata(
@@ -38,8 +35,10 @@ __plugin_config__ = (
 
 driver: Driver = get_driver()
 
+
 async def _message_handler(event: MessageEvent):
     await ws_conn.forwardEvent(event)
+
 
 is_matcher_created = False
 
@@ -64,6 +63,7 @@ async def setup_ws(bot: Bot):
     if not is_matcher_created:
         on_message(block=False).append_handler(_message_handler)
         is_matcher_created = True
+
 
 @driver.on_bot_disconnect
 async def stop_ws():
