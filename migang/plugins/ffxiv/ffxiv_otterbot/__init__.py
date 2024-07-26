@@ -1,23 +1,15 @@
-from typing import Union
-import websockets
-from websockets.legacy.client import Connect
-from websockets.exceptions import ConnectionClosedError
-
 from nonebot.log import logger
 from nonebot import on_message
+from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import (
     Bot,
-    MessageEvent,
-    MessageSegment,
-    GroupMessageEvent,
-    PrivateMessageEvent,
+    MessageEvent
 )
 import asyncio
 from migang.core import ConfigItem, get_config
 from nonebot import get_driver, on_message
-from nonebot.adapters import Event
-from nonebot.drivers import WebSocketClientMixin, Driver, Request
+from nonebot.drivers import Driver
 from .websocket import WebSocketConn
 
 __plugin_meta__ = PluginMetadata(
@@ -50,6 +42,11 @@ __plugin_config__ = (
 
 driver: Driver = get_driver()
 
+async def _message_handler(event: MessageEvent):
+    await ws_conn.forwardEvent(event)
+
+is_matcher_created = False
+
 ws_conn: WebSocketConn
 
 @driver.on_bot_connect
@@ -66,9 +63,14 @@ async def setup_ws(bot: Bot):
     global ws_conn
     ws_conn = WebSocketConn(bot=bot, url = url, bot_id=bot_id, access_token=access_token)
     asyncio.gather(ws_conn.connect())
+    global is_matcher_created
+    if not is_matcher_created:
+        on_message(block=False).append_handler(_message_handler)
+        is_matcher_created = True
 
-handle_message = on_message(block=False)
-
-@handle_message.handle()
-async def _(event: MessageEvent):
-    await ws_conn.forwardEvent(event)
+@driver.on_bot_disconnect
+async def stop_ws():
+    global ws_conn
+    if ws_conn is not None:
+        await ws_conn.stop()
+        ws_conn = None

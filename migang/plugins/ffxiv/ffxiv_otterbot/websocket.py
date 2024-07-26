@@ -33,6 +33,10 @@ def _build_ret_msg(data) -> dict[str, Any]:
         "data": data
     }
 
+def _proccess_api(action:str, data: dict[str, Any]):
+    if action == "get_group_member_list":
+        data["params"]["group_id"] = str(data["params"]["group_id"])
+
 class WebSocketConn:
 
     def __init__(self, bot: Bot, url: str, bot_id: int, access_token: str) -> None:
@@ -43,6 +47,7 @@ class WebSocketConn:
         self.__bot = bot
         self.__send_task = None
         self.__recv_task = None
+        self.__heartbeat = None
         self.__stop_flag = False
         self.__websocket: WebSocketClientProtocol = None
 
@@ -71,6 +76,7 @@ class WebSocketConn:
                 )
                 self.__send_task.cancel()
                 self.__recv_task.cancel()
+                self.__heartbeat.cancel()
                 await asyncio.sleep(1)  # 等待重连
 
     async def __send_heartbeat(self, ws: WebSocketClientProtocol):
@@ -80,10 +86,15 @@ class WebSocketConn:
                 await ws.send(_get_heartbeat_event(self.__bot_id))
             except Exception as e:
                 logger.error(f"发送心跳事件失败：{e}")
+                import traceback
+                traceback.print_exc()
     
     async def stop(self):
         self.__stop_flag = False
-        self.__websocket.close()
+        self.__send_task.cancel()
+        self.__recv_task.cancel()
+        self.__heartbeat.cancel()
+        await self.__websocket.close()
 
     async def forwardEvent(self, event: Event):
         if hasattr(event, "self_id"):
@@ -95,12 +106,12 @@ class WebSocketConn:
         echo = data.get("echo", "")
         try:
             action = data["action"]
-            if action == "get_group_member_list":
-                data["params"]["group_id"] = str(data["params"]["group_id"])
+            _proccess_api(action=action, data=data)
             resp = await self.__bot.call_api(data["action"], **data["params"])
             resp_data = _build_ret_msg(resp)
             if echo:
                 resp_data["echo"] = echo
+            logger.info(f"发送獭窝API调用结果：{resp_data}")
             await self.__queue.put(resp_data)
         except Exception as e:
             logger.warning(f"调用api失败：{data}：{e}")
@@ -123,4 +134,5 @@ class WebSocketConn:
     async def __ws_recv(self, ws: WebSocketClientProtocol):
         while self.__stop_flag:
             raw_data = await ws.recv()
+            logger.info(f"收到獭窝信息：{raw_data}" )
             await self._call_api(ujson.loads(raw_data))
