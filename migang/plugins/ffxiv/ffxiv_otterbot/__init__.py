@@ -1,12 +1,10 @@
-from nonebot.log import logger
 from nonebot import on_message
-from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import (
     Bot,
     MessageEvent
 )
-import asyncio
+
 from migang.core import ConfigItem, get_config
 from nonebot import get_driver, on_message
 from nonebot.drivers import Driver
@@ -35,9 +33,7 @@ __plugin_config__ = (
         key="bot_id",
         description="獭窝中配置的bot_id",
     ),
-    ConfigItem(
-        key="access_token", description="token"
-    ),
+    ConfigItem(key="access_token", description="token"),
 )
 
 driver: Driver = get_driver()
@@ -48,6 +44,7 @@ async def _message_handler(event: MessageEvent):
 is_matcher_created = False
 
 ws_conn: WebSocketConn
+
 
 @driver.on_bot_connect
 async def setup_ws(bot: Bot):
@@ -61,7 +58,7 @@ async def setup_ws(bot: Bot):
     if not url:
         return
     global ws_conn
-    ws_conn = WebSocketConn(bot=bot, url = url, bot_id=bot_id, access_token=access_token)
+    ws_conn = WebSocketConn(bot=bot, url=url, bot_id=bot_id, access_token=access_token)
     asyncio.gather(ws_conn.connect())
     global is_matcher_created
     if not is_matcher_created:
