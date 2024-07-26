@@ -30,9 +30,10 @@ def _build_ret_msg(data) -> dict[str, Any]:
     return {"status": "ok", "retcode": 0, "data": data}
 
 
-def _proccess_api(action:str, data: dict[str, Any]):
+def _proccess_api(action: str, data: dict[str, Any]):
     if action == "get_group_member_list":
         data["params"]["group_id"] = str(data["params"]["group_id"])
+
 
 class WebSocketConn:
     def __init__(self, bot: Bot, url: str, bot_id: int, access_token: str) -> None:
@@ -86,7 +87,7 @@ class WebSocketConn:
                 await ws.send(_get_heartbeat_event(self.__bot_id))
             except Exception as e:
                 logger.error(f"发送心跳事件失败：{e}")
-    
+
     async def stop(self):
         self.__stop_flag = False
         self.__send_task.cancel()
@@ -131,5 +132,5 @@ class WebSocketConn:
     async def __ws_recv(self, ws: WebSocketClientProtocol):
         while self.__stop_flag:
             raw_data = await ws.recv()
-            logger.info(f"收到獭窝信息：{raw_data}" )
+            logger.info(f"收到獭窝信息：{raw_data}")
             await self._call_api(ujson.loads(raw_data))
