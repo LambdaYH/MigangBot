@@ -1,3 +1,4 @@
+import re
 import time
 import asyncio
 from typing import Any
@@ -9,6 +10,7 @@ from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters import Bot, Event
 from websockets import WebSocketClientProtocol
+from nonebot.adapters.onebot.v11 import MessageSegment
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
 _HEARTBEAT_INTERVAL = 3
@@ -30,9 +32,17 @@ def _build_ret_msg(data) -> dict[str, Any]:
     return {"status": "ok", "retcode": 0, "data": data}
 
 
+_reply_id_pattern = r"\[CQ:reply,id=([^\]]+)\]"
+
+
 def _proccess_api(action: str, data: dict[str, Any]):
     if action == "get_group_member_list":
         data["params"]["group_id"] = str(data["params"]["group_id"])
+    message: str = data["params"].get("message")
+    if message and (match := re.search(_reply_id_pattern, message)):
+        data["params"]["message"] = MessageSegment.reply(
+            match.group(1)
+        ) + message.replace(match.group(0), "")
 
 
 class WebSocketConn:
@@ -100,9 +110,11 @@ class WebSocketConn:
             event.self_id = self.__bot_id
         await self.__queue.put(event)
 
-    async def _call_api(self, data: dict[str, Any]) -> Any:
-        echo = data.get("echo", "")
+    async def _call_api(self, raw_data: str) -> Any:
+        echo: str = ""
         try:
+            data = ujson.loads(raw_data)
+            echo = data.get("echo", "")
             action = data["action"]
             _proccess_api(action=action, data=data)
             resp = await self.__bot.call_api(data["action"], **data["params"])
@@ -113,24 +125,37 @@ class WebSocketConn:
             await self.__queue.put(resp_data)
         except Exception as e:
             logger.warning(f"调用api失败：{data}：{e}")
+            import traceback
+
+            traceback.print_exc()
             return {"status": "failed", "echo": echo}
 
     async def __ws_send(self, ws: WebSocketClientProtocol):
         while self.__stop_flag:
-            event = await self.__queue.get()
-            send_data: str
-            if isinstance(event, BaseModel):
-                send_data = event.model_dump()
-                send_data["message"] = send_data["raw_message"]
-                send_data = ujson.dumps(send_data)
-            elif isinstance(event, dict):
-                send_data = ujson.dumps(event)
-            elif isinstance(event, str):
-                send_data = event
-            await ws.send(send_data)
+            try:
+                event = await self.__queue.get()
+                send_data: str
+                if isinstance(event, BaseModel):
+                    send_data = event.model_dump()
+                    send_data["message"] = send_data["raw_message"]
+                    send_data = ujson.dumps(send_data)
+                elif isinstance(event, dict):
+                    send_data = ujson.dumps(event)
+                elif isinstance(event, str):
+                    send_data = event
+                asyncio.create_task(ws.send(send_data))
+            except (ConnectionClosedError, ConnectionClosedOK) as e:
+                raise e
+            except Exception as e:
+                logger.error(f"发送獭窝信息异常：{e}")
 
     async def __ws_recv(self, ws: WebSocketClientProtocol):
         while self.__stop_flag:
-            raw_data = await ws.recv()
-            logger.info(f"收到獭窝信息：{raw_data}")
-            await self._call_api(ujson.loads(raw_data))
+            try:
+                raw_data = await ws.recv()
+                logger.info(f"收到獭窝信息：{raw_data}")
+                asyncio.create_task(self._call_api(raw_data))
+            except (ConnectionClosedError, ConnectionClosedOK) as e:
+                raise e
+            except Exception as e:
+                logger.error(f"接受獭窝信息异常：{e}")
