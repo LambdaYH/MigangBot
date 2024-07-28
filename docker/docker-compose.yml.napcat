@@ -1,0 +1,69 @@
+# Docker Compose 配置文件
+# 请修改以下部分以符合您的具体需求：
+#
+# 1. 在 napcat 服务的 environment 中，将 ACCOUNT 替换为机器人的实际 QQ 号码。
+# 2. 确认并调整所有 volume 挂载路径为您系统上的实际路径。
+# 3. 替换napcat.mac_address设定的ip地址。
+
+version: "3.8"
+services:
+    # 数据库
+    db:
+        image: postgres:15-alpine
+        restart: unless-stopped
+        networks:
+            - migangbot
+        environment:
+            POSTGRES_USER: migangbot_user # 数据库用户
+            POSTGRES_PASSWORD: 1206 # 数据库用户密码
+            POSTGRES_DB: migangbot_db # 默认数据库
+        volumes:
+            - ./db:/var/lib/postgresql/data
+
+    # 后端
+    migangbot:
+        restart: unless-stopped
+        image: lambdayh/migangbot:latest
+        environment:
+            TZ: Asia/Shanghai
+        volumes: # 修改为实际路径
+            - ./migangbot/data:/migangbot/data
+            - ./migangbot/configs:/migangbot/configs
+            - ./migangbot/user_config:/root/.config # 这是~/.config，localstore和meme_generator会在这个文件夹下
+            - ./migangbot/.env.prod:/migangbot/.env.prod
+        depends_on:
+            - db
+        networks:
+            - migangbot
+        ports:
+            - 127.0.0.1:1206:1206
+
+    # 客户端
+    napcat:
+        container_name: napcat
+        image: mlikiowa/napcat-docker:latest
+        restart: unless-stopped
+        environment:
+            - ACCOUNT=<机器人qq> # 修改为bot的qq
+            - WSR_ENABLE=true
+            - WS_URLS=["ws://migangbot:1206/onebot/v11/ws"]
+        networks:
+            - migangbot
+        volumes: # 修改为实际路径
+            - ./napcat/QQ:~/.config/QQ
+            - ./napcat/config:/usr/src/app/napcat/config
+        mac_address: "00:00:00:00:00:00" # 必须修改，通过https://uutool.cn/mac/生成一个
+
+    # 使用"COMPOSE_PROFILES=update docker compose up -d"启动可实现自动更新
+    watchtower:
+        restart: unless-stopped
+        image: containrrr/watchtower
+        profiles: [ "update" ]
+        environment:
+            WATCHTOWER_CLEANUP: "true"
+            WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
+
+networks:
+    migangbot:
