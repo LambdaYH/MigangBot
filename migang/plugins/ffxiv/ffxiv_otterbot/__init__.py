@@ -38,6 +38,10 @@ __plugin_config__ = (
 
 driver: Driver = get_driver()
 
+is_matcher_created = False
+
+ws_conn: WebSocketConn
+
 
 def _rule(event: MessageEvent):
     return command_filter(event.get_plaintext())
@@ -45,11 +49,6 @@ def _rule(event: MessageEvent):
 
 async def _message_handler(event: MessageEvent):
     await ws_conn.forwardEvent(event)
-
-
-is_matcher_created = False
-
-ws_conn: WebSocketConn
 
 
 @driver.on_bot_connect
