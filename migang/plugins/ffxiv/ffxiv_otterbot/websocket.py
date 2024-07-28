@@ -89,6 +89,14 @@ class WebSocketConn:
                 self.__recv_task.cancel()
                 self.__heartbeat.cancel()
                 await asyncio.sleep(1)  # 等待重连
+            except Exception as e:
+                logger.opt(colors=True).error(
+                    f"<y><bg #f8bbd0>连接獭窝发生意料之外的错误：{e}</bg #f8bbd0></y>"
+                )
+                import traceback
+
+                traceback.print_exc()
+                await asyncio.sleep(15)
 
     async def __send_heartbeat(self, ws: WebSocketClientProtocol):
         while self.__stop_flag:

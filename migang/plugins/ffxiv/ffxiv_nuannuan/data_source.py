@@ -46,15 +46,19 @@ async def get_nuannuan_image() -> None:
             img = await card.screenshot()
             if img:
                 img = Image.open(BytesIO(img))
-                height = img.height
+                height = img.height - 1
                 width = img.width - 1
                 # 二分似乎容易受干扰
-                for i in range(width - 1, -1, -1):
-                    if img.getpixel((i, 0)) == (255, 255, 255, 255):
+                for i in range(width, -1, -1):
+                    if img.getpixel((i, 0))[:3] == (
+                        255,
+                        255,
+                        255,
+                    ):
                         width = i
                         break
-                for i in range(height):
-                    if img.getpixel((width, i)) != (255, 255, 255, 255):
+                for i in range(height, -1, -1):
+                    if img.getpixel((0, i))[:3] == (255, 255, 255):
                         height = i
                         break
                 img = img.crop(((0, 0, width, height)))
