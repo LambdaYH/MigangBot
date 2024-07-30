@@ -83,7 +83,7 @@ class WebSocketConn:
                     )
             except (ConnectionClosedError, ConnectionClosedOK):
                 logger.opt(colors=True).warning(
-                    "<y><bg #f8bbd0>WebSocket Closed</bg #f8bbd0></y>"
+                    "<y><bg #f8bbd0>与獭窝连接关闭</bg #f8bbd0></y>"
                 )
                 self.__send_task.cancel()
                 self.__recv_task.cancel()
@@ -132,7 +132,7 @@ class WebSocketConn:
             logger.info(f"发送獭窝API调用结果：{resp_data}")
             await self.__queue.put(resp_data)
         except Exception as e:
-            logger.warning(f"调用api失败：{data}：{e}")
+            logger.error(f"调用api失败：{data}：{e}")
             import traceback
 
             traceback.print_exc()
