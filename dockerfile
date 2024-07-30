@@ -21,8 +21,8 @@ ENV PYTHONPATH=/pkgs
 WORKDIR /migangbot
 COPY . /migangbot
 COPY docker/build/db_config.yaml docker/build/.env /migangbot/
-COPY --from=builder /tmp/__pypackages__/3.11/lib /pkgs
-COPY --from=builder /tmp/__pypackages__/3.11/bin/* /bin/
+COPY --from=builder /tmp/__pypackages__/3.12/lib /pkgs
+COPY --from=builder /tmp/__pypackages__/3.12/bin/* /bin/
 
 # install deps
 RUN apt-get update \
