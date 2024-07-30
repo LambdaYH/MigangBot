@@ -1,5 +1,5 @@
 # build stage
-FROM python:3.11-slim-bullseye AS builder
+FROM python:3.12-slim-bookworm AS builder
 
 # install PDM
 RUN pip install -U pip setuptools wheel
@@ -13,7 +13,7 @@ WORKDIR /tmp
 RUN mkdir __pypackages__ && pdm sync --prod -G plugins --no-editable
 
 # run stage
-FROM python:3.11-slim-bullseye
+FROM python:3.12-slim-bookworm
 
 # retrieve packages from build stage
 ENV PYTHONPATH=/pkgs
@@ -26,7 +26,9 @@ COPY --from=builder /tmp/__pypackages__/3.11/bin/* /bin/
 
 # install deps
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends fonts-noto-cjk fonts-noto-color-emoji libzbar-dev libopencv-dev \
+    && apt-get install -y --no-install-recommends \
+    fonts-noto-cjk fonts-noto-color-emoji libzbar-dev libopencv-dev \
+    build-essential libssl-dev ca-certificates libasound2 wget \
     && playwright install --with-deps chromium \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
