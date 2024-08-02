@@ -84,6 +84,7 @@ httpx = ">=0.26.0"
 pillow = ">=10.1.0"
 lxml = ">= 0.6.0"
 nonebot-plugin-apscheduler = ">=0.4.0"
+jieba = "https://files.pythonhosted.org/packages/03/ab/cefe7c598f830dcf920eb1caced13c7b029807c519db18bf089000b249b0/jieba_migang-0.0.1-py3-none-any.whl"
 
 [tool.nonebot]
 adapters = [

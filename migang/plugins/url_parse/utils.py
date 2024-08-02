@@ -120,7 +120,7 @@ class ParserManager:
     ) -> Set[Callable[[str], Any]]:
         ret = []
         for url in urls:
-            url = url.replace("\/", "/")
+            url = url.replace("\\/", "/")
             if url.startswith(ALIAS_DOMAIN):
                 url = await get_url(url)
             url = url.rstrip("&")

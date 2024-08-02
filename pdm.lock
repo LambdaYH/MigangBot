@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:ad02c8a992e43370bacc9cd576b09d6d5a5609be814780ea44772063bfff4d83"
+content_hash = "sha256:3e51c73f843392567117af1997991750d5e724cac344f1eb6eaf49a8ed07a43d"
 
 [[metadata.targets]]
 requires_python = "~=3.10"
@@ -1592,11 +1592,12 @@ files = [
 
 [[package]]
 name = "jieba"
-version = "0.42.1"
+version = "0.0.1"
+url = "https://files.pythonhosted.org/packages/03/ab/cefe7c598f830dcf920eb1caced13c7b029807c519db18bf089000b249b0/jieba_migang-0.0.1-py3-none-any.whl"
 summary = "Chinese Words Segmentation Utilities"
 groups = ["plugins"]
 files = [
-    {file = "jieba-0.42.1.tar.gz", hash = "sha256:055ca12f62674fafed09427f176506079bc135638a14e23e25be909131928db2"},
+    {file = "jieba_migang-0.0.1-py3-none-any.whl", hash = "sha256:5c1792089147cde622a8d0ed2df7876e632a57c4cdaeff1cf17c6a223ec23c8e"},
 ]
 
 [[package]]
@@ -3457,16 +3458,13 @@ files = [
 
 [[package]]
 name = "pyjwt"
-version = "2.8.0"
-requires_python = ">=3.7"
+version = "2.9.0"
+requires_python = ">=3.8"
 summary = "JSON Web Token implementation in Python"
 groups = ["plugins"]
-dependencies = [
-    "typing-extensions; python_version <= \"3.7\"",
-]
 files = [
-    {file = "PyJWT-2.8.0-py3-none-any.whl", hash = "sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320"},
-    {file = "PyJWT-2.8.0.tar.gz", hash = "sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de"},
+    {file = "PyJWT-2.9.0-py3-none-any.whl", hash = "sha256:3b02fb0f44517787776cf48f2ae25d8e14f300e6d7545a4315cee571a415e850"},
+    {file = "pyjwt-2.9.0.tar.gz", hash = "sha256:7e1e5b56cc735432a7369cbfa0efe50fa113ebecdc04ae6922deba8b84582d0c"},
 ]
 
 [[package]]

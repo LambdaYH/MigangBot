@@ -113,7 +113,7 @@ def format_nn_text(text: str) -> List[str]:
     text = text[text.find("主题：") : text.rfind("\n\n")]
     text = re.sub(r"\n{2,10}", "\n\n", text)
     text_list = text.split("\n\n")
-    return [t for t in text_list if re.search("【[\s\S]+】", t)]
+    return [t for t in text_list if re.search(r"【[\s\S]+】", t)]
 
 
 async def get_nuannuan_text() -> None:
