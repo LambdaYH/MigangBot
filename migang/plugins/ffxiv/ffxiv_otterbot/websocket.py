@@ -10,7 +10,7 @@ from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters import Bot, Event
 from websockets import WebSocketClientProtocol
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
 _HEARTBEAT_INTERVAL = 3
@@ -41,9 +41,9 @@ def _proccess_api(action: str, data: dict[str, Any]):
     message: str = data["params"].get("message")
     if message:
         if match := re.search(_reply_id_pattern, message):
-            data["params"]["message"] = MessageSegment.reply(
-                match.group(1)
-            ) + Message(message.replace(match.group(0), "").strip())
+            data["params"]["message"] = MessageSegment.reply(match.group(1)) + Message(
+                message.replace(match.group(0), "").strip()
+            )
 
 
 class WebSocketConn:
