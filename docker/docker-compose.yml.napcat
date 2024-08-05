@@ -50,7 +50,7 @@ services:
         networks:
             - migangbot
         volumes: # 修改为实际路径
-            - ./napcat/QQ:~/.config/QQ
+            - ./napcat/QQ:/root/.config/QQ
             - ./napcat/config:/usr/src/app/napcat/config
         mac_address: "00:00:00:00:00:00" # 改成本地网卡mac地址，或去除
 
