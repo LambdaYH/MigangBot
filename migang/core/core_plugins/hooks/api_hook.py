@@ -89,7 +89,10 @@ async def _(
     ):
         tasks = []
         for msg in data["messages"]:
-            content = msg.data["content"]
+            if isinstance(msg, dict):
+                content = msg.get("data")["content"]
+            else:
+                content = msg.data["content"]
             if isinstance(content, MessageSegment) and _is_need_process(content):
                 tasks.append(_replace_node(msg, content))
             elif not isinstance(content, str) and isinstance(content, Iterable):
