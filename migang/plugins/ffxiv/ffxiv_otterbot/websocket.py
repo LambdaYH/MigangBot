@@ -2,7 +2,7 @@ import re
 import time
 import asyncio
 from typing import Any
-from asyncio import Queue
+from asyncio import Queue, CancelledError
 
 import ujson
 import websockets
@@ -90,6 +90,8 @@ class WebSocketConn:
                 self.__recv_task.cancel()
                 self.__heartbeat.cancel()
                 await asyncio.sleep(1)  # 等待重连
+            except CancelledError:
+                logger.info("獭窝断开连接，异步线程终止")
             except Exception as e:
                 logger.opt(colors=True).error(
                     f"<y><bg #f8bbd0>连接獭窝发生意料之外的错误：{e}</bg #f8bbd0></y>"
