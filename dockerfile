@@ -1,6 +1,9 @@
 # build stage
 FROM python:3.12-slim-bookworm AS builder
 
+# 依赖
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
+
 # install PDM
 RUN pip install -U pip setuptools wheel
 RUN pip install pdm
