@@ -6,9 +6,10 @@ from asyncio import Queue, CancelledError
 
 import ujson
 import websockets
+from nonebot import get_bot
 from nonebot.log import logger
 from pydantic import BaseModel
-from nonebot.adapters import Bot, Event
+from nonebot.adapters import Event
 from websockets import WebSocketClientProtocol
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
@@ -47,16 +48,16 @@ def _proccess_api(action: str, data: dict[str, Any]):
 
 
 class WebSocketConn:
-    def __init__(self, bot: Bot, url: str, bot_id: int, access_token: str) -> None:
+    def __init__(self, url: str, bot_id: int, access_token: str) -> None:
         self.__queue = Queue()
         self.__url = url
         self.__bot_id = bot_id
         self.__access_token = access_token
-        self.__bot = bot
         self.__send_task = None
         self.__recv_task = None
         self.__heartbeat = None
         self.__stop_flag = False
+        self.__connect = False
         self.__websocket: WebSocketClientProtocol = None
 
     async def connect(self):
@@ -74,6 +75,7 @@ class WebSocketConn:
                 ) as websocket:
                     logger.info("与獭窝已成功建立连接")
                     self.__websocket = websocket
+                    self.__connect = True
                     self.__send_task = asyncio.create_task(self.__ws_send(websocket))
                     self.__recv_task = asyncio.create_task(self.__ws_recv(websocket))
                     self.__heartbeat = asyncio.create_task(
@@ -86,12 +88,8 @@ class WebSocketConn:
                 logger.opt(colors=True).warning(
                     "<y><bg #f8bbd0>与獭窝连接关闭</bg #f8bbd0></y>"
                 )
-                self.__send_task.cancel()
-                self.__recv_task.cancel()
-                self.__heartbeat.cancel()
+                await self.__handle_disconnect()
                 await asyncio.sleep(1)  # 等待重连
-            except CancelledError:
-                logger.info("獭窝断开连接，异步线程终止")
             except Exception as e:
                 logger.opt(colors=True).error(
                     f"<y><bg #f8bbd0>连接獭窝发生意料之外的错误：{e}</bg #f8bbd0></y>"
@@ -102,19 +100,50 @@ class WebSocketConn:
                 await asyncio.sleep(15)
 
     async def __send_heartbeat(self, ws: WebSocketClientProtocol):
-        while self.__stop_flag:
+        while self.__connect:
             try:
                 await asyncio.sleep(_HEARTBEAT_INTERVAL)
                 await ws.send(_get_heartbeat_event(self.__bot_id))
             except Exception as e:
                 logger.error(f"发送心跳事件失败：{e}")
 
+    async def __handle_disconnect(self):
+        self.__connect = False
+        if self.__send_task:
+            self.__send_task.cancel()
+            try:
+                await self.__send_task
+            except asyncio.CancelledError:
+                logger.info("send_task已取消")
+            except Exception as e:
+                logger.error(f"send_task 错误: {e}")
+
+        if self.__recv_task:
+            self.__recv_task.cancel()
+            try:
+                await self.__recv_task
+            except asyncio.CancelledError:
+                logger.info("recv_task已取消")
+            except Exception as e:
+                logger.error(f"recv_task 错误: {e}")
+
+        if self.__heartbeat:
+            self.__heartbeat.cancel()
+            try:
+                await self.__heartbeat
+            except asyncio.CancelledError:
+                logger.info("heartbeat已取消")
+            except Exception as e:
+                logger.error(f"heartbeat 错误: {e}")
+
+        try:
+            await self.__websocket.close()
+        except Exception as e:
+            logger.info(f"ws连接关闭：{e}")
+
     async def stop(self):
         self.__stop_flag = False
-        self.__send_task.cancel()
-        self.__recv_task.cancel()
-        self.__heartbeat.cancel()
-        await self.__websocket.close()
+        await self.__handle_disconnect()
 
     async def forwardEvent(self, event: Event):
         if hasattr(event, "self_id"):
@@ -128,7 +157,7 @@ class WebSocketConn:
             echo = data.get("echo", "")
             action = data["action"]
             _proccess_api(action=action, data=data)
-            resp = await self.__bot.call_api(data["action"], **data["params"])
+            resp = await get_bot().call_api(data["action"], **data["params"])
             resp_data = _build_ret_msg(resp)
             if echo:
                 resp_data["echo"] = echo
@@ -142,7 +171,7 @@ class WebSocketConn:
             return {"status": "failed", "echo": echo}
 
     async def __ws_send(self, ws: WebSocketClientProtocol):
-        while self.__stop_flag:
+        while self.__connect:
             try:
                 event = await self.__queue.get()
                 send_data: str
@@ -161,7 +190,7 @@ class WebSocketConn:
                 logger.error(f"发送獭窝信息异常：{e}")
 
     async def __ws_recv(self, ws: WebSocketClientProtocol):
-        while self.__stop_flag:
+        while self.__connect:
             try:
                 raw_data = await ws.recv()
                 logger.info(f"收到獭窝信息：{raw_data}")

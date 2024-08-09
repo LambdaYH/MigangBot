@@ -3,7 +3,7 @@ import asyncio
 from nonebot.drivers import Driver
 from nonebot.plugin import PluginMetadata
 from nonebot import get_driver, on_message
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent
 
 from migang.core import ConfigItem, get_config
 
@@ -51,29 +51,18 @@ async def _message_handler(event: MessageEvent):
     await ws_conn.forwardEvent(event)
 
 
-@driver.on_bot_connect
-async def setup_ws(bot: Bot):
+@driver.on_startup
+async def setup_ws():
     access_token = await get_config("access_token")
     if not access_token:
         return
     bot_id = await get_config("bot_id")
     if not bot_id:
-        bot_id = bot.self_id
+        return
     url = await get_config("url")
     if not url:
         return
     global ws_conn
-    ws_conn = WebSocketConn(bot=bot, url=url, bot_id=bot_id, access_token=access_token)
-    asyncio.gather(ws_conn.connect())
-    global is_matcher_created
-    if not is_matcher_created:
-        on_message(block=False, rule=_rule).append_handler(_message_handler)
-        is_matcher_created = True
-
-
-@driver.on_bot_disconnect
-async def stop_ws():
-    global ws_conn
-    if ws_conn is not None:
-        await ws_conn.stop()
-        ws_conn = None
+    ws_conn = WebSocketConn(url=url, bot_id=bot_id, access_token=access_token)
+    asyncio.create_task(ws_conn.connect())
+    on_message(block=False, rule=_rule).append_handler(_message_handler)
