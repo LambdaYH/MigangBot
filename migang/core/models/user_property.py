@@ -89,3 +89,19 @@ class UserProperty(Model):
         if not user:
             return 0
         return user.gold
+
+    @classmethod
+    async def check_impression(cls, user_id: int, target) -> bool:
+        """监测好感度是否达到目标值"""
+        user = await cls.filter(user_id=user_id).first()
+        if not user:
+            return False
+        return user.impression >= target
+
+    @classmethod
+    async def get_impression(cls, user_id: int) -> float:
+        """监测好感度是否达到目标值"""
+        user = await cls.filter(user_id=user_id).first()
+        if not user:
+            return 0
+        return user.impression
