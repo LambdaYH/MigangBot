@@ -41,10 +41,20 @@ def _proccess_api(action: str, data: dict[str, Any]):
         data["params"]["group_id"] = str(data["params"]["group_id"])
     message: str = data["params"].get("message")
     if message:
-        if match := re.search(_reply_id_pattern, message):
+        if isinstance(message, str) and (
+            match := re.search(_reply_id_pattern, message)
+        ):
             data["params"]["message"] = MessageSegment.reply(match.group(1)) + Message(
                 message.replace(match.group(0), "").strip()
             )
+        if isinstance(message, list):
+            new_message = Message()
+            if message[-1]["type"] == "reply":
+                new_message.append(MessageSegment.reply(message[-1]["data"]["id"]))
+                message = message[:-1]
+            for m in message:
+                new_message.append(MessageSegment(type=m["type"], data=m["data"]))
+            data["params"]["message"] = new_message
 
 
 class WebSocketConn:
@@ -168,7 +178,7 @@ class WebSocketConn:
             import traceback
 
             traceback.print_exc()
-            return {"status": "failed", "echo": echo}
+            await self.__queue.put({"status": "failed", "echo": echo})
 
     async def __ws_send(self, ws: WebSocketClientProtocol):
         while self.__connect:
