@@ -78,7 +78,7 @@ class GroupBotManager:
         """获取每个群的群机器人，返回 bot，群号"""
         group_list = []
         bot_dict: Dict[int, Bot] = {}
-        for k, v in self.__group_bot:
+        for k, v in self.__group_bot.items():
             if v:
                 bot_id = v[0]
                 if bot_id not in bot_dict:
