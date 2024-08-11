@@ -231,8 +231,7 @@ async def _(arg: Message = CommandArg()):
     music_name = arg.extract_plain_text()
     if not music_name:
         return
-    if m := await search_qq_music(music_name, 1):
-        print(MessageSegment.music(m[0]["type"], m[0]["id"]))
+    if m := await search_netease_music(music_name, 1):
         await music_laiyishou.finish(MessageSegment.music(m[0]["type"], m[0]["id"]))
     else:
         await music_laiyishou.finish("没有找到这首歌呢~")
