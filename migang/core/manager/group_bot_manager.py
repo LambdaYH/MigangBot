@@ -7,17 +7,6 @@ from nonebot import get_bot, get_bots
 from nonebot.adapters.onebot.v11 import Bot, ActionFailed
 
 
-def shuffle_list(lst):
-    if len(lst) > 1:
-        first_element = lst[0]
-        # 打乱列表顺序直到第一个元素与原始的第一个元素不同
-        while True:
-            random.shuffle(lst)
-            if lst[0] != first_element:
-                break
-    return lst
-
-
 class GroupBotManager:
     """管理群消息使用哪个机器人处理"""
 
@@ -83,7 +72,7 @@ class GroupBotManager:
     def shuffle_group_bot(self):
         """更换群机器人的顺序"""
         for group_bots in self.__group_bot.values():
-            shuffle_list(group_bots)
+            random.shuffle(group_bots)
 
     def get_valid_group(self) -> List[Tuple[Bot, int]]:
         """获取每个群的群机器人，返回 bot，群号"""

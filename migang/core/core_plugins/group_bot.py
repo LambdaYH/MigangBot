@@ -27,7 +27,6 @@ async def _(bot: Bot):
 @scheduler.scheduled_job("cron", minute=0, hour=0, day_of_week="mon")
 async def _():
     """每周重新刷新下群"""
-
     await group_bot_manager.refreshAll()
 
 
