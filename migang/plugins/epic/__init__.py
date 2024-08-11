@@ -45,6 +45,4 @@ async def handle(bot: Bot, event: MessageEvent):
 async def _():
     bot = get_bot()
     msg_list, code = await get_epic_free(int(bot.self_id))
-    await broadcast(
-        task_name="epic_free_game", msg=msg_list, forward=code == 200, bot=bot
-    )
+    await broadcast(task_name="epic_free_game", msg=msg_list, forward=code == 200)

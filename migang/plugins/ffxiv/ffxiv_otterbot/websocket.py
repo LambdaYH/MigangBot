@@ -2,7 +2,7 @@ import re
 import time
 import asyncio
 from typing import Any
-from asyncio import Queue, CancelledError
+from asyncio import Queue
 
 import ujson
 import websockets
@@ -11,8 +11,10 @@ from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters import Event
 from websockets import WebSocketClientProtocol
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
+
+from migang.core.manager import group_bot_manager
 
 _HEARTBEAT_INTERVAL = 3
 
@@ -167,7 +169,13 @@ class WebSocketConn:
             echo = data.get("echo", "")
             action = data["action"]
             _proccess_api(action=action, data=data)
-            resp = await get_bot().call_api(data["action"], **data["params"])
+            params = data["params"]
+            bot: Bot
+            if params and (group_id := params.get("group_id")):
+                bot = group_bot_manager.get_bot(group_id=group_id)
+            else:
+                bot = get_bot()
+            resp = await bot.call_api(data["action"], **params)
             resp_data = _build_ret_msg(resp)
             if echo:
                 resp_data["echo"] = echo
@@ -178,7 +186,7 @@ class WebSocketConn:
             import traceback
 
             traceback.print_exc()
-            await self.__queue.put({"status": "failed", "echo": echo})
+            # await self.__queue.put({"status": "failed", "echo": echo})
 
     async def __ws_send(self, ws: WebSocketClientProtocol):
         while self.__connect:

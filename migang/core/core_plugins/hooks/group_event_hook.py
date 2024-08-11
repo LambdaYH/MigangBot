@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import (
     GroupIncreaseNoticeEvent,
 )
 
-from migang.core.manager import user_manager, group_manager
+from migang.core.manager import user_manager, group_manager, group_bot_manager
 
 from .utils import check_event
 
@@ -33,6 +33,9 @@ async def _(
 ):
     if matcher.plugin_name in _ignore_plugins:
         return
+    # 群机器人检查
+    if not group_bot_manager.check_group_bot(event.group_id, event.self_id):
+        raise IgnoredException("躺~")
     if not group_manager.check_group_plugin_status(
         plugin_name=matcher.plugin_name, group_id=event.group_id
     ):

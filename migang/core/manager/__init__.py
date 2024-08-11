@@ -10,6 +10,7 @@ from .group_manager import GroupManager
 from .cd_manager import CDItem, CDManager
 from .plugin_manager import PluginManager
 from .request_manager import RequestManager
+from .group_bot_manager import GroupBotManager
 from .task_manager import TaskItem, TaskManager
 from .permission_manager import PermissionManager
 from .count_manager import CountItem, CountManager
@@ -38,6 +39,7 @@ __all__ = [
     "goods_manager",
     "init_managers",
     "save_managers",
+    "group_bot_manager",
 ]
 
 core_data_path = Path() / "data" / "core"
@@ -56,6 +58,10 @@ group_manager: GroupManager = GroupManager(
     task_manager=task_manager,
 )
 """对群权限以及群机器人启闭情况进行控制，此对象内嵌plugin_manager与task_manager，用于管理群内插件与任务的状态
+"""
+
+group_bot_manager: GroupBotManager = GroupBotManager()
+"""管理机器人对群消息是否响应
 """
 
 user_manager: UserManager = UserManager(

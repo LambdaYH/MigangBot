@@ -25,8 +25,8 @@ from nonebot.adapters.onebot.v11 import (
     GroupIncreaseNoticeEvent,
 )
 
-from migang.core.manager import request_manager, permission_manager
 from migang.core import BLACK, ConfigItem, get_config, sync_get_config
+from migang.core.manager import request_manager, group_bot_manager, permission_manager
 
 from .data_source import build_request_img
 
@@ -404,6 +404,7 @@ async def _(arg: Message = CommandArg()):
 
 @group_increase.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
+    group_bot_manager.handle_group_add(bot_id=event.self_id, group_id=event.group_id)
     if (
         _handle_group != "同意"
         and (await get_config("auto_leave"))
@@ -428,6 +429,7 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
 
 @group_decrease.handle()
 async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
+    group_bot_manager.handle_group_kick(bot_id=event.self_id, group_id=event.group_id)
     operator_id = event.operator_id
     group_id = event.group_id
     try:

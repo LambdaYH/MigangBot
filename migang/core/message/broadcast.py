@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
 )
 
-from migang.core.manager import group_manager
+from migang.core.manager import group_manager, group_bot_manager
 
 
 class SendManager:
@@ -109,7 +109,6 @@ async def broadcast(
     task_name: str,
     msg: Union[Iterable[Union[Message, MessageSegment]], Message, MessageSegment, str],
     forward: bool = False,
-    bot: Optional[Bot] = None,
 ) -> None:
     """将消息推送到task_name启用的所有群
 
@@ -119,19 +118,20 @@ async def broadcast(
         forward (bool, optional): 若以转发模式，则True. Defaults to False.
         bot (Optional[Bot], optional): 选定的bot. Defaults to None.
     """
-    if not bot:
-        bot = get_bot()
-    group_list = await bot.get_group_list()
-    group_list = [
-        group["group_id"]
-        for group in group_list
+    group_bot_list = group_bot_manager.get_valid_group()
+    bot_group_map: Dict[Bot, List[int]] = {}
+    for bot, group_id in group_bot_list:
+        if bot not in bot_group_map:
+            bot_group_map[bot] = []
         if group_manager.check_group_task_status(
-            task_name=task_name, group_id=group["group_id"]
-        )
-    ]
-    shuffle(group_list)
+            task_name=task_name, group_id=group_id
+        ):
+            bot_group_map[bot].append(group_id)
+    for group_list in bot_group_map.values():
+        shuffle(group_list)
     if isinstance(msg, str):
         msg = Message(msg)
     if isinstance(msg, Message) or isinstance(msg, MessageSegment):
         msg = (msg,)
-    await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()
+    for bot, group_list in bot_group_map.items():
+        await SendManager(bot=bot, group_list=group_list, msg=msg, forward=forward).do()

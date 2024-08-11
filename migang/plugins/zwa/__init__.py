@@ -76,5 +76,4 @@ async def _():
         task_name="good_night",
         msg=f"{list(bot.config.nickname)[0]}要睡觉了，你们也要早点睡呀"
         + MessageSegment.image(IMAGE_PATH / "wanan.jpg"),
-        bot=bot,
     )

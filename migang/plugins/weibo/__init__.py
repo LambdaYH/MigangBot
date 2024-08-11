@@ -357,7 +357,7 @@ async def _():
                     MessageSegment.node_custom(bot.self_id, "微博威", weibo)
                     for weibo in weibos
                 ]
-            await broadcast(task_name=task, msg=weibos, forward=forward_mode, bot=bot)
+            await broadcast(task_name=task, msg=weibos, forward=forward_mode)
 
 
 @scheduler.scheduled_job("cron", second="0", minute="0", hour="5")
