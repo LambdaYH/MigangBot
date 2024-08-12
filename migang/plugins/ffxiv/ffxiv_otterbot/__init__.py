@@ -43,7 +43,7 @@ def _rule(event: MessageEvent):
     return command_filter(event.get_plaintext())
 
 
-handle_msg = on_message(block=False, rule=_rule)
+handle_msg = on_message(block=False, rule=_rule, priority=20)
 
 
 @handle_msg.handle()
