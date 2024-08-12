@@ -67,7 +67,10 @@ async def build_request_img(
         )
         info.paste(id_img, (400, 10), True)
         time_img = text2image(
-            text=request.time.strftime("%Y-%m-%d %H:%M:%S"),
+            text="bot："
+            + request.self_id
+            + "\n"
+            + request.time.strftime("%Y-%m-%d %H:%M:%S"),
             padding=(1, 1),
             fill=(140, 140, 143),
             fontname="HONOR Sans CN",

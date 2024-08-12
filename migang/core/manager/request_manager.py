@@ -20,6 +20,7 @@ class GroupRequest(BaseModel):
     comment: str
     flag: str
     time: datetime
+    self_id: str
 
 
 class FriendRequest(BaseModel):
@@ -30,6 +31,7 @@ class FriendRequest(BaseModel):
     comment: str
     flag: str
     time: datetime
+    self_id: str
 
 
 class Requests(BaseModel):
@@ -53,6 +55,7 @@ class RequestManager:
 
     async def add(
         self,
+        self_id: str,
         user_name: Optional[str],
         user_id: int,
         sex: Optional[str],
@@ -86,6 +89,7 @@ class RequestManager:
                     comment=comment,
                     flag=flag,
                     time=time,
+                    self_id=self_id,
                 )
             )
         else:
@@ -100,6 +104,7 @@ class RequestManager:
                     comment=comment,
                     flag=flag,
                     time=time,
+                    self_id=self_id,
                 )
             )
         await self.save()
@@ -162,6 +167,8 @@ class RequestManager:
         if id_ >= len(target):
             return f"请输入 0~{len(target) - 1} 之间的id！"
         request = target[id_]
+        if request.self_id is not None and request.self_id != bot.self_id:
+            return f"无法{'同意' if approve else '拒绝'}id为{id_}的{'入群' if type_=='group' else '好友'}请求，该请求属于bot：{request.self_id}"
         try:
             if type_ == "group":
                 await bot.set_group_add_request(

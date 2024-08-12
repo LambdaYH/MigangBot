@@ -165,14 +165,17 @@ async def _(bot: Bot, event: FriendRequestEvent):
     except ActionFailed:
         logger.info(f"无法获取用户 {event.user_id} 的信息")
     for user in bot.config.superusers:
-        await bot.send_private_msg(
-            user_id=int(user),
-            message=f"*****一份好友申请*****\n"
-            f"昵称：{user_name}({event.user_id})\n"
-            f"状态：{_handle_friend}\n"
-            f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-            f"备注：{event.comment}",
-        )
+        try:
+            await bot.send_private_msg(
+                user_id=int(user),
+                message=f"*****一份好友申请*****\n"
+                f"昵称：{user_name}({event.user_id})\n"
+                f"状态：{_handle_friend}\n"
+                f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                f"备注：{event.comment}",
+            )
+        except ActionFailed:
+            logger.error(f"发送 {user} 好友 {event.user_id} 请求处理消息失败")
     if _handle_friend == "同意":
         try:
             await bot.set_friend_add_request(flag=event.flag, approve=True)
@@ -187,6 +190,7 @@ async def _(bot: Bot, event: FriendRequestEvent):
             logger.info(f"拒绝好友请求失败：{event.user_id}")
     else:
         await request_manager.add(
+            self_id=bot.self_id,
             user_name=user_name,
             user_id=event.user_id,
             sex=sex,
@@ -235,14 +239,17 @@ async def _(bot: Bot, event: GroupRequestEvent):
     except ActionFailed:
         logger.info(f"无法获取群 {event.group_id} 的信息")
     for user in bot.config.superusers:
-        await bot.send_private_msg(
-            user_id=int(user),
-            message=f"*****一份入群申请*****\n"
-            f"群聊：{group_name}({event.group_id})\n"
-            f"申请人：{user_name}({event.user_id})\n"
-            f"状态：{_handle_group}\n"
-            f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n",
-        )
+        try:
+            await bot.send_private_msg(
+                user_id=int(user),
+                message=f"*****一份入群申请*****\n"
+                f"群聊：{group_name}({event.group_id})\n"
+                f"申请人：{user_name}({event.user_id})\n"
+                f"状态：{_handle_group}\n"
+                f"日期：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n",
+            )
+        except ActionFailed:
+            logger.error(f"发送 {user} 入群 {event.group_id} 请求处理消息失败")
     if _handle_group == "同意":
         try:
             await bot.set_group_add_request(
@@ -266,6 +273,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
         if hint := await get_config("group_request_hint"):
             await bot.send_private_msg(user_id=event.user_id, message=Message(hint))
         await request_manager.add(
+            self_id=bot.self_id,
             user_name=user_name,
             user_id=event.user_id,
             sex=sex,
