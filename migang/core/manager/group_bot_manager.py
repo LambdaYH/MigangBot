@@ -21,14 +21,18 @@ class GroupBotManager:
 
     async def add_bot(self, bot: Bot) -> bool:
         """添加群机器人"""
+        return await self.__add_bot(bot, self.__group_bot)
+
+    async def __add_bot(self, bot: Bot, group_bot: Dict[int, List[int]]) -> bool:
+        """添加群机器人"""
         self_id = int(bot.self_id)
         try:
             group_list = await bot.get_group_list()
             group_list = [int(group["group_id"]) for group in group_list]
             for group in group_list:
-                if group not in self.__group_bot:
-                    self.__group_bot[group] = []
-                self.__group_bot[group].append(self_id)
+                if group not in group_bot:
+                    group_bot[group] = []
+                group_bot[group].append(self_id)
             logger.info(f"已装载bot：{self_id}")
             return True
         except ActionFailed:
@@ -49,13 +53,13 @@ class GroupBotManager:
     async def refreshAll(self):
         logger.info("开始刷新群")
         bots = get_bots().values()
-        group_bot_bak = self.__group_bot
-        self.__group_bot = {}
+        group_bot_temp = {}
         for bot in bots:
-            if not self.add_bot(bot):
-                self.__group_bot = group_bot_bak
+            if not await self.__add_bot(bot, group_bot_temp):
                 return
             await asyncio.sleep(12.06)
+        self.__group_bot = group_bot_temp
+        print(self.__group_bot)
         logger.info("群刷新结束")
 
     def check_group_bot(self, group_id: int, bot_id: int) -> bool:
@@ -71,8 +75,10 @@ class GroupBotManager:
 
     def shuffle_group_bot(self):
         """更换群机器人的顺序"""
+        print(self.__group_bot)
         for group_bots in self.__group_bot.values():
             random.shuffle(group_bots)
+        print(self.__group_bot)
 
     def get_valid_group(self) -> List[Tuple[Bot, int]]:
         """获取每个群的群机器人，返回 bot，群号"""

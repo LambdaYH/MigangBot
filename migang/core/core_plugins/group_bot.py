@@ -30,7 +30,7 @@ async def _():
     await group_bot_manager.refreshAll()
 
 
-@scheduler.scheduled_job("cron", minute=0)
+@scheduler.scheduled_job("cron", minute=6)
 async def _():
     """换班"""
     logger.info("换班时间到~")
