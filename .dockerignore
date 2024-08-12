@@ -10,6 +10,7 @@ configs
 .env
 .env.prod
 docker/docker-compose.yml
+docker/docker-compose.yml.napcat
 package-lock.json
 package.json
 .pdm-python
