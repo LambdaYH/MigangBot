@@ -59,7 +59,6 @@ class GroupBotManager:
                 return
             await asyncio.sleep(12.06)
         self.__group_bot = group_bot_temp
-        print(self.__group_bot)
         logger.info("群刷新结束")
 
     def check_group_bot(self, group_id: int, bot_id: int) -> bool:
@@ -75,10 +74,8 @@ class GroupBotManager:
 
     def shuffle_group_bot(self):
         """更换群机器人的顺序"""
-        print(self.__group_bot)
         for group_bots in self.__group_bot.values():
             random.shuffle(group_bots)
-        print(self.__group_bot)
 
     def get_valid_group(self) -> List[Tuple[Bot, int]]:
         """获取每个群的群机器人，返回 bot，群号"""
