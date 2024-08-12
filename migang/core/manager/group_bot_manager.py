@@ -84,6 +84,7 @@ class GroupBotManager:
                 if bot_id not in bot_dict:
                     bot_dict[bot_id] = get_bot(str(bot_id))
                 group_list.append((bot_dict[bot_id], k))
+        return group_list
 
     def get_bot(self, group_id: str | int) -> Bot:
         if isinstance(group_id, str):
