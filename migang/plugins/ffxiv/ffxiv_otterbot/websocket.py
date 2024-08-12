@@ -117,7 +117,7 @@ class WebSocketConn:
                 await asyncio.sleep(_HEARTBEAT_INTERVAL)
                 await ws.send(_get_heartbeat_event(self.__bot_id))
             except Exception as e:
-                logger.error(f"发送心跳事件失败：{e}")
+                logger.warning(f"发送心跳事件失败：{e}")
 
     async def __handle_disconnect(self):
         self.__connect = False
@@ -128,7 +128,7 @@ class WebSocketConn:
             except asyncio.CancelledError:
                 logger.info("send_task已取消")
             except Exception as e:
-                logger.error(f"send_task 错误: {e}")
+                logger.warning(f"send_task 错误: {e}")
 
         if self.__recv_task:
             self.__recv_task.cancel()
@@ -137,7 +137,7 @@ class WebSocketConn:
             except asyncio.CancelledError:
                 logger.info("recv_task已取消")
             except Exception as e:
-                logger.error(f"recv_task 错误: {e}")
+                logger.warning(f"recv_task 错误: {e}")
 
         if self.__heartbeat:
             self.__heartbeat.cancel()
@@ -146,7 +146,7 @@ class WebSocketConn:
             except asyncio.CancelledError:
                 logger.info("heartbeat已取消")
             except Exception as e:
-                logger.error(f"heartbeat 错误: {e}")
+                logger.warning(f"heartbeat 错误: {e}")
 
         try:
             await self.__websocket.close()
