@@ -11,15 +11,13 @@ from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters import Event
 from websockets import WebSocketClientProtocol
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
-from migang.core.manager import group_bot_manager
-
-_HEARTBEAT_INTERVAL = 3
+_HEARTBEAT_INTERVAL = 30
 
 
-def _get_heartbeat_event(bot_id: int) -> str:
+def _get_heartbeat_event(bot_id: str) -> str:
     data = {
         "post_type": "meta_event",
         "meta_event_type": "heartbeat",
@@ -64,6 +62,7 @@ class WebSocketConn:
         self.__queue = Queue()
         self.__url = url
         self.__bot_id = bot_id
+        self.__bot_id_str = str(bot_id)
         self.__access_token = access_token
         self.__send_task = None
         self.__recv_task = None
@@ -158,8 +157,6 @@ class WebSocketConn:
         await self.__handle_disconnect()
 
     async def forwardEvent(self, event: Event):
-        if hasattr(event, "self_id"):
-            event.self_id = self.__bot_id
         await self.__queue.put(event)
 
     async def _call_api(self, raw_data: str) -> Any:
@@ -170,11 +167,7 @@ class WebSocketConn:
             action = data["action"]
             _proccess_api(action=action, data=data)
             params = data["params"]
-            bot: Bot
-            if params and (group_id := params.get("group_id")):
-                bot = group_bot_manager.get_bot(group_id=group_id)
-            else:
-                bot = get_bot()
+            bot = get_bot(self.__bot_id_str)
             resp = await bot.call_api(data["action"], **params)
             resp_data = _build_ret_msg(resp)
             if echo:
