@@ -80,7 +80,7 @@ class GroupBotManager:
         bot_dict: Dict[int, Bot] = {}
         for k, v in self.__group_bot.items():
             if v:
-                bot_id = v[0]
+                bot_id = random.choice(v)  # 随机获取本群可用bot
                 if bot_id not in bot_dict:
                     bot_dict[bot_id] = get_bot(str(bot_id))
                 group_list.append((bot_dict[bot_id], k))
