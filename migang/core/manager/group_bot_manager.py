@@ -50,16 +50,17 @@ class GroupBotManager:
             self.__group_bot[group_id] = []
         self.__group_bot[group_id].append(bot_id)
 
-    async def refreshAll(self):
+    async def refreshAll(self) -> bool:
         logger.info("开始刷新群")
         bots = get_bots().values()
         group_bot_temp = {}
         for bot in bots:
             if not await self.__add_bot(bot, group_bot_temp):
-                return
+                return False
             await asyncio.sleep(12.06)
         self.__group_bot = group_bot_temp
         logger.info("群刷新结束")
+        return True
 
     def check_group_bot(self, group_id: int, bot_id: int) -> bool:
         """检查群机器人，取list中的第一个
