@@ -99,6 +99,7 @@ plugins = [
     "nonebot_plugin_sentry",
     "nonebot_plugin_word_bank2",
     "nonebot_bison",
+    "nonebot_plugin_memes",
     "nonebot_plugin_shindan",
     "nonebot_plugin_remake",
     "nonebot_plugin_emojimix",
