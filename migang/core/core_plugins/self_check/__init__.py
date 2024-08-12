@@ -15,7 +15,6 @@ __plugin_meta__ = PluginMetadata(
     description="检查所在服务器状态",
     usage="""
 usage：
-    签到，数据以用户为单位
     指令：
         /ping
         自检（仅超级用户可用）

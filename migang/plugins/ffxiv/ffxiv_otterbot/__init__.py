@@ -1,3 +1,4 @@
+import copy
 import asyncio
 
 from nonebot.drivers import Driver
@@ -48,7 +49,7 @@ def _rule(event: MessageEvent):
 
 
 async def _message_handler(event: MessageEvent):
-    await ws_conn.forwardEvent(event)
+    await ws_conn.forwardEvent(copy.deepcopy(event))
 
 
 @driver.on_startup
