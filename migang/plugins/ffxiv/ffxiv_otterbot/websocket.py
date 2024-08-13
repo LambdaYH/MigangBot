@@ -99,8 +99,6 @@ class WebSocketConn:
                 logger.opt(colors=True).warning(
                     "<y><bg #f8bbd0>与獭窝连接关闭</bg #f8bbd0></y>"
                 )
-                await self.__handle_disconnect()
-                await asyncio.sleep(1)  # 等待重连
             except Exception as e:
                 logger.opt(colors=True).error(
                     f"<y><bg #f8bbd0>连接獭窝发生意料之外的错误：{e}</bg #f8bbd0></y>"
@@ -108,13 +106,19 @@ class WebSocketConn:
                 import traceback
 
                 traceback.print_exc()
-                await asyncio.sleep(15)
+            finally:
+                # 无论哪种异常，都处理断开连接的逻辑
+                await self.__handle_disconnect()
+                # 等待5s重连
+                await asyncio.sleep(5)
 
     async def __send_heartbeat(self, ws: WebSocketClientProtocol):
         while self.__connect:
             try:
                 await asyncio.sleep(_HEARTBEAT_INTERVAL)
                 await ws.send(_get_heartbeat_event(self.__bot_id))
+            except (ConnectionClosedError, ConnectionClosedOK) as e:
+                raise e
             except Exception as e:
                 logger.warning(f"发送心跳事件失败：{e}")
 
@@ -160,7 +164,6 @@ class WebSocketConn:
         await self.__queue.put(event)
 
     async def _call_api(self, raw_data: str) -> Any:
-        echo: str = ""
         try:
             data = ujson.loads(raw_data)
             echo = data.get("echo", "")
@@ -175,11 +178,19 @@ class WebSocketConn:
             logger.info(f"发送獭窝API调用结果：{resp_data}")
             await self.__queue.put(resp_data)
         except Exception as e:
-            logger.error(f"调用api失败：{data}：{e}")
+            logger.error(f"调用api失败：{raw_data}：{e}")
             import traceback
 
             traceback.print_exc()
             # await self.__queue.put({"status": "failed", "echo": echo})
+
+    async def __do_send(self, data, ws: WebSocketClientProtocol):
+        try:
+            await ws.send(data)
+        except (ConnectionClosedError, ConnectionClosedOK) as e:
+            logger.warning(f"ws已断开连接，无法继续发送消息：{e}")
+        except Exception as e:
+            logger.warning(f"ws发送消息失败：{e}")
 
     async def __ws_send(self, ws: WebSocketClientProtocol):
         while self.__connect:
@@ -194,7 +205,7 @@ class WebSocketConn:
                     send_data = ujson.dumps(event)
                 elif isinstance(event, str):
                     send_data = event
-                asyncio.create_task(ws.send(send_data))
+                asyncio.create_task(self.__do_send(send_data, ws))
             except (ConnectionClosedError, ConnectionClosedOK) as e:
                 raise e
             except Exception as e:
