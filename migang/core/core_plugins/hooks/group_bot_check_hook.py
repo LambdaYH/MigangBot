@@ -1,5 +1,6 @@
 from typing import Union
 
+from nonebot import get_bots
 from nonebot.exception import IgnoredException
 from nonebot.message import event_preprocessor
 from nonebot.adapters.onebot.v11 import (
@@ -28,3 +29,5 @@ async def _(
     # 群机器人检查
     if not group_bot_manager.check_group_bot(event.group_id, event.self_id):
         raise IgnoredException("躺~")
+    if event.get_user_id() in get_bots():
+        raise IgnoredException("发抖")
