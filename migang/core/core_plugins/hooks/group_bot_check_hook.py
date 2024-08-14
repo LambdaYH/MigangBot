@@ -18,7 +18,7 @@ from migang.core.manager import group_bot_manager
 
 
 @event_preprocessor
-async def check_group_bot(
+async def _(
     event: Union[
         GroupAdminNoticeEvent,
         GroupBanNoticeEvent,
