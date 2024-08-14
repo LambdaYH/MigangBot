@@ -1,8 +1,10 @@
 import re
-from typing import Tuple
+import asyncio
+from typing import Tuple, Optional
 from time import strftime, localtime
 
 import aiohttp
+from yarl import URL
 from nonebot.log import logger
 from fake_useragent import UserAgent
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
@@ -14,6 +16,31 @@ BVID_PATTERN = re.compile(r"(BV|bv)([a-zA-Z0-9])+")
 
 BANGUMI_API_URL = "https://api.bilibili.com/pgc/view/web/season"
 LIVE_API_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom"
+
+
+async def download_image(url: str) -> Optional[bytes]:
+    for _ in range(5):
+        async with aiohttp.ClientSession(raise_for_status=True) as session:
+            referer = f"{URL(url).scheme}://{URL(url).host}/"
+            headers = {"referer": referer}
+            try:
+                resp = await session.get(url, headers=headers)
+                # 如果图片无法获取到，直接返回
+                if len(await resp.read()) == 0:
+                    return None
+                # 如果图片格式为 SVG ，先转换为 PNG
+                if resp.headers["Content-Type"].startswith("image/svg+xml"):
+                    next_url = str(
+                        URL("https://images.weserv.nl/").with_query(
+                            f"url={url}&output=png"
+                        )
+                    )
+                    return await download_image(next_url)
+                return await resp.read()
+            except Exception as e:
+                logger.warning(f"图片[{url}]下载失败！将重试最多 5 次！\n{e}")
+                await asyncio.sleep(10)
+    return None
 
 
 @parser_manager(
@@ -60,7 +87,7 @@ async def get_video_detail(url: str) -> Tuple[Message, str]:
         )
         + "\n"
         + "[封面] "
-        + MessageSegment.image(cover)
+        + MessageSegment.image(await download_image(cover))
         + "\n"
         + f"URL:{link}"
     )
@@ -121,7 +148,7 @@ async def get_bangumi_detail(url: str) -> Tuple[Message, str]:
         )
         + "\n"
         + "[封面] "
-        + MessageSegment.image(cover)
+        + MessageSegment.image(await download_image(cover))
         + "\n"
         + f"URL:{link}"
     )
@@ -176,7 +203,7 @@ async def get_live_summary(url: str) -> Tuple[Message, str]:
         + f"[主播] {up}\n"
         + f"[分区] {parent_area_name} - {area_name}\n"
         + "[封面] "
-        + MessageSegment.image(cover)
+        + MessageSegment.image(await download_image(cover))
         + "\n"
         + f"URL:https://live.bilibili.com/{room_id}"
     )
