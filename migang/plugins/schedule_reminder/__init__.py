@@ -30,6 +30,8 @@ from nonebot_plugin_datastore import get_session, create_session
 from migang.core import DATA_PATH
 from migang.utils.image import pic_to_bytes
 from migang.utils.file import async_load_data
+from migang.core.manager import group_bot_manager
+from migang.core.exception import NoGroupBotException
 
 from .model import Schedule
 from .data_source import (
@@ -69,7 +71,15 @@ __plugin_category__ = "群功能"
 
 
 async def do_job(group_id: int, user_id: int, msg: str, id_: str, once=False):
-    bot = get_bot()
+    bot: Bot
+    if group_id:
+        try:
+            bot = group_bot_manager.get_bot(group_id=group_id)
+        except NoGroupBotException:
+            logger.warning(f"定时任务{id_}所指定的群{group_id}已不存在")
+            return
+    else:
+        bot = get_bot()
     try:
         if group_id:
             await bot.send_group_msg(

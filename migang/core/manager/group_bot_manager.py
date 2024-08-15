@@ -6,6 +6,8 @@ from nonebot.log import logger
 from nonebot import get_bot, get_bots
 from nonebot.adapters.onebot.v11 import Bot, ActionFailed
 
+from migang.core.exception import NoGroupBotException
+
 
 class GroupBotManager:
     """管理群消息使用哪个机器人处理"""
@@ -95,4 +97,4 @@ class GroupBotManager:
             group_id = int(group_id)
         if group_bots := self.__group_bot.get(group_id):
             return get_bot(str(group_bots[0]))
-        raise Exception(f"该群{group_id}不存在群机器人！！")
+        raise NoGroupBotException(f"该群{group_id}不存在群机器人！！")
