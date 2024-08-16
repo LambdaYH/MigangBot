@@ -55,21 +55,15 @@ __plugin_meta__ = PluginMetadata(
 )
 __plugin_category__ = "好玩的"
 
-__plugin_config__ = [ConfigItem(
-    key = "url",
-    initial_value= "",
-    description="连接地址"
-),
-ConfigItem(
-    key = "access_token",
-    initial_value= "",
-    description="token"
-)
+__plugin_config__ = [
+    ConfigItem(key="url", initial_value="", description="连接地址"),
+    ConfigItem(key="access_token", initial_value="", description="token"),
 ]
 
 driver: Driver = get_driver()
 
 ws_conn: WebSocketConn
+
 
 async def _handler(event: MessageEvent):
     await ws_conn.forwardEvent(event)
@@ -82,8 +76,6 @@ async def setup_ws():
         return
     ascess_token = await get_config("access_token")
     global ws_conn
-    ws_conn = WebSocketConn(
-        url=url, access_token=ascess_token
-    )
+    ws_conn = WebSocketConn(url=url, access_token=ascess_token)
     on_message(block=False, priority=20).append_handler(_handler)
     asyncio.create_task(ws_conn.connect())

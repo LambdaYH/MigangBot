@@ -30,6 +30,7 @@ def _get_heartbeat_event(bot_id: str) -> str:
 def _build_ret_msg(data) -> dict[str, Any]:
     return {"status": "ok", "retcode": 0, "data": data}
 
+
 class WebSocketConn:
     def __init__(self, url: str, access_token: str) -> None:
         self.__queue = Queue()
