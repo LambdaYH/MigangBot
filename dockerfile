@@ -35,7 +35,6 @@ RUN apt-get update \
     && playwright install --with-deps chromium \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-RUN meme download
 RUN arkkit init -SIMG
 
 # set command/entrypoint, adapt to fit your needs
