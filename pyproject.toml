@@ -51,7 +51,6 @@ license = {text = "AGPL-3.0"}
 plugins = [
     "nonebot-plugin-word-bank2>=0.1.8",
     "nonebot-plugin-htmlrender>=0.2.3",
-    "nonebot-plugin-memes>=0.6.1",
     "nonebot-plugin-shindan>=0.5.1",
     "nonebot-plugin-remake>=0.3.3",
     "nonebot-plugin-emojimix>=0.3.1",
@@ -99,7 +98,6 @@ plugins = [
     "nonebot_plugin_sentry",
     "nonebot_plugin_word_bank2",
     "nonebot_bison",
-    "nonebot_plugin_memes",
     "nonebot_plugin_shindan",
     "nonebot_plugin_remake",
     "nonebot_plugin_emojimix",
