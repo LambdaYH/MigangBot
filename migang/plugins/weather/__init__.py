@@ -47,7 +47,7 @@ __plugin_config__ = (
 )
 
 
-weather = on_regex(r".{0,10}?(.*)的?天气(.{0,10})", priority=5, block=True)
+weather = on_regex(r"^.{0,10}?(.{0,10})的?天气(.{0,10})$", priority=5, block=True)
 eorzean_time = on_fullmatch("/et", priority=5, block=True)
 
 
