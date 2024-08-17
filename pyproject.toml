@@ -78,6 +78,7 @@ plugins = [
 
 
 [tool.pdm.resolution.overrides]
+Pillow = ">=10.0.0"
 jieba = "https://files.pythonhosted.org/packages/03/ab/cefe7c598f830dcf920eb1caced13c7b029807c519db18bf089000b249b0/jieba_migang-0.0.1-py3-none-any.whl"
 
 [tool.nonebot]
