@@ -5,7 +5,7 @@ from nonebot.exception import IgnoredException
 from nonebot.message import event_preprocessor
 from nonebot.adapters.onebot.v11 import (
     Bot,
-    MessageSegment,
+    MessageEvent,
     GroupMessageEvent,
     GroupBanNoticeEvent,
     GroupAdminNoticeEvent,
@@ -17,6 +17,7 @@ from nonebot.adapters.onebot.v11 import (
 from migang.core.manager import group_bot_manager
 
 
+# 群聊环境下群机器人检查
 @event_preprocessor
 async def _(
     event: Union[
@@ -34,6 +35,7 @@ async def _(
         raise IgnoredException("发抖")
 
 
+# 群聊环境下群机器人检查
 @event_preprocessor
 async def _(
     bot: Bot,
@@ -52,3 +54,10 @@ async def _(
             if seg.type == "at" and seg.data.get("qq") == bot.self_id:
                 return
     raise IgnoredException("躺~")
+
+
+# 过滤掉所有转发的消息
+@event_preprocessor
+async def _(event: MessageEvent):
+    if event.message and event.message[0].type == "forward":
+        raise IgnoredException("拒绝处理转发消息")
