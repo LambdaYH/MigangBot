@@ -83,6 +83,7 @@ class WebSocketConn:
                         "X-Client-Role": "Universal",
                         "User-Agent": "OneBot",
                     },
+                    max_size=50 * 1024 * 1024,
                 ) as websocket:
                     logger.info("与獭窝已成功建立连接")
                     self.__websocket = websocket
