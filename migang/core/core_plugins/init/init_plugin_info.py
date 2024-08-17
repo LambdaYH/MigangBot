@@ -11,23 +11,22 @@ from migang.core.utils.file_operation import async_load_data, async_save_data
 
 from .utils import get_plugin_list
 
-
-async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
-    try:
-        async with aiohttp.ClientSession() as client:
-            r = await (
-                await client.get(
-                    "https://registry.nonebot.dev/plugins.json",
-                    timeout=30,
-                )
-            ).json(content_type=None)
-    except asyncio.TimeoutError:
-        logger.warning("连接Nonebot2商店超时，无法加载商店插件信息")
-        return {}
-    ret = {}
-    for plugin in r:
-        ret[plugin["module_name"]] = plugin
-    return ret
+# async def _get_store_plugin_list() -> Dict[str, Dict[str, Any]]:
+#     try:
+#         async with aiohttp.ClientSession() as client:
+#             r = await (
+#                 await client.get(
+#                     "https://registry.nonebot.dev/plugins.json",
+#                     timeout=30,
+#                 )
+#             ).json(content_type=None)
+#     except asyncio.TimeoutError:
+#         logger.warning("连接Nonebot2商店超时，无法加载商店插件信息")
+#         return {}
+#     ret = {}
+#     for plugin in r:
+#         ret[plugin["module_name"]] = plugin
+#     return ret
 
 
 async def init_plugin_info():
@@ -104,8 +103,8 @@ async def init_plugin_info():
                 if hasattr(plugin.module, "__plugin_version__")
                 else None
             )
-        if plugin_name in custom_usage:
-            usage = custom_usage[plugin_name]
+        if plugin_name in custom_usage and (u := custom_usage[plugin_name]):
+            usage = u
 
         plugin_type = (
             plugin.module.__getattribute__("__plugin_type__")
