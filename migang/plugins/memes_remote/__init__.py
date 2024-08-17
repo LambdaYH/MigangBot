@@ -55,8 +55,13 @@ driver: Driver = get_driver()
 ws_conn: WebSocketConn
 
 
-async def _handler(event: MessageEvent):
+async def __rule(event: MessageEvent):
     await ws_conn.forwardEvent(event)
+    return False
+
+
+async def _handler():
+    pass
 
 
 @post_init_manager
@@ -67,5 +72,5 @@ async def setup_ws():
     ascess_token = await get_config("access_token")
     global ws_conn
     ws_conn = WebSocketConn(url=url, access_token=ascess_token)
-    on_message(block=False, priority=20).append_handler(_handler)
+    on_message(block=False, priority=20, rule=__rule).append_handler(_handler)
     asyncio.create_task(ws_conn.connect())
