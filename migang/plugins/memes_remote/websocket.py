@@ -99,7 +99,7 @@ class WebSocketConn:
                 await asyncio.sleep(_HEARTBEAT_INTERVAL)
                 await ws.send(_get_heartbeat_event(self.__bot_id))
             except Exception as e:
-                logger.warning(f"发送心跳事件失败：{e}")
+                logger.warning(f"memes：发送心跳事件失败：{e}")
 
     async def __handle_disconnect(self):
         self.__connect = False
@@ -108,32 +108,32 @@ class WebSocketConn:
             try:
                 await self.__send_task
             except asyncio.CancelledError:
-                logger.info("send_task已取消")
+                logger.info("memes：send_task已取消")
             except Exception as e:
-                logger.warning(f"send_task 错误: {e}")
+                logger.warning(f"memes：send_task 错误: {e}")
 
         if self.__recv_task:
             self.__recv_task.cancel()
             try:
                 await self.__recv_task
             except asyncio.CancelledError:
-                logger.info("recv_task已取消")
+                logger.info("memes：recv_task已取消")
             except Exception as e:
-                logger.warning(f"recv_task 错误: {e}")
+                logger.warning(f"memes：recv_task 错误: {e}")
 
         if self.__heartbeat:
             self.__heartbeat.cancel()
             try:
                 await self.__heartbeat
             except asyncio.CancelledError:
-                logger.info("heartbeat已取消")
+                logger.info("memes：heartbeat已取消")
             except Exception as e:
-                logger.warning(f"heartbeat 错误: {e}")
+                logger.warning(f"memes：heartbeat 错误: {e}")
 
         try:
             await self.__websocket.close()
         except Exception as e:
-            logger.info(f"ws连接关闭：{e}")
+            logger.info(f"memes：ws连接关闭：{e}")
 
     async def stop(self):
         self.__stop_flag = False
@@ -149,16 +149,16 @@ class WebSocketConn:
             echo = data.get("echo", "")
             action = data["action"]
             params = data["params"]
-            _proccess_api(action, data)
+            _proccess_api(data)
             bot = get_bot(str(params.get("__self_id__")))
-            resp = await bot.call_api(data["action"], **params)
+            resp = await bot.call_api(action, **params)
             resp_data = _build_ret_msg(resp)
             if echo:
                 resp_data["echo"] = echo
             logger.info(f"发送memesAPI调用结果：{resp_data}")
             await self.__queue.put(resp_data)
         except Exception as e:
-            logger.error(f"调用api失败：{data}：{e}")
+            logger.error(f"memes：调用api失败：{data}：{e}")
             import traceback
 
             traceback.print_exc()

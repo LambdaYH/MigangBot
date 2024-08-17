@@ -171,7 +171,7 @@ class WebSocketConn:
             _proccess_api(action=action, data=data)
             params = data["params"]
             bot = get_bot(self.__bot_id_str)
-            resp = await bot.call_api(data["action"], **params)
+            resp = await bot.call_api(action, **params)
             resp_data = _build_ret_msg(resp)
             if echo:
                 resp_data["echo"] = echo
@@ -215,7 +215,7 @@ class WebSocketConn:
         while self.__connect:
             try:
                 raw_data = await ws.recv()
-                logger.info(f"收到獭窝信息：{raw_data}")
+                logger.info(f"收到獭窝信息：{raw_data[:200]}")
                 asyncio.create_task(self._call_api(raw_data))
             except (ConnectionClosedError, ConnectionClosedOK) as e:
                 raise e

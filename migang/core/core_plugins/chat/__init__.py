@@ -50,9 +50,8 @@ __plugin_config__ = (
 
 
 chat = on_message(rule=to_me(), priority=998, permission=GROUP)
-message_manager = MessageManager(hello, anti_zuichou, get_gpt_chat, no_result)
+message_manager = MessageManager(hello, anti_zuichou, no_result)
 # 没at时候把消息送给naturel_gpt处理
-on_message(priority=998, block=False, rule=not_at_rule).append_handler(do_chat)
 
 
 @chat.handle()
