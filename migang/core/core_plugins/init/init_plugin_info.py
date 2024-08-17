@@ -56,30 +56,30 @@ async def init_plugin_info():
             # logger.info(f"未将 {plugin_name} 加入插件控制")
             name = plugin_name
             if f"{plugin_name}.json" not in plugin_file_list:
-                if store_plugin_list is None:
-                    store_plugin_list = await _get_store_plugin_list()
-                # 从商店加载
-                if plugin_name in store_plugin_list:
-                    p = store_plugin_list[plugin_name]
-                    name = p["name"]
-                    usage = p["desc"]
-                    author = p["author"]
-                    custom_usage[plugin_name] = usage
-                    try:
-                        async with aiohttp.ClientSession() as client:
-                            async with await client.get(
-                                f"https://pypi.org/pypi/{p['project_link']}/json",
-                                timeout=10,
-                            ) as r:
-                                r = await r.json()
-                                version = r["info"]["version"]
-                    except Exception as e:
-                        logger.warning(f"从pypi读取 {plugin_name} 版本信息失败：{e}")
-                else:
-                    custom_usage[plugin_name] = None
-                    logger.warning(
-                        f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
-                    )
+                # if store_plugin_list is None:
+                #     store_plugin_list = await _get_store_plugin_list()
+                # # 从商店加载
+                # if plugin_name in store_plugin_list:
+                #     p = store_plugin_list[plugin_name]
+                #     name = p["name"]
+                #     usage = p["desc"]
+                #     author = p["author"]
+                #     custom_usage[plugin_name] = usage
+                #     try:
+                #         async with aiohttp.ClientSession() as client:
+                #             async with await client.get(
+                #                 f"https://pypi.org/pypi/{p['project_link']}/json",
+                #                 timeout=10,
+                #             ) as r:
+                #                 r = await r.json()
+                #                 version = r["info"]["version"]
+                #     except Exception as e:
+                #         logger.warning(f"从pypi读取 {plugin_name} 版本信息失败：{e}")
+                # else:
+                custom_usage[plugin_name] = None
+                logger.warning(
+                    f"无法读取插件 {plugin_name} 信息，请检查插件信息是否正确定义或修改data/core/plugin_manager/{plugin_name}.json后重新启动"
+                )
                 custom_usage_modified = True
         if metadata := plugin.metadata:
             version = metadata.extra.get("version")
