@@ -56,7 +56,7 @@ ws_conn: WebSocketConn
 
 
 async def __rule(event: MessageEvent):
-    await ws_conn.forwardEvent(event)
+    asyncio.create_task(ws_conn.forwardEvent(event))
     return False
 
 
