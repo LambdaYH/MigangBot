@@ -1,4 +1,5 @@
 import time
+import random
 import asyncio
 from typing import Any
 from asyncio import Queue
@@ -45,7 +46,7 @@ class WebSocketConn:
     def __init__(self, url: str, access_token: str) -> None:
         self.__queue = Queue()
         self.__url = url
-        self.__bot_id = 12345
+        self.__bot_id = int("".join([str(random.randint(0, 9)) for _ in range(10)]))
         self.__access_token = access_token
         self.__send_task = None
         self.__recv_task = None
