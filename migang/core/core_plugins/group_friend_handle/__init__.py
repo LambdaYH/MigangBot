@@ -271,7 +271,10 @@ async def _(bot: Bot, event: GroupRequestEvent):
             logger.info(f"拒绝入群请求失败：{event.group_id}")
     else:
         if hint := await get_config("group_request_hint"):
-            await bot.send_private_msg(user_id=event.user_id, message=Message(hint))
+            try:
+                await bot.send_private_msg(user_id=event.user_id, message=Message(hint))
+            except ActionFailed:
+                pass
         await request_manager.add(
             self_id=bot.self_id,
             user_name=user_name,
