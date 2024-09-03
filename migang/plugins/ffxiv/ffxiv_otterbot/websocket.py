@@ -11,8 +11,8 @@ from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters import Event
 from websockets import WebSocketClientProtocol
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 
 _HEARTBEAT_INTERVAL = 30
 
@@ -162,6 +162,10 @@ class WebSocketConn:
         await self.__handle_disconnect()
 
     async def forwardEvent(self, event: Event):
+        if isinstance(event, MessageEvent):
+            for seg in event.message:
+                if seg.type == "image":
+                    seg.data.pop("file_size")
         await self.__queue.put(event)
 
     async def _call_api(self, raw_data: str) -> Any:
