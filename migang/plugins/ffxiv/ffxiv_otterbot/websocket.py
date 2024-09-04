@@ -11,6 +11,7 @@ from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters import Event
 from websockets import WebSocketClientProtocol
+from nonebot.adapters.onebot.v11.utils import unescape
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 
@@ -162,10 +163,6 @@ class WebSocketConn:
         await self.__handle_disconnect()
 
     async def forwardEvent(self, event: Event):
-        if isinstance(event, MessageEvent):
-            for seg in event.message:
-                if seg.type == "image":
-                    seg.data.pop("file_size")
         await self.__queue.put(event)
 
     async def _call_api(self, raw_data: str) -> Any:
@@ -204,7 +201,7 @@ class WebSocketConn:
                 send_data: str
                 if isinstance(event, BaseModel):
                     send_data = event.model_dump()
-                    send_data["message"] = send_data["raw_message"]
+                    send_data["message"] = unescape(send_data["raw_message"])
                     send_data = ujson.dumps(send_data)
                 elif isinstance(event, dict):
                     send_data = ujson.dumps(event)
