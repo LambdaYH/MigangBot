@@ -347,7 +347,7 @@ class BaseWeiboSpider:
         try:
             latest_weibos = []
             js = await self.get_weibo_json()
-            if js["ok"]:
+            if js and js["ok"]:
                 weibos = js["data"]["cards"]
                 for w in weibos:
                     if (
@@ -426,7 +426,7 @@ class UserWeiboSpider(BaseWeiboSpider):
             js = await self.get_json(
                 api_url, params={"type": "uid", "value": self.__user_id}
             )
-            if js["ok"]:
+            if js and js["ok"]:
                 info = js["data"]["userInfo"]
                 self.__user_name = info.get("screen_name")
         except Exception as e:
