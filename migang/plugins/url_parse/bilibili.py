@@ -39,7 +39,7 @@ async def download_image(url: str) -> Optional[bytes]:
                 return await resp.read()
             except Exception as e:
                 logger.warning(f"图片[{url}]下载失败！将重试最多 5 次！\n{e}")
-                await asyncio.sleep(10)
+                await asyncio.sleep(1)
     return None
 
 
@@ -195,16 +195,14 @@ async def get_live_summary(url: str) -> Tuple[Message, str]:
     else:
         real_status = "[未开播]"
     cover = res["room_info"]["cover"]
-
     msg = (
         real_status
         + "\n"
         + f"[标题] {title}\n"
         + f"[主播] {up}\n"
-        + f"[分区] {parent_area_name} - {area_name}\n"
-        + "[封面] "
-        + MessageSegment.image(await download_image(cover))
-        + "\n"
-        + f"URL:https://live.bilibili.com/{room_id}"
+        + f"[分区] {parent_area_name} - {area_name}"
     )
+    if cover:
+        msg += "\n[封面] " + MessageSegment.image(await download_image(cover))
+    msg += f"\nURL:https://live.bilibili.com/{room_id}"
     return msg, link
