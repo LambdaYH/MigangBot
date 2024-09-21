@@ -1,7 +1,7 @@
 from io import BytesIO
 from typing import Annotated
 
-import aiohttp
+import httpx
 from pyzbar import pyzbar
 from nonebot import on_command
 from nonebot.typing import T_State
@@ -90,10 +90,10 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
     url_list = []
 
-    async with aiohttp.ClientSession() as client:
+    async with httpx.AsyncClient() as client:
         for i in image_url:
             img = await client.get(i, timeout=15)
-            urls = "\n".join(decode(await img.read()))
+            urls = "\n".join(decode(img.content))
             if not urls:
                 continue
             url_list.append(urls)

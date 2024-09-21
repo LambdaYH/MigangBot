@@ -1,8 +1,6 @@
 """初始化插件各数据
 """
 
-# 修复ssl握手错误
-import ssl
 import asyncio
 
 from nonebot import logger, get_driver
@@ -17,14 +15,6 @@ from .init_plugin_info import init_plugin_info
 from .init_plugin_task import init_plugin_task
 from .init_plugin_count import init_plugin_count
 from .init_plugin_config import init_plugin_config
-
-SSL_CONTEXT = ssl.create_default_context()
-SSL_CONTEXT.set_ciphers("DEFAULT")
-SSL_CONTEXT.options |= ssl.OP_NO_SSLv2
-SSL_CONTEXT.options |= ssl.OP_NO_SSLv3
-SSL_CONTEXT.options |= ssl.OP_NO_TLSv1
-SSL_CONTEXT.options |= ssl.OP_NO_TLSv1_1
-SSL_CONTEXT.options |= ssl.OP_NO_COMPRESSION
 
 
 @get_driver().on_startup

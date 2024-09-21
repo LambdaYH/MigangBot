@@ -4,7 +4,7 @@ import hashlib
 from typing import Any, Dict, List
 from datetime import datetime, timedelta
 
-import aiohttp
+import httpx
 import aiofiles
 from croniter import croniter
 from pydantic import TypeAdapter
@@ -19,20 +19,21 @@ image_dir.mkdir(exist_ok=True, parents=True)
 
 
 async def cache_file(msg: Message):
-    async with aiohttp.ClientSession() as client:
+    async with httpx.AsyncClient() as client:
         await asyncio.gather(
             *[cache_image_url(seg, client) for seg in msg if seg.type == "image"]
         )
 
 
-async def cache_image_url(seg: MessageSegment, client: aiohttp.ClientSession):
+async def cache_image_url(seg: MessageSegment, client: httpx.AsyncClient):
     if url := seg.data.get("url"):
         for _ in range(3):
             try:
-                r = await client.get(url)
-                data = await r.read()
+                response = await client.get(url)
+                response.raise_for_status()  # 确保请求成功
+                data = response.content
                 break
-            except asyncio.TimeoutException:
+            except (httpx.TimeoutException, httpx.HTTPStatusError):
                 await asyncio.sleep(0.5)
         seg.type = "cached_image"
     else:
