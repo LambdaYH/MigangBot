@@ -26,7 +26,7 @@ nuannuan_text = []
 url = "https://docs.qq.com/sheet/DY2lCeEpwemZESm5q?tab=dewveu&c=A1A0A0"
 
 headers = {
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.33"
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
 }
 
 nuannuan_start_time = datetime(
@@ -41,7 +41,7 @@ def get_data():
 async def get_nuannuan_image() -> None:
     try:
         async with get_new_page(viewport={"width": 2560, "height": 2560}) as page:
-            await page.goto(url)
+            await page.goto(url, timeout=60 * 1000)
             card = await page.wait_for_selector(".main-board", timeout=60 * 1000)
             img = await card.screenshot()
             if img:
