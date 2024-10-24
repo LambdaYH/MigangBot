@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:baca3ad4f0c389111084d35a1121ec0ad13f55549d4ea8efd1196eaf426eedfe"
+content_hash = "sha256:2a2992023967fb29c00eb2792a9bc4db97d8e0bdcbb06ed64777b01601fd5411"
 
 [[metadata.targets]]
 requires_python = "~=3.10"
@@ -2931,22 +2931,6 @@ dependencies = [
 files = [
     {file = "nonebot_plugin_waiter-0.8.0-py3-none-any.whl", hash = "sha256:eabf284f783a1e534591a552139a747623e621453a790b554854bc8a386f783f"},
     {file = "nonebot_plugin_waiter-0.8.0.tar.gz", hash = "sha256:b750f2a3b255ebe9ab7ce75056c1e829281d898c6da8d81552147df2b1686270"},
-]
-
-[[package]]
-name = "nonebot-plugin-withdraw"
-version = "0.4.0"
-requires_python = "<4.0,>=3.9"
-summary = "A simple withdraw plugin for Nonebot2"
-groups = ["plugins"]
-dependencies = [
-    "nonebot-plugin-alconna>=0.51.4",
-    "nonebot-plugin-session<0.4.0,>=0.3.0",
-    "nonebot2<3.0.0,>=2.3.0",
-]
-files = [
-    {file = "nonebot_plugin_withdraw-0.4.0-py3-none-any.whl", hash = "sha256:0e722fe6530a7dd13034907cbf4e852c90a6676b6f0e106b5b8a726394376fd1"},
-    {file = "nonebot_plugin_withdraw-0.4.0.tar.gz", hash = "sha256:753363493019bf1ec5a74c4799bc7eeb702f0886bd2706b125f8c7c1f1a10ebc"},
 ]
 
 [[package]]
