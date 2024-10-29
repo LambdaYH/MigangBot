@@ -59,7 +59,10 @@ async def get_item_id(
     if name_lang == "cn":
         url = "https://cafemaker.wakingsands.com/search"
     r = await client.get(url=url, timeout=30, params=params)
-    result = (await r.json())["Results"]
+    rjson = await r.json()
+    if rjson.get("ExCode") == 500:
+        return None, -1
+    result = rjson["Results"]
     if len(result) > 0:
         result = max(
             result,
