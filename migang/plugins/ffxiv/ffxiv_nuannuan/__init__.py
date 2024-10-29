@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import (
     PrivateMessageEvent,
 )
 
-from .data_source import get_data
+from .data_source import get_data, get_cur_phase
 
 __plugin_meta__ = PluginMetadata(
     name="最终幻想14时尚品鉴",
@@ -34,9 +34,12 @@ ffxiv_nuannuan = on_fullmatch(
 @ffxiv_nuannuan.handle()
 async def _(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent]):
     nuannuan_image, nuannuan_text = get_data()
+    phase = get_cur_phase()
     msg_list = [
         MessageSegment.node_custom(
-            event.self_id, "暖暖威", "以下数据来自：游玩C攻略站(https://www.youwanc.com/)"
+            event.self_id,
+            "暖暖威",
+            f"当前应为第{phase}周，以下数据来自：游玩C攻略站(https://www.youwanc.com/)",
         ),
         MessageSegment.node_custom(
             event.self_id, "暖暖威", MessageSegment.image(nuannuan_image)
