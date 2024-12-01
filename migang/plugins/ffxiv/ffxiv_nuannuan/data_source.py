@@ -57,10 +57,15 @@ async def get_nuannuan_image() -> None:
                     ):
                         width = i
                         break
-                for i in range(height, -1, -1):
-                    if img.getpixel((0, i))[:3] == (255, 255, 255):
-                        height = i
-                        break
+                repeat_count = 0  # 防抖
+                for i in range(height):
+                    if img.getpixel((0, i))[:3] != (255, 255, 255):
+                        if repeat_count > 5:
+                            height = i
+                            break
+                        repeat_count = repeat_count + 1
+                    else:
+                        repeat_count = 0
                 img = img.crop(((0, 0, width, height)))
                 with BytesIO() as buf:
                     img.save(buf, format="PNG")
