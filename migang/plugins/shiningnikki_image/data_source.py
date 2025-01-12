@@ -29,10 +29,10 @@ async def update_suits_img():
             "https://nikki4.papegames.cn/api/v1/picture",
             headers=headers,
             cookies=cookie,
-            params={"limit": (await r.json())["total"]},
+            params={"limit": (await r.json())["data"]["total"]},
             timeout=5,
         )
-        r = (await r.json())["data"]
+        r = (await r.json())["data"]["data"]
     suits = await async_load_data(DATA_PATH / "suits.json")
     path = DATA_PATH / "suits"
     if not path.exists():
