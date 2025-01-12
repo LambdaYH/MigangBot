@@ -184,6 +184,8 @@ class WebSocketConn:
                 raise e
             except Exception as e:
                 logger.error(f"发送memes信息异常：{e}")
+            finally:
+                self.__queue.task_done()
 
     async def __ws_recv(self, ws: WebSocketClientProtocol):
         while self.__connect:
