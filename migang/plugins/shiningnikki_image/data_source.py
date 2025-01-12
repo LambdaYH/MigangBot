@@ -19,14 +19,14 @@ async def update_suits_img():
         )
         cookie = r.cookies
         r = await client.get(
-            "https://nikki4.papegames.cn/api/yuyue/galaryList?section=4&page=1&latest=1",
+            "https://nikki4.papegames.cn/api/v1/picture",
             headers=headers,
             cookies=cookie,
             params={"limit": 0},
             timeout=5,
         )
         r = await client.get(
-            "https://nikki4.papegames.cn/api/yuyue/galaryList?section=4&page=1&latest=1",
+            "https://nikki4.papegames.cn/api/v1/picture",
             headers=headers,
             cookies=cookie,
             params={"limit": (await r.json())["total"]},
@@ -45,14 +45,14 @@ async def update_suits_img():
         id_ = str(item["id"])
         if id_ not in suits:
             suits[id_] = {
-                "url": item["href"],
+                "url": item["content"],
                 "name": item["title"].strip()
                 if item["title"].strip()
                 else "不愿意透露姓名的大裙子",
             }
             insert_count += 1
         if f"{id_}.jpg" not in img_set:
-            urls.append(item["href"])
+            urls.append(item["content"])
             names.append(f"{id_}.jpg")
     download_count = await async_download_files(
         urls=urls, path=path, names=names, stream=True, concurrency_limit=6
