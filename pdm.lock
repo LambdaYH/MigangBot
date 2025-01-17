@@ -467,17 +467,17 @@ files = [
 
 [[package]]
 name = "azure-cognitiveservices-speech"
-version = "1.41.1"
+version = "1.42.0"
 requires_python = ">=3.7"
 summary = "Microsoft Cognitive Services Speech SDK for Python"
 groups = ["default"]
 files = [
-    {file = "azure_cognitiveservices_speech-1.41.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:ea9d466f236598e37ea3dad1db203a2901ef91b407e435b59d9b22669324074d"},
-    {file = "azure_cognitiveservices_speech-1.41.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:0f52f7852965bb2f5cf9aed0d3c6ef58238867bb6f0287eba95e42e1a513dd74"},
-    {file = "azure_cognitiveservices_speech-1.41.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:70030c6f1c875895eb985de3775f62349aa8687b6616afa9498466e281f178d3"},
-    {file = "azure_cognitiveservices_speech-1.41.1-py3-none-manylinux2014_aarch64.whl", hash = "sha256:94ddda0deb3a9fee58a0a781b09ab8ab95401c5daf9bfc9f84ce8134d3a77055"},
-    {file = "azure_cognitiveservices_speech-1.41.1-py3-none-win32.whl", hash = "sha256:039eec52c0a549a30658fa24a06d42afc6366c47b03b961c0b6f730fd421293e"},
-    {file = "azure_cognitiveservices_speech-1.41.1-py3-none-win_amd64.whl", hash = "sha256:13679949f52f89c263e8b1c6a2d0f384d663917c58b150772cf42b710a01321c"},
+    {file = "azure_cognitiveservices_speech-1.42.0-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:ad45a18ad6973a4fa2dbd4d71ded3a1a02c4dbbf13696b08f7a16f4156dddce7"},
+    {file = "azure_cognitiveservices_speech-1.42.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9105a64a9d83044790f4f8c9358b6ea66a7c042cbd67173db303501782e62d3f"},
+    {file = "azure_cognitiveservices_speech-1.42.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:90890a147499239f37b0b1a5112c51820b90fa2b5adafa0df4da6cc0c211887f"},
+    {file = "azure_cognitiveservices_speech-1.42.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:106fbdb165a215cada47d7e95851e0b9d2755a3f2355369bab4915ad001efe89"},
+    {file = "azure_cognitiveservices_speech-1.42.0-py3-none-win32.whl", hash = "sha256:7d57218beec24360a8b7ce89755c2c133259e3411c233ef0a659b951e4c4c904"},
+    {file = "azure_cognitiveservices_speech-1.42.0-py3-none-win_amd64.whl", hash = "sha256:32076ee03b3b402a2e8841f2c21e5cd54dc3ffbf5af183426344727298c8bbd4"},
 ]
 
 [[package]]
@@ -1344,7 +1344,7 @@ files = [
 
 [[package]]
 name = "emoji"
-version = "2.14.0"
+version = "2.14.1"
 requires_python = ">=3.7"
 summary = "Emoji for Python"
 groups = ["plugins"]
@@ -1352,8 +1352,8 @@ dependencies = [
     "typing-extensions>=4.7.0; python_version < \"3.9\"",
 ]
 files = [
-    {file = "emoji-2.14.0-py3-none-any.whl", hash = "sha256:fcc936bf374b1aec67dda5303ae99710ba88cc9cdce2d1a71c5f2204e6d78799"},
-    {file = "emoji-2.14.0.tar.gz", hash = "sha256:f68ac28915a2221667cddb3e6c589303c3c6954c6c5af6fefaec7f9bdf72fdca"},
+    {file = "emoji-2.14.1-py3-none-any.whl", hash = "sha256:35a8a486c1460addb1499e3bf7929d3889b2e2841a57401903699fef595e942b"},
+    {file = "emoji-2.14.1.tar.gz", hash = "sha256:f8c50043d79a2c1410ebfae833ae1868d5941a67a6cd4d18377e2eb0bd79346b"},
 ]
 
 [[package]]
@@ -2758,36 +2758,35 @@ files = [
 
 [[package]]
 name = "nonebot-plugin-cesaa"
-version = "0.4.2"
+version = "0.5.0"
 requires_python = ">=3.9"
 summary = "为 chatrecorder 添加 send-anything-anywhere 的 PlatformTarget 支持"
 groups = ["plugins"]
 dependencies = [
-    "nonebot-plugin-chatrecorder<0.7.0,>=0.6.0",
-    "nonebot-plugin-send-anything-anywhere>=0.6.0",
+    "nonebot-plugin-chatrecorder>=0.7.0",
+    "nonebot-plugin-send-anything-anywhere>=0.7.1",
     "nonebot2>=2.2.0",
 ]
 files = [
-    {file = "nonebot_plugin_cesaa-0.4.2-py3-none-any.whl", hash = "sha256:9f36b0617b7c46eddd315bc853948ba931fcc78af97cbe56867d513e416f24a6"},
-    {file = "nonebot_plugin_cesaa-0.4.2.tar.gz", hash = "sha256:719460b40c9d9d0ad67630a186e924ef9d6c58fdc4449844162d724b9e3fe808"},
+    {file = "nonebot_plugin_cesaa-0.5.0-py3-none-any.whl", hash = "sha256:3b012631fc3779acfc75297f5ec8b3dca613a777fd47ced202d7d11e9e728a17"},
+    {file = "nonebot_plugin_cesaa-0.5.0.tar.gz", hash = "sha256:f9489fdc26b32c48abba754e401f759a1b633aeeee8bcaaced28bc260d770019"},
 ]
 
 [[package]]
 name = "nonebot-plugin-chatrecorder"
-version = "0.6.2"
+version = "0.7.0"
 requires_python = "<4.0,>=3.9"
 summary = "适用于 Nonebot2 的聊天记录插件"
 groups = ["plugins"]
 dependencies = [
     "nonebot-plugin-localstore<1.0.0,>=0.6.0",
     "nonebot-plugin-orm<1.0.0,>=0.7.0",
-    "nonebot-plugin-session-orm<0.3.0,>=0.2.0",
-    "nonebot-plugin-session<0.4.0,>=0.3.0",
+    "nonebot-plugin-uninfo<1.0.0,>=0.6.1",
     "nonebot2<3.0.0,>=2.3.0",
 ]
 files = [
-    {file = "nonebot_plugin_chatrecorder-0.6.2-py3-none-any.whl", hash = "sha256:70df4bc7bf1a8d9a5e84f6bf8d0c473095a581150e118fb29c340a1abf5e39f3"},
-    {file = "nonebot_plugin_chatrecorder-0.6.2.tar.gz", hash = "sha256:4bdd892eb00e16f3d75e7edfc85b6bfd7e0fd17be82de164bd9b275cc1ea6974"},
+    {file = "nonebot_plugin_chatrecorder-0.7.0-py3-none-any.whl", hash = "sha256:56cfb306cc85c602c8c97e7f1a63328d075ac8fd2349ddefcb501600f416d544"},
+    {file = "nonebot_plugin_chatrecorder-0.7.0.tar.gz", hash = "sha256:5b63a92733307c4cd739bb1bb6d2af949811ff6882ce49e73d42735cfd6e820d"},
 ]
 
 [[package]]
@@ -3094,37 +3093,6 @@ files = [
 ]
 
 [[package]]
-name = "nonebot-plugin-session"
-version = "0.3.2"
-requires_python = "<4.0,>=3.9"
-summary = "Nonebot2 会话信息提取与会话id定义"
-groups = ["plugins"]
-dependencies = [
-    "nonebot2<3.0.0,>=2.3.0",
-    "strenum<0.5.0,>=0.4.15",
-]
-files = [
-    {file = "nonebot_plugin_session-0.3.2-py3-none-any.whl", hash = "sha256:785e74ff656e46d84c4dbbac125f9a9adebcc4b9ff7db700527e6e47d47aabd6"},
-    {file = "nonebot_plugin_session-0.3.2.tar.gz", hash = "sha256:da0dabe9108151052a6e83d9923068d2ec43a93810ad37b264ed65aee2c69f93"},
-]
-
-[[package]]
-name = "nonebot-plugin-session-orm"
-version = "0.2.2"
-requires_python = "<4.0,>=3.9"
-summary = "session 插件 orm 扩展"
-groups = ["plugins"]
-dependencies = [
-    "nonebot-plugin-orm<1.0.0,>=0.7.0",
-    "nonebot-plugin-session<0.4.0,>=0.3.0",
-    "nonebot2<3.0.0,>=2.3.0",
-]
-files = [
-    {file = "nonebot_plugin_session_orm-0.2.2-py3-none-any.whl", hash = "sha256:ab2bbc9fbf245b3e236789aabb2bef4d501dd720d74002744091503d33548ba7"},
-    {file = "nonebot_plugin_session_orm-0.2.2.tar.gz", hash = "sha256:b615df55b00bfb6c37b9e66664e7ebd69deaf921e77a6491c74c9429740414d8"},
-]
-
-[[package]]
 name = "nonebot-plugin-shindan"
 version = "0.6.5"
 requires_python = "<4.0,>=3.9"
@@ -3193,7 +3161,7 @@ files = [
 
 [[package]]
 name = "nonebot-plugin-wordcloud"
-version = "0.8.2"
+version = "0.9.0"
 requires_python = ">=3.9"
 summary = "适用于 NoneBot2 的词云插件"
 groups = ["plugins"]
@@ -3202,17 +3170,17 @@ dependencies = [
     "jieba>=0.42.1",
     "nonebot-plugin-alconna>=0.49.0",
     "nonebot-plugin-apscheduler>=0.4.0",
-    "nonebot-plugin-cesaa<0.5.0,>=0.4.2",
+    "nonebot-plugin-cesaa<0.6.0,>=0.5.0",
     "nonebot-plugin-localstore>=0.6.0",
     "nonebot-plugin-orm>=0.7.0",
-    "nonebot-plugin-session>=0.3.0",
+    "nonebot-plugin-uninfo>=0.6.2",
     "nonebot2[fastapi]>=2.2.0",
     "tzdata",
     "wordcloud>=1.8.1",
 ]
 files = [
-    {file = "nonebot_plugin_wordcloud-0.8.2-py3-none-any.whl", hash = "sha256:0a9a5e3495b3ca827f15f49ac1fa348131d3e7dfd305f07004369a69c3c72073"},
-    {file = "nonebot_plugin_wordcloud-0.8.2.tar.gz", hash = "sha256:db19f85155895d92fb07db31e045b17859c2d862dc49de029aa735a327584ae8"},
+    {file = "nonebot_plugin_wordcloud-0.9.0-py3-none-any.whl", hash = "sha256:a83d5c79935b5f98891e39f1a2fd16209745a24cdb6a2a02813e6ad50d4f6676"},
+    {file = "nonebot_plugin_wordcloud-0.9.0.tar.gz", hash = "sha256:be1b955e62646fa4a21784d86130258593971e59f591fc41c1c3a43712cab75e"},
 ]
 
 [[package]]
@@ -3397,7 +3365,7 @@ files = [
 
 [[package]]
 name = "openai"
-version = "1.59.6"
+version = "1.59.7"
 requires_python = ">=3.8"
 summary = "The official Python library for the openai API"
 groups = ["default"]
@@ -3412,13 +3380,13 @@ dependencies = [
     "typing-extensions<5,>=4.11",
 ]
 files = [
-    {file = "openai-1.59.6-py3-none-any.whl", hash = "sha256:b28ed44eee3d5ebe1a3ea045ee1b4b50fea36ecd50741aaa5ce5a5559c900cb6"},
-    {file = "openai-1.59.6.tar.gz", hash = "sha256:c7670727c2f1e4473f62fea6fa51475c8bc098c9ffb47bfb9eef5be23c747934"},
+    {file = "openai-1.59.7-py3-none-any.whl", hash = "sha256:cfa806556226fa96df7380ab2e29814181d56fea44738c2b0e581b462c268692"},
+    {file = "openai-1.59.7.tar.gz", hash = "sha256:043603def78c00befb857df9f0a16ee76a3af5984ba40cb7ee5e2f40db4646bf"},
 ]
 
 [[package]]
 name = "opencv-python-headless"
-version = "4.10.0.84"
+version = "4.11.0.86"
 requires_python = ">=3.6"
 summary = "Wrapper package for OpenCV python bindings."
 groups = ["default", "plugins"]
@@ -3435,13 +3403,13 @@ dependencies = [
     "numpy>=1.26.0; python_version >= \"3.12\"",
 ]
 files = [
-    {file = "opencv-python-headless-4.10.0.84.tar.gz", hash = "sha256:f2017c6101d7c2ef8d7bc3b414c37ff7f54d64413a1847d89970b6b7069b4e1a"},
-    {file = "opencv_python_headless-4.10.0.84-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:a4f4bcb07d8f8a7704d9c8564c224c8b064c63f430e95b61ac0bffaa374d330e"},
-    {file = "opencv_python_headless-4.10.0.84-cp37-abi3-macosx_12_0_x86_64.whl", hash = "sha256:5ae454ebac0eb0a0b932e3406370aaf4212e6a3fdb5038cc86c7aea15a6851da"},
-    {file = "opencv_python_headless-4.10.0.84-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:46071015ff9ab40fccd8a163da0ee14ce9846349f06c6c8c0f2870856ffa45db"},
-    {file = "opencv_python_headless-4.10.0.84-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:377d08a7e48a1405b5e84afcbe4798464ce7ee17081c1c23619c8b398ff18295"},
-    {file = "opencv_python_headless-4.10.0.84-cp37-abi3-win32.whl", hash = "sha256:9092404b65458ed87ce932f613ffbb1106ed2c843577501e5768912360fc50ec"},
-    {file = "opencv_python_headless-4.10.0.84-cp37-abi3-win_amd64.whl", hash = "sha256:afcf28bd1209dd58810d33defb622b325d3cbe49dcd7a43a902982c33e5fad05"},
+    {file = "opencv-python-headless-4.11.0.86.tar.gz", hash = "sha256:996eb282ca4b43ec6a3972414de0e2331f5d9cda2b41091a49739c19fb843798"},
+    {file = "opencv_python_headless-4.11.0.86-cp37-abi3-macosx_13_0_arm64.whl", hash = "sha256:48128188ade4a7e517237c8e1e11a9cdf5c282761473383e77beb875bb1e61ca"},
+    {file = "opencv_python_headless-4.11.0.86-cp37-abi3-macosx_13_0_x86_64.whl", hash = "sha256:a66c1b286a9de872c343ee7c3553b084244299714ebb50fbdcd76f07ebbe6c81"},
+    {file = "opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6efabcaa9df731f29e5ea9051776715b1bdd1845d7c9530065c7951d2a2899eb"},
+    {file = "opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b"},
+    {file = "opencv_python_headless-4.11.0.86-cp37-abi3-win32.whl", hash = "sha256:f447d8acbb0b6f2808da71fddd29c1cdd448d2bc98f72d9bb78a7a898fc9621b"},
+    {file = "opencv_python_headless-4.11.0.86-cp37-abi3-win_amd64.whl", hash = "sha256:6c304df9caa7a6a5710b91709dd4786bf20a74d57672b3c31f7033cc638174ca"},
 ]
 
 [[package]]
@@ -4621,7 +4589,7 @@ files = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.19.2"
+version = "2.20.0"
 requires_python = ">=3.6"
 summary = "Python client for Sentry (https://sentry.io)"
 groups = ["plugins"]
@@ -4630,24 +4598,24 @@ dependencies = [
     "urllib3>=1.26.11",
 ]
 files = [
-    {file = "sentry_sdk-2.19.2-py2.py3-none-any.whl", hash = "sha256:ebdc08228b4d131128e568d696c210d846e5b9d70aa0327dec6b1272d9d40b84"},
-    {file = "sentry_sdk-2.19.2.tar.gz", hash = "sha256:467df6e126ba242d39952375dd816fbee0f217d119bf454a8ce74cf1e7909e8d"},
+    {file = "sentry_sdk-2.20.0-py2.py3-none-any.whl", hash = "sha256:c359a1edf950eb5e80cffd7d9111f3dbeef57994cb4415df37d39fda2cf22364"},
+    {file = "sentry_sdk-2.20.0.tar.gz", hash = "sha256:afa82713a92facf847df3c6f63cec71eb488d826a50965def3d7722aa6f0fdab"},
 ]
 
 [[package]]
 name = "sentry-sdk"
-version = "2.19.2"
+version = "2.20.0"
 extras = ["loguru"]
 requires_python = ">=3.6"
 summary = "Python client for Sentry (https://sentry.io)"
 groups = ["plugins"]
 dependencies = [
     "loguru>=0.5",
-    "sentry-sdk==2.19.2",
+    "sentry-sdk==2.20.0",
 ]
 files = [
-    {file = "sentry_sdk-2.19.2-py2.py3-none-any.whl", hash = "sha256:ebdc08228b4d131128e568d696c210d846e5b9d70aa0327dec6b1272d9d40b84"},
-    {file = "sentry_sdk-2.19.2.tar.gz", hash = "sha256:467df6e126ba242d39952375dd816fbee0f217d119bf454a8ce74cf1e7909e8d"},
+    {file = "sentry_sdk-2.20.0-py2.py3-none-any.whl", hash = "sha256:c359a1edf950eb5e80cffd7d9111f3dbeef57994cb4415df37d39fda2cf22364"},
+    {file = "sentry_sdk-2.20.0.tar.gz", hash = "sha256:afa82713a92facf847df3c6f63cec71eb488d826a50965def3d7722aa6f0fdab"},
 ]
 
 [[package]]
@@ -5256,7 +5224,7 @@ files = [
 
 [[package]]
 name = "virtualenv"
-version = "20.28.1"
+version = "20.29.0"
 requires_python = ">=3.8"
 summary = "Virtual Python Environment builder"
 groups = ["default", "git"]
@@ -5267,8 +5235,8 @@ dependencies = [
     "platformdirs<5,>=3.9.1",
 ]
 files = [
-    {file = "virtualenv-20.28.1-py3-none-any.whl", hash = "sha256:412773c85d4dab0409b83ec36f7a6499e72eaf08c80e81e9576bca61831c71cb"},
-    {file = "virtualenv-20.28.1.tar.gz", hash = "sha256:5d34ab240fdb5d21549b76f9e8ff3af28252f5499fb6d6f031adac4e5a8c5329"},
+    {file = "virtualenv-20.29.0-py3-none-any.whl", hash = "sha256:c12311863497992dc4b8644f8ea82d3b35bb7ef8ee82e6630d76d0197c39baf9"},
+    {file = "virtualenv-20.29.0.tar.gz", hash = "sha256:6345e1ff19d4b1296954cee076baaf58ff2a12a84a338c62b02eda39f20aa982"},
 ]
 
 [[package]]
