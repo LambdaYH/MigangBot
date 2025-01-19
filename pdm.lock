@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:5083de0e3f6ca4ae36a56c9f65b7104758f27cdadfaa5dd30b462266e7e6224e"
+content_hash = "sha256:1a7eb3feb735aea23c6708cfcf3e7d7f31e0838f365861a67e1aa11e851ea16f"
 
 [[metadata.targets]]
 requires_python = "~=3.10"
@@ -2649,8 +2649,8 @@ files = [
 ]
 
 [[package]]
-name = "nonebot-bison-migang"
-version = "0.1.7"
+name = "nonebot-bison"
+version = "0.9.5"
 requires_python = "<4.0.0,>=3.10"
 summary = "Subscribe message from social medias"
 groups = ["plugins"]
@@ -2677,8 +2677,8 @@ dependencies = [
     "yarl>=1.11.1",
 ]
 files = [
-    {file = "nonebot_bison_migang-0.1.7-py3-none-any.whl", hash = "sha256:2190d96bd7d1e9a8eed6a6bf1ca7b38d44c787d87865ec9b37ecf6591ac62637"},
-    {file = "nonebot_bison_migang-0.1.7.tar.gz", hash = "sha256:f3e0e4a13e8c551e753da9d8bcc6092f51bdbc089e039da5b95b0c7b99a66ab1"},
+    {file = "nonebot_bison-0.9.5-py3-none-any.whl", hash = "sha256:39d5cbc802aedb53bd252aaef19c4c581e5e742cd7e1ae89457b5713f8ad4d35"},
+    {file = "nonebot_bison-0.9.5.tar.gz", hash = "sha256:931a7f0511f1a29b9b10b84ddcd823ee45eaea7068adc72d263602b0358867e6"},
 ]
 
 [[package]]
