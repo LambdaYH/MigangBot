@@ -1,19 +1,12 @@
 #  暂时不启用
 import re
-import base64
-import secrets
-from io import BytesIO
 from typing import Tuple
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 import httpx
-import requests
-from PIL import Image
 from lxml import etree
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
-
-from migang.utils.image import pic_to_b64
+from nonebot.adapters.onebot.v11 import Message
 
 from .utils import parser_manager
 
