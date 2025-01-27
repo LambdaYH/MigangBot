@@ -13,6 +13,8 @@ from sqlalchemy import select
 from pil_utils import BuildImage
 from nonebot_plugin_datastore import create_session
 
+from migang.utils.date import is_new_year
+
 from . import zhanbu_config
 from .model import EorzeanZhanbuRecorder
 
@@ -150,8 +152,7 @@ async def get_luck_num(QID: int) -> int:
     res = md5.hexdigest()
     random.seed(res)
 
-    # # 2024 new year update
-    if today == date(2024, 2, 10):
+    if is_new_year():
         if random.random() < 0.1:
             return 2024
         luck_num = random.randint(0, 100)

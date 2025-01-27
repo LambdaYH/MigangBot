@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:1a7eb3feb735aea23c6708cfcf3e7d7f31e0838f365861a67e1aa11e851ea16f"
+content_hash = "sha256:e2d928645964d8873dee8e2d280d6b7fcfaad892d212ac3b31becc956913d0eb"
 
 [[metadata.targets]]
 requires_python = "~=3.10"
@@ -1357,6 +1357,63 @@ files = [
 ]
 
 [[package]]
+name = "ephem"
+version = "4.1.6"
+summary = "Compute positions of the planets and stars"
+groups = ["default"]
+files = [
+    {file = "ephem-4.1.6-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:682820bf6e5c914c051193f9a3cb35a3f4432e613062d860e9bb43c23adc43f4"},
+    {file = "ephem-4.1.6-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:2cfff027fdd2311a03a6001c5fead25eb4bfe99af1139a999c2c42ee036bdd19"},
+    {file = "ephem-4.1.6-cp310-cp310-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4dbe2740c2d2e1b3a3db69d498681c14fbe2c19690a881209b3b93e489e0df50"},
+    {file = "ephem-4.1.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0ee73ce7d513aece25a0902160dea43ea4af451326d27149a059b00b5ceea3ac"},
+    {file = "ephem-4.1.6-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:101568d96f77142484227881e20b4ca5d32a92c3edee7a91e529e93bc928addc"},
+    {file = "ephem-4.1.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b7143892cf73871182baac3121fc297680e0fbfd556689d23878c0cbcd7124f5"},
+    {file = "ephem-4.1.6-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:7f3abc0d806244ea96b4bc89ed8bbb655fcc141c48ada4ec1f93091dd2213f44"},
+    {file = "ephem-4.1.6-cp310-cp310-musllinux_1_2_i686.whl", hash = "sha256:f4a9a0349acd3e0feaf8fe2e5aab4fcf3a0d0ca1bfa8e7c0e3ae015e25e0cdee"},
+    {file = "ephem-4.1.6-cp310-cp310-musllinux_1_2_s390x.whl", hash = "sha256:8a1b4fdc34869fd5b8d212ad69b73ddaa8a4a907bfe43f7c307d9b2e8b4c2b5c"},
+    {file = "ephem-4.1.6-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:fec931d545be646eab0c7d56c1bd3c71fd9b6b2a34d368457ce6c8f58e7eaba0"},
+    {file = "ephem-4.1.6-cp310-cp310-win32.whl", hash = "sha256:8d357fde411b121d246b6345d21ccb66104b43a9e9b04aa3ba5712256d0e4221"},
+    {file = "ephem-4.1.6-cp310-cp310-win_amd64.whl", hash = "sha256:0fc685c29beec97b800d68171f6bbc6c84f5e0c3d63ec5a68c5d173effe4eca7"},
+    {file = "ephem-4.1.6-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:217d510cf95f1b5f70e95ed379ba12b56321689a7a8802b42f2cdb4b90f8e52b"},
+    {file = "ephem-4.1.6-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:224c67fc5d53a217f7af5b8ded1a91f22d83e4d26f8986553d2cafbe0608e9d8"},
+    {file = "ephem-4.1.6-cp311-cp311-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e02af942f9b93f5be1d8943d65e8ded26871e4a294281c54c84f89e04ff77277"},
+    {file = "ephem-4.1.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fb42efcd08c721ecf338b39e6a1ee8734575928bb570e5ad24b5da00b293751a"},
+    {file = "ephem-4.1.6-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:01f6ae74ce6b4d4abe2c632e6925ccb0a718e8285707f70493d4ac2c14bbb755"},
+    {file = "ephem-4.1.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:97be1fbf6161d45f003cfd1260fc8185feedcb6f54fe01abb0ae2b625e4f0d92"},
+    {file = "ephem-4.1.6-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:19f78dba9ef13c6f8973efdf111fea2cfc92ef8af3e56a17be63f9752d2d2480"},
+    {file = "ephem-4.1.6-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:87ffdb3e4a2aea6c33d60b9d3fa2bdb985494a788fc45eb10fb376cace6f5fa5"},
+    {file = "ephem-4.1.6-cp311-cp311-musllinux_1_2_s390x.whl", hash = "sha256:70cc4c09658a97447cdab070144a661c60e98794fef16e0bb9e7c4a072d260c0"},
+    {file = "ephem-4.1.6-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:6ffa438a5fae5cf346aaee46d20e44a442e004952591d06a06a3104504954a7b"},
+    {file = "ephem-4.1.6-cp311-cp311-win32.whl", hash = "sha256:84d416962d78f5d0b5f18fc5155bf0d7a012f5e9e47b62469000ab4c062de6ca"},
+    {file = "ephem-4.1.6-cp311-cp311-win_amd64.whl", hash = "sha256:1f87cb92288d8ec3e83c1ffae2ca0473a84ab696f5bf518d75622be0394e245d"},
+    {file = "ephem-4.1.6-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:320e825021e589b2a53bac03f057d1344814dc9cc5249bfeacfd8fe322f17032"},
+    {file = "ephem-4.1.6-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:78778ba7ca5a28e3532943eab4584986bc053878e5976e50394e6cb5490e3b3f"},
+    {file = "ephem-4.1.6-cp312-cp312-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bb6b45ae88ddb82219bc06a40b4db8584ab78306ebf239918dde1aa4b97f913c"},
+    {file = "ephem-4.1.6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:179f59cbc37c27b35cbea4833d4993b00080ca10753c5b2dca2e838826f854a2"},
+    {file = "ephem-4.1.6-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4c65dcd6b44572e4f20b02055f69a95b6c591c559dc6a70fca5215fd8ab290f1"},
+    {file = "ephem-4.1.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:10b9688bf56b65fd416ebd95a90c63c8d2412b64495e75139a85e6c216cc5a90"},
+    {file = "ephem-4.1.6-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:440e45209fb26315fa6d8b179dae1968dd446de4e8a8612ad88111694cd8df1b"},
+    {file = "ephem-4.1.6-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:126d6c407793830552c7dcf62f6dccc0c3ef701c4505970a8ab01ecfd70b1a1a"},
+    {file = "ephem-4.1.6-cp312-cp312-musllinux_1_2_s390x.whl", hash = "sha256:bc137b3e9060a77b03e8a4b5ad3d40406599bdddcd7dfb2cd9325971d38b7864"},
+    {file = "ephem-4.1.6-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:25203e20b773ae804333e347da3c286291c6fc95a723a44c1af149cb64938128"},
+    {file = "ephem-4.1.6-cp312-cp312-win32.whl", hash = "sha256:1c845b804ce65f875097a543c2b74f8889e5b5414df01f18ba77c085d524d4c6"},
+    {file = "ephem-4.1.6-cp312-cp312-win_amd64.whl", hash = "sha256:0c0675849f2bc9fca88193c58b376180e9fb7b1d8f2bb764231cbf1ecd40b6b3"},
+    {file = "ephem-4.1.6-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:6b17cc3a5af526c199b497cc7b9942246591b83da4247d83be6bf0baa90123e5"},
+    {file = "ephem-4.1.6-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:513c2b2cc04d53563c6c1b0a86ee9f92d2e5e20a0dd72323f3b4183ae4f9d63c"},
+    {file = "ephem-4.1.6-cp313-cp313-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1348bfd7703084c75a932c10c66e3194b84cf7f31fe6e2afede1367877b601b7"},
+    {file = "ephem-4.1.6-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9bf720a1fd563f476525c714ac4091b6788ad415ffb4727b77d1fbb6b28a831e"},
+    {file = "ephem-4.1.6-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4456d08414729fa8461c6772f5e9ca9b577df86f47dacdaf5fda4f9eab0efd56"},
+    {file = "ephem-4.1.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f87348581588488461af29fe645d36257cf9235838f5a5211cb668215b95b2db"},
+    {file = "ephem-4.1.6-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:b8c807a54814cd3c8d3e00304afdc99d290f754f53c708a656b92490d870bfd4"},
+    {file = "ephem-4.1.6-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:abccd1a7a8ccfea94746a150f5b9f4dd50aa9db0a24ae4e875ecee2215001290"},
+    {file = "ephem-4.1.6-cp313-cp313-musllinux_1_2_s390x.whl", hash = "sha256:84c86bc1a171ddc9bd886fe3f5030638bffe1c808b89e0c7a6aec9aae335a69e"},
+    {file = "ephem-4.1.6-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:9b5552e33b5f63886c74c2731ab15b5f514db1978d80872d7f3230d1903416f0"},
+    {file = "ephem-4.1.6-cp313-cp313-win32.whl", hash = "sha256:636b455486de2262bbd786c53e810db775ab1ebf1ad78f3aae436429a52d1044"},
+    {file = "ephem-4.1.6-cp313-cp313-win_amd64.whl", hash = "sha256:2f96d0ae098d300ebbd0cb7c49fc92bc4629c80c08a3fe5c19cb55cafb89eff4"},
+    {file = "ephem-4.1.6.tar.gz", hash = "sha256:0ed2e4ea76f9db3eede2204adab8af3f1708201c7c04ee8511e710a54ca6425f"},
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.2"
 requires_python = ">=3.7"
@@ -2170,6 +2227,22 @@ files = [
     {file = "lru_dict-1.3.0-pp310-pypy310_pp73-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e5c20f236f27551e3f0adbf1a987673fb1e9c38d6d284502cd38f5a3845ef681"},
     {file = "lru_dict-1.3.0-pp310-pypy310_pp73-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ca3703ff03b03a1848c563bc2663d0ad813c1cd42c4d9cf75b623716d4415d9a"},
     {file = "lru_dict-1.3.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:a9fb71ba262c6058a0017ce83d343370d0a0dbe2ae62c2eef38241ec13219330"},
+]
+
+[[package]]
+name = "lunarcalendar"
+version = "0.0.9"
+requires_python = ">=2.7, <4"
+summary = "A lunar calendar converter, including a number of lunar and solar holidays, mainly from China."
+groups = ["default"]
+dependencies = [
+    "ephem>=3.7.5.3",
+    "python-dateutil>=2.6.1",
+    "pytz",
+]
+files = [
+    {file = "LunarCalendar-0.0.9-py2.py3-none-any.whl", hash = "sha256:5ef25883d73898b37edb54da9e0f04215aaa68b897fd12e9d4b79756ff91c8cb"},
+    {file = "LunarCalendar-0.0.9.tar.gz", hash = "sha256:681142f22fc353c3abca4b25699e3d1aa7083ad1c268dce36ba297eca04bed5a"},
 ]
 
 [[package]]

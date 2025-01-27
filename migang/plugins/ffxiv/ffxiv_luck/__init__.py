@@ -11,6 +11,8 @@ from nonebot.adapters.onebot.v11 import (
     PrivateMessageEvent,
 )
 
+from migang.utils.date import is_new_year
+
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
     name="最终幻想14Luck",
@@ -42,7 +44,7 @@ def get_page_num(user_id: int):
     md5.update(strnum.encode("utf-8"))
     res = md5.hexdigest()
     # 春节
-    if today == datetime.date(2024, 2, 10):
+    if is_new_year():
         daji = [0, 7, 8, 9, 10, 11, 12, 61, 77, 79, 84, 88, 89, 85, 86, 98]
         return daji[int(res.upper(), 16) % len(daji)]
 
