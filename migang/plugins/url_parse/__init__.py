@@ -30,6 +30,7 @@ usage：
 BILIBILI_TASK = "url_parse_bilibili"
 GITHUB_TASK = "url_parse_github_repo_card"
 WEIBO_TASK = "url_parse_weibo_parse"
+# DEFAULT_TASK = "url_default_parse"
 
 
 __plugin_hidden__ = True
@@ -70,7 +71,7 @@ url_parse = on_message(permission=GROUP, priority=22, block=True, rule=_rule)
 async def _(event: GroupMessageEvent, state: T_State):
     msgs = await parser_manager.do_parse(state["parses"])
     for msg in msgs:
-        if msg is not None:
+        if msg is not None and msg:
             try:
                 await url_parse.send(msg)
             except ActionFailed:

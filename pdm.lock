@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:e2d928645964d8873dee8e2d280d6b7fcfaad892d212ac3b31becc956913d0eb"
+content_hash = "sha256:e5f4db5eac3b8223a650732c344d0342a88c71a09a630e63a6bf756e2cfc3cbf"
 
 [[metadata.targets]]
 requires_python = "~=3.10"
@@ -3275,6 +3275,22 @@ files = [
 ]
 
 [[package]]
+name = "nonebot-session-to-uninfo"
+version = "0.0.2"
+requires_python = "<4.0,>=3.9"
+summary = "session 插件到 uninfo 插件的 orm 迁移工具"
+groups = ["default"]
+dependencies = [
+    "alembic<2.0,>=1.13",
+    "sqlalchemy<3.0,>=2.0",
+    "strenum<0.5.0,>=0.4.15",
+]
+files = [
+    {file = "nonebot_session_to_uninfo-0.0.2-py3-none-any.whl", hash = "sha256:6639f252f371ee50f414904011757f480916a771f2cea8dcf5bc24792b168330"},
+    {file = "nonebot_session_to_uninfo-0.0.2.tar.gz", hash = "sha256:10d3540fa85293cdd669065cb3898f07af625e2a640a2ab2fa0360a444eef3ab"},
+]
+
+[[package]]
 name = "nonebot2"
 version = "2.4.1"
 requires_python = "<4.0,>=3.9"
@@ -4864,7 +4880,7 @@ files = [
 name = "strenum"
 version = "0.4.15"
 summary = "An Enum that inherits from str."
-groups = ["plugins"]
+groups = ["default", "plugins"]
 files = [
     {file = "StrEnum-0.4.15-py3-none-any.whl", hash = "sha256:a30cda4af7cc6b5bf52c8055bc4bf4b2b6b14a93b574626da33df53cf7740659"},
     {file = "StrEnum-0.4.15.tar.gz", hash = "sha256:878fb5ab705442070e4dd1929bb5e2249511c0bcf2b0eeacf3bcd80875c82eff"},

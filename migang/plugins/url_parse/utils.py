@@ -73,6 +73,7 @@ class GroupCache:
 class ParserManager:
     def __init__(self) -> None:
         self.__trie: StringTrie[str, Tuple[Callable, str]] = StringTrie()
+        self.__default: List[Callable] = []
         self.__url_cache = GroupCache()
         self.__result_cache: Dict[str, Tuple[Message, str]] = {}
 
@@ -104,14 +105,17 @@ class ParserManager:
         return None
 
     def __call__(
-        self, task_name: str, startswith: Tuple[str, ...], ttl: float = None
+        self, task_name: str, startswith: Tuple[str, ...] = [], ttl: float = None
     ) -> Any:
         def add_parser(func):
-            for starts_url in startswith:
-                self.__trie[starts_url] = (
-                    partial(self.__parser, func=func, ttl=ttl),
-                    task_name,
-                )
+            if not startswith:
+                self.__default.append(partial(self.__parser, func=func, ttl=ttl))
+            else:
+                for starts_url in startswith:
+                    self.__trie[starts_url] = (
+                        partial(self.__parser, func=func, ttl=ttl),
+                        task_name,
+                    )
 
         return add_parser
 
@@ -132,6 +136,9 @@ class ParserManager:
             _, func = self.__trie.longest_prefix(url)
             if func and check_task(group_id=group_id, task_name=func[1]):
                 ret.append(partial(func[0], url=url, group_id=group_id))
+            if len(ret) == 0:
+                for dft_func in self.__default:
+                    ret.append(partial(dft_func, url=url, group_id=group_id))
         return ret
 
     async def do_parse(self, parsers: List[Tuple[Callable, str]]) -> List[Message]:

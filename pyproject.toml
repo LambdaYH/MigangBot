@@ -45,6 +45,7 @@ dependencies = [
     "jieba>=0.42.1",
     "httpx==0.27.2",
     "lunarcalendar>=0.0.9",
+    "nonebot-session-to-uninfo>=0.0.2",
 ]
 requires-python = ">=3.10,<4.0"
 readme = "README.md"
