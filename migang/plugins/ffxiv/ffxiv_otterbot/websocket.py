@@ -78,12 +78,12 @@ class WebSocketConn:
             try:
                 async with websockets.connect(
                     self.__url,
-                    extra_headers={
+                    additional_headers={
                         "Authorization": f"Bearer {self.__access_token}",
                         "X-Self-ID": self.__bot_id,
                         "X-Client-Role": "Universal",
-                        "User-Agent": "OneBot",
                     },
+                    user_agent_header="OneBot",
                     max_size=50 * 1024 * 1024,
                 ) as websocket:
                     logger.info("与獭窝已成功建立连接")
