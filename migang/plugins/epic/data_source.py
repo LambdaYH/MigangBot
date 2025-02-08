@@ -97,6 +97,7 @@ async def get_epic_free(self_id: int) -> Tuple[List, int]:
                                 "VaultOpened",
                                 "DieselStoreFrontWide",
                                 "OfferImageWide",
+                                "GalleryImage",
                             ]
                         ):
                             game_thumbnail = image["url"]
