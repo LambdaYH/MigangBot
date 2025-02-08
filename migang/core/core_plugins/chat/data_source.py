@@ -145,7 +145,7 @@ async def _():
     try:
         async with aiohttp.ClientSession() as session:
             r = await session.get(
-                "https://mirror.ghproxy.com/https://raw.githubusercontent.com/tkgs0/nonebot-plugin-antiinsult/main/nonebot_plugin_antiinsult/curse.json",
+                "https://raw.githubusercontent.com/tkgs0/nonebot-plugin-antiinsult/main/nonebot_plugin_antiinsult/curse.json",
                 timeout=5,
             )
             antiinsult = (await r.json(content_type=None))["curse"]
