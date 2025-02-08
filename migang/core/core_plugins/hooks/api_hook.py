@@ -33,9 +33,9 @@ async def _replace_node(node: MessageSegment, data: MessageSegment) -> None:
 
 
 def _is_need_process(seg: MessageSegment) -> bool:
-    return (seg.type == "image" or seg.type == "record") and seg.data[
-        "file"
-    ].startswith("file")
+    return (seg.type == "image" or seg.type == "record") and (
+        seg.data.get("file") or ""
+    ).startswith("file")
 
 
 @Bot.on_called_api
