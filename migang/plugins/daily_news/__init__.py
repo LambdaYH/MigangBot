@@ -41,10 +41,10 @@ async def get_zaobao() -> MessageSegment:
     for i in range(3):
         try:
             async with aiohttp.ClientSession() as client:
-                r = await client.get("http://dwz.2xb.cn/zaob", timeout=7)
+                r = await client.get("https://60s-api.viki.moe/v2/60s", timeout=7)
                 r = await r.json()
-                if r["code"] == 200:
-                    url = r["imageUrl"]
+                if r["code"] == 200 and (data := r.get("data")):
+                    url = data["image"]
                     img = await client.get(
                         url,
                         headers={"referer": f"{URL(url).scheme}://{URL(url).host}/"},
