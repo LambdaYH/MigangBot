@@ -57,7 +57,7 @@ async def get_zaobao() -> MessageSegment:
     return None
 
 
-@scheduler.scheduled_job("cron", hour="9", minute="9", jitter=50)
+@scheduler.scheduled_job("cron", hour="9", minute="30", jitter=50)
 async def _():
     zaobao = await get_zaobao()
     if not zaobao:
