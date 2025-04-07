@@ -42,7 +42,7 @@ async def _():
 
 async def get_gh_resources(url: str):
     if is_empty_or_none(url):
-        logger.error("链接不得为空")
+        logger.warning("链接不得为空")
         return None
 
     # 拼接代理 URL
@@ -54,10 +54,10 @@ async def get_gh_resources(url: str):
             response.raise_for_status()
             return response
     except httpx.RequestError as e:
-        logger.error(f"请求 {full_url} 异常: {e}")
+        logger.warning(f"请求 {full_url} 异常: {e}")
     except httpx.HTTPStatusError as e:
-        logger.error(f"HTTP状态码错误: {e.response.status_code} - {e.response.text}")
+        logger.warning(f"HTTP状态码错误: {e.response.status_code} - {e.response.text}")
     except Exception as e:
-        logger.error(f"未知异常: {e}")
+        logger.warning(f"未知异常: {e}")
 
     raise Exception(f"请求 {full_url} 失败")
