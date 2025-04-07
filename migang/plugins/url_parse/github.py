@@ -3,6 +3,8 @@ from typing import Tuple
 
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
+from migang.core.utils import http_utils
+
 from .utils import parser_manager
 
 
@@ -14,9 +16,10 @@ async def get_github_repo_card(url: str) -> Tuple[Message, str]:
     info = url[url.find("/") + 1 :].split("/")
     if len(info) < 2:
         raise Exception("非Github仓库链接")
+    image_content = await http_utils.request_gh(
+        f"https://opengraph.githubassets.com/{secrets.token_urlsafe(16)}/{info[0]}/{info[1]}"
+    )
     return (
-        MessageSegment.image(
-            f"https://opengraph.githubassets.com/{secrets.token_urlsafe(16)}/{info[0]}/{info[1]}"
-        ),
+        MessageSegment.image(image_content.content),
         f"https://github.com/{info[0]}/{info[1]}",
     )

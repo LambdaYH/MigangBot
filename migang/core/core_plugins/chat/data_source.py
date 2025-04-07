@@ -13,6 +13,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 
 from migang.core import get_config
 from migang.core.permission import BLACK
+from migang.core.utils import http_utils
 from migang.core.manager import permission_manager
 
 
@@ -143,14 +144,12 @@ async def _():
     data_dir.mkdir(parents=True, exist_ok=True)
     file_path = data_dir / "curse.json"
     try:
-        async with aiohttp.ClientSession() as session:
-            r = await session.get(
-                "https://raw.githubusercontent.com/tkgs0/nonebot-plugin-antiinsult/main/nonebot_plugin_antiinsult/curse.json",
-                timeout=5,
-            )
-            antiinsult = (await r.json(content_type=None))["curse"]
-            async with await anyio.open_file(file_path, "w", encoding="utf8") as f:
-                await f.write(ujson.dumps(antiinsult, ensure_ascii=True))
+        r = await http_utils.request_gh(
+            "https://raw.githubusercontent.com/tkgs0/nonebot-plugin-antiinsult/main/nonebot_plugin_antiinsult/curse.json"
+        )
+        antiinsult = r.json()["curse"]
+        async with await anyio.open_file(file_path, "w", encoding="utf8") as f:
+            await f.write(ujson.dumps(antiinsult, ensure_ascii=True))
     except Exception as e:
         logger.warning(f"更新反嘴臭词失败：{e}，尝试加载已有数据")
         if file_path.exists():

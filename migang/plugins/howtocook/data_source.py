@@ -11,10 +11,10 @@ from pil_utils import BuildImage, text2image
 from tenacity import RetryError, retry, wait_fixed, stop_after_attempt
 
 from migang.core import DATA_PATH
+from migang.core.utils import http_utils
 from migang.utils.file import async_load_data, async_save_data
 
-require("nonebot_plugin_htmlrender")
-from nonebot_plugin_htmlrender import md_to_pic
+from .md_render import md_to_pic
 
 PATH = DATA_PATH / "howtocook"
 IMAGE_PATH = PATH / "image"
@@ -71,49 +71,51 @@ async def update_menu():
     menu_local = await async_load_data(MENU_FILE)
     if "data" not in menu_local:
         menu_local["data"] = {}
-    async with aiohttp.ClientSession() as client:
-        r = await client.get(API_URL)
-        menu_remote = await r.json(content_type=None)
-        # 有变化才更新
-        if "sha" not in menu_local or menu_local["sha"] != menu_remote["sha"]:
-            menu_local["sha"] = menu_remote["sha"]
-            for item in menu_remote["tree"]:
-                path: str = item["path"]
-                # 是个菜谱
-                if path.startswith("dishes") and path.endswith(".md"):
-                    name = path.split("/")[-1].removesuffix(".md")
-                    if (
-                        name not in menu_local["data"]
-                        or menu_local["data"][name]["sha"] != item["sha"]
-                    ):
 
-                        @retry(stop=stop_after_attempt(7), wait=wait_fixed(5))
-                        async def save():
-                            md_text = await (
-                                await client.get(
-                                    f"https://raw.githubusercontent.com/Anduin2017/HowToCook/master/{path}"
-                                )
-                            ).text()
-                            # 放真实的图片链接
-                            prefix_path = f"(https://raw.githubusercontent.com/Anduin2017/HowToCook/master/{'/'.join(path.split('/')[:-1])}/"
-                            md_text = re.sub(
-                                r"\(\.\/([\s\S]+?\.(jpg|png|webp|jpeg))\)",
-                                prefix_path + r"\1)",
-                                md_text,
+    r = await http_utils.request_gh(API_URL)
+    menu_remote = r.json()
+    # 有变化才更新
+    if "sha" not in menu_local or menu_local["sha"] != menu_remote["sha"]:
+        menu_local["sha"] = menu_remote["sha"]
+        for item in menu_remote["tree"]:
+            path: str = item["path"]
+            # 是个菜谱
+            if path.startswith("dishes") and path.endswith(".md"):
+                name = path.split("/")[-1].removesuffix(".md")
+                if (
+                    name not in menu_local["data"]
+                    or menu_local["data"][name]["sha"] != item["sha"]
+                ):
+
+                    @retry(stop=stop_after_attempt(7), wait=wait_fixed(5))
+                    async def save():
+                        md_text = (
+                            await http_utils.request_gh(
+                                f"https://raw.githubusercontent.com/Anduin2017/HowToCook/master/{path}"
                             )
-                            md_image = await md_to_pic(md_text, width=1000)
-                            async with await anyio.open_file(
-                                IMAGE_PATH / f"{name}.png", "wb"
-                            ) as f:
-                                await f.write(md_image)
+                        ).text
+                        # 放真实的图片链接
+                        prefix_path = "(" + http_utils.get_gh_url(
+                            f"https://raw.githubusercontent.com/Anduin2017/HowToCook/master/{'/'.join(path.split('/')[:-1])}/"
+                        )
+                        md_text = re.sub(
+                            r"\(\.\/([\s\S]+?\.(jpg|png|webp|jpeg))\)",
+                            prefix_path + r"\1)",
+                            md_text,
+                        )
+                        md_image = await md_to_pic(md_text, width=1000)
+                        async with await anyio.open_file(
+                            IMAGE_PATH / f"{name}.png", "wb"
+                        ) as f:
+                            await f.write(md_image)
 
-                        try:
-                            await save()
-                            menu_local["data"][name] = {"sha": item["sha"]}
-                        except RetryError:
-                            logger.error(f"{name}的菜单图片下载失败！{traceback.format_exc()}")
-            await generate_menu_image(menu_local["data"])
-            await async_save_data(menu_local, MENU_FILE)
+                    try:
+                        await save()
+                        menu_local["data"][name] = {"sha": item["sha"]}
+                    except RetryError:
+                        logger.error(f"{name}的菜单图片下载失败！{traceback.format_exc()}")
+        await generate_menu_image(menu_local["data"])
+        await async_save_data(menu_local, MENU_FILE)
 
 
 async def update_menu_set(menu: Set[str]):

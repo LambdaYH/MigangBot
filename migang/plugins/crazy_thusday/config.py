@@ -8,6 +8,8 @@ from nonebot.log import logger
 from pydantic import Extra, BaseModel
 from nonebot import get_driver, get_plugin_config
 
+from migang.core.utils import http_utils
+
 try:
     import ujson as json
 except ModuleNotFoundError:
@@ -55,7 +57,13 @@ async def post_check() -> None:
     json_path: Path = crazy_config.crazy_path / "post.json"
 
     url = "https://raw.githubusercontent.com/MinatoAquaCrews/nonebot_plugin_crazy_thursday/master/nonebot_plugin_crazy_thursday/post.json"
-    response = await download_url(url)
+
+    try:
+        response = await http_utils.request_gh(url)
+    except Exception as e:
+        logger.warning("获取crary thusday失败")
+        response = None
+
     if response is None:
         if not json_path.exists():
             logger.warning("Crazy Thursday resource missing! Please check!")

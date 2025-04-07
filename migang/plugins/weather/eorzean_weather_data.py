@@ -8,6 +8,7 @@ from nonebot import Driver, get_driver
 from nonebot_plugin_apscheduler import scheduler
 
 from migang.core import DATA_PATH
+from migang.core.utils import http_utils
 from migang.utils.file import async_load_data, async_save_data
 
 weather_idx_file = DATA_PATH / "eorzean_weather" / "weather_idx.json"
@@ -30,8 +31,7 @@ driver: Driver = get_driver()
 
 async def read_code_location():
     code_location = {}
-    async with aiohttp.ClientSession() as client:
-        data = await (await client.get(url=placeNameUrl, timeout=15)).text()
+    data = (await http_utils.request_gh(placeNameUrl)).text
     c = csv.reader(StringIO(data))
     for row in c:
         if c.line_num <= 3:
@@ -45,8 +45,7 @@ async def read_alter_name():
 
 
 async def update_weather():
-    async with aiohttp.ClientSession() as client:
-        data = await (await client.get(url=weatherUrl, timeout=15)).text()
+    data = (await http_utils.request_gh(weatherUrl)).text
     c = csv.reader(StringIO(data))
     weather_idx.clear()
     for row in c:
@@ -57,8 +56,7 @@ async def update_weather():
 
 
 async def update_weather_rate():
-    async with aiohttp.ClientSession() as client:
-        data = await (await client.get(url=weatherRateUrl, timeout=15)).text()
+    data = (await http_utils.request_gh(weatherRateUrl)).text
     c = csv.reader(StringIO(data))
     for row in c:
         if c.line_num <= 3:
@@ -75,8 +73,7 @@ async def update_weather_rate():
 
 
 async def update_territory_info():
-    async with aiohttp.ClientSession() as client:
-        data = await (await client.get(url=TerritoryTypeUrl, timeout=15)).text()
+    data = (await http_utils.request_gh(TerritoryTypeUrl)).text
     c = csv.reader(StringIO(data))
     codeLocation = await read_code_location()
     a_n = await read_alter_name()
