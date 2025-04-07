@@ -3,6 +3,7 @@ import nonebot
 from nonebot import get_driver
 from nonebot.log import logger
 
+# https://github.com/sky22333/hub-proxy 自建一个
 GH_PROXY_URL: str = ""
 GH_PROXY_HEADERS = {}
 
@@ -40,7 +41,7 @@ async def _():
         GH_PROXY_HEADERS = {}
 
 
-async def get_gh_resources(url: str):
+async def request_gh(url: str):
     if is_empty_or_none(url):
         logger.warning("链接不得为空")
         return None
