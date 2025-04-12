@@ -3,6 +3,8 @@ from nonebot import on_command, on_fullmatch
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import Fullmatch, CommandArg
 
+from migang.core.utils import migangbot_api
+
 from .data_source import get_market_data, handle_item_name_abbr
 
 __plugin_meta__ = PluginMetadata(
@@ -74,5 +76,13 @@ async def _(args: Message = CommandArg()):
     if hq:
         item_name = item_name.replace("hq", "", 1).replace("HQ", "", 1)
     item_name = handle_item_name_abbr(item_name)
-    msg = await get_market_data(server_name, item_name, hq)
+    if migangbot_api.is_use_api():
+        msg = await migangbot_api.get_api_result(
+            "/api/ffxiv/get_market_data",
+            server_name=server_name,
+            item_name=item_name,
+            hq=hq,
+        )
+    else:
+        msg = await get_market_data(server_name, item_name, hq)
     await ffxiv_market.send(msg)

@@ -32,7 +32,7 @@ async def get_data():
 
 async def search_id(glamour_id: int, client: aiohttp.ClientSession) -> Dict[str, Any]:
     try:
-        glamour_url = f"http://api.ffxivsc.cn/glamour/v1/getGlamourInfo?uid=&glamourId={glamour_id}"
+        glamour_url = f"https://api.ffxivsc.cn/glamour/v1/getGlamourInfo?uid=&glamourId={glamour_id}"
         headers = {
             "Host": "api.ffxivsc.cn",
             "Origin": "https://www.ffxivsc.cn",
