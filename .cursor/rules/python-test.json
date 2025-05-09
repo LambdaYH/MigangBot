@@ -1,0 +1,15 @@
+{
+  "name": "Generate Python Test",
+  "description": "为Python模块生成测试文件",
+  "command": {
+    "type": "prompt",
+    "value": "Generate a test file for the Python module at $1. The test should use pytest and include test cases for all public functions and classes in the module."
+  },
+  "variables": [
+    {
+      "name": "module_path",
+      "type": "currentFile"
+    }
+  ],
+  "triggerOn": "custom"
+}

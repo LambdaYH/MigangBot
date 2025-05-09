@@ -1,0 +1,10 @@
+{
+  "name": "Format Python on Save",
+  "description": "使用Black和isort在保存时格式化Python代码",
+  "languages": ["python"],
+  "command": {
+    "type": "shell",
+    "value": "cd $WORKDIR && python -m black $FILE && python -m isort $FILE"
+  },
+  "triggerOn": "onSave"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Python Docstring",
+  "description": "为Python函数自动生成文档字符串",
+  "regex": "def\\s+([a-zA-Z0-9_]+)\\s*\\(([^\\)]*)\\)\\s*:\\s*$",
+  "regexFlags": "gm",
+  "languages": ["python"],
+  "command": {
+    "type": "prompt",
+    "value": "Write a comprehensive docstring for a Python function with the signature 'def $1($2):' in the format of Google style docstring. Include parameters descriptions and return value description if any."
+  },
+  "triggerOn": "onType",
+  "triggerSequence": "\n\"\"\"\n",
+  "conditions": [
+    {
+      "condition": "lineStartsWith",
+      "value": "def "
+    }
+  ]
+}

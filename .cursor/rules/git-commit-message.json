@@ -1,0 +1,15 @@
+{
+  "name": "Generate Git Commit Message",
+  "description": "根据更改自动生成Git提交消息",
+  "command": {
+    "type": "prompt",
+    "value": "Generate a concise and descriptive git commit message based on the changes I've just made. Follow the conventional commit format. The changes are: $1"
+  },
+  "variables": [
+    {
+      "name": "changes",
+      "type": "gitDiff"
+    }
+  ],
+  "triggerOn": "custom"
+}

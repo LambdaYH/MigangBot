@@ -1,0 +1,35 @@
+{
+  "name": "Python Import",
+  "description": "自动导入Python模块",
+  "regex": "([a-zA-Z0-9_]+)",
+  "regexFlags": "g",
+  "priority": 10,
+  "languages": ["python"],
+  "command": {
+    "type": "import",
+    "value": "$1"
+  },
+  "triggerOn": "onTypeOrInsertLine",
+  "conditions": [
+    {
+      "condition": "not isImported",
+      "value": "$1"
+    },
+    {
+      "condition": "not isDefinedVariable",
+      "value": "$1"
+    },
+    {
+      "condition": "not isComment",
+      "value": "$1"
+    },
+    {
+      "condition": "not isString",
+      "value": "$1"
+    },
+    {
+      "condition": "isPythonStandardLibraryOrInRequirements",
+      "value": "$1"
+    }
+  ]
+}

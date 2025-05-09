@@ -1,0 +1,15 @@
+{
+  "name": "Create Nonebot Plugin",
+  "description": "创建新的Nonebot插件基本结构",
+  "command": {
+    "type": "prompt",
+    "value": "Create a new Nonebot2 plugin structure for a plugin named '$1'. Include all necessary files like __init__.py, config.py, handler.py, and any other needed files. The plugin should follow the structure of other plugins in the 'migang/plugins' directory."
+  },
+  "variables": [
+    {
+      "name": "plugin_name",
+      "prompt": "输入插件名称"
+    }
+  ],
+  "triggerOn": "custom"
+}
