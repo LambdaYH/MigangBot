@@ -113,9 +113,11 @@ async def _():
     )
 
 
+from .langchain_tools import tool_manager  # noqa
+
 # ========================= #
-# 把扩展导入
-from .extensions import paint  # noqa
+# langchain实现
+from .langchain_chat import langchain_chatbot  # noqa
 
 # ========================= #
 
