@@ -2,22 +2,136 @@
 name = "migangbot"
 version = "0.1.0"
 description = "基于Nonebot2与go-cqhttp的机器人"
-dependencies = ["nonebot2[fastapi,httpx]>=2.3.2", "pydantic[dotenv]>=1.10.10", "nonebot-adapter-onebot<3.0.0,>=2.3.1", "nonebot-plugin-apscheduler<1.0.0,>=0.3.0", "ujson>=5.8.0", "ruamel-yaml>=0.17.32", "async-lru>=2.0.2", "tortoise-orm[accel,asyncpg]<1.0.0,>=0.19.3", "aiohttp[speedups]>=3.8.4", "lxml>=4.9.2", "tenacity>=8.2.1", "fake-useragent<2.0.0,>=1.1.1", "aiocache<1.0.0,>=0.12.1", "azure-cognitiveservices-speech<2.0.0,>=1.29.0", "deep-translator<2.0.0,>=1.11.4", "pyzbar>=0.1.9", "anyio>=3.7.0", "mcstatus<11.0.0,>=10.0.3", "croniter<2.0.0,>=1.4.1", "python-levenshtein<1.0.0,>=0.21.1", "thefuzz<1.0.0,>=0.19.0", "psutil>=5.9.5", "cattrs<24.0.0,>=23.1.1", "pil-utils==0.1.12", "nb-cli<2.0.0,>=1.1.2", "cn2an<1.0.0,>=0.5.19", "pygal<4.0.0,>=3.0.0", "qrcode<8.0.0,>=7.4.2", "openai>=1.0.0", "cairosvg<3.0.0,>=2.7.0", "cachetools<6.0.0,>=5.3.0", "dateparser<2.0.0,>=1.1.7", "feedparser<7.0.0,>=6.0.10", "uvicorn[standard]>=0.23.2", "nonebot-plugin-orm>=0.7.1", "nonebot-plugin-alconna>=0.41.0", "jieba>=0.42.1", "httpx==0.27.2", "lunarcalendar>=0.0.9", "nonebot-session-to-uninfo>=0.0.2", "langchain-openai>=0.3.18", "langchain>=0.3.25", "langchain-community>=0.3.24", "aerich>=0.9.0"]
+authors = [
+    {name = "LambdaYH", email = "mobai@mobai.one"},
+]
+dependencies = [
+    "nonebot2[fastapi,httpx]>=2.3.2",
+    "pydantic[dotenv]>=1.10.10",
+    "nonebot-adapter-onebot<3.0.0,>=2.3.1",
+    "nonebot-plugin-apscheduler<1.0.0,>=0.3.0",
+    "ujson>=5.8.0",
+    "ruamel-yaml>=0.17.32",
+    "async-lru>=2.0.2",
+    "tortoise-orm[accel,asyncpg]<1.0.0,>=0.19.3",
+    "aiohttp[speedups]>=3.8.4",
+    "lxml>=4.9.2",
+    "tenacity>=8.2.1",
+    "fake-useragent<2.0.0,>=1.1.1",
+    "aiocache<1.0.0,>=0.12.1",
+    "azure-cognitiveservices-speech<2.0.0,>=1.29.0",
+    "deep-translator<2.0.0,>=1.11.4",
+    "pyzbar>=0.1.9",
+    "anyio>=3.7.0",
+    "mcstatus<11.0.0,>=10.0.3",
+    "croniter<2.0.0,>=1.4.1",
+    "python-levenshtein<1.0.0,>=0.21.1",
+    "thefuzz<1.0.0,>=0.19.0",
+    "psutil>=5.9.5",
+    "cattrs<24.0.0,>=23.1.1",
+    "pil-utils==0.1.12",
+    "nb-cli<2.0.0,>=1.1.2",
+    "cn2an<1.0.0,>=0.5.19",
+    "pygal<4.0.0,>=3.0.0",
+    "qrcode<8.0.0,>=7.4.2",
+    "openai>=1.0.0",
+    "cairosvg<3.0.0,>=2.7.0",
+    "cachetools<6.0.0,>=5.3.0",
+    "dateparser<2.0.0,>=1.1.7",
+    "feedparser<7.0.0,>=6.0.10",
+    "uvicorn[standard]>=0.23.2",
+    "nonebot-plugin-orm>=0.7.1",
+    "nonebot-plugin-alconna>=0.41.0",
+    "jieba>=0.42.1",
+    "httpx==0.27.2",
+    "lunarcalendar>=0.0.9",
+    "nonebot-session-to-uninfo>=0.0.2",
+    "langchain-openai>=0.3.18",
+    "langchain>=0.3.25",
+    "langchain-community>=0.3.24",
+]
 requires-python = ">=3.10,<4.0"
 readme = "README.md"
-
-[[project.authors]]
-name = "LambdaYH"
-email = "mobai@mobai.one"
-
-[project.license]
-text = "AGPL-3.0"
+license = {text = "AGPL-3.0"}
 
 [project.optional-dependencies]
-plugins = ["nonebot-plugin-word-bank2>=0.1.8", "nonebot-plugin-htmlrender>=0.2.3", "nonebot-plugin-shindan>=0.5.1", "nonebot-plugin-remake>=0.3.3", "nonebot-plugin-emojimix>=0.3.1", "nonebot-plugin-wordcloud>=0.6.1", "nonebot-plugin-ddcheck>=0.3.1", "nonebot-plugin-handle>=0.3.6", "nonebot-plugin-imagetools>=0.3.0", "nonebot-plugin-cocdicer>=0.4.0", "nonebot-plugin-datastore>=1.0.0", "nonebot-plugin-oddtext>=0.2.0", "nonebot-plugin-gachalogs>=0.2.13", "nonebot-plugin-arkgacha>=0.5.0", "nonebot-plugin-gspanel>=0.2.25", "nonebot-plugin-gscode>=0.1.8", "nonebot-plugin-wordle>=0.3.4", "nonebot-plugin-sentry>=0.4.1", "nonebot-plugin-bottle>=1.0.1", "YetAnotherPicSearch>=2.0.2", "nonebot-plugin-pingti>=0.1.3", "nonebot-bison-migang>=0.1.4"]
+plugins = [
+    "nonebot-plugin-word-bank2>=0.1.8",
+    "nonebot-plugin-htmlrender>=0.2.3",
+    "nonebot-plugin-shindan>=0.5.1",
+    "nonebot-plugin-remake>=0.3.3",
+    "nonebot-plugin-emojimix>=0.3.1",
+    "nonebot-plugin-wordcloud>=0.6.1",
+    "nonebot-plugin-ddcheck>=0.3.1",
+    "nonebot-plugin-handle>=0.3.6",
+    "nonebot-plugin-imagetools>=0.3.0",
+    "nonebot-plugin-cocdicer>=0.4.0",
+    "nonebot-plugin-datastore>=1.0.0",
+    "nonebot-plugin-oddtext>=0.2.0",
+    "nonebot-plugin-gachalogs>=0.2.13",
+    "nonebot-plugin-arkgacha>=0.5.0",
+    "nonebot-plugin-gspanel>=0.2.25",
+    "nonebot-plugin-gscode>=0.1.8",
+    "nonebot-plugin-wordle>=0.3.4",
+    "nonebot-plugin-sentry>=0.4.1",
+    "nonebot-plugin-bottle>=1.0.1",
+    "YetAnotherPicSearch>=2.0.2",
+    "nonebot-plugin-pingti>=0.1.3",
+    "nonebot-bison-migang>=0.1.4"
+]
+
 
 [tool.pdm.resolution.overrides]
 Pillow = ">=10.0.0"
+
+[tool.nonebot]
+adapters = [
+    { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
+]
+plugins = [
+    "nonebot_plugin_apscheduler",
+    "nonebot_plugin_datastore",
+    "nonebot_plugin_htmlrender",
+    "nonebot_plugin_orm",
+    "nonebot_plugin_alconna",
+    "nonebot_plugin_sentry",
+    "nonebot_plugin_word_bank2",
+    "nonebot_bison",
+    "nonebot_plugin_shindan",
+    "nonebot_plugin_remake",
+    "nonebot_plugin_emojimix",
+    "nonebot_plugin_wordcloud",
+    "nonebot_plugin_ddcheck",
+    "nonebot_plugin_handle",
+    "nonebot_plugin_imagetools",
+    "nonebot_plugin_cocdicer",
+    "nonebot_plugin_oddtext",
+    "nonebot_plugin_gachalogs",
+    "nonebot_plugin_gspanel",
+    "nonebot_plugin_gscode",
+    "nonebot_plugin_wordle",
+    "nonebot_plugin_bottle",
+    "nonebot_plugin_arkgacha",
+    "YetAnotherPicSearch",
+    "nonebot_plugin_pingti"
+]
+plugin_dirs = ["migang/core/core_plugins", "migang/plugins"]
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+extend-exclude = '''
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+length_sort = true
+skip_gitignore = true
+force_sort_within_sections = true
+extra_standard_library = ["typing_extensions"]
+
+[tool.pdm]
 
 [tool.pdm.build]
 includes = []
@@ -29,33 +143,16 @@ update = ["--update-eager"]
 install = "pdm install --prod -G plugins"
 update_db = "nb datastore upgrade"
 start = "nb run"
-
-[tool.pdm.scripts.all]
-composite = ["update_db", "start"]
+all = {composite = ["update_db", "start"]}
 
 [tool.pdm.dev-dependencies]
-format = ["black>=23.3.0", "isort>=5.12.0"]
-git = ["pre-commit>=3.3.3"]
-
-[tool.nonebot]
-plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_datastore", "nonebot_plugin_htmlrender", "nonebot_plugin_orm", "nonebot_plugin_alconna", "nonebot_plugin_sentry", "nonebot_plugin_word_bank2", "nonebot_bison", "nonebot_plugin_shindan", "nonebot_plugin_remake", "nonebot_plugin_emojimix", "nonebot_plugin_wordcloud", "nonebot_plugin_ddcheck", "nonebot_plugin_handle", "nonebot_plugin_imagetools", "nonebot_plugin_cocdicer", "nonebot_plugin_oddtext", "nonebot_plugin_gachalogs", "nonebot_plugin_gspanel", "nonebot_plugin_gscode", "nonebot_plugin_wordle", "nonebot_plugin_bottle", "nonebot_plugin_arkgacha", "YetAnotherPicSearch", "nonebot_plugin_pingti"]
-plugin_dirs = ["migang/core/core_plugins", "migang/plugins"]
-[[tool.nonebot.adapters]]
-name = "OneBot V11"
-module_name = "nonebot.adapters.onebot.v11"
-
-[tool.black]
-line-length = 88
-include = "\\.pyi?$"
-extend-exclude = ""
-
-[tool.isort]
-profile = "black"
-line_length = 88
-length_sort = true
-skip_gitignore = true
-force_sort_within_sections = true
-extra_standard_library = ["typing_extensions"]
+format = [
+    "black>=23.3.0",
+    "isort>=5.12.0",
+]
+git = [
+    "pre-commit>=3.3.3",
+]
 
 [tool.aerich]
 tortoise_orm = "aerich_config_helper.orm_config.TORTOISE_ORM"
