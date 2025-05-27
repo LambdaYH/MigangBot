@@ -52,6 +52,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
         group_id=event.group_id,
         target_id=event.self_id if triggered else None,
         message=record_msg,
+        is_bot=False,  # 用户消息
     ).save()
 
     if triggered:

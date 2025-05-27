@@ -137,7 +137,7 @@ class LangChainChatBot:
             )
 
             if chat.target_id:  # 这是对话消息
-                if chat.user_id == int(bot.self_id):  # bot的回复
+                if getattr(chat, "is_bot", False):  # 机器人回复
                     messages.append(AIMessage(content=message_content))
                 else:  # 用户的消息
                     user_name = await get_user_name(
@@ -291,6 +291,7 @@ class LangChainChatBot:
                     group_id=event.group_id,
                     target_id=event.user_id,
                     message=serialize_message(raw_response),
+                    is_bot=True,  # 机器人消息
                 ).save()
 
                 # 更新印象
