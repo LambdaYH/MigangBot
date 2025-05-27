@@ -1,5 +1,3 @@
-import random
-import asyncio
 import traceback
 from typing import List
 from datetime import datetime
@@ -7,10 +5,10 @@ from datetime import datetime
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from langchain_openai import ChatOpenAI
+from langchain.agents import create_openai_tools_agent
 from langchain_core.messages import AIMessage, HumanMessage
-from langchain.agents import AgentExecutor, create_openai_tools_agent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment, GroupMessageEvent
 
 from migang.core import sync_get_config
 from migang.core.models import ChatGPTChatHistory, ChatGPTChatImpression
@@ -48,10 +46,14 @@ class LangChainChatBot:
             "personality", "chat_chatgpt", "她叫{bot_name}，是一个搭配师"
         )
         self.unlock_content = sync_get_config("unlock_content", "chat_chatgpt", False)
+        self.max_response_per_msg = sync_get_config(
+            "max_response_per_msg", "chat_chatgpt", 5
+        )
 
         self.current_key_index = 0
         self.llm = self._create_llm()
         self.tools = self._create_tools()
+        print("[LangChainChatBot.__init__] 当前注册的工具:", [t.name for t in self.tools])
 
     def _create_llm(self) -> ChatOpenAI:
         """创建langchain的ChatOpenAI实例"""
@@ -118,7 +120,6 @@ class LangChainChatBot:
             [
                 ("system", system_prompt),
                 MessagesPlaceholder(variable_name="chat_history"),
-                ("human", "{input}"),
                 MessagesPlaceholder(variable_name="agent_scratchpad"),
             ]
         )
@@ -281,17 +282,12 @@ class LangChainChatBot:
                 )
 
                 # 执行对话
-                response = await agent_executor.ainvoke(
-                    {
-                        "input": f"{user_name}: {trigger_text}",
-                        "chat_history": chat_history,
-                    }
-                )
+                response = await agent_executor.ainvoke({"chat_history": chat_history})
 
                 raw_response = response["output"]
 
                 # 处理回复内容
-                await self._process_response(matcher, event, bot, raw_response)
+                await self._process_response(matcher, raw_response)
 
                 # 记录回复
                 await ChatGPTChatHistory(
@@ -328,17 +324,13 @@ class LangChainChatBot:
                 else:
                     continue
 
-    async def _process_response(self, matcher, event, bot, response):
+    async def _process_response(self, matcher, response):
         """处理agent的回复内容，兼容Message、MessageSegment、str、CQ码字符串、list"""
         import re
         import random
         import asyncio
 
-        from nonebot.adapters.onebot.v11 import Message, MessageSegment
-
-        max_response_per_msg = sync_get_config(
-            "max_response_per_msg", "chat_chatgpt", 5
-        )
+        from nonebot.adapters.onebot.v11 import Message
 
         # 支持多段回复
         if isinstance(response, list):
@@ -348,46 +340,23 @@ class LangChainChatBot:
         else:
             reply_list = [response]
 
-        for reply in reply_list[:max_response_per_msg]:
-            # 0. Message类型（如paint_image返回）
-            if isinstance(reply, Message):
-                for seg in reply:
-                    await matcher.send(seg)
-                    await asyncio.sleep(random.random() + 1.5)
+        for reply in reply_list[: self.max_response_per_msg]:
+            if not isinstance(reply, str):
+                reply = str(reply)
+
+            reply = reply.strip()
+            if not reply:
                 continue
-            # 1. 直接发送 MessageSegment
-            if isinstance(reply, MessageSegment):
-                await matcher.send(reply)
-                await asyncio.sleep(random.random() + 1.5)
+            # 纯符号跳过
+            if re.match(r"^[^\u4e00-\u9fa5\w]{1}$", reply):
+                logger.debug(f"检测到纯符号文本: {reply}，跳过发送...")
                 continue
-            # 2. 字符串类型
-            if isinstance(reply, str):
-                reply = reply.strip()
-                if not reply:
-                    continue
-                # 2.1 兼容 LLM 直接输出的 CQ:image 字符串
-                if "[CQ:image,file=" in reply:
-                    image_match = re.search(r"\[CQ:image,file=([^\]]+)\]", reply)
-                    if image_match:
-                        image_url = image_match.group(1)
-                        text_part = reply.replace(image_match.group(0), "").strip()
-                        if text_part:
-                            await matcher.send(text_part)
-                            await asyncio.sleep(0.5)
-                        await matcher.send(MessageSegment.image(image_url))
-                        await asyncio.sleep(random.random() + 1.5)
-                        continue
-                # 2.2 纯符号跳过
-                if re.match(r"^[^\u4e00-\u9fa5\w]{1}$", reply):
-                    logger.debug(f"检测到纯符号文本: {reply}，跳过发送...")
-                    continue
-                # 2.3 普通文本
-                await matcher.send(reply)
-                await asyncio.sleep(random.random() + 1.5)
-                continue
-            # 3. 其他类型（兜底转字符串）
-            await matcher.send(str(reply))
+            await matcher.send(Message(reply))
             await asyncio.sleep(random.random() + 1.5)
+
+        if self.max_response_per_msg < len(reply_list):
+            logger.error(f"大模型回复内容过多：{response}")
+            await matcher.send(f"由于内容过多，麦克风被抢走了...")
 
 
 # 全局实例

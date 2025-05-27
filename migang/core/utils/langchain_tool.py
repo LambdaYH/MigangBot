@@ -4,6 +4,8 @@ from langchain_core.tools import tool
 from nonebot.matcher import current_matcher
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
+from migang.core.core_plugins.chat.chatgpt.langchain_tools import tool_manager
+
 
 def nb_langchain_tool(func):
     @tool
@@ -14,7 +16,9 @@ def nb_langchain_tool(func):
             matcher = current_matcher.get(None)
             if matcher is not None:
                 await matcher.send(result)
-                return "工具调用内容已返回给用户，无需再发送任何相关的内容"
+                return "工具调用内容已发送"
+
         return result
 
+    tool_manager.register_tool(wrapper)
     return wrapper

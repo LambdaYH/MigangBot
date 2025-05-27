@@ -113,6 +113,7 @@ async def _():
     )
 
 
+from .tools import *
 from .langchain_tools import tool_manager  # noqa
 
 # ========================= #

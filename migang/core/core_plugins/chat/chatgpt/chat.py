@@ -11,16 +11,6 @@ from migang.core.models import ChatGPTChatHistory
 
 from .utils import get_bot_name, gen_chat_text, get_user_name, serialize_message
 
-ignore_prefix: Tuple[str] = tuple(
-    sync_get_config("ignore_prefix", plugin_name="chat_chatgpt", default_value=[]) or []
-)
-openai_timeout: int = sync_get_config(
-    "timeout", plugin_name="chat_chatgpt", default_value=60
-)
-max_response_per_msg: int = sync_get_config(
-    "max_response_per_msg", plugin_name="chat_chatgpt", default_value=5
-)
-
 
 async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     sender_name = await get_user_name(

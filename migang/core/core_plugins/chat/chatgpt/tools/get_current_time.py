@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from langchain_core.tools import tool
+from migang.core.utils.langchain_tool import nb_langchain_tool
 
 
-@tool
+@nb_langchain_tool
 def get_current_time() -> str:
     """获取当前时间工具，返回当前时间字符串"""
     current_time = datetime.now().strftime("%Y年%m月%d日 %H:%M:%S %A")
