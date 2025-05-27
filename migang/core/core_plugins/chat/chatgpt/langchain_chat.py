@@ -8,9 +8,9 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from langchain.agents import AgentExecutor, create_openai_tools_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment, GroupMessageEvent
 
 from migang.core import sync_get_config
 from migang.core.models import ChatGPTChatHistory, ChatGPTChatImpression
@@ -90,7 +90,13 @@ class LangChainChatBot:
         self, bot_name: str, user_name: str, impression: str
     ) -> ChatPromptTemplate:
         """创建聊天提示模板"""
-        system_prompt = f"""你必须按照用户的指示扮演指定的角色，并以第一人称给出回应信息。如有必要，你可以调用工具来完成任务。
+        tool_hint = (
+            "【工具调用说明】\n"
+            "你可以调用工具来帮助用户。请务必积极调用工具，而不是直接回复文本。\n"
+            "遇到任何你无法直接完成或可以借助工具完成的任务时，也应主动调用工具。\n"
+        )
+        system_prompt = f"""{tool_hint}
+你必须按照用户的指示扮演指定的角色，并以第一人称给出回应信息。
 
 [角色设定]
 {self.personality.format(bot_name=bot_name)}
@@ -268,6 +274,8 @@ class LangChainChatBot:
 
                 # 创建agent
                 agent = create_openai_tools_agent(self.llm, self.tools, prompt)
+                from langchain.agents import AgentExecutor
+
                 agent_executor = AgentExecutor(
                     agent=agent, tools=self.tools, verbose=True
                 )
@@ -321,10 +329,12 @@ class LangChainChatBot:
                     continue
 
     async def _process_response(self, matcher, event, bot, response):
-        """处理agent的回复内容，兼容MessageSegment、str、CQ码字符串、list"""
-        import re  # 保证全函数可用
+        """处理agent的回复内容，兼容Message、MessageSegment、str、CQ码字符串、list"""
+        import re
+        import random
+        import asyncio
 
-        from nonebot.adapters.onebot.v11 import MessageSegment
+        from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
         max_response_per_msg = sync_get_config(
             "max_response_per_msg", "chat_chatgpt", 5
@@ -339,6 +349,12 @@ class LangChainChatBot:
             reply_list = [response]
 
         for reply in reply_list[:max_response_per_msg]:
+            # 0. Message类型（如paint_image返回）
+            if isinstance(reply, Message):
+                for seg in reply:
+                    await matcher.send(seg)
+                    await asyncio.sleep(random.random() + 1.5)
+                continue
             # 1. 直接发送 MessageSegment
             if isinstance(reply, MessageSegment):
                 await matcher.send(reply)
