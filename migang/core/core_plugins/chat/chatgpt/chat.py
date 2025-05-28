@@ -11,6 +11,10 @@ from migang.core.models import ChatGPTChatHistory
 
 from .utils import get_bot_name, gen_chat_text, get_user_name, serialize_message
 
+ignore_prefix: Tuple[str] = tuple(
+    sync_get_config("ignore_prefix", plugin_name="chat_chatgpt", default_value=[]) or []
+)
+
 
 async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     sender_name = await get_user_name(
@@ -37,19 +41,20 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
             {"type": "at", "data": {"qq": bot.self_id}},
             {"type": "text", "data": {"text": " "}},
         ] + record_msg
-    await ChatGPTChatHistory(
-        user_id=event.user_id,
-        group_id=event.group_id,
-        target_id=event.self_id if triggered else None,
-        message=record_msg,
-        is_bot=False,  # 用户消息
-    ).save()
 
     if triggered:
         logger.debug("符合发言条件，开始回复")
         # 保存信息，用于回复
         state["gpt_sender_name"] = sender_name
-        state["gpt_trigger_text"] = chat_text
+        state["gpt_trigger_text"] = record_msg
+    else:
+        await ChatGPTChatHistory(
+            user_id=event.user_id,
+            group_id=event.group_id,
+            target_id=event.self_id if triggered else None,
+            message=record_msg,
+            is_bot=False,  # 用户消息
+        ).save()
     return triggered
 
 

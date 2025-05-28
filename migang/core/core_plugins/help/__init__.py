@@ -70,6 +70,11 @@ command_list = on_command(
 
 @simple_help.handle()
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+    """
+    获取机器人帮助图片或指定插件的帮助信息。
+    参数:
+      args: 插件名，留空则返回总帮助图片。
+    """
     args = args.extract_plain_text()
     if not args:
         image_file: Path
