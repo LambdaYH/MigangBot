@@ -8,6 +8,7 @@ from nonebot.utils import run_sync, is_coroutine_callable
 
 from migang.core.utils import config_operation
 
+from .ssl_fix import *
 from .init_font import load_font
 from .command_check import check_command
 from .init_plugin_cd import init_plugin_cd
