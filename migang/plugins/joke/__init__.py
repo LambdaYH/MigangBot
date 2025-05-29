@@ -29,7 +29,7 @@ usage：
     supported_adapters={"~onebot.v11"},
 )
 
-joke = on_regex(r"^来点([\S\s]{1,5})笑话$", priority=5, block=True)
+joke = on_regex(r"^来点([\S\s]{0,5})笑话$", priority=5, block=True)
 
 joke_path = Path(__file__).parent / "jokes.json"
 

@@ -10,6 +10,7 @@ from nonebot.utils import run_sync, is_coroutine_callable
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
 from migang.core.core_plugins.chat.chatgpt.langchain_tools import tool_manager
+from migang.core.core_plugins.chat.chatgpt.plugin_vector_db import search_plugin
 
 # 需要自动注入的上下文类型
 INJECT_TYPES = (Matcher, Bot, Event, T_State, Message)
@@ -34,3 +35,12 @@ def nb_langchain_tool(func):
     tool_manager.register_tool(wrapper)
     # 打印当前所有工具名称
     return wrapper
+
+
+async def search_plugin_tool(query: str) -> str:
+    """
+    工具描述：根据用户问题检索最相关的插件，并返回插件详细信息。
+    参数:
+        query: 用户问题
+    """
+    return await search_plugin(query)

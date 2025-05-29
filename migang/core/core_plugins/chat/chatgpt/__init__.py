@@ -109,11 +109,18 @@ async def _():
                 description="解锁内容限制",
             ),
             ConfigItem("proxy", description="代理服务器"),
+            ConfigItem(
+                "embedding_model",
+                description="embedding模型",
+                default_value="",
+                initial_value="",
+            ),
         ),
     )
 
 
 from .tools import *
+from .plugin_vector_db import *
 from .langchain_tools import tool_manager  # noqa
 
 # ========================= #

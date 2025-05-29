@@ -10,6 +10,7 @@ from nonebot.adapters.onebot.v11 import (
     GROUP,
     Bot,
     Message,
+    MessageEvent,
     MessageSegment,
     GroupMessageEvent,
 )
@@ -57,6 +58,9 @@ on_message(priority=998, block=False, rule=not_at_rule).append_handler(do_chat)
 
 @chat.handle()
 async def _(matcher: Matcher, bot: Bot, event: GroupMessageEvent):
+    # 防止llm自触发死循环
+    if getattr(event, "llm_trigger", False):
+        return
     if "CQ:xml" in str(event.message) or event.get_plaintext().startswith("/"):
         return
     user_name = event.sender.card or event.sender.nickname

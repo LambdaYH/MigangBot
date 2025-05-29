@@ -11,6 +11,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from migang.core import sync_get_config
+from migang.core.utils.langchain_tool import search_plugin_tool
 from migang.core.models import ChatGPTChatHistory, ChatGPTChatImpression
 
 from .utils import (
@@ -96,7 +97,11 @@ class LangChainChatBot:
         return tool_manager.get_tools()
 
     def _create_prompt_template(
-        self, bot_name: str, user_name: str, impression: str
+        self,
+        bot_name: str,
+        user_name: str,
+        impression: str,
+        relative_plugin: str = None,
     ) -> ChatPromptTemplate:
         """创建聊天提示模板"""
         tool_hint = (
@@ -114,8 +119,11 @@ class LangChainChatBot:
 [印象信息]
 {impression if impression else '暂无印象信息'}
 
+[相关插件-若需调用，请查阅插件的用法，使用指令调用trigger_plugin工具，若无法直接调用，可告知用户用法]
+{relative_plugin}
+
 [回复规则]
-1. 如果回复内容过长，请在适当位置分段，使用'*;'分隔（不包括单引号）
+1. 如果回复内容过长，请在适当位置分段，使用'*;'分隔（不包括单引号），最多{self.max_response_per_msg}段
 2. 使用纯文本回复
 3. 回复内容应该多样化，不要重复已经回复过的内容
 4. 你的回答应严格遵循上下文信息，不要编造或假设不存在的内容，除非用户要求你这样做
@@ -292,8 +300,19 @@ class LangChainChatBot:
                 # 获取聊天历史
                 chat_history = await self._get_chat_history(thread_id, bot)
 
+                uniformed_message = await uniform_message(
+                    deserialize_message(trigger_text), group_id=event.group_id, bot=bot
+                )
+
+                # 获取相关插件
+                relative_plugin = await search_plugin_tool(uniformed_message)
+
+                print(relative_plugin)
+
                 # 创建提示模板
-                prompt = self._create_prompt_template(bot_name, user_name, impression)
+                prompt = self._create_prompt_template(
+                    bot_name, user_name, impression, relative_plugin
+                )
 
                 # 创建agent
                 agent = create_openai_tools_agent(self.llm, self.tools, prompt)
@@ -307,7 +326,7 @@ class LangChainChatBot:
                 user_name = await get_user_name(
                     bot=bot, group_id=event.group_id, user_id=event.user_id
                 )
-                input_message = f"{user_name}: {await uniform_message(deserialize_message(trigger_text), group_id=event.group_id, bot=bot)}"
+                input_message = f"{user_name}: {uniformed_message}"
                 response = await agent_executor.ainvoke(
                     {
                         "input": input_message,
