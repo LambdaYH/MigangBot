@@ -49,6 +49,8 @@ dependencies = [
     "langchain-openai>=0.3.18",
     "langchain>=0.3.25",
     "langchain-community>=0.3.24",
+    "langgraph>=0.4.7",
+    "chromadb>=1.0.11",
 ]
 requires-python = ">=3.10,<4.0"
 readme = "README.md"

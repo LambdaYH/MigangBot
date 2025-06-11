@@ -1,3 +1,4 @@
+from nonebot.log import logger
 from nonebot.matcher import current_bot, current_event
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 
@@ -12,6 +13,7 @@ async def trigger_plugin(content: str):
     Args:
         content (str): 触发插件的完整指令
     """
+    logger.info(f"触发插件: {content}")
     if not content:
         return "请输入插件指令"
     bot = current_bot.get()

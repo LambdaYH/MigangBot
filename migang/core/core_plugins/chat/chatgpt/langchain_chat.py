@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from langchain_openai import ChatOpenAI
-from langchain.agents import create_openai_tools_agent
+from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import AIMessage, HumanMessage
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -61,10 +61,9 @@ class LangChainChatBot:
         self.current_key_index = 0
         self.llm = self._create_llm()
         self.tools = self._create_tools()
-        print("[LangChainChatBot.__init__] 当前注册的工具:", [t.name for t in self.tools])
 
     def _create_llm(self) -> ChatOpenAI:
-        """创建langchain的ChatOpenAI实例"""
+        """创建langchain的ChatOpenAI实例，支持异步流式输出"""
         api_key = self.api_keys[self.current_key_index] if self.api_keys else ""
 
         kwargs = {
@@ -76,6 +75,7 @@ class LangChainChatBot:
             "presence_penalty": self.presence_penalty,
             "request_timeout": self.timeout,
             "api_key": api_key,
+            "streaming": True,  # 启用流式输出
         }
 
         if self.api_base:
@@ -135,12 +135,9 @@ class LangChainChatBot:
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt),
-                MessagesPlaceholder(variable_name="chat_history", optional=True),
-                ("human", "{input}"),
-                MessagesPlaceholder(variable_name="agent_scratchpad"),
+                MessagesPlaceholder(variable_name="messages"),
             ]
         )
-
         return prompt
 
     async def _get_chat_history(self, thread_id: str, bot: Bot) -> List:
@@ -314,29 +311,67 @@ class LangChainChatBot:
                     bot_name, user_name, impression, relative_plugin
                 )
 
-                # 创建agent
-                agent = create_openai_tools_agent(self.llm, self.tools, prompt)
-                from langchain.agents import AgentExecutor
+                # 每次根据最新 prompt 动态创建 agent
+                agent = create_react_agent(self.llm, tools=self.tools, prompt=prompt)
 
-                agent_executor = AgentExecutor(
-                    agent=agent,
-                    tools=self.tools,
-                    verbose=True,
-                )
                 user_name = await get_user_name(
                     bot=bot, group_id=event.group_id, user_id=event.user_id
                 )
                 input_message = f"{user_name}: {uniformed_message}"
-                response = await agent_executor.ainvoke(
-                    {
-                        "input": input_message,
-                        "chat_history": chat_history,
-                    }
-                )
-                raw_response = response["output"]
+                # 组装 messages
+                messages = chat_history + [HumanMessage(content=input_message)]
 
-                # 处理回复内容
-                await self._process_response(matcher, raw_response)
+                # 流式处理响应
+                import re
+                import random
+                import asyncio
+
+                from langchain_core.messages import AIMessage
+                from nonebot.adapters.onebot.v11 import Message
+
+                buffer = ""
+                count = 0
+                sent_parts = []
+
+                # 使用 agent 的流式输出，监听 AI 消息的增量内容
+                async for chunk in agent.astream(
+                    {"messages": messages},
+                    stream_mode="messages",  # 改为 messages 模式
+                ):
+                    # chunk 是元组格式: (AIMessageChunk, metadata)
+                    if isinstance(chunk, tuple) and len(chunk) >= 1:
+                        message_chunk = chunk[0]
+                        # 检查是否是 AI 消息且有内容
+                        if (
+                            isinstance(message_chunk, AIMessage)
+                            and message_chunk.content
+                        ):
+                            print(f"流式内容: {message_chunk.content}")
+                            buffer += message_chunk.content
+
+                        # 处理分段发送
+                        while "*;" in buffer and count < self.max_response_per_msg:
+                            part, buffer = buffer.split("*;", 1)
+                            part = part.strip()
+                            if part and not re.match(r"^[^\u4e00-\u9fa5\w]{1}$", part):
+                                await matcher.send(Message(part))
+                                await asyncio.sleep(random.random() + 1.5)
+                                count += 1
+                                sent_parts.append(part)
+                        if count >= self.max_response_per_msg:
+                            break
+
+                # 发送剩余部分
+                if buffer.strip() and count < self.max_response_per_msg:
+                    await matcher.send(Message(buffer.strip()))
+                    sent_parts.append(buffer.strip())
+                if count >= self.max_response_per_msg:
+                    logger.error(f"大模型回复内容过多，已截断")
+                    await matcher.send(f"由于内容过多，麦克风被抢走了...")
+                if sent_parts:
+                    full_response_str = "*;".join(sent_parts)
+                else:
+                    full_response_str = buffer.strip()
 
                 # 记录用户发言
                 await ChatGPTChatHistory(
@@ -351,7 +386,7 @@ class LangChainChatBot:
                     user_id=event.self_id,
                     group_id=getattr(event, "group_id", 0),
                     target_id=event.user_id,
-                    message=serialize_message(raw_response),
+                    message=serialize_message(full_response_str),
                     is_bot=True,  # 机器人消息
                 ).save()
 
@@ -382,40 +417,6 @@ class LangChainChatBot:
                     await matcher.finish(f"抱歉，我遇到了一些问题: {error_msg}")
                 else:
                     continue
-
-    async def _process_response(self, matcher, response):
-        """处理agent的回复内容，兼容Message、MessageSegment、str、CQ码字符串、list"""
-        import re
-        import random
-        import asyncio
-
-        from nonebot.adapters.onebot.v11 import Message
-
-        # 支持多段回复
-        if isinstance(response, list):
-            reply_list = response
-        elif isinstance(response, str):
-            reply_list = response.split("*;")
-        else:
-            reply_list = [response]
-
-        for reply in reply_list[: self.max_response_per_msg]:
-            if not isinstance(reply, str):
-                reply = str(reply)
-
-            reply = reply.strip()
-            if not reply:
-                continue
-            # 纯符号跳过
-            if re.match(r"^[^\u4e00-\u9fa5\w]{1}$", reply):
-                logger.debug(f"检测到纯符号文本: {reply}，跳过发送...")
-                continue
-            await matcher.send(Message(reply))
-            await asyncio.sleep(random.random() + 1.5)
-
-        if self.max_response_per_msg < len(reply_list):
-            logger.error(f"大模型回复内容过多：{response}")
-            await matcher.send(f"由于内容过多，麦克风被抢走了...")
 
 
 # 全局实例
