@@ -304,8 +304,6 @@ class LangChainChatBot:
                 # 获取相关插件
                 relative_plugin = await search_plugin_tool(uniformed_message)
 
-                print(relative_plugin)
-
                 # 创建提示模板
                 prompt = self._create_prompt_template(
                     bot_name, user_name, impression, relative_plugin
@@ -346,7 +344,7 @@ class LangChainChatBot:
                             isinstance(message_chunk, AIMessage)
                             and message_chunk.content
                         ):
-                            print(f"流式内容: {message_chunk.content}")
+                            # print(f"流式内容: {message_chunk.content}")
                             buffer += message_chunk.content
 
                         # 处理分段发送
