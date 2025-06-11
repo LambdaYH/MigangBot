@@ -19,7 +19,7 @@ def _build_config(data: dict) -> Dict[str, Any]:
         "connections": {},
         "apps": {
             "models": {
-                "models": ["aerich_config_helper.model", "aerich.models"],
+                "models": ["aerich_config_helper.model"],
                 "default_connection": "default",
             }
         },

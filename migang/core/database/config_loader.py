@@ -19,7 +19,7 @@ def _build_config(data: dict) -> Dict[str, Any]:
         "connections": {},
         "apps": {
             "models": {
-                "models": ["migang.core.models", "aerich.models"],
+                "models": ["migang.core.models"],
                 "default_connection": "default",
             }
         },
