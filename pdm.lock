@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = ["cross_platform"]
 lock_version = "4.5.0"
-content_hash = "sha256:ab7496e583330d4564e06f670c498fa8526440741b7dd8952db6067a4d704e99"
+content_hash = "sha256:326b008436c089fffd46f0f639daa6cc6716fd2ea6ef341b67a52923c482204f"
 
 [[metadata.targets]]
 requires_python = "~=3.10"
@@ -327,26 +327,6 @@ dependencies = [
 files = [
     {file = "arclet_alconna_tools-0.7.10-py3-none-any.whl", hash = "sha256:50e8b2f433fbc612dc8b99f4f5410006dcb1ef406c971c795071117a4eab8e20"},
     {file = "arclet_alconna_tools-0.7.10.tar.gz", hash = "sha256:446a63a9c56886c23fb44548bb9a18655e0ba5b5dd80cc87915b858dfb02554c"},
-]
-
-[[package]]
-name = "arknights-toolkit"
-version = "0.7.10"
-requires_python = ">=3.9"
-summary = "Arknights-related Toolkit"
-dependencies = [
-    "Pillow>=10.2.0",
-    "cli-lite>=0.10.0",
-    "httpx<1.0.0,>=0.26.0",
-    "loguru>=0.7.2",
-    "lxml>=5.1.0",
-    "matplotlib>=3.7.5",
-    "msgpack>=1.0.8",
-    "ujson>=5.9.0",
-]
-files = [
-    {file = "arknights_toolkit-0.7.10-py3-none-any.whl", hash = "sha256:d36600d30df4027a35708da03e12769254aafe3a323b94f8e04850871b7ab44a"},
-    {file = "arknights_toolkit-0.7.10.tar.gz", hash = "sha256:78fad03477ea40b1cfad5d4dc86b6b4897a0f29a4bdf8a13c0883313a5945323"},
 ]
 
 [[package]]
@@ -1006,21 +986,6 @@ files = [
     {file = "ciso8601-2.3.2-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ecc2f7090e7b8427288b9528fa9571682426f2c7d45d39cf940321192d8796c8"},
     {file = "ciso8601-2.3.2-pp310-pypy310_pp73-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c585a05d745c36f974030d1831ed899f8b00afd760f6eff6b8de7eef72cb1336"},
     {file = "ciso8601-2.3.2.tar.gz", hash = "sha256:ec1616969aa46c51310b196022e5d3926f8d3fa52b80ec17f6b4133623bd5434"},
-]
-
-[[package]]
-name = "cli-lite"
-version = "0.10.2"
-requires_python = ">=3.8"
-summary = "A simple framework to build a cli tool, base on Alconna"
-dependencies = [
-    "arclet-alconna-tools>=0.7.9",
-    "arclet-alconna>=1.8.30",
-    "importlib-metadata>=3.6.0",
-]
-files = [
-    {file = "cli_lite-0.10.2-py3-none-any.whl", hash = "sha256:a4835512d13c82bd596c7dd343c0dcdfd7c18226d8092c05ae6726f3539b0887"},
-    {file = "cli_lite-0.10.2.tar.gz", hash = "sha256:2cb62cfa89c0eddf81328253fbe6994d7e57bb2aea91d10ceb378a61e03753d3"},
 ]
 
 [[package]]
@@ -3362,23 +3327,6 @@ dependencies = [
 files = [
     {file = "nonebot_plugin_apscheduler-0.5.0-py3-none-any.whl", hash = "sha256:8b99b5ee60c4bc195d4df2fd27dab3d6963691e3332f6cee31a06eb4277c307f"},
     {file = "nonebot_plugin_apscheduler-0.5.0.tar.gz", hash = "sha256:6c0230e99765f275dc83d6639ff33bd6f71203fa10cd1b8a204b0f95530cda86"},
-]
-
-[[package]]
-name = "nonebot-plugin-arkgacha"
-version = "0.8.2"
-requires_python = ">=3.9"
-summary = "Plugin for Arknights gacha, support multi platform"
-dependencies = [
-    "arknights-toolkit>=0.7.7",
-    "nonebot-plugin-alconna>=0.54.0",
-    "nonebot-plugin-apscheduler>=0.4.0",
-    "nonebot-plugin-localstore>=0.6.0",
-    "nonebot2>=2.3.0",
-]
-files = [
-    {file = "nonebot_plugin_arkgacha-0.8.2-py3-none-any.whl", hash = "sha256:0293f3085eaca11c385a189e6a827e8de2cb89c9ec003ddcde2b9310f2875a24"},
-    {file = "nonebot_plugin_arkgacha-0.8.2.tar.gz", hash = "sha256:eed8095e0d3a75ec668f24bf16ea7b67986b23993c925481fefb3c26be6ccec7"},
 ]
 
 [[package]]

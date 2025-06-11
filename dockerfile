@@ -35,7 +35,6 @@ RUN apt-get update \
     && playwright install --with-deps chromium \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-RUN arkkit init -SIMG
 
 # set command/entrypoint, adapt to fit your needs
 CMD aerich upgrade ; nb datastore upgrade ; nb orm upgrade ; nb run
