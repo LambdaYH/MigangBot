@@ -1,3 +1,4 @@
+import re
 import random
 
 from nonebot import on_message
@@ -110,12 +111,16 @@ async def _(event: GroupMessageEvent):
             await repeat.finish("打断" + plain_text)
         else:
             await repeat.finish("打断施法！")
-    if azure_tts_status() and random.random() < 0.20 and 0 < len(plain_text) < 50:
-        await repeat.finish(
-            MessageSegment.record(await get_azure_tts(filt_message(plain_text)))
-        )
-    else:
-        await repeat.finish(filt_message(event.message))
+    # 仅当过滤后的文本包含有效字符（中文、英文或数字）时才进行 TTS
+    filtered_text = filt_message(plain_text)
+    if (
+        azure_tts_status()
+        and random.random() < 0.20
+        and 0 < len(plain_text) < 50
+        and re.search(r"[A-Za-z0-9\u4E00-\u9FFF]", filtered_text) is not None
+    ):
+        await repeat.finish(MessageSegment.record(await get_azure_tts(filtered_text)))
+    await repeat.finish(filt_message(event.message))
 
 
 def uniform_message(msg: Message) -> Message:
