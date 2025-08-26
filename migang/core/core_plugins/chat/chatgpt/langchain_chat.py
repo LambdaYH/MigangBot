@@ -104,6 +104,10 @@ class LangChainChatBot:
         relative_plugin: str = None,
     ) -> ChatPromptTemplate:
         """创建聊天提示模板"""
+        # 防止 relative_plugin 中的花括号被 ChatPromptTemplate 识别为变量
+        safe_relative_plugin = ""
+        if relative_plugin:
+            safe_relative_plugin = relative_plugin.replace("{", "{{").replace("}", "}}")
         system_prompt = f"""
 # Role: {bot_name}
 
@@ -143,7 +147,7 @@ class LangChainChatBot:
 - 预期结果: 以简短形式输出功能调用与回应
 
 ### 附：当前可能相关插件
-{relative_plugin}
+{safe_relative_plugin}
 
 ## Initialization
 作为{bot_name}，遵守上述Rules，按Workflows执行任务，确保回复关联度与简洁性。
@@ -157,6 +161,7 @@ class LangChainChatBot:
                 MessagesPlaceholder(variable_name="messages"),
             ]
         )
+
         return prompt
 
     async def _get_chat_history(self, thread_id: str, bot: Bot) -> List:
