@@ -87,6 +87,8 @@ class BaseWeiboSpider:
         self.__record_file_path = weibo_record_path / f"{unique_id}.json"
 
         self.__received_weibo_ids: List[str] = []
+        # 实例级刷新锁，避免同一实例并发重复刷新
+        self.__cookie_lock = asyncio.Lock()
 
     @abstractmethod
     def get_notice_name(self) -> str:
@@ -108,10 +110,66 @@ class BaseWeiboSpider:
                     )
                     if r.status == 200:
                         return await r.json()
+                    # 仅当 HTTP 状态码为 432 时，刷新 Cookie（实例级加锁）后重试
+                    if r.status == 432:
+                        await self.__refresh_cookie(client)
+                        await asyncio.sleep(random.randint(1, 3))
+                        continue
                 except Exception as e:
                     logger.warning(f"获取网页 {url} json异常，次数{i}：{e}")
                     await asyncio.sleep(random.randint(2, 6))
             return None
+
+    async def __refresh_cookie(self, client: aiohttp.ClientSession):
+        """
+        访问 m.weibo.cn 获取 Set-Cookie，并合并到当前实例的请求头。
+        """
+        try:
+            async with self.__cookie_lock:
+                resp = await client.get(
+                    "https://m.weibo.cn/", headers=self.__headers, timeout=20
+                )
+                # 收集新 Cookie
+                new_cookie_pairs = []
+                for name, morsel in resp.cookies.items():
+                    new_cookie_pairs.append((name, morsel.value))
+
+                if not new_cookie_pairs:
+                    # 兼容仅通过 Set-Cookie 头返回的情况
+                    set_cookie_header = (
+                        resp.headers.getall("Set-Cookie", [])
+                        if hasattr(resp.headers, "getall")
+                        else []
+                    )
+                    for sc in set_cookie_header:
+                        first = sc.split(";", 1)[0]
+                        if "=" in first:
+                            k, v = first.split("=", 1)
+                            new_cookie_pairs.append((k.strip(), v.strip()))
+
+                if not new_cookie_pairs:
+                    logger.warning("刷新 Cookie 失败：未获取到 Set-Cookie")
+                    return
+
+                # 合并旧 Cookie 与新 Cookie（新值覆盖旧值）
+                merged: dict = {}
+                existing = self.__headers.get("cookie")
+                if existing:
+                    for part in existing.split(";"):
+                        part = part.strip()
+                        if not part or "=" not in part:
+                            continue
+                        k, v = part.split("=", 1)
+                        merged[k.strip()] = v.strip()
+                for k, v in new_cookie_pairs:
+                    merged[k] = v
+
+                cookie_str = "; ".join([f"{k}={v}" for k, v in merged.items()])
+                # 写回当前实例表头
+                self.__headers["cookie"] = cookie_str
+                logger.info("m.weibo.cn Cookie 已刷新并写入请求头")
+        except Exception as e:
+            logger.warning(f"刷新 m.weibo.cn Cookie 失败：{e}")
 
     async def init(self):
         """
