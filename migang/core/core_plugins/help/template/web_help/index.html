@@ -7,6 +7,7 @@
     <title>帮助</title>
     <link rel="stylesheet" href="/help/web_static/res/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="/help/web_static/migang_menu.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
     <style>
         .content { column-count: {{ column_count }}; gap: 1rem; column-gap: normal; }
         /* 自适应 */
@@ -16,7 +17,20 @@
         /* 网页不使用纹理图，避免 404 */
         .content>div::before{ background-image: none !important; }
         /* 气泡与弹窗 */
-        .tooltip{position:fixed;display:none;max-width:80vw;max-height:60vh;overflow:auto;background:rgba(0,0,0,.85);color:#fff;padding:8px 12px;border-radius:6px;font-size:14px;z-index:9999;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+        .tooltip{position:fixed;display:none;max-width:80vw;max-height:60vh;overflow:auto;padding:12px 16px;border-radius:10px;font-size:calc(var(--mfsize) - 2px);line-height:1.45;font-weight:600;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.18);background:rgba(255,255,255,.60);color:#111;border:2px solid var(--themebordercolor);white-space:normal;word-break:break-word;backdrop-filter: blur(var(--blur));-webkit-backdrop-filter: blur(var(--blur));font-family:"Microsoft YaHei","微软雅黑","Noto Sans SC","PingFang SC","Hiragino Sans GB",Arial,sans-serif;}
+        .tooltip h1,.tooltip h2,.tooltip h3{ margin:0 0 .25em 0; line-height:1.2; }
+        .tooltip h1{ font-size:1.1em; }
+        .tooltip h2{ font-size:1.06em; }
+        .tooltip h3{ font-size:1.03em; }
+        .tooltip p{ margin:.25em 0; }
+        .tooltip ul,.tooltip ol{ margin:.25em 0 .25em 1.2em; padding-left:1em; }
+        .tooltip li{ margin:.15em 0; }
+        .tooltip code{ padding:.1em .3em; background:rgba(0,0,0,.06); border-radius:4px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+        .tooltip pre{ margin:.4em 0; padding:.6em .8em; background:rgba(0,0,0,.06); border-radius:8px; overflow:auto; font-size:.9em; }
+        .tooltip table{ border-collapse:collapse; width:100%; margin:.4em 0; font-size:.9em; }
+        .tooltip th,.tooltip td{ border:1px solid rgba(0,0,0,.15); padding:.35em .5em; text-align:left; }
+        .tooltip thead th{ background:rgba(0,0,0,.06); }
+        .tooltip img{ max-width:100%; height:auto; }
         .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9998;}
         .modal-content{background:#fff;border-radius:10px;max-width:96vw;max-height:96vh;overflow:auto;padding:8px;}
         .modal-content img{display:block;max-width:100%;height:auto;}
@@ -63,6 +77,9 @@
     <div id="help-tooltip" class="tooltip"></div>
     <div id="help-modal" class="modal-backdrop"><div class="modal-content"><img id="help-modal-img" alt="usage"></div></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.0/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
     <script>
         (function(){
             function ready(fn){ if(document.readyState !== 'loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
@@ -73,9 +90,76 @@
                 var token = new URLSearchParams(location.search).get('t') || '';
                 var hoverTimer = null;
                 function nameFromSpan(span){ return (span.childNodes[0] && span.childNodes[0].textContent || span.textContent).trim(); }
-                function showTooltip(x,y,text){ tooltip.style.display='block'; tooltip.style.left=(x+12)+'px'; tooltip.style.top=(y+12)+'px'; tooltip.textContent=text; }
+                function parseDirectives(text){
+                    var s = String(text||'');
+                    var mode=null, width=null, height=null;
+                    var re=/^\s*\[([^\]]+)\]\s*/i, m;
+                    while((m=re.exec(s))){
+                        var token=m[1].trim();
+                        var lower=token.toLowerCase();
+                        if(lower==='md' || lower==='markdown'){ mode='md'; }
+                        else if(lower==='html'){ mode='html'; }
+                        else{
+                            var parts=lower.split(',');
+                            for(var pi=0; pi<parts.length; pi++){
+                                var kv=parts[pi].split('=');
+                                if(kv.length===2){ var k=kv[0].trim(); var v=kv[1].trim(); if(k==='width'){ width=parseInt(v,10)||null; } if(k==='height'){ height=parseInt(v,10)||null; } }
+                            }
+                        }
+                        s = s.slice(m[0].length);
+                    }
+                    return { mode:mode, width:width, height:height, content:s };
+                }
+
+                function showTooltip(x,y,text,sourceEl){
+                    tooltip.style.display='block';
+                    tooltip.style.left=(x+12)+'px';
+                    tooltip.style.top=(y+12)+'px';
+                    // reset size each time
+                    tooltip.style.width = 'auto';
+                    tooltip.style.height = 'auto';
+                    var d=parseDirectives(text);
+                    if(d.width){ tooltip.style.width = d.width + 'px'; }
+                    if(d.height){ tooltip.style.height = d.height + 'px'; }
+
+                    if(d.mode==='md'){
+                        tooltip.style.whiteSpace = 'normal';
+                        var raw=d.content;
+                        // fix non-standard bold like "** 文本:" -> "**文本**:"
+                        raw = raw.replace(/\*\*\s*([^\n:*：|][^:*：|]*?)\s*([:：])/g, function(_, t, c){ return '**'+t.trim()+'**'+c; });
+                        // auto-close tokens like "**af" or " **am" (word-likes) → "**af**"
+                        raw = raw.replace(/(^|[\s\|:：])\*\*([A-Za-z0-9_-]{1,16})(?=\s|\||$)/g, function(_, p, w){ return p+'**'+w+'**'; });
+                        if(window.marked && window.DOMPurify){
+                            try{
+                                var html=window.marked.parse(raw, { gfm:true, breaks:true });
+                                tooltip.innerHTML = window.DOMPurify.sanitize(html);
+                                if(window.hljs){
+                                    var blocks=tooltip.querySelectorAll('pre code');
+                                    for(var bi=0; bi<blocks.length; bi++){ window.hljs.highlightElement(blocks[bi]); }
+                                }
+                            }catch(_){ tooltip.textContent = raw; }
+                        }else{
+                            tooltip.textContent = raw;
+                        }
+                    }else if(d.mode==='html'){
+                        tooltip.style.whiteSpace = 'normal';
+                        var htmlRaw=d.content;
+                        if(window.DOMPurify){ tooltip.innerHTML = window.DOMPurify.sanitize(htmlRaw); }
+                        else { tooltip.innerHTML = htmlRaw; }
+                    }else{
+                        tooltip.style.whiteSpace = 'pre-wrap';
+                        tooltip.textContent=text;
+                    }
+                    try{
+                        if(sourceEl){
+                            var cs=getComputedStyle(sourceEl);
+                            var themeBorder=(cs.getPropertyValue('--themebordercolor')||'').trim();
+                            if(themeBorder){ tooltip.style.borderColor=themeBorder; }
+                        }
+                    }catch(_){ /* ignore styling errors */ }
+                }
                 function hideTooltip(){ tooltip.style.display='none'; }
-                function onHover(e){ var span=e.currentTarget; var name=nameFromSpan(span); hoverTimer=setTimeout(async function(){ try{ var resp=await fetch('/help/plugin_usage?name='+encodeURIComponent(name)+'&t='+token); if(!resp.ok) return; var data=await resp.json(); showTooltip(e.clientX,e.clientY,data.usage||'暂无使用说明'); }catch(_){} }, 200); }
+                function onHover(e){ var span=e.currentTarget; var name=nameFromSpan(span); hoverTimer=setTimeout(async function(){ try{ var resp=await fetch('/help/plugin_usage?name='+encodeURIComponent(name)+'&t='+token); if(!resp.ok) return; var data=await resp.json(); showTooltip(e.clientX,e.clientY,data.usage||'暂无使用说明', span); }catch(_){} }, 200); }
                 function onLeave(){ clearTimeout(hoverTimer); hideTooltip(); }
                 function onClick(e){ var span=e.currentTarget; var name=nameFromSpan(span); modal.style.display='flex'; modalImg.src='/help/plugin?name='+encodeURIComponent(name)+'&t='+token; }
                 modal.addEventListener('click', function(){ modal.style.display='none'; modalImg.removeAttribute('src'); });
