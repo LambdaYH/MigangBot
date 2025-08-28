@@ -10,8 +10,8 @@ import anyio
 from pil_utils import text2image
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-from nonebot import require, get_plugin, on_command
 from nonebot.permission import SUPERUSER, SuperUser
+from nonebot import require, get_driver, get_plugin, on_command
 from nonebot.rule import (
     ToMeRule,
     RegexRule,
@@ -34,6 +34,7 @@ from nonebot.adapters.onebot.v11 import (
 
 from migang.core.manager import user_manager, group_manager, plugin_manager
 
+from .web import create_help_token
 from .data_source import (
     USER_HELP_PATH,
     GROUP_HELP_PATH,
@@ -92,7 +93,26 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             user_id=user_id,
             super_user=await SUPERUSER(bot, event),
         )
-        await simple_help.send(MessageSegment.image(img))
+        # 生成可访问网页的临时 token
+        token = create_help_token(
+            group_id=group_id,
+            user_id=user_id,
+            super_user=await SUPERUSER(bot, event),
+        )
+        # 构造外部可访问地址：优先读取自定义配置 help_page_base_url，其次使用 host/port
+        try:
+            driver_cfg = get_driver().config
+            base = getattr(driver_cfg, "help_page_base_url", "") or ""
+            if not base:
+                host = getattr(driver_cfg, "host", "") or ""
+                port = getattr(driver_cfg, "port", "") or ""
+                base = f"http://{host}:{port}" if host and port else ""
+        except Exception:
+            base = ""
+        url = f"{base}/help?t={token}"
+        await simple_help.send(
+            MessageSegment.image(img) + MessageSegment.text(f"\n网页查看：{url}")
+        )
         async with await anyio.open_file(image_file, "wb") as f:
             await f.write(img)
     else:

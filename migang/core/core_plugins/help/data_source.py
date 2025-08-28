@@ -121,6 +121,12 @@ min_width = (
 
 
 async def draw_usage(usage: str) -> Optional[MessageSegment]:
+    png = await build_usage_png(usage)
+    return MessageSegment.image(png)
+
+
+async def build_usage_png(usage: str) -> bytes:
+    """将使用说明渲染为 PNG 字节，供图片与网页复用"""
     help_img = text2image(
         text=usage,
         fontname="Yozai",
@@ -168,13 +174,11 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
             ),
             color=(255, 255, 255),
         )
-        # 边框左
         bk.draw_line(
             (border, top_border, border, bk.height - border),
             fill=color_candidates[0],
             width=line_width,
         )
-        # 边框底
         bk.draw_line(
             (
                 border - int(line_width / 2),
@@ -185,7 +189,6 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
             fill=color_candidates[1],
             width=line_width,
         )
-        # 边框右
         bk.draw_line(
             (
                 bk.width - border,
@@ -196,18 +199,15 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
             fill=color_candidates[2],
             width=line_width,
         )
-        # 计算文字处于上边框的位置
         length = bk.width - border * 2
         start_idx = random.randint(
             10, length - 10 - text_image_padding - text_image_width - text_image_padding
         )
-        # 上边框左半部分
         bk.draw_line(
             (border, top_border, start_idx + border, top_border),
             fill=color_candidates[3],
             width=line_width,
         )
-        # 上边框右半部分
         bk.draw_line(
             (
                 border
@@ -222,7 +222,6 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
             fill=color_candidates[3],
             width=line_width,
         )
-        # 把边框左被上边框遮住的一角画上
         bk.draw_line(
             (
                 border,
@@ -243,7 +242,7 @@ async def draw_usage(usage: str) -> Optional[MessageSegment]:
         )
         return bk.save_png()
 
-    return MessageSegment.image(await _draw())
+    return await _draw()
 
 
 _sorted_data: Dict[str, List[PluginManager.Plugin]] = {}
@@ -285,19 +284,10 @@ def _sort_data():
             _sorted_data[plugin.category].append(plugin)
 
 
-async def _build_html_image(
+def get_help_menu_context(
     group_id: Optional[int], user_id: Optional[int], super_user: bool = False
-) -> bytes:
-    """生成帮助图片
-
-    Args:
-        group_id (Optional[int]): _description_
-        user_id (Optional[int]): _description_
-        super_user (bool, optional): _description_. Defaults to False.
-
-    Returns:
-        bytes: _description_
-    """
+) -> Dict:
+    """构建帮助菜单模板上下文（网页/图片复用）"""
     _sort_data()
     classify = {}
     random.shuffle(colors)
@@ -362,18 +352,32 @@ async def _build_html_image(
             flag_index = index
         plugin_list.append(data)
     plugin_list[flag_index], plugin_list[0] = plugin_list[0], plugin_list[flag_index]
-    max_column_length = len(plugin_list[0]["items"])
-    plugin_count = sum([len(plugin["items"]) for plugin in plugin_list])
+    max_column_length = len(plugin_list[0]["items"]) if plugin_list else 1
+    plugin_count = (
+        sum([len(plugin["items"]) for plugin in plugin_list]) if plugin_list else 0
+    )
+    return {
+        "group": True if group_id else False,
+        "plugin_list": plugin_list,
+        "column_count": min(
+            math.ceil((plugin_count + len(plugin_list)) / max_column_length), 4
+        )
+        if plugin_list
+        else 1,
+    }
+
+
+async def _build_html_image(
+    group_id: Optional[int], user_id: Optional[int], super_user: bool = False
+) -> bytes:
+    """生成帮助图片（基于模板上下文）"""
+    ctx = get_help_menu_context(
+        group_id=group_id, user_id=user_id, super_user=super_user
+    )
     pic = await template_to_pic(
         template_path=TEMPLATE_PATH / "menu",
         template_name="migang_menu.html",
-        templates={
-            "group": True if group_id else False,
-            "plugin_list": plugin_list,
-            "column_count": min(
-                math.ceil((plugin_count + len(plugin_list)) / max_column_length), 4
-            ),
-        },
+        templates=ctx,
         type="jpeg",
         quality=76,
         pages={

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>帮助</title>
+    <link rel="stylesheet" href="/help/web_static/res/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="/help/web_static/migang_menu.css">
+    <style>
+        .content { column-count: {{ column_count }}; gap: 1rem; column-gap: normal; }
+        /* 自适应 */
+        @media (max-width: 576px){ :root{ --mfsize:16px; --ofsize:20px;} .content{ column-count:1 !important;} #banner-image-box{height:220px;} .content>div>span{height:48px;line-height:48px;} .splic::before{width:220px;height:48px;} }
+        @media (min-width:577px) and (max-width: 992px){ :root{ --mfsize:22px; --ofsize:28px;} .content{ column-count:2 !important;} #banner-image-box{height:360px;} .content>div>span{height:64px;line-height:64px;} .splic::before{width:400px;height:64px;} }
+        @media (min-width:993px){ :root{ --mfsize:28px; --ofsize:36px;} }
+        /* 网页不使用纹理图，避免 404 */
+        .content>div::before{ background-image: none !important; }
+        /* 气泡与弹窗 */
+        .tooltip{position:fixed;display:none;max-width:80vw;max-height:60vh;overflow:auto;background:rgba(0,0,0,.85);color:#fff;padding:8px 12px;border-radius:6px;font-size:14px;z-index:9999;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+        .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9998;}
+        .modal-content{background:#fff;border-radius:10px;max-width:96vw;max-height:96vh;overflow:auto;padding:8px;}
+        .modal-content img{display:block;max-width:100%;height:auto;}
+        a.plugin-link{ color: inherit; text-decoration: none; }
+    </style>
+</head>
+
+<body>
+    <div id="banner-image-box">
+        <div id="gradient-color-banner"></div>
+    </div>
+    <div class="wrapper">
+        <main class="des">
+            <p>可以通过 ‘帮助[功能名称]’ 来获取对应功能的使用方法。 或者使用 ‘指令帮助[功能名称]’ 来获取该功能可用指令。</p>
+            {% if group %}
+            <p style="color:red;">注：横线字功能被群管理员禁用，浅色字代表功能正在维护。</p>
+            {% else %}
+            <p style="color:red;">注：横线字功能仅群聊可用，浅色字代表功能正在维护。</p>
+            {% endif %}
+        </main>
+        <div class="content">
+            {% for plugin in plugin_list %}
+            <div style="--themebordercolor:{{plugin.color}};--themebgcolor:{{plugin.color}}0a;--pluginbgcolor:{{plugin.color}}5c;">
+                <div>
+                    <span>
+                        <i class="{{plugin.icon}}"></i>
+                        {{plugin.name}}
+                    </span>
+                </div>
+                {% for item in plugin['items'] %}
+                {% if item.status._value_ == 0 %}
+                <span>{{item.plugin_name}}<div class="splic"></div></span>
+                {% elif item.status._value_ == 1 %}
+                <span><del>{{item.plugin_name}}</del><div class="splic"></div></span>
+                {% else %}
+                <span class="ban">{{item.plugin_name}}<div class="splic"></div></span>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="help-tooltip" class="tooltip"></div>
+    <div id="help-modal" class="modal-backdrop"><div class="modal-content"><img id="help-modal-img" alt="usage"></div></div>
+
+    <script>
+        (function(){
+            function ready(fn){ if(document.readyState !== 'loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
+            ready(function(){
+                var tooltip = document.getElementById('help-tooltip');
+                var modal = document.getElementById('help-modal');
+                var modalImg = document.getElementById('help-modal-img');
+                var token = new URLSearchParams(location.search).get('t') || '';
+                var hoverTimer = null;
+                function nameFromSpan(span){ return (span.childNodes[0] && span.childNodes[0].textContent || span.textContent).trim(); }
+                function showTooltip(x,y,text){ tooltip.style.display='block'; tooltip.style.left=(x+12)+'px'; tooltip.style.top=(y+12)+'px'; tooltip.textContent=text; }
+                function hideTooltip(){ tooltip.style.display='none'; }
+                function onHover(e){ var span=e.currentTarget; var name=nameFromSpan(span); hoverTimer=setTimeout(async function(){ try{ var resp=await fetch('/help/plugin_usage?name='+encodeURIComponent(name)+'&t='+token); if(!resp.ok) return; var data=await resp.json(); showTooltip(e.clientX,e.clientY,data.usage||'暂无使用说明'); }catch(_){} }, 200); }
+                function onLeave(){ clearTimeout(hoverTimer); hideTooltip(); }
+                function onClick(e){ var span=e.currentTarget; var name=nameFromSpan(span); modal.style.display='flex'; modalImg.src='/help/plugin?name='+encodeURIComponent(name)+'&t='+token; }
+                modal.addEventListener('click', function(){ modal.style.display='none'; modalImg.removeAttribute('src'); });
+                var nodes=document.querySelectorAll('.content>div > span');
+                for(var i=0;i<nodes.length;i++){ var sp=nodes[i]; if(!sp) continue; sp.addEventListener('mouseenter',onHover); sp.addEventListener('mouseleave',onLeave); sp.addEventListener('mousemove',function(ev){ if(tooltip.style.display==='block'){ tooltip.style.left=(ev.clientX+12)+'px'; tooltip.style.top=(ev.clientY+12)+'px'; }}); sp.addEventListener('click',onClick); }
+            });
+        })();
+    </script>
+</body>
+
+</html>
