@@ -68,43 +68,44 @@ async def init_plugin_config():
             logger.error(f"插件 {plugins[i].name} 配置加载失败：{e}")
     # 自动管理metadata的配置项，自动管理.env中的配置，以configs文件夹中配置为主，若不同，则更新.env文件
     # 代价就是有改动后必须要重启，以及会把.env弄乱掉
-    env_file = Path() / f".env.{get_driver().env}"
-    env_values = dotenv_values(env_file)
-    modified = False
+    # 由于会把.env弄乱掉，所以取消这个逻辑
+    # env_file = Path() / f".env.{get_driver().env}"
+    # env_values = dotenv_values(env_file)
+    # modified = False
 
-    # 会让缓存提前热身......
-    async def check_env_config(plugin_name: str, config: ConfigItem):
-        nonlocal modified, env_values
-        # 检测配置项更新
-        value = await config_manager.async_get_config_item(
-            plugin_name=plugin_name, plugin_config=config.key
-        )
-        if (
-            config.key not in env_values
-            and _parse_value(value) != _parse_value(config.default_value)
-        ) or (
-            config.key in env_values and _parse_value(value) != env_values[config.key]
-        ):
-            env_values[config.key] = _parse_value(value)
-            modified = True
+    # # 会让缓存提前热身......
+    # async def check_env_config(plugin_name: str, config: ConfigItem):
+    #     nonlocal modified, env_values
+    #     # 检测配置项更新
+    #     value = await config_manager.async_get_config_item(
+    #         plugin_name=plugin_name, plugin_config=config.key
+    #     )
+    #     if (
+    #         config.key not in env_values
+    #         and _parse_value(value) != _parse_value(config.default_value)
+    #     ) or (
+    #         config.key in env_values and _parse_value(value) != env_values[config.key]
+    #     ):
+    #         env_values[config.key] = _parse_value(value)
+    #         modified = True
 
-        # 去除和默认值一样的配置项
-        if config.key in env_values and env_values[config.key] == _parse_value(
-            config.default_value
-        ):
-            del env_values[config.key]
-            modified = True
+    #     # 去除和默认值一样的配置项
+    #     if config.key in env_values and env_values[config.key] == _parse_value(
+    #         config.default_value
+    #     ):
+    #         del env_values[config.key]
+    #         modified = True
 
-    tasks = []
-    for k, v in all_configs.items():
-        tasks += [
-            check_env_config(plugin_name=k, config=config) for config in v if config.env
-        ]
-    await asyncio.gather(*tasks)
-    env_str = "\n".join(f"{k} = {v}" for k, v in env_values.items())
-    async with await anyio.open_file(env_file, "w", encoding="utf-8") as f:
-        await f.write(env_str)
-    if modified:
-        logger.warning("检测到env文件中变量已更新，建议重新启动Bot以使得插件能获取到最新的配置文件")
+    # tasks = []
+    # for k, v in all_configs.items():
+    #     tasks += [
+    #         check_env_config(plugin_name=k, config=config) for config in v if config.env
+    #     ]
+    # await asyncio.gather(*tasks)
+    # env_str = "\n".join(f"{k} = {v}" for k, v in env_values.items())
+    # async with await anyio.open_file(env_file, "w", encoding="utf-8") as f:
+    #     await f.write(env_str)
+    # if modified:
+    #     logger.warning("检测到env文件中变量已更新，建议重新启动Bot以使得插件能获取到最新的配置文件")
     # 保存最新的默认值进文件
     await config_manager.save_default_value()
