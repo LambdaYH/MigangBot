@@ -106,9 +106,8 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         url = f"{base}/help?t={token}"
 
         if image_file.exists():
-            await simple_help.finish(
-                MessageSegment.image(image_file) + MessageSegment.text(f"\n网页查看：{url}")
-            )
+            await simple_help.send(MessageSegment.image(image_file))
+            await simple_help.finish(f"帮助网页：{url}")
         img = await get_help_image(
             group_id=group_id,
             user_id=user_id,
@@ -120,9 +119,8 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             user_id=user_id,
             super_user=await SUPERUSER(bot, event),
         )
-        await simple_help.send(
-            MessageSegment.image(img) + MessageSegment.text(f"\n网页查看：{url}")
-        )
+        await simple_help.send(MessageSegment.image(img))
+        await simple_help.send(f"帮助网页：{url}")
         async with await anyio.open_file(image_file, "wb") as f:
             await f.write(img)
     else:
