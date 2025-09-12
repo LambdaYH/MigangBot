@@ -10,6 +10,7 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 from migang.core import ConfigItem, get_config
 
 from .render_pic import render
+from .config import plugin_config
 from .eorzean_weather import get_eorzean_weather
 from .weather_data import Weather, CityNotFoundError, NoWeatherDataError
 
@@ -29,23 +30,6 @@ usage：
 
 __plugin_category__ = "一些工具"
 
-__plugin_config__ = (
-    ConfigItem(
-        key="api_key",
-        initial_value=None,
-        description="参考 https://github.com/kexue-z/nonebot-plugin-heweather 获取api_key",
-    ),
-    ConfigItem(
-        key="api_type",
-        initial_value=0,
-        default_value=0,
-        description="0 = 免费版 1 = 标准版 2 = 商业版",
-    ),
-    ConfigItem(
-        key="forcast_days", initial_value=7, default_value=7, description="天气预报天数"
-    ),
-)
-
 
 weather = on_regex(r"^.{0,10}?(.{0,10})的?天气(.{0,10})$", priority=5, block=True)
 eorzean_time = on_fullmatch("/et", priority=5, block=True)
@@ -57,12 +41,7 @@ async def _(matcher: Matcher, reg_group: Tuple[Any, ...] = RegexGroup()):
     if city:
         if w := get_eorzean_weather(city):
             await weather.finish(w)
-        w_data = Weather(
-            city_name=city,
-            forcast_days=await get_config("forcast_days"),
-            api_key=await get_config("api_key"),
-            api_type=await get_config("api_type"),
-        )
+        w_data = Weather(city_name=city, api_type=plugin_config.qweather_apitype)
         try:
             await w_data.load_data()
         except (CityNotFoundError, NoWeatherDataError):

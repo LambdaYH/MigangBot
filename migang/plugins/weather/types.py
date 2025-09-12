@@ -1,0 +1,10 @@
+class APIError(Exception):
+    ...
+
+
+class ConfigError(Exception):
+    ...
+
+
+class CityNotFoundError(Exception):
+    ...
