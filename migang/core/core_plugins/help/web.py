@@ -42,12 +42,12 @@ class _TempToken:
 
 
 class HelpTokenManager:
-    """简单的内存 Token 管理，30 分钟过期"""
+    """简单的内存 Token 管理，默认 7 天过期"""
 
     def __init__(self) -> None:
         self._tokens: Dict[str, _TempToken] = {}
 
-    def create(self, payload: Dict, ttl_minutes: int = 30) -> str:
+    def create(self, payload: Dict, ttl_minutes: int = 60 * 24 * 7) -> str:
         token = uuid.uuid4().hex
         self._tokens[token] = _TempToken(
             payload=payload,

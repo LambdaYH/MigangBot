@@ -4,18 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>帮助</title>
+    <title>米缸帮助</title>
     <link rel="stylesheet" href="/help/web_static/res/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="/help/web_static/migang_menu.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
     <style>
         .content { column-count: {{ column_count }}; gap: 1rem; column-gap: normal; }
         /* 自适应 */
-        @media (max-width: 576px){ :root{ --mfsize:16px; --ofsize:20px;} .content{ column-count:1 !important;} #banner-image-box{height:220px;} .content>div>span{height:48px;line-height:48px;} .splic::before{width:220px;height:48px;} }
-        @media (min-width:577px) and (max-width: 992px){ :root{ --mfsize:22px; --ofsize:28px;} .content{ column-count:2 !important;} #banner-image-box{height:360px;} .content>div>span{height:64px;line-height:64px;} .splic::before{width:400px;height:64px;} }
+        @media (max-width: 576px){ :root{ --mfsize:16px; --ofsize:20px;} .content{ column-count:1 !important;} #banner-image-box{height:220px;} .content>div>span{height:48px;line-height:48px;} }
+        @media (min-width:577px) and (max-width: 992px){ :root{ --mfsize:22px; --ofsize:28px;} .content{ column-count:2 !important;} #banner-image-box{height:360px;} .content>div>span{height:64px;line-height:64px;} }
         @media (min-width:993px){ :root{ --mfsize:28px; --ofsize:36px;} }
         /* 网页不使用纹理图，避免 404 */
         .content>div::before{ background-image: none !important; }
+        /* 修复移动端 banner 渐变偏移：将渐变条固定到图片容器底部 */
+        #banner-image-box{ position:relative; overflow:hidden; }
+        #gradient-color-banner{ position:absolute !important; left:0; right:0; bottom:0 !important; top:auto !important; height:80px; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--bgcolor) 100%); }
+        @media (max-width: 576px){ #gradient-color-banner{ height:60px; } }
+        @media (min-width:577px) and (max-width: 992px){ #gradient-color-banner{ height:80px; } }
+        @media (min-width:993px){ #gradient-color-banner{ height:100px; } }
+        /* 让左侧圆角背景自适应填满 span 高度与文字长度（通过 JS 计算 --bgw） */
+        .content>div>span{ position: relative; }
+        .splic{ position:absolute !important; top:0 !important; left:0; height:100% !important; width:0; }
+        .splic::before{ top:0; left:0; height:100% !important; width:var(--bgw, clamp(100px, 45%, 500px)) !important; transform:none !important; border-radius:100px; z-index:-1; }
         /* 气泡与弹窗 */
         .tooltip{position:fixed;display:none;max-width:80vw;max-height:60vh;overflow:auto;padding:12px 16px;border-radius:10px;font-size:calc(var(--mfsize) - 2px);line-height:1.45;font-weight:600;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.18);background:rgba(255,255,255,.60);color:#111;border:2px solid var(--themebordercolor);white-space:normal;word-break:break-word;backdrop-filter: blur(var(--blur));-webkit-backdrop-filter: blur(var(--blur));font-family:"Microsoft YaHei","微软雅黑","Noto Sans SC","PingFang SC","Hiragino Sans GB",Arial,sans-serif;}
         .tooltip h1,.tooltip h2,.tooltip h3{ margin:0 0 .25em 0; line-height:1.2; }
@@ -32,9 +42,29 @@
         .tooltip thead th{ background:rgba(0,0,0,.06); }
         .tooltip img{ max-width:100%; height:auto; }
         .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9998;}
-        .modal-content{background:#fff;border-radius:10px;max-width:96vw;max-height:96vh;overflow:auto;padding:8px;}
-        .modal-content img{display:block;max-width:100%;height:auto;}
+        .modal-content{background:transparent;border-radius:10px;max-width:96vw;max-height:96vh;overflow:visible;padding:0;width:fit-content;height:fit-content;}
+        .modal-content.loading{ background:transparent !important; }
+        #help-modal-img{display:block;max-width:96vw;max-height:96vh;height:auto;background:#fff;border-radius:10px;}
+        #loading-gif{background:transparent !important;}
         a.plugin-link{ color: inherit; text-decoration: none; }
+        /* 加载状态样式 - 彩色动态小球 */
+        .loading-overlay{
+            position:absolute !important;
+            top:0 !important;
+            left:0 !important;
+            right:0 !important;
+            bottom:0 !important;
+            background:transparent !important;
+            display:flex;
+            align-items:center !important;
+            justify-content:center !important;
+            border-radius:10px !important;
+            z-index:9999 !important
+        }
+        .loading-overlay.hidden{
+            display:none !important;
+        }
+        .modal-content{position:relative;}
     </style>
 </head>
 
@@ -44,7 +74,6 @@
     </div>
     <div class="wrapper">
         <main class="des">
-            <p>可以通过 ‘帮助[功能名称]’ 来获取对应功能的使用方法。 或者使用 ‘指令帮助[功能名称]’ 来获取该功能可用指令。</p>
             {% if group %}
             <p style="color:red;">注：横线字功能被群管理员禁用，浅色字代表功能正在维护。</p>
             {% else %}
@@ -75,7 +104,14 @@
     </div>
 
     <div id="help-tooltip" class="tooltip"></div>
-    <div id="help-modal" class="modal-backdrop"><div class="modal-content"><img id="help-modal-img" alt="usage"></div></div>
+    <div id="help-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div id="loading-overlay" class="loading-overlay hidden">
+                <img id="loading-gif" src="/help/web_static/res/loading.gif" style="width:99px;height:99px;" alt="loading">
+            </div>
+            <img id="help-modal-img" alt="usage">
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.0/dist/purify.min.js"></script>
@@ -87,8 +123,10 @@
                 var tooltip = document.getElementById('help-tooltip');
                 var modal = document.getElementById('help-modal');
                 var modalImg = document.getElementById('help-modal-img');
+                var loadingOverlay = document.getElementById('loading-overlay');
                 var token = new URLSearchParams(location.search).get('t') || '';
                 var hoverTimer = null;
+                var modalOpen = false; // 打开大图时不再显示 tooltip
                 function nameFromSpan(span){ return (span.childNodes[0] && span.childNodes[0].textContent || span.textContent).trim(); }
                 function parseDirectives(text){
                     var s = String(text||'');
@@ -159,12 +197,96 @@
                     }catch(_){ /* ignore styling errors */ }
                 }
                 function hideTooltip(){ tooltip.style.display='none'; }
-                function onHover(e){ var span=e.currentTarget; var name=nameFromSpan(span); hoverTimer=setTimeout(async function(){ try{ var resp=await fetch('/help/plugin_usage?name='+encodeURIComponent(name)+'&t='+token); if(!resp.ok) return; var data=await resp.json(); showTooltip(e.clientX,e.clientY,data.usage||'暂无使用说明', span); }catch(_){} }, 200); }
+                function onHover(e){ if(modalOpen) return; var span=e.currentTarget; var name=nameFromSpan(span); hoverTimer=setTimeout(async function(){ if(modalOpen) return; try{ var resp=await fetch('/help/plugin_usage?name='+encodeURIComponent(name)+'&t='+token); if(!resp.ok) return; var data=await resp.json(); if(modalOpen) return; showTooltip(e.clientX,e.clientY,data.usage||'暂无使用说明', span); }catch(_){} }, 200); }
                 function onLeave(){ clearTimeout(hoverTimer); hideTooltip(); }
-                function onClick(e){ var span=e.currentTarget; var name=nameFromSpan(span); modal.style.display='flex'; modalImg.src='/help/plugin?name='+encodeURIComponent(name)+'&t='+token; }
-                modal.addEventListener('click', function(){ modal.style.display='none'; modalImg.removeAttribute('src'); });
+                function onClick(e){
+                    var span=e.currentTarget;
+                    var name=nameFromSpan(span);
+                    // 打开大图前，隐藏任何已显示的气泡，避免叠在图片上形成“边框”错觉
+                    hideTooltip();
+                    modal.style.display='flex';
+                    modalOpen = true;
+                    clearTimeout(hoverTimer);
+                    loadingOverlay.classList.remove('hidden');
+                    // 进入加载态：让模态内容背景透明
+                    document.querySelector('.modal-content').classList.add('loading');
+                    modalImg.style.display='none';
+
+                    // 清除之前的src和事件处理器
+                    modalImg.removeAttribute('src');
+                    modalImg.onload = null;
+                    modalImg.onerror = null;
+
+                    modalImg.onload = function(){
+                        loadingOverlay.classList.add('hidden');
+                        document.querySelector('.modal-content').classList.remove('loading');
+                        modalImg.style.display='block';
+                    };
+                    modalImg.onerror = function(){
+                        loadingOverlay.classList.add('hidden');
+                        document.querySelector('.modal-content').classList.remove('loading');
+                        modalImg.style.display='none';
+                        // 显示错误信息
+                        var errorDiv = document.createElement('div');
+                        errorDiv.style.cssText = 'text-align:center;padding:40px;color:#666;font-size:16px;';
+                        errorDiv.textContent = '图片加载失败';
+                        modalImg.parentNode.appendChild(errorDiv);
+                    };
+                    modalImg.src='/help/plugin?name='+encodeURIComponent(name)+'&t='+token;
+                }
+                modal.addEventListener('click', function(){
+                    modal.style.display='none';
+                    modalOpen = false;
+                    clearTimeout(hoverTimer);
+                    hideTooltip();
+                    loadingOverlay.classList.add('hidden');
+                    document.querySelector('.modal-content').classList.remove('loading');
+                    modalImg.style.display='block';
+                    modalImg.removeAttribute('src');
+
+                    // 清理错误信息
+                    var errorDivs = modalImg.parentNode.querySelectorAll('div:not(#loading-overlay):not(.loading-ball)');
+                    for(var i = 0; i < errorDivs.length; i++){
+                        if(errorDivs[i].textContent === '图片加载失败'){
+                            errorDivs[i].remove();
+                        }
+                    }
+                });
                 var nodes=document.querySelectorAll('.content>div > span');
-                for(var i=0;i<nodes.length;i++){ var sp=nodes[i]; if(!sp) continue; sp.addEventListener('mouseenter',onHover); sp.addEventListener('mouseleave',onLeave); sp.addEventListener('mousemove',function(ev){ if(tooltip.style.display==='block'){ tooltip.style.left=(ev.clientX+12)+'px'; tooltip.style.top=(ev.clientY+12)+'px'; }}); sp.addEventListener('click',onClick); }
+                // 根据文字实际宽度动态设置左侧圆角背景宽度 --bgw（含移动端 redraw）
+                var _measureCtx = document.createElement('canvas').getContext('2d');
+                function updateBackgroundWidthForSpan(span){
+                    try{
+                        var cs = getComputedStyle(span);
+                        // 尽量使用浏览器提供的 font 简写
+                        if(cs.font && cs.font.length){ _measureCtx.font = cs.font; }
+                        else{ _measureCtx.font = [cs.fontStyle, cs.fontVariant, cs.fontWeight, cs.fontSize, cs.fontFamily].join(' '); }
+
+                        var iconEl = span.querySelector('i');
+                        var textNode = iconEl && iconEl.nextSibling ? iconEl.nextSibling : span.firstChild;
+                        var text = '';
+                        if(textNode){ text = (textNode.textContent || textNode.nodeValue || '').trim(); }
+
+                        var textW = _measureCtx.measureText(text).width;
+                        var iconW = iconEl ? iconEl.getBoundingClientRect().width : 0;
+                        var padL = parseFloat(cs.paddingLeft||'0');
+                        var extra = 24; // 微调余量
+                        var desired = padL + iconW + textW + extra;
+                        var maxW = Math.max(100, span.clientWidth*0.96);
+                        var px = Math.max(100, Math.min(maxW, desired));
+                        // 强制触发重排以避免移动端缓存旧值
+                        span.style.setProperty('--bgw', px + 'px');
+                        void span.offsetWidth;
+                    }catch(_){ /* ignore */ }
+                }
+                function bootstrapSpans(){ for(var i=0;i<nodes.length;i++){ var sp=nodes[i]; if(!sp) continue; updateBackgroundWidthForSpan(sp); sp.addEventListener('mouseenter',onHover); sp.addEventListener('mouseleave',onLeave); sp.addEventListener('mousemove',function(ev){ if(tooltip.style.display==='block'){ tooltip.style.left=(ev.clientX+12)+'px'; tooltip.style.top=(ev.clientY+12)+'px'; }}); sp.addEventListener('click',onClick); } }
+                bootstrapSpans();
+                function refreshAll(){ for(var i=0;i<nodes.length;i++){ updateBackgroundWidthForSpan(nodes[i]); } }
+                window.addEventListener('resize', refreshAll);
+                window.addEventListener('orientationchange', refreshAll);
+                // 一些移动端浏览器在初次渲染后会调整字体/尺寸，延迟一次刷新
+                setTimeout(refreshAll, 50);
+                setTimeout(refreshAll, 200);
             });
         })();
     </script>

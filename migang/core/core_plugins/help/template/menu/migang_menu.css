@@ -175,6 +175,8 @@ body {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    position: relative; /* ensure pseudo backgrounds layer correctly on mobile */
+    z-index: 0; /* stacking context for pseudo backgrounds */
 }
 
 .splic {
@@ -192,7 +194,7 @@ body {
     border-radius: 100px;
     background: var(--pluginbgcolor);
     transform: translate(-95%, -100%);
-    z-index: -1;
+    z-index: -1; /* shadow layer */
 }
 
 .content>div>div {
@@ -205,6 +207,8 @@ body {
 .content>div>div>span:nth-child(1) {
     color: white;
     font-size: var(--ofsize);
+    position: relative;
+    z-index: 1; /* ensure title text sits above decorative layers */
 }
 
 

@@ -86,13 +86,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         elif isinstance(event, PrivateMessageEvent):
             user_id = event.user_id
             image_file = USER_HELP_PATH / f"{user_id }.png"
-        if image_file.exists():
-            await simple_help.finish(MessageSegment.image(image_file))
-        img = await get_help_image(
-            group_id=group_id,
-            user_id=user_id,
-            super_user=await SUPERUSER(bot, event),
-        )
+
         # 生成可访问网页的临时 token
         token = create_help_token(
             group_id=group_id,
@@ -110,6 +104,22 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         except Exception:
             base = ""
         url = f"{base}/help?t={token}"
+
+        if image_file.exists():
+            await simple_help.finish(
+                MessageSegment.image(image_file) + MessageSegment.text(f"\n网页查看：{url}")
+            )
+        img = await get_help_image(
+            group_id=group_id,
+            user_id=user_id,
+            super_user=await SUPERUSER(bot, event),
+        )
+        # 生成可访问网页的临时 token
+        token = create_help_token(
+            group_id=group_id,
+            user_id=user_id,
+            super_user=await SUPERUSER(bot, event),
+        )
         await simple_help.send(
             MessageSegment.image(img) + MessageSegment.text(f"\n网页查看：{url}")
         )
