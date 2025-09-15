@@ -46,6 +46,8 @@ async def handle_api_result(
     data: Dict[str, Any],
     result: Any,
 ):
+    if result is None:
+        return
     # 将昵称用昵称系统替换，保留群员卡片
     if (
         (api == "get_group_member_info" or api == "get_stranger_info")
