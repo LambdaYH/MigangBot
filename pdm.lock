@@ -5,7 +5,7 @@
 groups = ["default", "format", "git", "plugins"]
 strategy = []
 lock_version = "4.5.0"
-content_hash = "sha256:cc41151c6777a73e0b3d08434f2d98db31402bf70bbd7fd08a5fded35a9e8498"
+content_hash = "sha256:0239fd25f5c95bd20cd4f5a53f21ed49b40db3d861b020389729cbdce4ab988b"
 
 [[metadata.targets]]
 requires_python = "~=3.11"
