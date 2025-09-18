@@ -30,11 +30,27 @@ COPY --from=builder /tmp/__pypackages__/3.12/bin/* /bin/
 # install deps
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+    libfontconfig1 libgl1-mesa-glx libgl1-mesa-dri \
     fonts-noto-cjk fonts-noto-color-emoji libzbar-dev libopencv-dev \
     build-essential libssl-dev ca-certificates libasound2 wget \
     && playwright install --with-deps chromium \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# install custom fonts from resources/font
+RUN if [ -d "/migangbot/resources/font" ]; then \
+        mkdir -p /usr/share/fonts/migangbot \
+        && find /migangbot/resources/font -name "*.ttf" -exec cp {} /usr/share/fonts/migangbot/ \; \
+        && find /migangbot/resources/font -name "*.otf" -exec cp {} /usr/share/fonts/migangbot/ \; \
+        && find /migangbot/resources/font -name "*.TTF" -exec cp {} /usr/share/fonts/migangbot/ \; \
+        && find /migangbot/resources/font -name "*.OTF" -exec cp {} /usr/share/fonts/migangbot/ \; \
+        && chmod 644 /usr/share/fonts/migangbot/* \
+        && fc-cache -f -v \
+        && echo "字体安装完成，已安装字体列表：" \
+        && fc-list | grep migangbot || echo "未找到 migangbot 字体目录中的字体"; \
+    else \
+        echo "字体目录 /migangbot/resources/font 不存在，跳过字体安装"; \
+    fi
 
 # set command/entrypoint, adapt to fit your needs
 CMD aerich upgrade ; nb datastore upgrade ; nb orm upgrade ; nb run
