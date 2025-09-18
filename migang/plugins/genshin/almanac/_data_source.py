@@ -85,7 +85,11 @@ def build_alc_image() -> Path:
     background = BuildImage.open(BACKGROUND_PATH)
     now = datetime.now()
     background.draw_text(
-        (78, 145), str(now.year), fill="#8d7650ff", fontsize=30, fontname="HYWenHei"
+        (78, 145),
+        str(now.year),
+        fill="#8d7650ff",
+        font_size=30,
+        font_families=["HYWenHei"],
     )
     month = str(now.month)
     month_w = 358
@@ -97,8 +101,8 @@ def build_alc_image() -> Path:
         (month_w, 145),
         f"{int2cn(month)}月",
         fill="#8d7650ff",
-        fontsize=30,
-        fontname="HYWenHei",
+        font_size=30,
+        font_families=["HYWenHei"],
     )
     day = str(now.day)
     if now.day > 10 and day[-1] != "0":
@@ -113,8 +117,8 @@ def build_alc_image() -> Path:
         (day_w, 145),
         f"{int2cn(day)}日",
         fill="#f7f8f2ff",
-        fontsize=35,
-        fontname="HYWenHei",
+        font_size=35,
+        font_families=["HYWenHei"],
     )
     fortune_h = 230
     for fortune in good_fortune:
@@ -122,15 +126,15 @@ def build_alc_image() -> Path:
             (150, fortune_h),
             fortune.title,
             fill="#756141ff",
-            fontsize=25,
-            fontname="HYWenHei",
+            font_size=25,
+            font_families=["HYWenHei"],
         )
         background.draw_text(
             (150, fortune_h + 28),
             fortune.desc,
             fill="#b5b3acff",
-            fontsize=19,
-            fontname="HYWenHei",
+            font_size=19,
+            font_families=["HYWenHei"],
         )
         fortune_h += 55
     fortune_h += 4
@@ -139,15 +143,15 @@ def build_alc_image() -> Path:
             (150, fortune_h),
             fortune.title,
             fill="#756141ff",
-            fontsize=25,
-            fontname="HYWenHei",
+            font_size=25,
+            font_families=["HYWenHei"],
         )
         background.draw_text(
             (150, fortune_h + 28),
             fortune.desc,
             fill="#b5b3acff",
-            fontsize=19,
-            fontname="HYWenHei",
+            font_size=19,
+            font_families=["HYWenHei"],
         )
         fortune_h += 55
     with open(path, "wb") as f:

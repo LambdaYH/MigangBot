@@ -60,13 +60,13 @@ def draw_bag(
             bk.draw_text(
                 (5, 0, side_width, bk.height),
                 "被\n动",
-                fontname="HONOR Sans CN",
+                font_families=["HONOR Sans CN"],
             )
         else:
             bk.draw_text(
                 (5, 0, side_width, bk.height),
                 str(i + 1),
-                fontname="HONOR Sans CN",
+                font_families=["HONOR Sans CN"],
             )
         if goods and goods.icon:
             icon = goods.icon
@@ -80,13 +80,13 @@ def draw_bag(
         bk.draw_text(
             (side_width + 5 + icon_size[0] + 5, 5),
             text=item.item_name,
-            fontname="HONOR Sans CN",
-            fontsize=font_size,
+            font_families=["HONOR Sans CN"],
+            font_size=font_size,
         )
         bk.draw_text(
             (bk.width - side_width, 0, bk.width, bk.height),
             text=str(item.amount),
-            fontname="HONOR Sans CN",
+            font_families=["HONOR Sans CN"],
         )
         item_img.append(bk)
 
@@ -100,7 +100,7 @@ def draw_bag(
         my_gold.draw_text(
             (each_width * i, 0, each_width * (i + 1), my_gold_height // 3),
             text=text,
-            fontname="HONOR Sans CN",
+            font_families=["HONOR Sans CN"],
         )
     for i in range(4):
         my_gold.draw_line(
@@ -117,7 +117,7 @@ def draw_bag(
                 my_gold_height - 5,
             ),
             text=str(gold),
-            fontname="HONOR Sans CN",
+            font_families=["HONOR Sans CN"],
         )
     bk.paste(my_gold, (20, 10), True)
     height_start = my_gold_height + 20

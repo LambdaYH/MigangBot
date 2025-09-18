@@ -49,7 +49,9 @@ async def build_request_img(
         )
         info = BuildImage.new(mode="RGBA", size=(500, 100), color=(254, 254, 254))
         info.paste(avatar, pos=(15, int((info.height - avatar.height) / 2)), alpha=True)
-        info.draw_text((120, 15), request.user_name or "None", fontname="HONOR Sans CN")
+        info.draw_text(
+            (120, 15), request.user_name or "None", font_families=["HONOR Sans CN"]
+        )
         info.paste(age_bk, (120, 50), True)
         info.paste(comment, (120 + age_bk.width + 10, 49), True)
         if isinstance(request, GroupRequest):
@@ -91,7 +93,7 @@ async def build_request_img(
     bk.draw_text(
         (15, 13),
         "好友请求" if type_ == "friend" else "入群请求",
-        fontsize=20,
-        fontname="HONOR Sans CN",
+        font_size=20,
+        font_families=["HONOR Sans CN"],
     )
     return bk

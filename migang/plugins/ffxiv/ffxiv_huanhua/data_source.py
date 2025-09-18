@@ -101,23 +101,23 @@ async def result_to_img(
     bk.draw_text(
         (600, 50),
         title + "\n\n" + itd + "\n\n" + race + "\n\n",
-        fontname="HONOR Sans CN",
+        font_families=["HONOR Sans CN"],
         fill="black",
-        fontsize=28,
+        font_size=28,
     )
     bk.draw_text(
         (596, 254),
         text=result["left"],
-        fontname="HONOR Sans CN",
+        font_families=["HONOR Sans CN"],
         fill="black",
-        fontsize=28,
+        font_size=28,
     )
     bk.draw_text(
         (1386, 254),
         text=result["right"],
-        fontname="HONOR Sans CN",
+        font_families=["HONOR Sans CN"],
         fill="black",
-        fontsize=28,
+        font_size=28,
     )
     return MessageSegment.image(bk.save_png())
 

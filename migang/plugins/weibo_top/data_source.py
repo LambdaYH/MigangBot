@@ -64,8 +64,12 @@ def gen_wbtop_pic(data: dict) -> MessageSegment:
         hot = str(data["hot_word_num"])
         img = BuildImage.new("RGBA", (700, 30), color="white")
         _, h = getsize(ttf_font, title)
-        img.draw_text((10, int((30 - h) / 2)), title, fontname="Yozai", fontsize=20)
-        img.draw_text((580, int((30 - h) / 2)), hot, fontname="Yozai", fontsize=20)
+        img.draw_text(
+            (10, int((30 - h) / 2)), title, font_families=["Yozai"], font_size=20
+        )
+        img.draw_text(
+            (580, int((30 - h) / 2)), hot, font_families=["Yozai"], font_size=20
+        )
         text_bk.paste(img, (0, height))
         height += img.height + 2
     bk.paste(text_bk, (0, 280))

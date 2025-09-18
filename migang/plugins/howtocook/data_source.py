@@ -55,8 +55,8 @@ async def generate_menu_image(menu: Dict[str, Any]):
     bg.draw_text(
         (0, 0, bg.width, 160),
         text="菜   谱",
-        fontname="DFBuDingW12-GB",
-        fontsize=60,
+        font_families=["DFBuDingW12-GB"],
+        font_size=60,
         max_fontsize=60,
     )
     start_x = 40

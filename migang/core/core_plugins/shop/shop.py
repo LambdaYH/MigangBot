@@ -87,8 +87,8 @@ def draw_shop() -> BytesIO:
             bk.draw_bbcode_text(
                 text=line,
                 xy=(start_x, last_height + 7),
-                fontname="FZSJ-QINGCRJ",
-                fontsize=25,
+                font_families=["FZSJ-QINGCRJ"],
+                font_size=25,
             )
             last_height += line_height
         last_height = 10
@@ -113,41 +113,41 @@ def draw_shop() -> BytesIO:
         goods_bk.paste(icon, (186, 7), alpha=True)
         # 画名字
         goods_bk.draw_bbcode_text(
-            (2, 11, 172, 37), text=goods.name, fontname="Yozai", fontsize=20
+            (2, 11, 172, 37), text=goods.name, font_families=["Yozai"], font_size=20
         )
         # 画价格
         goods_bk.draw_bbcode_text(
-            (5, 45), text="价格", fontname="CJGaoDeGuo-MH", fontsize=30
+            (5, 45), text="价格", font_families=["CJGaoDeGuo-MH"], font_size=30
         )
         if goods.discount == 1:
             goods_bk.draw_bbcode_text(
                 (42, 42, 170, 120),
                 text=str(goods.price),
-                fontname="DS-Digital",
-                fontsize=90,
+                font_families=["DS-Digital"],
+                font_size=90,
                 max_fontsize=90,
             )
         else:
             goods_bk.draw_bbcode_text(
                 (5, 90, 50, 120),
                 text=str(goods.price),
-                fontname="DS-Digital",
-                fontsize=25,
+                font_families=["DS-Digital"],
+                font_size=25,
             )
             goods_bk.draw_line((7, 90, 46, 117), fill=(255, 0, 0), width=3)
             goods_bk.draw_bbcode_text(
                 (42, 42, 170, 120),
                 text=str(int(goods.price * goods.discount)),
-                fontname="DS-Digital",
-                fontsize=90,
+                font_families=["DS-Digital"],
+                font_size=90,
                 max_fontsize=90,
                 fill=(255, 0, 0),
             )
             goods_bk.draw_bbcode_text(
                 (175, 85),
                 text=f"-{100 - int(goods.discount * 100)}%",
-                fontname="FZSJ-QINGCRJ",
-                fontsize=25,
+                font_families=["FZSJ-QINGCRJ"],
+                font_size=25,
             )
         # 画日限制
         if goods.purchase_limit is not None:
@@ -158,8 +158,8 @@ def draw_shop() -> BytesIO:
             limit_img.draw_bbcode_text(
                 (0, 20, limit_img.width, limit_img.height),
                 text=str(goods.purchase_limit),
-                fontname="EASTER CHALK",
-                fontsize=26,
+                font_families=["EASTER CHALK"],
+                font_size=26,
                 fill=(255, 0, 0),
             )
             bk.paste(
@@ -221,8 +221,8 @@ def draw_shop() -> BytesIO:
         bk.draw_text(
             (nikki_img.width + 17, last_height + 30),
             text=str(i + 1),
-            fontname="EASTER CHALK",
-            fontsize=25,
+            font_families=["EASTER CHALK"],
+            font_size=25,
             fill=(255, 255, 255, 178),
         )
         last_height += img.height + goods_img_gap
@@ -241,11 +241,14 @@ def draw_shop() -> BytesIO:
     bk.draw_text(
         (395, 30),
         text="商   品   列   表",
-        fontname="DFBuDingW12-GB",
-        fontsize=60,
+        font_families=["DFBuDingW12-GB"],
+        font_size=60,
         max_fontsize=60,
     )
     bk.draw_text(
-        (10, 10), text="发送 购买道具【商品名/序号】购买", fontname="DFBuDingW12-GB", fontsize=20
+        (10, 10),
+        text="发送 购买道具【商品名/序号】购买",
+        font_families=["DFBuDingW12-GB"],
+        font_size=20,
     )
     return bk.save_png()

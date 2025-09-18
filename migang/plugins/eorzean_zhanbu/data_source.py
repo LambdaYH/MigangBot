@@ -76,17 +76,17 @@ def draw(
         xy=(59, 75, 219, 124),
         text=f"{luck}%",
         fill="#F5F5F5",
-        fontsize=45,
+        font_size=45,
         max_fontsize=45,
-        fontname="Mamelon",
+        font_families=["Mamelon"],
     )
 
     # draw dye
     img.draw_text(
         xy=(58, 148, 220, 171),
         text=dye,
-        fontsize=18,
-        fontname="sakura_yingsuti",
+        font_size=18,
+        font_families=["sakura_yingsuti"],
         fill="#323232",
     )
 
@@ -117,8 +117,8 @@ def draw(
                 xy=(x, y),
                 text=textVertical,
                 fill="#323232",
-                fontname="sakura_yingsuti",
-                fontsize=font_size,
+                font_families=["sakura_yingsuti"],
+                font_size=font_size,
             )
     return img.save_png()
 

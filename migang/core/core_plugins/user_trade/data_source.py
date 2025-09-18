@@ -157,13 +157,13 @@ def draw(
         bg.draw_text(
             (5 + icon_size[0] + 5, 5),
             text=item_name,
-            fontname="HONOR Sans CN",
-            fontsize=font_size,
+            font_families=["HONOR Sans CN"],
+            font_size=font_size,
         )
         bg.draw_text(
             (bg.width - side_width, 0, bg.width, bg.height),
             text=str(amount),
-            fontname="HONOR Sans CN",
+            font_families=["HONOR Sans CN"],
         )
         item_img.append(bg)
 
@@ -203,7 +203,7 @@ def draw(
     gold_img.draw_text(
         (5 + 5, 5, gold_img.width - 5, gold_img.height - 5),
         text=str(gold),
-        fontname="HONOR Sans CN",
+        font_families=["HONOR Sans CN"],
     )
 
     if avatar_pos == 0:

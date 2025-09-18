@@ -129,14 +129,18 @@ async def _(event: MessageEvent):
         r=18
     )
     demand_img.draw_text(
-        xy=(150, 5), text="活", fontsize=50, max_fontsize=50, fontname="HONOR Sans CN"
+        xy=(150, 5),
+        text="活",
+        font_size=50,
+        max_fontsize=50,
+        font_families=["HONOR Sans CN"],
     )
     demand_img.draw_text(
         xy=(demand_img.width - 205, 5),
         text="期",
-        fontsize=50,
+        font_size=50,
         max_fontsize=50,
-        fontname="HONOR Sans CN",
+        font_families=["HONOR Sans CN"],
     )
     demand_img.draw_line(
         xy=(5, 80, demand_img.width - 5, 80), fill=(255, 255, 255, 230), width=3
@@ -144,7 +148,7 @@ async def _(event: MessageEvent):
     demand_img.draw_text(
         xy=(5, 85, demand_img.width - 5, demand_img.height - 5),
         text=str(total_demand_deposit),
-        fontname="HONOR Sans CN",
+        font_families=["HONOR Sans CN"],
     )
     bg_img = bg_img.resize_canvas(size=(demand_img.width + 30, demand_img.height + 30))
     bg_img.paste(img=demand_img, pos=(15, 15), alpha=True)

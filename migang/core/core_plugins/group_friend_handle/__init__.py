@@ -375,7 +375,7 @@ async def _(
 [b]好友请求处理[/b]: {await get_config('handle_friend')}
 [b]入群请求处理[/b]: {await get_config('handle_group')}
         """.strip(),
-                fontname="Yozai",
+                font_families=["Yozai"],
                 fontsize=15,
             ).save(buf, "PNG")
             await help_msg.finish(MessageSegment.image(buf))

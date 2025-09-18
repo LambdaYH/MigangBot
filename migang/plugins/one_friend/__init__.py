@@ -65,12 +65,16 @@ async def _(
         ava = BuildImage.new("RGBA", (100, 100), color=(0, 0, 0))
     ava = ava.circle()
     text = BuildImage.new("RGBA", (400, 40), color="white")
-    text.draw_text((0, 0), user_name, fontsize=30, fontname="Microsoft YaHei")
+    text.draw_text((0, 0), user_name, font_size=30, font_families=["Microsoft YaHei"])
     A = BuildImage.new("RGBA", (700, 150), color="white")
     A.paste(ava, (30, 25), True)
     A.paste(text, (150, 28))
     A.draw_text(
-        (150, 85), msg, fontsize=25, fill=(125, 125, 125), fontname="Microsoft YaHei"
+        (150, 85),
+        msg,
+        font_size=25,
+        fill=(125, 125, 125),
+        font_families=["Microsoft YaHei"],
     )
 
     await one_friend.send(MessageSegment.image(A.save_png()))

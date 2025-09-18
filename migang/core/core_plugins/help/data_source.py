@@ -237,8 +237,8 @@ async def build_usage_png(usage: str) -> bytes:
         bk.draw_bbcode_text(
             (border + start_idx + text_image_padding, top_border - 30),
             text=f"[color={color_candidates[0]}]使[/color][color={color_candidates[1]}]用[/color][color={color_candidates[2]}]帮[/color][color={color_candidates[3]}]助[/color]",
-            fontname="HONOR Sans CN",
-            fontsize=40,
+            font_families=["HONOR Sans CN"],
+            font_size=40,
         )
         return bk.save_png()
 

@@ -118,7 +118,7 @@ def build_img(
         halign="left",
         fill=header_text_color,
         max_fontsize=TITLE_FONT_SIZE,
-        fontname=mcstat_font,
+        font_families=[mcstat_font],
         stroke_ratio=STROKE_RATIO,
         stroke_fill=header_stroke_color,
     )
@@ -133,7 +133,7 @@ def build_img(
         halign="left",
         fill=header_text_color,
         max_fontsize=TITLE_FONT_SIZE,
-        fontname=mcstat_font,
+        font_families=[mcstat_font],
         stroke_ratio=STROKE_RATIO,
         stroke_fill=header_stroke_color,
     )
@@ -153,7 +153,7 @@ def format_extra(extra: str) -> Text2Image:
         format_code_to_bbcode(extra),
         EXTRA_FONT_SIZE,
         fill=CODE_COLOR["f"],
-        fontname=mcstat_font,
+        font_families=[mcstat_font],
         stroke_ratio=STROKE_RATIO,
         stroke_fill=STROKE_COLOR["f"],
         spacing=EXTRA_SPACING,
