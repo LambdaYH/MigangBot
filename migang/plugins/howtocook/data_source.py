@@ -38,7 +38,10 @@ async def generate_menu_image(menu: Dict[str, Any]):
     for col in cols:
         col_imgs.append(
             text2image(
-                col, bg_color=(240, 240, 240), fontsize=30, fontname="FZSJ-QINGCRJ"
+                col,
+                bg_color=(240, 240, 240),
+                font_size=30,
+                font_families=["FZSJ-QINGCRJ"],
             )
         )
     width = 0

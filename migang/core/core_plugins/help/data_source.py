@@ -129,8 +129,8 @@ async def build_usage_png(usage: str) -> bytes:
     """将使用说明渲染为 PNG 字节，供图片与网页复用"""
     help_img = text2image(
         text=usage,
-        fontname="Yozai",
-        fontsize=24,
+        font_families=["Yozai Font"],
+        font_size=24,
         padding=(0, 0),
         bg_color=(255, 255, 255, 0),
     )
@@ -158,8 +158,8 @@ async def build_usage_png(usage: str) -> bytes:
             usage = usage.removeprefix("[text]").lstrip()
         help_img = text2image(
             text=usage,
-            fontname="Yozai",
-            fontsize=24,
+            font_families=["Yozai Font"],
+            font_size=24,
             padding=(0, 0),
             bg_color=(255, 255, 255),
         )

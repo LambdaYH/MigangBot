@@ -113,7 +113,10 @@ def draw_shop() -> BytesIO:
         goods_bk.paste(icon, (186, 7), alpha=True)
         # 画名字
         goods_bk.draw_bbcode_text(
-            (2, 11, 172, 37), text=goods.name, font_families=["Yozai"], font_size=20
+            (2, 11, 172, 37),
+            text=goods.name,
+            font_families=["Yozai Font"],
+            font_size=20,
         )
         # 画价格
         goods_bk.draw_bbcode_text(

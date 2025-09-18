@@ -457,7 +457,9 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
                     + MessageSegment.image(
                         pic_to_bytes(
                             text2image(
-                                "\n".join(ret_msgs), fontname="Yozai", fontsize=16
+                                "\n".join(ret_msgs),
+                                font_families=["Yozai Font"],
+                                font_size=16,
                             )
                         )
                     ),
@@ -491,7 +493,11 @@ async def _(event: GroupMessageEvent, session: AsyncSession = Depends(get_sessio
     await show_task.finish(
         f"当前群[{event.group_id}]的所有定时任务"
         + MessageSegment.image(
-            pic_to_bytes(text2image("\n".join(ret_msgs), fontname="Yozai", fontsize=16))
+            pic_to_bytes(
+                text2image(
+                    "\n".join(ret_msgs), font_families=["Yozai Font"], font_size=16
+                )
+            )
         ),
         at_sender=True,
     )

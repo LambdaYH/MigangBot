@@ -22,9 +22,9 @@ async def build_request_img(
             str(request.age),
             bg_color="#04CAF7" if request.sex == "male" else "#F983C1",
             padding=(3, 1),
-            fontname="Yozai",
-            fontsize=15,
-            fallback_fonts=False,
+            font_families=["Yozai Font"],
+            font_size=15,
+            fallback_fonts_families=[],
         )
         with BytesIO() as buf:
             age_bk.save(buf, "PNG")
@@ -33,8 +33,8 @@ async def build_request_img(
             text="同意/拒绝",
             bg_color=(238, 239, 244, 254),
             padding=(7, 7),
-            fontname="HYWenHei",
-            fontsize=15,
+            font_families=["HYWenHei"],
+            font_size=15,
         )
         with BytesIO() as buf:
             button.save(buf, "PNG")
@@ -43,8 +43,8 @@ async def build_request_img(
         comment = text2image(
             f"对方留言：{request.comment}",
             padding=(0, 0),
-            fontsize=12,
-            fontname="HONOR Sans CN",
+            font_size=12,
+            font_families=["HONOR Sans CN"],
             fill=(140, 140, 143),
         )
         info = BuildImage.new(mode="RGBA", size=(500, 100), color=(254, 254, 254))
@@ -57,15 +57,15 @@ async def build_request_img(
         if isinstance(request, GroupRequest):
             group_info = text2image(
                 text=f"邀请你加入：{request.group_name}({request.group_id})",
-                fontsize=12,
-                fontname="HONOR Sans CN",
+                font_size=12,
+                font_families=["HONOR Sans CN"],
                 fill=(140, 140, 143),
                 padding=(0, 0),
             )
             info.paste(group_info, (120, 74), True)
         info.paste(button, (380, 35), True)
         id_img = text2image(
-            text=f"id：{i}", fontsize=13, fill=(140, 140, 143), padding=(0, 0)
+            text=f"id：{i}", font_size=13, fill=(140, 140, 143), padding=(0, 0)
         )
         info.paste(id_img, (400, 10), True)
         time_img = text2image(
@@ -75,8 +75,8 @@ async def build_request_img(
             + request.time.strftime("%Y-%m-%d %H:%M:%S"),
             padding=(1, 1),
             fill=(140, 140, 143),
-            fontname="HONOR Sans CN",
-            fontsize=8,
+            font_families=["HONOR Sans CN"],
+            font_size=8,
         )
         info.paste(
             time_img, pos=(info.width - time_img.width, info.height - time_img.height)

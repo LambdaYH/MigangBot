@@ -38,8 +38,8 @@ async def check():
         text_img = text2image(
             rst,
             bg_color=(255, 255, 255, 120),
-            fontsize=24,
-            fontname="STZhongsong",
+            font_size=24,
+            font_families=["STZhongsong"],
             padding=(15, 20),
         )
         bk = BuildImage.open(Path(__file__).parent / "image" / "check.jpg").resize(

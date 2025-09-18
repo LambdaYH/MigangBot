@@ -86,7 +86,7 @@ def draw(
         xy=(58, 148, 220, 171),
         text=dye,
         font_size=18,
-        font_families=["sakura_yingsuti"],
+        font_families=["樱酥体 蔷薇微光静谧时"],
         fill="#323232",
     )
 
@@ -117,7 +117,7 @@ def draw(
                 xy=(x, y),
                 text=textVertical,
                 fill="#323232",
-                font_families=["sakura_yingsuti"],
+                font_families=["樱酥体 蔷薇微光静谧时"],
                 font_size=font_size,
             )
     return img.save_png()

@@ -198,7 +198,7 @@ def draw(
         (0, 0, gift_border.width, gift_border.height),
         windfall,
         lines_align="center",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
     )
     bk = (
         BuildImage.open(random.choice(list(SIGN_BACKGROUND_PATH.iterdir())))
@@ -216,7 +216,7 @@ def draw(
     bk.draw_text(
         (30, 15),
         text=user_name,
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=50,
         max_fontsize=50,
         fill=(255, 255, 255),
@@ -224,7 +224,7 @@ def draw(
     bk.draw_text(
         (30, 85),
         text=f"UID: {user_id}",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=30,
         max_fontsize=50,
         fill=(255, 255, 255),
@@ -233,70 +233,70 @@ def draw(
     bk.draw_bbcode_text(
         xy=(30, 157),
         text=f"Accumulative check-in for [size=40][color=#D34021]{count}[/color][/size] days",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=25,
     )
     bk.paste(bar_bk, (225, 275), True)
     bk.draw_text(
         (220, 370),
         text=f"时间：{time.strftime('%Y-%m-%d %a %H:%M:%S')}",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=20,
     )
     bk.draw_text(
         (220, 240),
         text="当前",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=20,
     )
     bk.draw_text(
         (262, 234),
         text=f"好感度：{impression:.2f}",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=30,
     )
     bk.draw_text(
         (220, 305),
         text=f"· 好感度等级：{level} [{lik2relation[level]}]",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=15,
     )
     bk.draw_text(
         (220, 325),
         text=f"· {bot_name}对你的态度：{level2attitude[level]}",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=15,
     )
     bk.draw_text(
         (220, 345),
         text=f"· 距离升级还差 {interpolation:.2f} 好感度",
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         font_size=15,
     )
     bk.draw_text(
         (550, 180),
         text="今日签到",
         font_size=30,
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
     )
     bk.draw_bbcode_text(
         (580, 220),
         text=f"好感度 + {impression_diff}",
         font_size=20,
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
     )
     bk.draw_text(
         (580, 245),
         text=f"金币 + {gold_diff}",
         font_size=20,
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
     )
     # 水印
     bk.draw_text(
         (15, 400),
         text=f"{bot_name}@{datetime.now().year}",
         font_size=15,
-        font_families=["Yozai"],
+        font_families=["Yozai Font"],
         fill=(155, 155, 155),
     )
     return bk.save_png()
