@@ -79,7 +79,7 @@ plugins = [
     "nonebot-plugin-bottle>=2.1.1.0",
     "YetAnotherPicSearch>=2.0.10",
     "nonebot-plugin-pingti>=0.1.3",
-    "nonebot-bison-migang>=0.1.7",
+    "nonebot-bison>=0.9.7",
 ]
 
 
