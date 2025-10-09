@@ -354,12 +354,39 @@ class BaseWeiboSpider:
 
     async def get_long_weibo(self, id_):
         """获取长微博"""
-        weibo_info = await self.get_json(
-            "https://m.weibo.cn/statuses/show", params={"id": id_}
-        )
-        if not weibo_info or weibo_info["ok"] != 1:
-            return None
-        return self.parse_weibo(weibo_info["data"])
+        url = f"https://m.weibo.cn/detail/{id_}"
+        import aiohttp
+
+        for i in range(5):
+            try:
+                await asyncio.sleep(random.uniform(1.0, 2.5))
+                async with aiohttp.ClientSession() as client:
+                    resp = await client.get(
+                        url, headers=self.__headers, timeout=20, ssl=False
+                    )
+                    if resp.status != 200:
+                        continue
+                    html = await resp.text()
+                start = html.find('"status":')
+                end_call = html.rfind('"call"')
+                if start == -1 or end_call == -1:
+                    continue
+                html_slice = html[start:end_call]
+                last_comma = html_slice.rfind(",")
+                if last_comma != -1:
+                    html_slice = html_slice[:last_comma]
+                js_text = "{" + html_slice + "}"
+                try:
+                    js = json.loads(js_text)
+                except Exception:
+                    continue
+                weibo_info = js.get("status")
+                if weibo_info and weibo_info["ok"] == 1:
+                    return self.parse_weibo(weibo_info)
+            except Exception as e:
+                logger.warning(f"获取长微博异常，次数{i}：{e}")
+                continue
+        return None
 
     async def get_one_weibo(self, info):
         """获取一条微博的全部信息"""
