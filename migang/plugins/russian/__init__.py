@@ -203,7 +203,7 @@ async def _(
     bot: Bot, event: GroupMessageEvent, state: T_State, arg: Message = CommandArg()
 ):
     global rs_player
-    msg = arg.extract_plain_text()
+    msg = arg.extract_plain_text().strip()
     try:
         if (
             rs_player[event.group_id][1]
