@@ -4085,22 +4085,22 @@ files = [
 
 [[package]]
 name = "openai"
-version = "2.2.0"
+version = "2.3.0"
 requires_python = ">=3.8"
 summary = "The official Python library for the openai API"
 dependencies = [
     "anyio<5,>=3.5.0",
     "distro<2,>=1.7.0",
     "httpx<1,>=0.23.0",
-    "jiter<1,>=0.4.0",
+    "jiter<1,>=0.10.0",
     "pydantic<3,>=1.9.0",
     "sniffio",
     "tqdm>4",
     "typing-extensions<5,>=4.11",
 ]
 files = [
-    {file = "openai-2.2.0-py3-none-any.whl", hash = "sha256:d222e63436e33f3134a3d7ce490dc2d2f146fa98036eb65cc225df3ce163916f"},
-    {file = "openai-2.2.0.tar.gz", hash = "sha256:bc49d077a8bf0e370eec4d038bc05e232c20855a19df0b58e5b3e5a8da7d33e0"},
+    {file = "openai-2.3.0-py3-none-any.whl", hash = "sha256:a7aa83be6f7b0ab2e4d4d7bcaf36e3d790874c0167380c5d0afd0ed99a86bd7b"},
+    {file = "openai-2.3.0.tar.gz", hash = "sha256:8d213ee5aaf91737faea2d7fc1cd608657a5367a18966372a3756ceaabfbd812"},
 ]
 
 [[package]]
