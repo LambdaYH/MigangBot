@@ -6,21 +6,12 @@ async def search(keyword, result_num: int = 3):
     """搜索音乐"""
     song_list = []
     params = {
-        "format": "json",
-        "inCharset": "utf-8",
-        "outCharset": "utf-8",
-        "notice": 0,
-        "platform": "yqq.json",
-        "needNewCode": 0,
-        "uin": 0,
-        "hostUin": 0,
-        "is_xml": 0,
-        "key": keyword,
+        "word": keyword,
     }
     try:
         async with aiohttp.ClientSession() as client:
             resp = await client.get(
-                url="https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg",
+                url=f"https://api.vkeys.cn/v2/music/tencent",
                 params=params,
                 timeout=5,
             )
@@ -29,10 +20,10 @@ async def search(keyword, result_num: int = 3):
         logger.warning(f"Request QQ Music Timeout: {e}")
         return []
     try:
-        for item in res_data["data"]["song"]["itemlist"][:result_num]:
+        for item in res_data["data"][:result_num]:
             song_list.append(
                 {
-                    "title": item["name"],
+                    "title": item["song"],
                     "id": item["id"],
                     "content": item["singer"],
                     "type": "qq",

@@ -96,6 +96,43 @@ music_laiyishou = on_command(
     permission=GROUP,
 )
 
+qq_card_api = "https://oiapi.net/api/QQMusicJSONArk"
+
+
+async def build_music_card(song) -> MessageSegment:
+    if song["type"] == "163":
+        return MessageSegment.music("163", song["id"])
+    elif song["type"] == "qq":
+        try:
+            import aiohttp
+
+            async with aiohttp.ClientSession() as client:
+                m_detail = (
+                    await (
+                        await client.get(
+                            f"https://api.vkeys.cn/v2/music/tencent?id={song['id']}"
+                        )
+                    ).json()
+                )["data"]
+                params = {
+                    "format": "qq",
+                    "url": m_detail.get("url"),
+                    "song": m_detail.get("song"),
+                    "singer": m_detail.get("singer"),
+                    "jump": m_detail.get("link"),
+                    "cover": m_detail.get("cover"),
+                }
+
+                resp = await client.get(qq_card_api, params=params, timeout=8)
+                data = await resp.json()
+                return MessageSegment.json(data["data"])
+        except Exception as e:
+            logger.error(f"QQ Music Card API Error: {e}")
+            return MessageSegment.music("qq", song["id"])
+    elif song["type"] == "custom":
+        return MessageSegment(type="music", data=song)
+    return MessageSegment.text("不支持的音乐类型")
+
 
 @music_specfic_source.handle()
 async def _(
@@ -196,12 +233,7 @@ async def _(event: GroupMessageEvent, music_id: str = ArgStr("music_id")):
     music_idx = int(music_id) - 1
     if music_idx in music_dict:
         song = music_dict[music_idx]
-        if song["type"] == "163":
-            music = MessageSegment.music("163", song["id"])
-        elif song["type"] == "qq":
-            music = MessageSegment.music("qq", song["id"])
-        elif song["type"] == "custom":
-            music = MessageSegment(type="music", data=song)
+        music = await build_music_card(song)
         try:
             await music_select_handler.send(music)
         except ActionFailed:
@@ -232,6 +264,6 @@ async def _(arg: Message = CommandArg()):
     if not music_name:
         return
     if m := await search_qq_music(music_name, 1):
-        await music_laiyishou.finish(MessageSegment.music(m[0]["type"], m[0]["id"]))
+        await music_laiyishou.finish(await build_music_card(m[0]))
     else:
         await music_laiyishou.finish("没有找到这首歌呢~")

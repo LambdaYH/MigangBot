@@ -15,7 +15,7 @@ async def update_suits_img():
         r = await client.head(
             "https://nikki4.papegames.cn/audiovisual?utm_source=official&utm_medium=home_nav",
             headers=headers,
-            timeout=30,
+            timeout=60,
         )
         cookie = r.cookies
         r = await client.get(
@@ -23,14 +23,14 @@ async def update_suits_img():
             headers=headers,
             cookies=cookie,
             params={"limit": 0},
-            timeout=30,
+            timeout=60,
         )
         r = await client.get(
             "https://nikki4.papegames.cn/api/v1/picture",
             headers=headers,
             cookies=cookie,
             params={"limit": (await r.json())["data"]["total"]},
-            timeout=30,
+            timeout=60,
         )
         r = (await r.json())["data"]["data"]
     suits = await async_load_data(DATA_PATH / "suits.json")
