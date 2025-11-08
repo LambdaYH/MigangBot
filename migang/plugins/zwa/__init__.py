@@ -37,6 +37,10 @@ MORNING = (
     "各位早上好！",
 )
 
+_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
+}
+
 
 async def get_moring_message() -> str:
     """获得早上问好
@@ -49,7 +53,9 @@ async def get_moring_message() -> str:
             # 获得不同的问候语
             async with aiohttp.ClientSession() as client:
                 r = await client.get(
-                    f"https://timor.tech/api/holiday/tts?t={int(time())}", timeout=7
+                    f"https://timor.tech/api/holiday/tts?t={int(time())}",
+                    timeout=7,
+                    headers=_HEADERS,
                 )
                 rjson = await r.json()
             if rjson["code"] == 0:
