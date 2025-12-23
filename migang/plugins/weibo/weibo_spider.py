@@ -25,6 +25,16 @@ PATH = DATA_PATH / "weibo"
 weibo_record_path = PATH / "weibo_records"
 weibo_id_name_file = PATH / "weibo_id_name.json"
 
+# 全局共享的临时cookie
+global_cookie = {"cookie": "", "last_refresh_time": 0}
+global_cookie_lock = asyncio.Lock()
+_refreshing = False  # 正在刷新标记，避免并发重复刷新
+# 频繁刷新检测：在短时间内（秒）刷新超过此次数则告警
+FREQUENT_REFRESH_WINDOW = 120
+FREQUENT_REFRESH_THRESHOLD = 3
+# 刷新历史记录（用于检测频繁刷新）
+_refresh_history = []
+
 
 async def async_load_data(file: Path) -> List:
     data: List = None
@@ -87,8 +97,6 @@ class BaseWeiboSpider:
         self.__record_file_path = weibo_record_path / f"{unique_id}.json"
 
         self.__received_weibo_ids: List[str] = []
-        # 实例级刷新锁，避免同一实例并发重复刷新
-        self.__cookie_lock = asyncio.Lock()
 
     @abstractmethod
     def get_notice_name(self) -> str:
@@ -109,10 +117,17 @@ class BaseWeiboSpider:
                         url, params=params, headers=self.__headers, timeout=20
                     )
                     if r.status == 200:
-                        return await r.json()
-                    # 仅当 HTTP 状态码为 432 时，刷新 Cookie（实例级加锁）后重试
+                        js = await r.json()
+                        # 检查是否为认证页面（cookie过期）
+                        if not isinstance(js, dict) or "data" not in js:
+                            # cookie过期或无效，尝试刷新全局cookie
+                            await self._refresh_global_cookie(client)
+                            await asyncio.sleep(random.randint(1, 3))
+                            continue
+                        return js
+                    # HTTP 状态码为 432 时，刷新全局 Cookie 后重试
                     if r.status == 432:
-                        await self.__refresh_cookie(client)
+                        await self._refresh_global_cookie(client)
                         await asyncio.sleep(random.randint(1, 3))
                         continue
                 except Exception as e:
@@ -120,28 +135,57 @@ class BaseWeiboSpider:
                     await asyncio.sleep(random.randint(2, 6))
             return None
 
-    async def __refresh_cookie(self, client: aiohttp.ClientSession):
+    async def _refresh_global_cookie(self, client: aiohttp.ClientSession):
         """
-        访问 m.weibo.cn 获取 Set-Cookie，并合并到当前实例的请求头。
+        访问 m.weibo.cn 获取 Set-Cookie，并更新到全局cookie和当前实例的请求头。
+        全局cookie在所有spider实例间共享，避免重复刷新。
+
+        Args:
+            client: aiohttp客户端会话
         """
-        try:
-            async with self.__cookie_lock:
+        global _refresh_history, _refreshing
+        current_time = time.time()
+
+        # 如果正在刷新，等待刷新完成并使用结果
+        if _refreshing:
+            # 等待刷新完成
+            for _ in range(50):  # 最多等5秒
+                await asyncio.sleep(0.1)
+                if not _refreshing:
+                    break
+            if global_cookie["cookie"]:
+                self.__headers["cookie"] = global_cookie["cookie"]
+            return
+
+        # 获取锁，避免并发刷新
+        async with global_cookie_lock:
+            # 双重检查：等待锁期间可能其他实例已经刷新了
+            if global_cookie["cookie"]:
+                self.__headers["cookie"] = global_cookie["cookie"]
+                return
+
+            # 标记正在刷新
+            _refreshing = True
+
+            try:
+                headers_no_cookie = self.__headers.copy()
+                headers_no_cookie.pop("cookie", None)
                 resp = await client.get(
-                    "https://m.weibo.cn/", headers=self.__headers, timeout=20
+                    "https://m.weibo.cn/", headers=headers_no_cookie, timeout=20
                 )
-                # 收集新 Cookie
+                # 收集新 Cookie（从resp.cookies）
                 new_cookie_pairs = []
                 for name, morsel in resp.cookies.items():
                     new_cookie_pairs.append((name, morsel.value))
 
-                if not new_cookie_pairs:
-                    # 兼容仅通过 Set-Cookie 头返回的情况
-                    set_cookie_header = (
-                        resp.headers.getall("Set-Cookie", [])
-                        if hasattr(resp.headers, "getall")
-                        else []
-                    )
-                    for sc in set_cookie_header:
+                # 兼容仅通过 Set-Cookie 头返回的情况
+                set_cookie_headers = (
+                    resp.headers.getall("Set-Cookie", [])
+                    if hasattr(resp.headers, "getall")
+                    else [resp.headers.get("Set-Cookie", "")]
+                )
+                for sc in set_cookie_headers:
+                    if sc:
                         first = sc.split(";", 1)[0]
                         if "=" in first:
                             k, v = first.split("=", 1)
@@ -151,33 +195,55 @@ class BaseWeiboSpider:
                     logger.warning("刷新 Cookie 失败：未获取到 Set-Cookie")
                     return
 
-                # 合并旧 Cookie 与新 Cookie（新值覆盖旧值）
-                merged: dict = {}
-                existing = self.__headers.get("cookie")
-                if existing:
-                    for part in existing.split(";"):
-                        part = part.strip()
-                        if not part or "=" not in part:
-                            continue
-                        k, v = part.split("=", 1)
-                        merged[k.strip()] = v.strip()
-                for k, v in new_cookie_pairs:
-                    merged[k] = v
+                # 构建cookie字符串
+                cookie_str = "; ".join([f"{k}={v}" for k, v in new_cookie_pairs])
 
-                cookie_str = "; ".join([f"{k}={v}" for k, v in merged.items()])
+                # 更新全局cookie和时间戳
+                global_cookie["cookie"] = cookie_str
+                global_cookie["last_refresh_time"] = current_time
+
+                # 检测频繁刷新
+                _refresh_history.append(current_time)
+                # 清理旧记录
+                _refresh_history = [
+                    t
+                    for t in _refresh_history
+                    if current_time - t < FREQUENT_REFRESH_WINDOW
+                ]
+                # 如果短时间内刷新次数过多，打印error日志
+                if len(_refresh_history) >= FREQUENT_REFRESH_THRESHOLD:
+                    logger.error(
+                        f"微博Cookie频繁刷新告警：{FREQUENT_REFRESH_WINDOW}秒内刷新了{len(_refresh_history)}次！"
+                        f"这可能表明微博API有异常或cookie获取存在问题。"
+                        f"建议配置有效的cookie以避免此问题。"
+                    )
+
                 # 写回当前实例表头
                 self.__headers["cookie"] = cookie_str
-                logger.info("m.weibo.cn Cookie 已刷新并写入请求头")
-        except Exception as e:
-            logger.warning(f"刷新 m.weibo.cn Cookie 失败：{e}")
+                logger.info(f"m.weibo.cn 全局Cookie已刷新: {cookie_str[:50]}...")
+            except Exception as e:
+                logger.warning(f"刷新 m.weibo.cn Cookie 失败：{e}")
+            finally:
+                # 清除刷新标记
+                _refreshing = False
 
     async def init(self):
         """
         初始化
         """
         self.__init = True
+        # 优先使用配置的cookie（如果有的话）
         if cookie := await get_config(key="cookie"):
             self.__headers["cookie"] = cookie
+        elif global_cookie["cookie"]:
+            # 使用全局临时cookie
+            self.__headers["cookie"] = global_cookie["cookie"]
+        else:
+            # 没有cookie时，主动获取临时cookie
+            logger.warning("微博插件未配置cookie，将尝试使用临时cookie（可能很快失效）。建议在配置中添加有效的cookie。")
+            async with aiohttp.ClientSession() as client:
+                await self._refresh_global_cookie(client)
+
         self.__received_weibo_ids = await async_load_data(self.__record_file_path)
         if not self.__record_file_path.exists():
             await self.get_latest_weibos()
