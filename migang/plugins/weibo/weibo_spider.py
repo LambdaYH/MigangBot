@@ -29,6 +29,7 @@ weibo_id_name_file = PATH / "weibo_id_name.json"
 global_cookie = {"cookie": "", "last_refresh_time": 0}
 global_cookie_lock = asyncio.Lock()
 _refreshing = False  # 正在刷新标记，避免并发重复刷新
+_cookie_warning_printed = False  # 临时cookie警告是否已打印
 # 频繁刷新检测：在短时间内（秒）刷新超过此次数则告警
 FREQUENT_REFRESH_WINDOW = 120
 FREQUENT_REFRESH_THRESHOLD = 3
@@ -137,12 +138,14 @@ class BaseWeiboSpider:
 
     async def _refresh_global_cookie(self, client: aiohttp.ClientSession):
         """
-        访问 m.weibo.cn 获取 Set-Cookie，并更新到全局cookie和当前实例的请求头。
+        通过访问 weibo.cn/visitor/genvisitor2 获取 SUB cookie。
         全局cookie在所有spider实例间共享，避免重复刷新。
 
         Args:
             client: aiohttp客户端会话
         """
+        import re
+
         global _refresh_history, _refreshing
         current_time = time.time()
 
@@ -170,33 +173,55 @@ class BaseWeiboSpider:
             try:
                 headers_no_cookie = self.__headers.copy()
                 headers_no_cookie.pop("cookie", None)
-                resp = await client.get(
-                    "https://m.weibo.cn/", headers=headers_no_cookie, timeout=20
-                )
-                # 收集新 Cookie（从resp.cookies）
-                new_cookie_pairs = []
-                for name, morsel in resp.cookies.items():
-                    new_cookie_pairs.append((name, morsel.value))
 
-                # 兼容仅通过 Set-Cookie 头返回的情况
-                set_cookie_headers = (
-                    resp.headers.getall("Set-Cookie", [])
-                    if hasattr(resp.headers, "getall")
-                    else [resp.headers.get("Set-Cookie", "")]
-                )
-                for sc in set_cookie_headers:
-                    if sc:
-                        first = sc.split(";", 1)[0]
-                        if "=" in first:
-                            k, v = first.split("=", 1)
-                            new_cookie_pairs.append((k.strip(), v.strip()))
+                # 使用指定的请求参数获取 SUB cookie
+                data = {
+                    "cb": "visitor_gray_callback",
+                    "tid": "",
+                    "from": "weibo",
+                }
 
-                if not new_cookie_pairs:
-                    logger.warning("刷新 Cookie 失败：未获取到 Set-Cookie")
+                resp = await client.post(
+                    "https://visitor.passport.weibo.cn/visitor/genvisitor2",
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
+                        "Accept-Encoding": "gzip, deflate, br",
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    data=data,
+                    timeout=20,
+                )
+
+                if resp.status != 200:
+                    logger.warning(f"刷新 Cookie 失败，HTTP状态码: {resp.status}")
                     return
 
-                # 构建cookie字符串
-                cookie_str = "; ".join([f"{k}={v}" for k, v in new_cookie_pairs])
+                text = await resp.text()
+
+                # 解析 JavaScript 回调响应
+                # 格式: window.visitor_gray_callback && visitor_gray_callback({"retcode":...,"data":{"sub":"..."}});
+                match = re.search(r"visitor_gray_callback\((.+)\);?", text)
+                if not match:
+                    logger.warning(f"刷新 Cookie 失败：无法解析响应")
+                    return
+
+                try:
+                    js_data = json.loads(match.group(1))
+                except json.JSONDecodeError as e:
+                    logger.warning(f"刷新 Cookie 失败：JSON解析错误: {e}")
+                    return
+
+                if js_data.get("retcode") != 20000000:
+                    logger.warning(f"刷新 Cookie 失败：API返回错误: {js_data}")
+                    return
+
+                sub = js_data.get("data", {}).get("sub")
+                if not sub:
+                    logger.warning(f"刷新 Cookie 失败：未获取到SUB字段")
+                    return
+
+                # 只使用 SUB 字段作为 cookie
+                cookie_str = f"SUB={sub}"
 
                 # 更新全局cookie和时间戳
                 global_cookie["cookie"] = cookie_str
@@ -220,9 +245,9 @@ class BaseWeiboSpider:
 
                 # 写回当前实例表头
                 self.__headers["cookie"] = cookie_str
-                logger.info(f"m.weibo.cn 全局Cookie已刷新: {cookie_str[:50]}...")
+                logger.info(f"微博 SUB Cookie已刷新: {cookie_str[:30]}...")
             except Exception as e:
-                logger.warning(f"刷新 m.weibo.cn Cookie 失败：{e}")
+                logger.warning(f"刷新微博 Cookie 失败：{e}")
             finally:
                 # 清除刷新标记
                 _refreshing = False
@@ -240,7 +265,10 @@ class BaseWeiboSpider:
             self.__headers["cookie"] = global_cookie["cookie"]
         else:
             # 没有cookie时，主动获取临时cookie
-            logger.warning("微博插件未配置cookie，将尝试使用临时cookie（可能很快失效）。建议在配置中添加有效的cookie。")
+            global _cookie_warning_printed
+            if not _cookie_warning_printed:
+                logger.warning("微博插件未配置cookie，将尝试使用临时cookie（可能很快失效）。建议在配置中添加有效的cookie。")
+                _cookie_warning_printed = True
             async with aiohttp.ClientSession() as client:
                 await self._refresh_global_cookie(client)
 
