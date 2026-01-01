@@ -126,6 +126,8 @@ class BaseWeiboSpider:
                             await asyncio.sleep(random.randint(1, 3))
                             continue
                         return js
+                    if r.status != 200:
+                        logger.info(f"获取微博数据{url}异常：{r}")
                     # HTTP 状态码为 432 时，刷新全局 Cookie 后重试
                     if r.status == 432:
                         await self._refresh_global_cookie(client)
@@ -191,37 +193,25 @@ class BaseWeiboSpider:
                     data=data,
                     timeout=20,
                 )
-
                 if resp.status != 200:
                     logger.warning(f"刷新 Cookie 失败，HTTP状态码: {resp.status}")
                     return
 
-                text = await resp.text()
+                # 直接从响应头 Set-Cookie 中提取 cookie
+                cookie_parts = []
+                for key, value in resp.headers.items():
+                    if key.lower() == "set-cookie":
+                        # Set-Cookie 格式: name=value; attributes...
+                        # 只提取 name=value 部分
+                        cookie_part = value.split(";")[0].strip()
+                        if cookie_part:
+                            cookie_parts.append(cookie_part)
 
-                # 解析 JavaScript 回调响应
-                # 格式: window.visitor_gray_callback && visitor_gray_callback({"retcode":...,"data":{"sub":"..."}});
-                match = re.search(r"visitor_gray_callback\((.+)\);?", text)
-                if not match:
-                    logger.warning(f"刷新 Cookie 失败：无法解析响应")
+                if not cookie_parts:
+                    logger.error(f"刷新 Cookie 失败：响应头中未找到 Set-Cookie")
                     return
 
-                try:
-                    js_data = json.loads(match.group(1))
-                except json.JSONDecodeError as e:
-                    logger.warning(f"刷新 Cookie 失败：JSON解析错误: {e}")
-                    return
-
-                if js_data.get("retcode") != 20000000:
-                    logger.warning(f"刷新 Cookie 失败：API返回错误: {js_data}")
-                    return
-
-                sub = js_data.get("data", {}).get("sub")
-                if not sub:
-                    logger.warning(f"刷新 Cookie 失败：未获取到SUB字段")
-                    return
-
-                # 只使用 SUB 字段作为 cookie
-                cookie_str = f"SUB={sub}"
+                cookie_str = "; ".join(cookie_parts)
 
                 # 更新全局cookie和时间戳
                 global_cookie["cookie"] = cookie_str
@@ -245,7 +235,7 @@ class BaseWeiboSpider:
 
                 # 写回当前实例表头
                 self.__headers["cookie"] = cookie_str
-                logger.info(f"微博 SUB Cookie已刷新: {cookie_str[:30]}...")
+                logger.info(f"微博 Cookie已刷新: {cookie_str[:50]}...")
             except Exception as e:
                 logger.warning(f"刷新微博 Cookie 失败：{e}")
             finally:
