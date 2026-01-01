@@ -197,7 +197,10 @@ class BaseWeiboSpider:
                     logger.warning(f"刷新 Cookie 失败，HTTP状态码: {resp.status}")
                     return
 
-                # 直接从响应头 Set-Cookie 中提取 cookie
+                cookie_str = None
+                has_sub = False
+
+                # 方式1: 直接从响应头 Set-Cookie 中提取 cookie
                 cookie_parts = []
                 for key, value in resp.headers.items():
                     if key.lower() == "set-cookie":
@@ -206,12 +209,39 @@ class BaseWeiboSpider:
                         cookie_part = value.split(";")[0].strip()
                         if cookie_part:
                             cookie_parts.append(cookie_part)
+                            if cookie_part.startswith("SUB="):
+                                has_sub = True
 
-                if not cookie_parts:
-                    logger.error(f"刷新 Cookie 失败：响应头中未找到 Set-Cookie")
+                if cookie_parts and has_sub:
+                    cookie_str = "; ".join(cookie_parts)
+                    logger.info(f"微博 Cookie 已通过 Set-Cookie 方式获取")
+                else:
+                    # 方式2: 尝试解析 JSONP 响应的方式
+                    logger.info("Set-Cookie 中未包含 SUB，尝试 JSONP 解析方式...")
+                    text = await resp.text()
+
+                    # 解析 JavaScript 回调响应
+                    # 格式: window.visitor_gray_callback && visitor_gray_callback({"retcode":...,"data":{"sub":"..."}});
+                    match = re.search(r"visitor_gray_callback\((.+)\);?", text)
+                    if match:
+                        try:
+                            js_data = json.loads(match.group(1))
+                            if js_data.get("retcode") == 20000000:
+                                sub = js_data.get("data", {}).get("sub")
+                                if sub:
+                                    # 如果有 Set-Cookie 且没有 SUB，则补充 SUB
+                                    if cookie_parts:
+                                        cookie_parts.append(f"SUB={sub}")
+                                        cookie_str = "; ".join(cookie_parts)
+                                    else:
+                                        cookie_str = f"SUB={sub}"
+                                    logger.info(f"微博 Cookie 已通过 JSONP 方式获取")
+                        except json.JSONDecodeError:
+                            pass
+
+                if not cookie_str:
+                    logger.error(f"刷新 Cookie 失败：无法获取有效 cookie")
                     return
-
-                cookie_str = "; ".join(cookie_parts)
 
                 # 更新全局cookie和时间戳
                 global_cookie["cookie"] = cookie_str
@@ -381,7 +411,7 @@ class BaseWeiboSpider:
         ts = time.strptime(created_at.replace("+0800 ", ""), "%c")
         created_at = time.mktime(ts)
         deltaTime = time.time() - created_at
-        if deltaTime <= 7200:
+        if deltaTime <= 72000:
             self.__recent = True
         elif deltaTime > 7200 and deltaTime < 86400:
             if self.__init:
