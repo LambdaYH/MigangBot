@@ -67,11 +67,15 @@ async def embed_texts(texts: List[str]) -> List[List[float]]:
     return all_embeddings
 
 
+_ignore_plugin_name = set(["自助退群_"])
+
+
 async def sync_plugin_to_vector_db():
     """同步所有插件信息到向量数据库 (异步)"""
     if not (collection and openai_client):
         return
     plugins = list(plugin_manager.get_plugin_list())
+    plugins = [p for p in plugins if p.name not in _ignore_plugin_name]
     if not plugins:
         return
     texts = [get_plugin_text(p) for p in plugins]

@@ -411,7 +411,7 @@ class BaseWeiboSpider:
         ts = time.strptime(created_at.replace("+0800 ", ""), "%c")
         created_at = time.mktime(ts)
         deltaTime = time.time() - created_at
-        if deltaTime <= 72000:
+        if deltaTime <= 7200:
             self.__recent = True
         elif deltaTime > 7200 and deltaTime < 86400:
             if self.__init:
