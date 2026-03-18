@@ -1,8 +1,10 @@
+import re
 from functools import cache
 from typing import Any, Dict, List, Tuple
 
 from aiocache import cached
 from pydantic import TypeAdapter
+from langchain_core.messages import BaseMessage, messages_to_dict, messages_from_dict
 from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, GroupMessageEvent
 
 from migang.core.models import ChatGPTChatHistory
@@ -45,6 +47,49 @@ def serialize_message(message: Message | str) -> List[Dict[str, Any]]:
 
 def deserialize_message(message: List[Dict[str, Any]]) -> Message:
     return TypeAdapter(Message).validate_python(message)
+
+
+def serialize_langchain_messages(messages: List[BaseMessage]) -> Dict[str, Any]:
+    return {
+        "storage_type": "langchain_messages",
+        "messages": messages_to_dict(messages),
+    }
+
+
+def deserialize_langchain_messages(payload: Dict[str, Any]) -> List[BaseMessage]:
+    return messages_from_dict(payload.get("messages", []))
+
+
+def is_langchain_message_payload(payload: Any) -> bool:
+    return (
+        isinstance(payload, dict)
+        and payload.get("storage_type") == "langchain_messages"
+        and isinstance(payload.get("messages"), list)
+    )
+
+
+def message_content_to_text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, str):
+                parts.append(block)
+                continue
+            if not isinstance(block, dict):
+                continue
+            if "text" in block and isinstance(block["text"], str):
+                parts.append(block["text"])
+            elif block.get("type") == "text" and isinstance(block.get("text"), str):
+                parts.append(block["text"])
+        return "".join(parts)
+    return str(content or "")
+
+
+def strip_think_tags(text: str) -> str:
+    without_think = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    return without_think.strip()
 
 
 async def uniform_message(message: Message, group_id: int, bot: Bot) -> str:

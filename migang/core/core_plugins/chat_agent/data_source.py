@@ -13,7 +13,9 @@ from migang.core.permission import BLACK
 from migang.core.utils import http_utils
 from migang.core.manager import permission_manager
 
-hello_img = [file for file in (Path(__file__).parent / "image" / "zai").iterdir()]
+ASSET_PATH = Path(__file__).parent.parent / "chat" / "image"
+
+hello_img = [file for file in (ASSET_PATH / "zai").iterdir()]
 hello_msg = set(
     [
         "你好啊",
@@ -47,9 +49,7 @@ def hello(nickname: str, plain_text: str) -> Optional[Message]:
 
 
 # 没有回答时回复内容
-no_result_img = [
-    file for file in (Path(__file__).parent / "image" / "no_result").iterdir()
-]
+no_result_img = [file for file in (ASSET_PATH / "no_result").iterdir()]
 
 
 def no_result(nickname: str) -> Message:

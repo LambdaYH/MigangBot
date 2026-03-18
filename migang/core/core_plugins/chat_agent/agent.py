@@ -6,20 +6,17 @@ from nonebot.typing import T_State
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 
-from migang.core import sync_get_config
 from migang.core.models import ChatGPTChatHistory
 
+from .config import sync_get_agent_config
 from .utils import get_bot_name, gen_chat_text, get_user_name, serialize_message
 
 ignore_prefix: Tuple[str] = tuple(
-    sync_get_config("ignore_prefix", plugin_name="chat_chatgpt", default_value=[]) or []
+    sync_get_agent_config("ignore_prefix", default_value=[]) or []
 )
 
 
 async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
-    sender_name = await get_user_name(
-        bot=bot, group_id=event.group_id, user_id=event.user_id
-    )
     plain_text = event.get_plaintext()
     if not plain_text:
         logger.debug("空消息，不处理")
@@ -44,8 +41,6 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
 
     if triggered:
         logger.debug("符合发言条件，开始回复")
-        # 保存信息，用于回复
-        state["gpt_sender_name"] = sender_name
         state["gpt_trigger_text"] = record_msg
     else:
         await ChatGPTChatHistory(
@@ -62,13 +57,12 @@ async def do_chat(
     matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
 ) -> None:
     trigger_text = state["gpt_trigger_text"]
-    sender_name = state["gpt_sender_name"]
 
     start_time = datetime.now()
 
     # 使用新的langchain实现
     from .langchain_chat import langchain_chatbot
 
-    await langchain_chatbot.chat(matcher, event, bot, trigger_text, sender_name)
+    await langchain_chatbot.chat(matcher, event, bot, trigger_text)
 
     logger.debug(f"对话响应完成 | 耗时: {(datetime.now() - start_time).seconds}s")

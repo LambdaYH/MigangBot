@@ -10,55 +10,59 @@ from nonebot.adapters.onebot.v11 import (
     GROUP,
     Bot,
     Message,
-    MessageEvent,
     MessageSegment,
     GroupMessageEvent,
 )
 
-from migang.core import ConfigItem, get_config
+from migang.core import pre_init_manager
 from migang.core.utils.image import pic_file_to_bytes
 
+from .exception import BreakSession
+from .config import get_agent_config
+from .agent import do_chat, pre_check
+from .tools import *  # noqa: F401,F403
 from .message_manager import MessageManager
-from .chatgpt import do_chat, not_at_rule, get_gpt_chat
+from .settings import register_chat_agent_configs
 from .data_source import hello, no_result, anti_zuichou
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
-    name="chat_",
-    description="与Bot进行对话",
+    name="chat_agent",
+    description="使用 Agent 完成对话和插件调用",
     usage="""
 usage：
-    与Bot普普通通的对话吧！
+    @Bot 正常聊天即可，插件能力由 Agent 自主识别与调用。
 """.strip(),
     type="application",
     supported_adapters={"~onebot.v11"},
 )
 
-__plugin_config__ = (
-    ConfigItem(
-        key="turing_keys",
-        initial_value=["key1", "key2"],
-        default_value=[],
-        description="图灵机器人 key https://www.turingapi.com/",
-    ),
-    ConfigItem(
-        key="text_filter",
-        initial_value=["鸡", "口交"],
-        default_value=[],
-        description="回答过滤词，会以*呈现",
-    ),
-)
+
+@pre_init_manager
+async def _():
+    await register_chat_agent_configs()
 
 
-chat = on_message(rule=to_me(), priority=998, permission=GROUP)
-message_manager = MessageManager(hello, anti_zuichou, get_gpt_chat, no_result)
-# 没at时候把消息送给naturel_gpt处理
+async def get_agent_chat(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
+    state = {}
+    if await pre_check(event=event, bot=bot, state=state):
+        await do_chat(matcher=matcher, event=event, bot=bot, state=state)
+    raise BreakSession("chat_agent 已处理发送逻辑")
+
+
+async def not_at_rule(bot: Bot, event: GroupMessageEvent, state) -> bool:
+    if event.is_tome():
+        return False
+    return await pre_check(event=event, bot=bot, state=state)
+
+
+chat_agent = on_message(rule=to_me(), priority=998, permission=GROUP)
+message_manager = MessageManager(hello, anti_zuichou, get_agent_chat, no_result)
 on_message(priority=998, block=False, rule=not_at_rule).append_handler(do_chat)
 
 
-@chat.handle()
+@chat_agent.handle()
 async def _(matcher: Matcher, bot: Bot, event: GroupMessageEvent):
-    # 防止llm自触发死循环
     if getattr(event, "llm_trigger", False):
         return
     if "CQ:xml" in str(event.message) or event.get_plaintext().startswith("/"):
@@ -76,23 +80,19 @@ async def _(matcher: Matcher, bot: Bot, event: GroupMessageEvent):
     if not reply:
         return
     logger.info(
-        f"用户 {event.user_id} 群 {event.group_id if isinstance(event, GroupMessageEvent) else ''} "
-        f"问题：{event.message} ---- 回答：{reply}"
+        f"用户 {event.user_id} 群 {event.group_id} 问题：{event.message} ---- 回答：{reply}"
     )
-    reply = str(reply)
-    for t in await get_config("text_filter"):
-        reply = reply.replace(t, "*")
-    await chat.send(Message(reply))
-
-
-# 加一点祖传回复
+    reply_text = str(reply)
+    for text in await get_agent_config("text_filter", default_value=[]):
+        reply_text = reply_text.replace(text, "*")
+    await chat_agent.send(Message(reply_text))
 
 
 wenhao = on_keyword(("??", "？？"), priority=99, block=False, permission=GROUP)
 tanhao = on_keyword(("!!", "！！"), priority=99, block=False, permission=GROUP)
 huoguo = on_keyword(("火锅",), priority=99, block=False, permission=GROUP)
 
-custom_chat_path = Path(__file__).parent / "image" / "custom_chat"
+custom_chat_path = Path(__file__).parent.parent / "chat" / "image" / "custom_chat"
 
 
 @wenhao.handle()

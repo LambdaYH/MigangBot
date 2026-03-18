@@ -1,18 +1,15 @@
 import os
-import random
-from functools import wraps
 
 import openai
-from langchain_core.tools import tool
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 
-from migang.core import sync_get_config
 from migang.core.utils.langchain_tool import nb_langchain_tool
 
+from ..config import sync_get_agent_config
+
 # 获取openai相关配置，与langchain一致
-api_keys = sync_get_config("api_keys", "chat_chatgpt", [])
-api_base = sync_get_config("api_base", "chat_chatgpt", "")
-proxy = sync_get_config("proxy", "chat_chatgpt", "")
+api_keys = sync_get_agent_config("api_keys", default_value=[])
+api_base = sync_get_agent_config("api_base", default_value="")
 
 api_key = api_keys[0] if api_keys else os.getenv("OPENAI_API_KEY", "")
 
