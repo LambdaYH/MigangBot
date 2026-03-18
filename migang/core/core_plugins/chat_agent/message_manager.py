@@ -58,6 +58,10 @@ class MessageManager:
         event: GroupMessageEvent,
     ) -> Message:
         msg_str = event.get_plaintext()
+        if not msg_str:
+            image_count = sum(1 for seg in event.message if seg.type == "image")
+            if image_count:
+                msg_str = "[图片]" if image_count == 1 else f"[图片x{image_count}]"
         if count := self.__check_repeat(user_id=user_id, msg=msg_str):
             if count >= 3:
                 permission_manager.set_user_perm(

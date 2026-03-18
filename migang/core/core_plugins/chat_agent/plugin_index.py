@@ -21,6 +21,10 @@ from migang.core.core_plugins.init.utils import get_plugin_list
 from migang.core.manager import user_manager, group_manager, plugin_manager
 
 from .help_intent import is_help_query
+from .image_intent import (
+    is_explicit_image_tool_query,
+    is_general_image_understanding_query,
+)
 
 _SPACE_RE = re.compile(r"\s+")
 _SPLIT_RE = re.compile(r"[\s,，。.:：;；/\\|()（）\\[\\]【】<>《》!?！？]+")
@@ -361,7 +365,18 @@ class PluginIndex:
         query: str,
         limit: int = 4,
         event: Optional[MessageEvent] = None,
+        has_image: bool = False,
     ) -> str:
+        if has_image and is_general_image_understanding_query(query):
+            return (
+                "当前消息包含图片，这更像直接看图问题。"
+                "第一反应应直接基于图片内容回答，不要先调用插件。"
+                "只有用户明确要求二维码、扫码、OCR、提取文字、翻译图片、识图，"
+                "或者你已经尝试看图但确认无法仅靠视觉回答时，"
+                "才调用 search_project_plugins、inspect_project_plugin 或 invoke_project_plugin。"
+            )
+        if has_image and is_explicit_image_tool_query(query):
+            return "当前消息包含图片，且用户明确要求图片工具处理，可以检索相关插件。"
         if is_help_query(query):
             return "这更像帮助咨询问题，优先调用 query_help_plugin，而不是 search_project_plugins。"
 

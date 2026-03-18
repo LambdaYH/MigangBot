@@ -19,12 +19,12 @@ from nonebot.adapters.onebot.v11 import (
 
 __plugin_meta__ = PluginMetadata(
     name="二维码转链接",
-    description="将二维码图片转化为链接发出",
+    description="将二维码转化为链接发出",
     usage="""
 usage：
-    将二维码图片转换成链接(最多同时识别3张，防止刷屏)
+    将二维码转换成链接(最多同时识别3张，防止刷屏)
     指令:
-        二维码 [图片]
+        二维码 [二维码图]
 """.strip(),
     type="application",
     supported_adapters={"~onebot.v11"},

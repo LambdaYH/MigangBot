@@ -46,10 +46,10 @@ def nb_langchain_tool(func):
     return wrapper
 
 
-async def search_plugin_tool(query: str) -> str:
+async def search_plugin_tool(query: str, has_image: bool = False) -> str:
     """
     工具描述：根据用户问题检索最相关的插件，并返回插件详细信息。
     参数:
         query: 用户问题
     """
-    return plugin_index.render_prompt_context(query)
+    return plugin_index.render_prompt_context(query, has_image=has_image)

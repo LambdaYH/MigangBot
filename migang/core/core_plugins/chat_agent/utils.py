@@ -1,11 +1,25 @@
 import re
+import base64
+import hashlib
+import mimetypes
+from pathlib import Path
 from functools import cache
 from typing import Any, Dict, List, Tuple
+from urllib.parse import unquote, urlparse
 
+import anyio
+import httpx
 from aiocache import cached
+from nonebot.log import logger
 from pydantic import TypeAdapter
 from langchain_core.messages import BaseMessage, messages_to_dict, messages_from_dict
-from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    Message,
+    ActionFailed,
+    MessageSegment,
+    GroupMessageEvent,
+)
 
 from migang.core.models import ChatGPTChatHistory
 
@@ -13,6 +27,8 @@ DIRECT_OUTPUT_MARKERS = (
     "已成功调用该工具，工具结果已直接提供给用户，请勿再次调用",
     "插件已触发，结果已直接发送给用户",
 )
+IMAGE_CACHE_DIR = Path("data/chat_agent/image_cache")
+IMAGE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @cache
@@ -44,10 +60,87 @@ async def get_user_name(bot: Bot, group_id: int, user_id: int) -> str:
         return "未知"
 
 
-def serialize_message(message: Message | str) -> List[Dict[str, Any]]:
+async def _read_local_bytes(path: str) -> bytes:
+    async with await anyio.open_file(unquote(urlparse(path).path), "rb") as f:
+        return await f.read()
+
+
+def _guess_image_extension(source: str, mime_type: str) -> str:
+    extension = Path(urlparse(source).path or source).suffix
+    if extension:
+        return extension
+    guessed = mimetypes.guess_extension(mime_type or "")
+    return guessed or ".png"
+
+
+async def _cache_image_bytes(
+    data: bytes,
+    source: str,
+    mime_type: str = "image/png",
+) -> str:
+    digest = hashlib.md5(data).hexdigest()
+    extension = _guess_image_extension(source, mime_type)
+    cache_path = IMAGE_CACHE_DIR / f"{digest}{extension}"
+    if not cache_path.exists():
+        async with await anyio.open_file(cache_path, "wb") as f:
+            await f.write(data)
+    return cache_path.resolve().as_uri()
+
+
+async def _resolve_image_file_uri(seg: MessageSegment, bot: Bot | None = None) -> str:
+    file_value = str(seg.data.get("file") or "").strip()
+    url_value = str(seg.data.get("url") or "").strip()
+
+    if file_value.startswith("file://"):
+        return file_value
+    if file_value and Path(file_value).exists():
+        return Path(file_value).resolve().as_uri()
+    if url_value.startswith("file://"):
+        return url_value
+
+    if bot and file_value and "://" not in file_value:
+        try:
+            image_info = await bot.get_image(file=file_value)
+        except Exception as e:
+            logger.debug(f"获取 OneBot 图片文件失败: {e}")
+        else:
+            local_path = str(image_info.get("file") or "").strip()
+            if local_path and Path(local_path).exists():
+                return Path(local_path).resolve().as_uri()
+
+    if url_value:
+        try:
+            async with httpx.AsyncClient(timeout=15) as client:
+                response = await client.get(url_value)
+                response.raise_for_status()
+                mime_type = response.headers.get("content-type", "image/png").split(
+                    ";"
+                )[0]
+                return await _cache_image_bytes(response.content, url_value, mime_type)
+        except Exception as e:
+            logger.debug(f"缓存图片 URL 失败: {e}")
+
+    return ""
+
+
+async def serialize_message(
+    message: Message | str,
+    bot: Bot | None = None,
+) -> List[Dict[str, Any]]:
     if isinstance(message, str):
         message = Message(message)
-    return [seg.__dict__ for seg in message if seg.type == "text" or seg.type == "at"]
+    serialized: list[dict[str, Any]] = []
+    for seg in message:
+        if seg.type == "text" or seg.type == "at":
+            serialized.append(seg.__dict__)
+            continue
+        if seg.type != "image":
+            continue
+        image_data = dict(seg.data)
+        if file_uri := await _resolve_image_file_uri(seg, bot):
+            image_data["file"] = file_uri
+        serialized.append({"type": "image", "data": image_data})
+    return serialized
 
 
 def deserialize_message(message: List[Dict[str, Any]]) -> Message:
@@ -123,7 +216,88 @@ async def uniform_message(message: Message, group_id: int, bot: Bot) -> str:
                     )
                     if user_name:
                         msg += f"@{user_name}"  # 保持给bot看到的内容与真实用户看到的一致
+        elif seg.type == "image":
+            msg += "[图片]"
     return msg
+
+
+async def image_segment_to_model_block(
+    seg: MessageSegment,
+    bot: Bot | None = None,
+) -> Dict[str, Any] | None:
+    file_uri = str(seg.data.get("file") or "").strip()
+    url_value = str(seg.data.get("url") or "").strip()
+
+    if not file_uri or not file_uri.startswith("file://"):
+        file_uri = await _resolve_image_file_uri(seg, bot)
+    if file_uri.startswith("file://"):
+        try:
+            image_bytes = await _read_local_bytes(file_uri)
+        except Exception as e:
+            logger.debug(f"读取图片缓存失败: {e}")
+        else:
+            mime_type = mimetypes.guess_type(file_uri)[0] or "image/png"
+            encoded = base64.b64encode(image_bytes).decode("ascii")
+            logger.info(
+                f"图片已转为 base64 发送给模型: mime={mime_type} | bytes={len(image_bytes)}"
+            )
+            return {
+                "type": "image_url",
+                "image_url": {"url": f"data:{mime_type};base64,{encoded}"},
+            }
+
+    if url_value:
+        logger.info("图片无法读取本地文件，回退为远程 URL 发送给模型")
+        return {"type": "image_url", "image_url": {"url": url_value}}
+    return None
+
+
+async def message_to_model_content(
+    message: Message,
+    group_id: int,
+    bot: Bot,
+    prefix_text: str = "",
+) -> str | List[Dict[str, Any]]:
+    blocks: list[dict[str, Any]] = []
+
+    def append_text(text: str) -> None:
+        if not text:
+            return
+        if blocks and blocks[-1].get("type") == "text":
+            blocks[-1]["text"] += text
+        else:
+            blocks.append({"type": "text", "text": text})
+
+    append_text(prefix_text)
+
+    for seg in message:
+        if seg.is_text():
+            append_text(seg.data.get("text", ""))
+        elif seg.type == "at":
+            qq = seg.data.get("qq", None)
+            if not qq:
+                continue
+            if qq == "all":
+                append_text("@全体成员")
+            elif qq == bot.self_id:
+                append_text(f"@{get_bot_name(bot)}")
+            else:
+                user_name = await get_user_name(
+                    bot=bot, group_id=group_id, user_id=int(qq)
+                )
+                append_text(f"@{user_name}" if user_name else "@用户")
+        elif seg.type == "image":
+            image_block = await image_segment_to_model_block(seg, bot)
+            if image_block is not None:
+                blocks.append(image_block)
+            else:
+                append_text("[图片]")
+
+    if not blocks:
+        return prefix_text.strip()
+    if len(blocks) == 1 and blocks[0].get("type") == "text":
+        return blocks[0]["text"]
+    return blocks
 
 
 async def gen_chat_text(event: GroupMessageEvent, bot: Bot) -> Tuple[str, bool]:

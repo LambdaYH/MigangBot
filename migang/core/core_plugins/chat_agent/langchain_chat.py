@@ -13,15 +13,19 @@ from migang.core.utils.langchain_tool import search_plugin_tool
 
 from .prompt import build_chat_prompt
 from .settings import ChatAgentSettings
+from .image_intent import (
+    is_explicit_image_tool_query,
+    is_general_image_understanding_query,
+)
 from .utils import (
     get_bot_name,
     get_user_name,
     uniform_message,
     strip_think_tags,
-    serialize_message,
     deserialize_message,
     message_content_to_text,
     has_direct_output_marker,
+    message_to_model_content,
     is_langchain_message_payload,
     serialize_langchain_messages,
     deserialize_langchain_messages,
@@ -113,32 +117,39 @@ class LangChainChatBot:
                     if is_langchain_message_payload(chat.message):
                         messages.extend(deserialize_langchain_messages(chat.message))
                     else:
-                        message_content = await uniform_message(
+                        message_content = await message_to_model_content(
                             deserialize_message(chat.message),
                             group_id=chat.group_id,
                             bot=bot,
+                            prefix_text="",
                         )
                         messages.append(AIMessage(content=message_content))
                 else:
-                    message_content = await uniform_message(
-                        deserialize_message(chat.message),
-                        group_id=chat.group_id,
-                        bot=bot,
-                    )
                     user_name = await get_user_name(
                         bot=bot, group_id=chat.group_id, user_id=chat.user_id
                     )
-                    messages.append(
-                        HumanMessage(content=f"{user_name}: {message_content}")
+                    message_content = await message_to_model_content(
+                        deserialize_message(chat.message),
+                        group_id=chat.group_id,
+                        bot=bot,
+                        prefix_text=f"{user_name}: ",
                     )
+                    messages.append(HumanMessage(content=message_content))
             else:
-                message_content = await uniform_message(
-                    deserialize_message(chat.message), group_id=chat.group_id, bot=bot
-                )
                 user_name = await get_user_name(
                     bot=bot, group_id=chat.group_id, user_id=chat.user_id
                 )
-                messages.append(HumanMessage(content=f"{user_name}: {message_content}"))
+                message_content = await message_to_model_content(
+                    deserialize_message(chat.message), group_id=chat.group_id, bot=bot
+                )
+                if isinstance(message_content, str):
+                    message_content = f"{user_name}: {message_content}"
+                else:
+                    message_content = [
+                        {"type": "text", "text": f"{user_name}: "},
+                        *message_content,
+                    ]
+                messages.append(HumanMessage(content=message_content))
         return messages
 
     async def chat(
@@ -167,9 +178,18 @@ class LangChainChatBot:
                 uniformed_message = await uniform_message(
                     deserialize_message(trigger_text), group_id=event.group_id, bot=bot
                 )
+                has_image = any(item.get("type") == "image" for item in trigger_text)
+                direct_image_chat_mode = (
+                    has_image
+                    and is_general_image_understanding_query(uniformed_message)
+                    and not is_explicit_image_tool_query(uniformed_message)
+                )
 
                 # 获取相关插件
-                relative_plugin = await search_plugin_tool(uniformed_message)
+                relative_plugin = await search_plugin_tool(
+                    uniformed_message,
+                    has_image=has_image,
+                )
 
                 # 创建提示模板
                 prompt = build_chat_prompt(
@@ -178,21 +198,36 @@ class LangChainChatBot:
                     relative_plugin=relative_plugin,
                 )
 
-                # 每次根据最新 prompt 动态创建 agent
-                agent = create_react_agent(self.llm, tools=self.tools, prompt=prompt)
-
                 user_name = await get_user_name(
                     bot=bot, group_id=event.group_id, user_id=event.user_id
                 )
-                input_message = f"{user_name}: {uniformed_message}"
+                input_message = await message_to_model_content(
+                    deserialize_message(trigger_text),
+                    group_id=event.group_id,
+                    bot=bot,
+                    prefix_text=f"{user_name}: ",
+                )
+                if isinstance(input_message, list):
+                    image_block_count = sum(
+                        1 for item in input_message if item.get("type") == "image_url"
+                    )
+                    logger.info(
+                        f"发送多模态消息给模型: text_blocks={sum(1 for item in input_message if item.get('type') == 'text')} | image_blocks={image_block_count}"
+                    )
+                else:
+                    logger.info("发送纯文本消息给模型")
                 # 组装 messages
                 messages = chat_history + [HumanMessage(content=input_message)]
-                input_message_count = len(messages)
 
                 import re
 
                 from nonebot.adapters.onebot.v11 import Message
 
+                if direct_image_chat_mode:
+                    logger.info("图片理解模式：保留工具，由模型自行决策")
+
+                agent = create_react_agent(self.llm, tools=self.tools, prompt=prompt)
+                input_message_count = len(messages)
                 latest_state = None
 
                 async for stream_item in agent.astream(
@@ -240,6 +275,9 @@ class LangChainChatBot:
                 if len(final_response_text.split("*;")) > self.max_response_per_msg:
                     logger.error("大模型回复内容过多，已截断")
                     await matcher.send("由于内容过多，麦克风被抢走了...")
+                elif not final_response_text and has_image:
+                    logger.warning("当前消息包含图片，但模型未返回可见内容")
+                    await matcher.send("我收到图片了，但这次没有成功看出来。你可以再具体问我想看图里的哪部分。")
                 full_response_str = (
                     "*;".join(sent_parts) if sent_parts else final_response_text
                 )

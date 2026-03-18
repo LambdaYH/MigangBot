@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from migang.core.models import ChatGPTChatHistory
 
 from .config import sync_get_agent_config
-from .utils import get_bot_name, gen_chat_text, get_user_name, serialize_message
+from .utils import get_bot_name, gen_chat_text, serialize_message
 
 ignore_prefix: Tuple[str] = tuple(
     sync_get_agent_config("ignore_prefix", default_value=[]) or []
@@ -18,10 +18,11 @@ ignore_prefix: Tuple[str] = tuple(
 
 async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     plain_text = event.get_plaintext()
-    if not plain_text:
+    has_image = any(seg.type == "image" for seg in event.message)
+    if not plain_text and not has_image:
         logger.debug("空消息，不处理")
         return False
-    if plain_text.startswith(ignore_prefix):
+    if plain_text and plain_text.startswith(ignore_prefix):
         logger.debug("忽略消息前缀")
         return False
     chat_text, is_tome = await gen_chat_text(event=event, bot=bot)
@@ -32,7 +33,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     triggered = is_tome or (bot_name.lower() in chat_text.lower())
 
     # 记录消息，虽然可能与我无关，但是记录保证对上下文的理解
-    record_msg = serialize_message(event.message)
+    record_msg = await serialize_message(event.message, bot=bot)
     if is_tome:
         record_msg = [
             {"type": "at", "data": {"qq": bot.self_id}},
