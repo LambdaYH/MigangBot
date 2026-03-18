@@ -13,4 +13,3 @@ from .user_property import UserProperty  # noqa
 from .shop_group_log import ShopGroupLog  # noqa
 from .transaction_log import TransactionLog  # noqa
 from .chatgpt_chat_history import ChatGPTChatHistory  # noqa
-from .chatgpt_chat_impression import ChatGPTChatImpression  # noqa
