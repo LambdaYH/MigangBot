@@ -7,11 +7,16 @@ import anyio
 import ujson
 from nonebot import get_driver
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageSegment, GroupMessageEvent
 
 from migang.core.permission import BLACK
 from migang.core.utils import http_utils
+from migang.core.models import ChatGPTChatHistory
 from migang.core.manager import permission_manager
+
+from .utils import serialize_message
+from .config import sync_get_agent_config
+from .dialog_window import dialog_window_manager
 
 ASSET_PATH = Path(__file__).parent.parent / "chat" / "image"
 
@@ -28,14 +33,26 @@ hello_msg = set(
         "在",
     ]
 )
+dialog_window_minutes: int = int(
+    sync_get_agent_config("dialog_window_minutes", default_value=10) or 10
+)
 
 
-def hello(nickname: str, plain_text: str) -> Optional[Message]:
+async def hello(
+    nickname: str,
+    plain_text: str,
+    event: GroupMessageEvent,
+    bot: Bot,
+) -> Optional[Message]:
     """
     一些打招呼的内容
     """
     if plain_text and plain_text not in hello_msg:
         return None
+    dialog_window_manager.refresh(event, dialog_window_minutes)
+    logger.info(
+        f"hello 命中，已进入连续对话窗口 | group={event.group_id} | duration={dialog_window_minutes}min"
+    )
     result = random.choice(
         (
             "哦豁？！",
@@ -45,7 +62,15 @@ def hello(nickname: str, plain_text: str) -> Optional[Message]:
             "呼呼，叫俺干嘛",
         )
     )
-    return result + MessageSegment.image(random.choice(hello_img))
+    reply_message = Message(result) + MessageSegment.image(random.choice(hello_img))
+    await ChatGPTChatHistory(
+        user_id=event.user_id,
+        group_id=event.group_id,
+        target_id=event.self_id,
+        message=await serialize_message(event.message, bot=bot),
+        is_bot=False,
+    ).save()
+    return reply_message
 
 
 # 没有回答时回复内容

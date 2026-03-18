@@ -56,6 +56,48 @@ CHAT_AGENT_CONFIGS = (
         description="是否启用 MiniMax reasoning_split，便于分离思考内容",
     ),
     ConfigItem(
+        key="dialog_window_minutes",
+        initial_value=10,
+        default_value=10,
+        description="首次触发后，连续对话窗口持续时间（分钟）",
+    ),
+    ConfigItem(
+        key="intent_judge_enabled",
+        initial_value=True,
+        default_value=True,
+        description="是否启用小模型判断连续对话窗口内的消息是否需要 LLM 回复",
+    ),
+    ConfigItem(
+        key="intent_api_base",
+        initial_value="",
+        default_value="",
+        description="意图识别模型的 OpenAI-compatible API Base；留空时复用主模型配置",
+    ),
+    ConfigItem(
+        key="intent_api_keys",
+        initial_value=[],
+        default_value=[],
+        description="意图识别模型的 API Key 列表；留空时复用主模型配置",
+    ),
+    ConfigItem(
+        key="intent_model",
+        initial_value="",
+        default_value="",
+        description="连续对话意图识别使用的小模型；留空时复用主模型配置",
+    ),
+    ConfigItem(
+        key="intent_timeout",
+        initial_value=15,
+        default_value=15,
+        description="意图识别模型超时时间",
+    ),
+    ConfigItem(
+        key="intent_history_length",
+        initial_value=6,
+        default_value=6,
+        description="意图识别参考的最近会话条数",
+    ),
+    ConfigItem(
         key="plugin_rerank_enabled",
         initial_value=True,
         default_value=True,
@@ -139,6 +181,13 @@ class ChatAgentSettings:
     memory_short_length: int
     memory_max_length: int
     reasoning_split: bool
+    dialog_window_minutes: int
+    intent_judge_enabled: bool
+    intent_api_base: str
+    intent_api_keys: list[str]
+    intent_model: str
+    intent_timeout: int
+    intent_history_length: int
     plugin_rerank_enabled: bool
     plugin_rerank_model: str
     plugin_rerank_top_n: int
@@ -172,6 +221,19 @@ class ChatAgentSettings:
             ),
             reasoning_split=sync_get_agent_config(
                 "reasoning_split", default_value=True
+            ),
+            dialog_window_minutes=sync_get_agent_config(
+                "dialog_window_minutes", default_value=10
+            ),
+            intent_judge_enabled=sync_get_agent_config(
+                "intent_judge_enabled", default_value=True
+            ),
+            intent_api_base=sync_get_agent_config("intent_api_base", default_value=""),
+            intent_api_keys=sync_get_agent_config("intent_api_keys", default_value=[]),
+            intent_model=sync_get_agent_config("intent_model", default_value=""),
+            intent_timeout=sync_get_agent_config("intent_timeout", default_value=15),
+            intent_history_length=sync_get_agent_config(
+                "intent_history_length", default_value=6
             ),
             plugin_rerank_enabled=sync_get_agent_config(
                 "plugin_rerank_enabled", default_value=True
