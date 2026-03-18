@@ -9,11 +9,34 @@ from ..plugin_index import plugin_index
 from ..plugin_reranker import plugin_reranker
 from ..help_intent import normalize_help_query, is_help_overview_query
 
+_LLM_BLOCKED_PLUGIN_NAMES = {"dismiss", "switch_bot"}
+_LLM_BLOCKED_COMMAND_PREFIXES = (".dismiss",)
+_LLM_BLOCKED_FULLMATCH_COMMANDS = ("起床啦", "醒来吧", "醒来", "起床", "休息吧", "睡吧")
+
+
+def _blocked_plugin_reason(plugin_name: str) -> str | None:
+    if plugin_name in _LLM_BLOCKED_PLUGIN_NAMES:
+        return f"插件 {plugin_name} 已禁止由 LLM 自动调用。"
+    return None
+
+
+def _blocked_command_reason(content: str) -> str | None:
+    normalized = str(content or "").strip()
+    if not normalized:
+        return None
+    if normalized.startswith(_LLM_BLOCKED_COMMAND_PREFIXES):
+        return "该指令已禁止由 LLM 自动调用。"
+    if normalized in _LLM_BLOCKED_FULLMATCH_COMMANDS:
+        return "该指令已禁止由 LLM 自动调用。"
+    return None
+
 
 async def _dispatch_plugin_command(content: str) -> str:
     logger.info(f"触发插件: {content}")
     if not content:
         return "请输入插件指令"
+    if blocked_reason := _blocked_command_reason(content):
+        return blocked_reason
     bot = current_bot.get()
     event = current_event.get()
     if not bot or not event:
@@ -162,6 +185,8 @@ async def invoke_project_plugin(plugin_name: str, command: str = "") -> str:
     entry = plugin_index.resolve(plugin_name)
     if entry is None:
         return f"找不到插件“{plugin_name}”，请先搜索插件。"
+    if blocked_reason := _blocked_plugin_reason(entry.plugin_name):
+        return blocked_reason
 
     availability = plugin_index.get_availability(entry.plugin_name, event)
     if not availability.available:

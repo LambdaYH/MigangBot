@@ -18,7 +18,7 @@ from .utils import serialize_message
 from .config import sync_get_agent_config
 from .dialog_window import dialog_window_manager
 
-ASSET_PATH = Path(__file__).parent.parent / "chat" / "image"
+ASSET_PATH = Path(__file__).parent / "image"
 
 hello_img = [file for file in (ASSET_PATH / "zai").iterdir()]
 hello_msg = set(
