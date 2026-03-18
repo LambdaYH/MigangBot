@@ -21,6 +21,7 @@ from .utils import (
     serialize_message,
     deserialize_message,
     message_content_to_text,
+    has_direct_output_marker,
     is_langchain_message_payload,
     serialize_langchain_messages,
     deserialize_langchain_messages,
@@ -215,14 +216,17 @@ class LangChainChatBot:
                     for message in new_messages
                     if isinstance(message, AIMessage)
                 ]
-                final_ai_message = (
-                    assistant_messages[-1] if assistant_messages else None
-                )
                 final_response_text = ""
-                if final_ai_message is not None:
-                    final_response_text = strip_think_tags(
-                        message_content_to_text(final_ai_message.content)
+                if has_direct_output_marker(new_messages):
+                    logger.info("检测到工具结果已直接发送给用户，跳过补充回复")
+                else:
+                    final_ai_message = (
+                        assistant_messages[-1] if assistant_messages else None
                     )
+                    if final_ai_message is not None:
+                        final_response_text = strip_think_tags(
+                            message_content_to_text(final_ai_message.content)
+                        )
 
                 sent_parts = []
                 if final_response_text:

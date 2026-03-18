@@ -9,6 +9,11 @@ from nonebot.adapters.onebot.v11 import Bot, Message, ActionFailed, GroupMessage
 
 from migang.core.models import ChatGPTChatHistory
 
+DIRECT_OUTPUT_MARKERS = (
+    "已成功调用该工具，工具结果已直接提供给用户，请勿再次调用",
+    "插件已触发，结果已直接发送给用户",
+)
+
 
 @cache
 def get_bot_name(bot: Bot) -> str:
@@ -85,6 +90,14 @@ def message_content_to_text(content: Any) -> str:
                 parts.append(block["text"])
         return "".join(parts)
     return str(content or "")
+
+
+def has_direct_output_marker(messages: List[BaseMessage]) -> bool:
+    for message in messages:
+        content = message_content_to_text(getattr(message, "content", ""))
+        if any(marker in content for marker in DIRECT_OUTPUT_MARKERS):
+            return True
+    return False
 
 
 def strip_think_tags(text: str) -> str:

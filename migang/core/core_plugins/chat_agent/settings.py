@@ -56,6 +56,30 @@ CHAT_AGENT_CONFIGS = (
         description="是否启用 MiniMax reasoning_split，便于分离思考内容",
     ),
     ConfigItem(
+        key="plugin_rerank_enabled",
+        initial_value=True,
+        default_value=True,
+        description="插件检索结果接近时，是否启用 LLM 重排",
+    ),
+    ConfigItem(
+        key="plugin_rerank_model",
+        initial_value="",
+        default_value="",
+        description="插件重排模型；留空时复用主对话模型",
+    ),
+    ConfigItem(
+        key="plugin_rerank_top_n",
+        initial_value=4,
+        default_value=4,
+        description="触发重排时参与 LLM 判断的候选插件数量",
+    ),
+    ConfigItem(
+        key="plugin_rerank_score_gap",
+        initial_value=5.0,
+        default_value=5.0,
+        description="本地 top1 与 top2 分差小于等于该值时触发重排",
+    ),
+    ConfigItem(
         key="model",
         default_value="gpt-3.5-turbo",
         initial_value="gpt-3.5-turbo",
@@ -115,6 +139,10 @@ class ChatAgentSettings:
     memory_short_length: int
     memory_max_length: int
     reasoning_split: bool
+    plugin_rerank_enabled: bool
+    plugin_rerank_model: str
+    plugin_rerank_top_n: int
+    plugin_rerank_score_gap: float
     personality: str
     max_response_per_msg: int
 
@@ -144,6 +172,18 @@ class ChatAgentSettings:
             ),
             reasoning_split=sync_get_agent_config(
                 "reasoning_split", default_value=True
+            ),
+            plugin_rerank_enabled=sync_get_agent_config(
+                "plugin_rerank_enabled", default_value=True
+            ),
+            plugin_rerank_model=sync_get_agent_config(
+                "plugin_rerank_model", default_value=""
+            ),
+            plugin_rerank_top_n=sync_get_agent_config(
+                "plugin_rerank_top_n", default_value=4
+            ),
+            plugin_rerank_score_gap=sync_get_agent_config(
+                "plugin_rerank_score_gap", default_value=5.0
             ),
             personality=sync_get_agent_config(
                 "personality", default_value="她叫{bot_name}，是一个搭配师"

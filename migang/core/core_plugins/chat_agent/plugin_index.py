@@ -81,6 +81,13 @@ class PluginAvailability:
     status_text: str
 
 
+@dataclass(slots=True)
+class PluginSearchMatch:
+    entry: PluginIndexEntry
+    score: float
+    availability: PluginAvailability
+
+
 class PluginIndex:
     def __init__(self) -> None:
         self._entries: dict[str, PluginIndexEntry] = {}
@@ -212,13 +219,24 @@ class PluginIndex:
         limit: int = 5,
         event: Optional[MessageEvent] = None,
     ) -> list[PluginIndexEntry]:
+        return [
+            match.entry
+            for match in self.search_matches(query=query, limit=limit, event=event)
+        ]
+
+    def search_matches(
+        self,
+        query: str,
+        limit: int = 5,
+        event: Optional[MessageEvent] = None,
+    ) -> list[PluginSearchMatch]:
         self.refresh()
         normalized_query = self._normalize_text(query)
         if not normalized_query:
             return []
 
         query_keywords = self._keywords_from_text(query)
-        scored: list[tuple[float, PluginIndexEntry]] = []
+        scored: list[PluginSearchMatch] = []
         for entry in self._entries.values():
             score = self._score_entry(entry, normalized_query, query_keywords)
             if score <= 0:
@@ -226,10 +244,16 @@ class PluginIndex:
             availability = self.get_availability(entry.plugin_name, event)
             if availability.available:
                 score += 1
-            scored.append((score, entry))
+            scored.append(
+                PluginSearchMatch(
+                    entry=entry,
+                    score=score,
+                    availability=availability,
+                )
+            )
 
-        scored.sort(key=lambda item: item[0], reverse=True)
-        return [entry for _, entry in scored[:limit]]
+        scored.sort(key=lambda item: item.score, reverse=True)
+        return scored[:limit]
 
     def get_availability(
         self, plugin_name: str, event: Optional[MessageEvent]
@@ -262,17 +286,28 @@ class PluginIndex:
         limit: int = 5,
         event: Optional[MessageEvent] = None,
     ) -> str:
-        results = [
-            entry
-            for entry in self.search(query, limit=limit * 3, event=event)
-            if entry in self.user_visible_entries(event)
+        visible_plugin_names = {
+            entry.plugin_name for entry in self.user_visible_entries(event)
+        }
+        matches = [
+            match
+            for match in self.search_matches(query, limit=limit * 3, event=event)
+            if match.entry.plugin_name in visible_plugin_names
         ][:limit]
-        if not results:
+        return self.render_match_results(query=query, matches=matches)
+
+    def render_match_results(
+        self,
+        query: str,
+        matches: list[PluginSearchMatch],
+    ) -> str:
+        if not matches:
             return f"没有找到与“{query}”相关的插件。"
 
         lines = [f"与“{query}”最相关的插件："]
-        for index, entry in enumerate(results, start=1):
-            availability = self.get_availability(entry.plugin_name, event)
+        for index, match in enumerate(matches, start=1):
+            entry = match.entry
+            availability = match.availability
             lines.append(
                 f"{index}. {entry.short_label()} | 分类: {entry.category or '功能'} | 状态: {availability.status_text}"
             )

@@ -6,6 +6,7 @@ from migang.core.utils.langchain_tool import nb_langchain_tool
 from migang.core.core_plugins.help.data_source import get_plugin_help
 
 from ..plugin_index import plugin_index
+from ..plugin_reranker import plugin_reranker
 from ..help_intent import normalize_help_query, is_help_overview_query
 
 
@@ -104,7 +105,7 @@ async def query_help_plugin(query: str = "") -> str:
 
 
 @nb_langchain_tool
-def search_project_plugins(query: str, limit: int = 5) -> str:
+async def search_project_plugins(query: str, limit: int = 5) -> str:
     """
     为执行任务检索当前工程中的插件，返回最相关插件的名称、推荐触发词和状态。
     不适用于“有哪些功能/某插件怎么用”这类帮助问题；帮助问题应优先调用 query_help_plugin。
@@ -115,7 +116,23 @@ def search_project_plugins(query: str, limit: int = 5) -> str:
     """
     event = current_event.get(None)
     limit = max(1, min(limit, 8))
-    return plugin_index.render_search_results(query=query, limit=limit, event=event)
+    visible_plugin_names = {
+        entry.plugin_name for entry in plugin_index.user_visible_entries(event)
+    }
+    matches = [
+        match
+        for match in plugin_index.search_matches(
+            query, limit=max(limit * 3, 8), event=event
+        )
+        if match.entry.plugin_name in visible_plugin_names
+    ]
+    if plugin_reranker.should_rerank(query, matches):
+        candidate_summary = ", ".join(
+            f"{match.entry.plugin_name}({match.score:.1f})" for match in matches[:4]
+        )
+        logger.info(f"触发插件检索 LLM 重排: query={query} | candidates={candidate_summary}")
+        matches = await plugin_reranker.rerank(query, matches)
+    return plugin_index.render_match_results(query=query, matches=matches[:limit])
 
 
 @nb_langchain_tool
