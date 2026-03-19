@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+import ujson
 from nonebot.log import logger
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage
@@ -110,9 +111,11 @@ class ChatIntentJudge:
     def _build_extra_body(
         self, model: str, settings: ChatAgentSettings
     ) -> dict[str, object]:
-        if "qwen" in model.lower():
-            return {"enable_thinking": False}
-        return {"reasoning_split": settings.reasoning_split}
+        return {
+            "enable_thinking": False,
+            "reasoning": {"enabled": False},
+            "reasoning_split": settings.reasoning_split,
+        }
 
     async def _build_history(
         self,
@@ -170,8 +173,8 @@ class ChatIntentJudge:
         match = _JSON_BLOCK_RE.search(text)
         if match:
             try:
-                payload = json.loads(match.group(0))
-            except json.JSONDecodeError:
+                payload = ujson.loads(match.group(0))
+            except ValueError:
                 payload = None
             if isinstance(payload, dict):
                 return IntentJudgeResult(
