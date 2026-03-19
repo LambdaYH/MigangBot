@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import json
 from dataclasses import dataclass
 
 from nonebot.log import logger
@@ -91,6 +90,7 @@ class ChatIntentJudge:
         if self._llm is not None and self._llm_signature == signature:
             return self._llm
 
+        extra_body = self._build_extra_body(model, settings)
         kwargs = {
             "model": model,
             "temperature": 0,
@@ -98,9 +98,7 @@ class ChatIntentJudge:
             "request_timeout": timeout,
             "api_key": api_key,
             "streaming": False,
-            "extra_body": {
-                "reasoning_split": settings.reasoning_split,
-            },
+            "extra_body": extra_body,
         }
         if base_url:
             kwargs["base_url"] = base_url
@@ -108,6 +106,13 @@ class ChatIntentJudge:
         self._llm = ChatOpenAI(**kwargs)
         self._llm_signature = signature
         return self._llm
+
+    def _build_extra_body(
+        self, model: str, settings: ChatAgentSettings
+    ) -> dict[str, object]:
+        if "qwen" in model.lower():
+            return {"enable_thinking": False}
+        return {"reasoning_split": settings.reasoning_split}
 
     async def _build_history(
         self,
