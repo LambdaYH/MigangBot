@@ -60,7 +60,13 @@ class ChatIntentJudge:
             "2. 如果是在窗口内继续打招呼、寒暄、回应机器人，也应视为和机器人继续对话，should_reply=true。\n"
             "3. 如果明显是在和群友说话、普通群聊、和机器人上下文无关，should_reply=false。\n"
             "4. 如果消息里有图片，且像是在让机器人继续看图、解释刚发的图片，也算 should_reply=true。\n"
-            "5. 输出只能是 JSON，不要附加解释。\n\n"
+            "5. 只有历史里明确标记为 [BOT] 的内容，才算机器人说过的话；标记为 [USER] 的内容绝不能当作机器人发言。\n"
+            "6. 如果用户上一句本身就是在问机器人问题，不要误判成“这是机器人上一轮问过的话”。\n"
+            "7. 当前发言者一定是用户，不是机器人。\n"
+            "8. 如果最近几轮是在查看帮助、功能列表、插件说明，"
+            "用户随后说“这个怎么用”“这个功能怎么用”“怎么触发”"
+            "这类省略主语的追问，通常仍是在问机器人，should_reply=true。\n"
+            "9. 输出只能是 JSON，不要附加解释。\n\n"
             f"该群最近会话历史：\n{history_text}\n\n"
             f"当前消息是否带图片：{image_hint}\n"
             f"当前消息内容：{message_text or '[空文本，仅图片或非文本内容]'}"
@@ -132,11 +138,13 @@ class ChatIntentJudge:
             return "无"
 
         lines: list[str] = []
+        last_bot_text = "无"
         for row in reversed(rows):
             if getattr(row, "is_bot", False):
                 bot_text = self._extract_bot_text(row.message)
                 if bot_text:
-                    lines.append(f"机器人: {bot_text}")
+                    lines.append(f"[BOT] 机器人: {bot_text}")
+                    last_bot_text = bot_text
                 continue
 
             try:
@@ -152,20 +160,37 @@ class ChatIntentJudge:
                 user_text = "[消息解析失败]"
                 user_name = "用户"
             if user_text:
-                lines.append(f"{user_name}: {user_text}")
+                lines.append(f"[USER] {user_name}: {user_text}")
 
-        return "\n".join(lines) if lines else "无"
+        if not lines:
+            return "无"
+        return f"最近一条机器人消息: {last_bot_text}\n" + "\n".join(lines)
 
     def _extract_bot_text(self, payload: object) -> str:
         if is_langchain_message_payload(payload):
             messages = deserialize_langchain_messages(payload)
-            ai_text = [
-                message_content_to_text(message.content).strip()
-                for message in messages
-                if isinstance(message, AIMessage)
-            ]
-            ai_text = [text for text in ai_text if text]
-            return ai_text[-1] if ai_text else ""
+            collected: list[str] = []
+            for message in messages:
+                if isinstance(message, AIMessage):
+                    text = message_content_to_text(message.content).strip()
+                    if text:
+                        collected.append(text)
+                        continue
+                    tool_calls = getattr(message, "tool_calls", None) or []
+                    tool_names = [
+                        call.get("name")
+                        for call in tool_calls
+                        if isinstance(call, dict) and call.get("name")
+                    ]
+                    if tool_names:
+                        if "query_help_plugin" in tool_names:
+                            collected.append("[机器人刚调用了帮助工具]")
+                        else:
+                            collected.append(
+                                "[机器人刚调用了工具: " + ", ".join(tool_names) + "]"
+                            )
+            collected = [text for text in collected if text]
+            return collected[-1] if collected else ""
         return str(payload or "")
 
     def _parse_response(self, response: object) -> IntentJudgeResult:
