@@ -281,6 +281,18 @@ class LangChainChatBot:
                 full_response_str = (
                     "*;".join(sent_parts) if sent_parts else final_response_text
                 )
+                if full_response_str:
+                    logger.info(
+                        f"用户 {event.user_id} 群 {event.group_id} 问题：{uniformed_message} ---- 回答：{full_response_str}"
+                    )
+                elif has_direct_output_marker(new_messages):
+                    logger.info(
+                        f"用户 {event.user_id} 群 {event.group_id} 问题：{uniformed_message} ---- 回答：[工具结果已直接发送给用户]"
+                    )
+                else:
+                    logger.info(
+                        f"用户 {event.user_id} 群 {event.group_id} 问题：{uniformed_message} ---- 回答：[空回复]"
+                    )
 
                 # 记录用户发言
                 await ChatGPTChatHistory(
