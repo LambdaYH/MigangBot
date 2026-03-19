@@ -298,17 +298,24 @@ class PluginIndex:
             for match in self.search_matches(query, limit=limit * 3, event=event)
             if match.entry.plugin_name in visible_plugin_names
         ][:limit]
-        return self.render_match_results(query=query, matches=matches)
+        return self.render_match_results(query=query, matches=matches, event=event)
 
     def render_match_results(
         self,
         query: str,
         matches: list[PluginSearchMatch],
+        event: Optional[MessageEvent] = None,
     ) -> str:
         if not matches:
             return f"没有找到与“{query}”相关的插件。"
 
         lines = [f"与“{query}”最相关的插件："]
+        has_image = bool(event and any(seg.type == "image" for seg in event.message))
+        if has_image and is_explicit_image_tool_query(query):
+            lines.append(
+                "当前用户消息已经附带图片。若插件匹配，请直接调用 invoke_project_plugin；"
+                "调用时会自动把当前图片一并带给插件，无需让用户重新发送图片。"
+            )
         for index, match in enumerate(matches, start=1):
             entry = match.entry
             availability = match.availability
@@ -358,6 +365,11 @@ class PluginIndex:
                 lines.append(f"- {command.example} [{command.rule_type}]{suffix}")
         if entry.usage:
             lines.append(f"用法说明: {entry.usage}")
+        if event and any(seg.type == "image" for seg in event.message):
+            lines.append(
+                "提示: 当前用户消息已附带图片。若该插件需要图片输入，"
+                "调用 invoke_project_plugin 时会自动携带当前图片，无需要求用户重发。"
+            )
         return "\n".join(lines)
 
     def render_prompt_context(
@@ -376,7 +388,11 @@ class PluginIndex:
                 "才调用 search_project_plugins、inspect_project_plugin 或 invoke_project_plugin。"
             )
         if has_image and is_explicit_image_tool_query(query):
-            return "当前消息包含图片，且用户明确要求图片工具处理，可以检索相关插件。"
+            return (
+                "当前消息包含图片，且用户明确要求图片工具处理，可以检索相关插件。"
+                "一旦确定插件匹配，应直接调用 invoke_project_plugin。"
+                "invoke_project_plugin 会自动携带当前图片，无需要求用户重新发送图片。"
+            )
         if is_help_query(query):
             return "这更像帮助咨询问题，优先调用 query_help_plugin，而不是 search_project_plugins。"
 

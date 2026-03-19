@@ -90,6 +90,21 @@ class LangChainChatBot:
 
         return tool_manager.get_tools()
 
+    def _infer_contextual_image_query(self, chat_history: List[Any]) -> str:
+        for message in reversed(chat_history):
+            if not isinstance(message, HumanMessage):
+                continue
+            text = message_content_to_text(message.content).strip()
+            if not text:
+                continue
+            if ": " in text:
+                text = text.split(": ", 1)[1].strip()
+            if not text or text == "[图片]":
+                continue
+            if is_explicit_image_tool_query(text):
+                return text
+        return ""
+
     async def _get_chat_history(self, thread_id: str, bot: Bot) -> List:
         """根据 thread_id 获取历史消息，返回 langchain 消息格式"""
         messages = []
@@ -179,15 +194,24 @@ class LangChainChatBot:
                     deserialize_message(trigger_text), group_id=event.group_id, bot=bot
                 )
                 has_image = any(item.get("type") == "image" for item in trigger_text)
+                contextual_image_query = ""
+                effective_user_query = uniformed_message
+                if has_image and uniformed_message.strip() == "[图片]":
+                    contextual_image_query = self._infer_contextual_image_query(
+                        chat_history
+                    )
+                    if contextual_image_query:
+                        effective_user_query = f"{contextual_image_query} [当前消息附带图片]"
+                        logger.info(f"纯图片续聊，补全上下文意图: {contextual_image_query}")
                 direct_image_chat_mode = (
                     has_image
-                    and is_general_image_understanding_query(uniformed_message)
-                    and not is_explicit_image_tool_query(uniformed_message)
+                    and is_general_image_understanding_query(effective_user_query)
+                    and not is_explicit_image_tool_query(effective_user_query)
                 )
 
                 # 获取相关插件
                 relative_plugin = await search_plugin_tool(
-                    uniformed_message,
+                    effective_user_query,
                     has_image=has_image,
                 )
 
@@ -207,6 +231,20 @@ class LangChainChatBot:
                     bot=bot,
                     prefix_text=f"{user_name}: ",
                 )
+                if contextual_image_query:
+                    contextual_prefix = (
+                        f"{user_name}: [延续上一轮请求: {contextual_image_query}] "
+                    )
+                    if isinstance(input_message, list):
+                        if input_message and input_message[0].get("type") == "text":
+                            input_message[0]["text"] = contextual_prefix
+                        else:
+                            input_message = [
+                                {"type": "text", "text": contextual_prefix},
+                                *input_message,
+                            ]
+                    else:
+                        input_message = contextual_prefix + input_message
                 if isinstance(input_message, list):
                     image_block_count = sum(
                         1 for item in input_message if item.get("type") == "image_url"
@@ -283,15 +321,15 @@ class LangChainChatBot:
                 )
                 if full_response_str:
                     logger.info(
-                        f"用户 {event.user_id} 群 {event.group_id} 问题：{uniformed_message} ---- 回答：{full_response_str}"
+                        f"用户 {event.user_id} 群 {event.group_id} 问题：{effective_user_query} ---- 回答：{full_response_str}"
                     )
                 elif has_direct_output_marker(new_messages):
                     logger.info(
-                        f"用户 {event.user_id} 群 {event.group_id} 问题：{uniformed_message} ---- 回答：[工具结果已直接发送给用户]"
+                        f"用户 {event.user_id} 群 {event.group_id} 问题：{effective_user_query} ---- 回答：[工具结果已直接发送给用户]"
                     )
                 else:
                     logger.info(
-                        f"用户 {event.user_id} 群 {event.group_id} 问题：{uniformed_message} ---- 回答：[空回复]"
+                        f"用户 {event.user_id} 群 {event.group_id} 问题：{effective_user_query} ---- 回答：[空回复]"
                     )
 
                 # 记录用户发言
