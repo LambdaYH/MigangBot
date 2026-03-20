@@ -415,15 +415,15 @@ files = [
 
 [[package]]
 name = "async-lru"
-version = "2.2.0"
+version = "2.3.0"
 requires_python = ">=3.10"
 summary = "Simple LRU cache for asyncio"
 dependencies = [
     "typing-extensions>=4.0.0; python_version < \"3.11\"",
 ]
 files = [
-    {file = "async_lru-2.2.0-py3-none-any.whl", hash = "sha256:e2c1cf731eba202b59c5feedaef14ffd9d02ad0037fcda64938699f2c380eafe"},
-    {file = "async_lru-2.2.0.tar.gz", hash = "sha256:80abae2a237dbc6c60861d621619af39f0d920aea306de34cb992c879e01370c"},
+    {file = "async_lru-2.3.0-py3-none-any.whl", hash = "sha256:eea27b01841909316f2cc739807acea1c623df2be8c5cfad7583286397bb8315"},
+    {file = "async_lru-2.3.0.tar.gz", hash = "sha256:89bdb258a0140d7313cf8f4031d816a042202faa61d0ab310a0a538baa1c24b6"},
 ]
 
 [[package]]
@@ -495,12 +495,12 @@ files = [
 
 [[package]]
 name = "attrs"
-version = "25.4.0"
+version = "26.1.0"
 requires_python = ">=3.9"
 summary = "Classes Without Boilerplate"
 files = [
-    {file = "attrs-25.4.0-py3-none-any.whl", hash = "sha256:adcf7e2a1fb3b36ac48d97835bb6d8ade15b8dcce26aba8bf1d14847b57a3373"},
-    {file = "attrs-25.4.0.tar.gz", hash = "sha256:16d5969b87f0859ef33a48b35d55ac1be6e42ae49d5e853b597db70c35c57e11"},
+    {file = "attrs-26.1.0-py3-none-any.whl", hash = "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"},
+    {file = "attrs-26.1.0.tar.gz", hash = "sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32"},
 ]
 
 [[package]]
@@ -522,7 +522,7 @@ files = [
 
 [[package]]
 name = "azure-core"
-version = "1.38.3"
+version = "1.39.0"
 requires_python = ">=3.9"
 summary = "Microsoft Azure Core Library for Python"
 dependencies = [
@@ -530,8 +530,8 @@ dependencies = [
     "typing-extensions>=4.6.0",
 ]
 files = [
-    {file = "azure_core-1.38.3-py3-none-any.whl", hash = "sha256:bf59d29765bf4748ab9edf25f98a30b7ea9797f43e367c06d846a30b29c1f845"},
-    {file = "azure_core-1.38.3.tar.gz", hash = "sha256:a7931fd445cb4af8802c6f39c6a326bbd1e34b115846550a8245fa656ead6f8e"},
+    {file = "azure_core-1.39.0-py3-none-any.whl", hash = "sha256:4ac7b70fab5438c3f68770649a78daf97833caa83827f91df9c14e0e0ea7d34f"},
+    {file = "azure_core-1.39.0.tar.gz", hash = "sha256:8a90a562998dd44ce84597590fff6249701b98c0e8797c95fcdd695b54c35d74"},
 ]
 
 [[package]]
@@ -2039,15 +2039,15 @@ files = [
 
 [[package]]
 name = "importlib-metadata"
-version = "8.7.1"
-requires_python = ">=3.9"
+version = "8.8.0"
+requires_python = ">=3.10"
 summary = "Read metadata from Python packages"
 dependencies = [
     "zipp>=3.20",
 ]
 files = [
-    {file = "importlib_metadata-8.7.1-py3-none-any.whl", hash = "sha256:5a1f80bf1daa489495071efbb095d75a634cf28a8bc299581244063b53176151"},
-    {file = "importlib_metadata-8.7.1.tar.gz", hash = "sha256:49fef1ae6440c182052f407c8d34a68f72efc36db9ca90dc0113398f2fdde8bb"},
+    {file = "importlib_metadata-8.8.0-py3-none-any.whl", hash = "sha256:f05c37e6b05dc776a1f0bfc39b890634476404ec8449427f7db938e236c4c54e"},
+    {file = "importlib_metadata-8.8.0.tar.gz", hash = "sha256:d4ae075d546a9c2db36f0ba957f15f9443c9604e57d0785701621cb7ea2ec5d7"},
 ]
 
 [[package]]
@@ -2310,7 +2310,7 @@ files = [
 
 [[package]]
 name = "langchain"
-version = "1.2.12"
+version = "1.2.13"
 requires_python = "<4.0.0,>=3.10.0"
 summary = "Building applications with LLMs through composability"
 dependencies = [
@@ -2319,8 +2319,8 @@ dependencies = [
     "pydantic<3.0.0,>=2.7.4",
 ]
 files = [
-    {file = "langchain-1.2.12-py3-none-any.whl", hash = "sha256:60eff184b8f92c2610f5a4c9a97ad339a891adb01901e83e4df8e6c9c69cf852"},
-    {file = "langchain-1.2.12.tar.gz", hash = "sha256:ed705b5b293799f7e3e394387f398a1b71707542758283206c8c21415759d991"},
+    {file = "langchain-1.2.13-py3-none-any.whl", hash = "sha256:37d4526ac4b0cdd3d7706a6366124c30dc0771bf5340865b37cdc99d5e5ad9b1"},
+    {file = "langchain-1.2.13.tar.gz", hash = "sha256:d566ef67c8287e7f2e2df3c99bf3953a6beefd2a75a97fe56ecce905e21f3ef4"},
 ]
 
 [[package]]
@@ -2370,7 +2370,7 @@ files = [
 
 [[package]]
 name = "langchain-core"
-version = "1.2.19"
+version = "1.2.20"
 requires_python = "<4.0.0,>=3.10.0"
 summary = "Building applications with LLMs through composability"
 dependencies = [
@@ -2384,8 +2384,8 @@ dependencies = [
     "uuid-utils<1.0,>=0.12.0",
 ]
 files = [
-    {file = "langchain_core-1.2.19-py3-none-any.whl", hash = "sha256:6e74cb0fb443a8046ee298c05c99b67abe54cc57fcbc6d1cd3b0f2485ee47574"},
-    {file = "langchain_core-1.2.19.tar.gz", hash = "sha256:87fa82c3eb4cc3d7a65f574cb447b5df09ec2131c8c2a0a02d4737ad02685438"},
+    {file = "langchain_core-1.2.20-py3-none-any.whl", hash = "sha256:b65ff678f3c3dc1f1b4d03a3af5ee3b8d51f9be5181d74eb53c6c11cd9dd5e68"},
+    {file = "langchain_core-1.2.20.tar.gz", hash = "sha256:c7ac8b976039b5832abb989fef058b88c270594ba331efc79e835df046e7dc44"},
 ]
 
 [[package]]
@@ -2418,7 +2418,7 @@ files = [
 
 [[package]]
 name = "langgraph"
-version = "1.1.2"
+version = "1.1.3"
 requires_python = ">=3.10"
 summary = "Building stateful, multi-actor applications with LLMs"
 dependencies = [
@@ -2430,8 +2430,8 @@ dependencies = [
     "xxhash>=3.5.0",
 ]
 files = [
-    {file = "langgraph-1.1.2-py3-none-any.whl", hash = "sha256:5fd43c839ec2b5af564e9ae2d2d4f22ce0a006a0b58e800cc4e8de4dd9cbb643"},
-    {file = "langgraph-1.1.2.tar.gz", hash = "sha256:c4385ce349823a590891b3f6b1c46b54f51d0134164056866e95034985f047c9"},
+    {file = "langgraph-1.1.3-py3-none-any.whl", hash = "sha256:57cd6964ebab41cbd211f222293a2352404e55f8b2312cecde05e8753739b546"},
+    {file = "langgraph-1.1.3.tar.gz", hash = "sha256:ee496c297a9c93b38d8560be15cbb918110f49077d83abd14976cb13ac3b3370"},
 ]
 
 [[package]]
@@ -2464,7 +2464,7 @@ files = [
 
 [[package]]
 name = "langgraph-sdk"
-version = "0.3.11"
+version = "0.3.12"
 requires_python = ">=3.10"
 summary = "SDK for interacting with LangGraph API"
 dependencies = [
@@ -2472,13 +2472,13 @@ dependencies = [
     "orjson>=3.11.5",
 ]
 files = [
-    {file = "langgraph_sdk-0.3.11-py3-none-any.whl", hash = "sha256:18905fd6248ade98b0995d859a98672d57c811fbfffc0d63d1c107a512351b26"},
-    {file = "langgraph_sdk-0.3.11.tar.gz", hash = "sha256:3640134835d89d2c7c8bb7de73bd10673d4b282db3ff0e2fdaf1cee9e50cb1eb"},
+    {file = "langgraph_sdk-0.3.12-py3-none-any.whl", hash = "sha256:44323804965d6ec2a07127b3cf08a0428ea6deaeb172c2d478d5cd25540e3327"},
+    {file = "langgraph_sdk-0.3.12.tar.gz", hash = "sha256:c9c9ec22b3c0fcd352e2b8f32a815164f69446b8648ca22606329f4ff4c59a71"},
 ]
 
 [[package]]
 name = "langsmith"
-version = "0.7.20"
+version = "0.7.22"
 requires_python = ">=3.10"
 summary = "Client library to connect to the LangSmith Observability and Evaluation Platform."
 dependencies = [
@@ -2493,8 +2493,8 @@ dependencies = [
     "zstandard>=0.23.0",
 ]
 files = [
-    {file = "langsmith-0.7.20-py3-none-any.whl", hash = "sha256:0162faf791ea48d69009a12a3da917468556b99cf5d5fcacbb8cda064262e118"},
-    {file = "langsmith-0.7.20.tar.gz", hash = "sha256:fa983a74f75648ee0e80d3f9751162b6f9a438896d5f9bdb6cba9abda451e234"},
+    {file = "langsmith-0.7.22-py3-none-any.whl", hash = "sha256:6e9d5148314d74e86748cb9d3898632cad0320c9323d95f70f969e5bc078eee4"},
+    {file = "langsmith-0.7.22.tar.gz", hash = "sha256:35bfe795d648b069958280760564632fd28ebc9921c04f3e209c0db6a6c7dc04"},
 ]
 
 [[package]]
