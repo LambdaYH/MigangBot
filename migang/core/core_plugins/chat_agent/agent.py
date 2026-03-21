@@ -51,6 +51,9 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
         except Exception as e:
             logger.warning(f"连续对话意图识别失败，跳过本次续聊判断: {e}")
         else:
+            if judge_result.end_session:
+                dialog_window_manager.clear(event)
+                logger.info(f"检测到终止会话意图，已关闭连续对话窗口 | group={event.group_id}")
             triggered = judge_result.should_reply
             trigger_reason = f"window:{judge_result.reason}"
 

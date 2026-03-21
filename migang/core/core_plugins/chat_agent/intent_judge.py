@@ -28,6 +28,7 @@ _JSON_BLOCK_RE = re.compile(r"\{.*\}", re.DOTALL)
 class IntentJudgeResult:
     should_reply: bool
     reason: str
+    end_session: bool = False
 
 
 class ChatIntentJudge:
@@ -44,7 +45,7 @@ class ChatIntentJudge:
     ) -> IntentJudgeResult:
         settings = ChatAgentSettings.load()
         if not settings.intent_judge_enabled:
-            return IntentJudgeResult(False, "intent_judge_disabled")
+            return IntentJudgeResult(False, "intent_judge_disabled", False)
 
         llm = self._get_llm(settings)
         history_text = await self._build_history(
@@ -53,8 +54,8 @@ class ChatIntentJudge:
         image_hint = "是" if has_image else "否"
         prompt = (
             "你是群聊机器人的会话路由器。当前已经存在一个 10 分钟的连续对话窗口。\n"
-            "你的任务是判断：用户最新一句话是否仍然是在和机器人继续对话，是否需要机器人回复。\n"
-            '返回 JSON，格式固定为 {"should_reply": true/false, "reason": "简短原因"}。\n'
+            "你的任务是判断：用户最新一句话是否仍然是在和机器人继续对话，是否需要机器人回复，以及是否想终止当前会话窗口。\n"
+            '返回 JSON，格式固定为 {"should_reply": true/false, "end_session": true/false, "reason": "简短原因"}。\n'
             "判断规则：\n"
             "1. 如果是在承接机器人上一轮回答、追问、补充说明、纠正、要求继续处理，should_reply=true。\n"
             "2. 如果是在窗口内继续打招呼、寒暄、回应机器人，也应视为和机器人继续对话，should_reply=true。\n"
@@ -66,7 +67,10 @@ class ChatIntentJudge:
             "8. 如果最近几轮是在查看帮助、功能列表、插件说明，"
             "用户随后说“这个怎么用”“这个功能怎么用”“怎么触发”"
             "这类省略主语的追问，通常仍是在问机器人，should_reply=true。\n"
-            "9. 输出只能是 JSON，不要附加解释。\n\n"
+            "9. 如果用户明确表示“先别回了”“不用继续了”“结束吧”“先这样”“停一下”“不用聊了”这类终止会话的意思，"
+            "则 end_session=true，should_reply=false。\n"
+            "10. 只要 end_session=true，就不要再让机器人继续回复。\n"
+            "11. 输出只能是 JSON，不要附加解释。\n\n"
             f"该群最近会话历史：\n{history_text}\n\n"
             f"当前消息是否带图片：{image_hint}\n"
             f"当前消息内容：{message_text or '[空文本，仅图片或非文本内容]'}"
@@ -77,7 +81,7 @@ class ChatIntentJudge:
         if len(message_preview) > 60:
             message_preview = message_preview[:57] + "..."
         logger.info(
-            f"连续对话意图识别: should_reply={result.should_reply} | reason={result.reason} | message={message_preview}"
+            f"连续对话意图识别: should_reply={result.should_reply} | end_session={result.end_session} | reason={result.reason} | message={message_preview}"
         )
         return result
 
@@ -205,6 +209,7 @@ class ChatIntentJudge:
                 return IntentJudgeResult(
                     should_reply=bool(payload.get("should_reply")),
                     reason=str(payload.get("reason", "")).strip() or "json_result",
+                    end_session=bool(payload.get("end_session")),
                 )
         lowered = text.lower()
         should_reply = '"should_reply": true' in lowered or "true" == lowered
