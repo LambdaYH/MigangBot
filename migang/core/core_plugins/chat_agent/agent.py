@@ -25,6 +25,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     plain_text = event.get_plaintext()
     has_image = any(seg.type == "image" for seg in event.message)
     window_was_active = dialog_window_manager.is_active(event)
+    window_state = dialog_window_manager.get_state(event) if window_was_active else None
     if not plain_text and not has_image:
         logger.debug("空消息，不处理")
         return False
@@ -47,6 +48,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
                 bot=bot,
                 message_text=chat_text,
                 has_image=has_image,
+                window_source=window_state.source if window_state else "chat",
             )
         except Exception as e:
             logger.warning(f"连续对话意图识别失败，跳过本次续聊判断: {e}")
@@ -93,7 +95,7 @@ async def do_chat(
 
     await langchain_chatbot.chat(matcher, event, bot, trigger_text)
     if state.get("refresh_dialog_window"):
-        dialog_window_manager.refresh(event, dialog_window_minutes)
+        dialog_window_manager.refresh(event, dialog_window_minutes, source="chat")
         if state.get("window_was_active"):
             logger.info(
                 f"已刷新连续对话窗口 | group={event.group_id} | duration={dialog_window_minutes}min"

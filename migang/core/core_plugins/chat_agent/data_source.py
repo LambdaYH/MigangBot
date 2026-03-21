@@ -49,7 +49,7 @@ async def hello(
     """
     if plain_text and plain_text not in hello_msg:
         return None
-    dialog_window_manager.refresh(event, dialog_window_minutes)
+    dialog_window_manager.refresh(event, dialog_window_minutes, source="hello")
     logger.info(
         f"hello 命中，已进入连续对话窗口 | group={event.group_id} | duration={dialog_window_minutes}min"
     )

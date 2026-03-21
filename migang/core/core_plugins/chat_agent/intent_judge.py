@@ -42,6 +42,7 @@ class ChatIntentJudge:
         bot: Bot,
         message_text: str,
         has_image: bool,
+        window_source: str = "chat",
     ) -> IntentJudgeResult:
         settings = ChatAgentSettings.load()
         if not settings.intent_judge_enabled:
@@ -67,10 +68,13 @@ class ChatIntentJudge:
             "8. 如果最近几轮是在查看帮助、功能列表、插件说明，"
             "用户随后说“这个怎么用”“这个功能怎么用”“怎么触发”"
             "这类省略主语的追问，通常仍是在问机器人，should_reply=true。\n"
-            "9. 如果用户明确表示“先别回了”“不用继续了”“结束吧”“先这样”“停一下”“不用聊了”这类终止会话的意思，"
+            "9. 如果当前窗口来源是 hello 问候唤醒，那么用户在接下来一两轮里继续闲聊、寒暄、问日常问题，"
+            "通常仍是在和机器人说话，should_reply=true。\n"
+            "10. 如果用户明确表示“先别回了”“不用继续了”“结束吧”“先这样”“停一下”“不用聊了”这类终止会话的意思，"
             "则 end_session=true，should_reply=false。\n"
-            "10. 只要 end_session=true，就不要再让机器人继续回复。\n"
-            "11. 输出只能是 JSON，不要附加解释。\n\n"
+            "11. 只要 end_session=true，就不要再让机器人继续回复。\n"
+            "12. 输出只能是 JSON，不要附加解释。\n\n"
+            f"当前窗口来源: {window_source}\n"
             f"该群最近会话历史：\n{history_text}\n\n"
             f"当前消息是否带图片：{image_hint}\n"
             f"当前消息内容：{message_text or '[空文本，仅图片或非文本内容]'}"
