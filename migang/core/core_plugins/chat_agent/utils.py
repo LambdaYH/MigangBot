@@ -179,6 +179,26 @@ async def _build_reply_context(
     return context
 
 
+async def _ensure_reply_segment(
+    serialized: List[Dict[str, Any]],
+    event: GroupMessageEvent | None,
+    bot: Bot | None,
+    depth: int,
+) -> List[Dict[str, Any]]:
+    if event is None or getattr(event, "reply", None) is None:
+        return serialized
+    if any(seg.get("type") == "reply" for seg in serialized if isinstance(seg, dict)):
+        return serialized
+
+    reply_data: dict[str, Any] = {}
+    message_id = getattr(event.reply, "message_id", None)
+    if message_id is not None:
+        reply_data["id"] = message_id
+    if depth <= 1:
+        reply_data.update(await _build_reply_context(event.reply, bot, depth + 1))
+    return [{"type": "reply", "data": reply_data}, *serialized]
+
+
 async def _reply_segment_to_text(
     seg: MessageSegment,
     group_id: int,
@@ -252,7 +272,7 @@ async def serialize_message(
         if file_uri := await _resolve_image_file_uri(seg, bot):
             image_data["file"] = file_uri
         serialized.append({"type": "image", "data": image_data})
-    return serialized
+    return await _ensure_reply_segment(serialized, event=event, bot=bot, depth=depth)
 
 
 def deserialize_message(message: List[Dict[str, Any]]) -> Message:
