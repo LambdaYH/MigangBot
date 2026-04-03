@@ -11,7 +11,7 @@ from migang.core.models import ChatGPTChatHistory
 from .config import sync_get_agent_config
 from .intent_judge import chat_intent_judge
 from .dialog_window import dialog_window_manager
-from .utils import get_bot_name, gen_chat_text, serialize_message
+from .utils import get_bot_name, gen_chat_text, is_reply_to_bot, serialize_message
 
 ignore_prefix: Tuple[str] = tuple(
     sync_get_agent_config("ignore_prefix", default_value=[]) or []
@@ -32,21 +32,33 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     if plain_text and plain_text.startswith(ignore_prefix):
         logger.debug("忽略消息前缀")
         return False
-    chat_text, is_tome = await gen_chat_text(event=event, bot=bot)
+    chat_text, is_tome = await gen_chat_text(
+        event=event,
+        bot=bot,
+        include_reply_context=False,
+    )
+    judge_text, _ = await gen_chat_text(
+        event=event,
+        bot=bot,
+        include_reply_context=True,
+    )
     is_tome = is_tome or event.is_tome()
     bot_name = get_bot_name(bot=bot)
+    reply_to_bot = is_reply_to_bot(event=event, bot=bot)
 
     # 是否需要响应
-    explicit_triggered = is_tome or (bot_name.lower() in chat_text.lower())
+    explicit_triggered = (
+        is_tome or reply_to_bot or (bot_name.lower() in chat_text.lower())
+    )
     triggered = explicit_triggered
-    trigger_reason = "explicit"
+    trigger_reason = "reply_to_bot" if reply_to_bot else "explicit"
 
     if not triggered and dialog_window_manager.is_active(event):
         try:
             judge_result = await chat_intent_judge.should_reply(
                 event=event,
                 bot=bot,
-                message_text=chat_text,
+                message_text=judge_text,
                 has_image=has_image,
                 window_source=window_state.source if window_state else "chat",
             )
@@ -60,7 +72,7 @@ async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
             trigger_reason = f"window:{judge_result.reason}"
 
     # 记录消息，虽然可能与我无关，但是记录保证对上下文的理解
-    record_msg = await serialize_message(event.message, bot=bot)
+    record_msg = await serialize_message(event.message, bot=bot, event=event)
     if is_tome:
         record_msg = [
             {"type": "at", "data": {"qq": bot.self_id}},
