@@ -71,7 +71,6 @@ plugins = [
     "nonebot-plugin-datastore>=1.0.0",
     "nonebot-plugin-oddtext>=0.2.0",
     "nonebot-plugin-gachalogs>=0.2.13",
-    "nonebot-plugin-gspanel>=0.2.25",
     "nonebot-plugin-gscode>=0.1.8",
     "nonebot-plugin-wordle>=0.3.4",
     "nonebot-plugin-sentry>=0.4.1",
