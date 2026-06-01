@@ -92,7 +92,7 @@ wenhao = on_keyword(("??", "？？"), priority=99, block=False, permission=GROUP
 tanhao = on_keyword(("!!", "！！"), priority=99, block=False, permission=GROUP)
 huoguo = on_keyword(("火锅",), priority=99, block=False, permission=GROUP)
 
-custom_chat_path = Path(__file__).parent.parent / "chat" / "image" / "custom_chat"
+custom_chat_path = Path(__file__).parent / "image" / "custom_chat"
 
 
 @wenhao.handle()

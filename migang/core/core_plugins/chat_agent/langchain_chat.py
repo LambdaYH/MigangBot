@@ -354,13 +354,20 @@ class LangChainChatBot:
 
             except Exception as e:
                 error_msg = str(e)
+                lowered_error_msg = error_msg.lower()
+                if (
+                    "unprocessable_entity_error" in lowered_error_msg
+                    and "new_sensitive" in lowered_error_msg
+                ):
+                    logger.warning(f"模型接口拦截敏感输出，已终止本次回复: {error_msg}")
+                    await matcher.finish("这次回复被接口拦截了，换个说法再问我吧。")
                 logger.error(
                     f"聊天处理过程中发生错误 (尝试 {attempt + 1}/{max_retries}): {error_msg}"
                 )
                 logger.debug(f"错误详情: {traceback.format_exc()}")
 
                 # 检查是否是API密钥相关错误
-                if "rate limit" in error_msg.lower() or "api key" in error_msg.lower():
+                if "rate limit" in lowered_error_msg or "api key" in lowered_error_msg:
                     if attempt < max_retries - 1:  # 不是最后一次尝试
                         self._switch_api_key()
                         logger.info(f"由于API错误，切换密钥后重试...")

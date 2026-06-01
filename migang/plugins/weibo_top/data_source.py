@@ -1,9 +1,11 @@
+import json
 import datetime
 from pathlib import Path
 from typing import Tuple, Union
 
 import aiohttp
 from PIL import ImageFont
+from nonebot.log import logger
 from pil_utils import BuildImage
 from nonebot.adapters.onebot.v11 import MessageSegment
 
@@ -23,7 +25,17 @@ async def get_wbtop(url: str) -> Tuple[Union[dict, str], int]:
             async with aiohttp.ClientSession() as client:
                 get_response = await client.get(url, timeout=20)
                 if get_response.status == 200:
-                    data_json = (await get_response.json())["data"]["realtime"]
+                    try:
+                        payload = await get_response.json()
+                    except (aiohttp.ContentTypeError, json.JSONDecodeError) as e:
+                        logger.warning(f"微博热搜返回非 JSON 数据: {e}")
+                        return "微博热搜接口返回异常，请稍后再试", 999
+
+                    data_json = payload.get("data", {}).get("realtime")
+                    if not isinstance(data_json, list):
+                        logger.warning(f"微博热搜接口数据结构异常: {payload}")
+                        return "微博热搜接口数据异常，请稍后再试", 999
+
                     for data_item in data_json:
                         # 如果是广告，则不添加
                         if "is_ad" in data_item:
@@ -40,10 +52,16 @@ async def get_wbtop(url: str) -> Tuple[Union[dict, str], int]:
                         return "没有搜索到...", 997
                     return {"data": data, "time": datetime.datetime.now()}, 200
                 else:
-                    if i > 2:
-                        return "获取失败,请十分钟后再试", 999
-        except TimeoutError:
-            return "超时了....", 998
+                    logger.warning(f"微博热搜接口状态异常: {get_response.status}")
+        except (TimeoutError, aiohttp.ClientError) as e:
+            logger.warning(f"获取微博热搜异常，次数{i + 1}: {e}")
+            if i == 2:
+                return "获取失败,请十分钟后再试", 999
+        except Exception as e:
+            logger.exception(f"获取微博热搜发生未预期异常，次数{i + 1}: {e}")
+            if i == 2:
+                return "获取失败,请十分钟后再试", 999
+    return "获取失败,请十分钟后再试", 999
 
 
 def gen_wbtop_pic(data: dict) -> MessageSegment:

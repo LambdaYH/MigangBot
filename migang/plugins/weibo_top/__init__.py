@@ -37,6 +37,16 @@ wbtop_url = "https://weibo.com/ajax/side/hotSearch"
 wbtop_data = []
 
 
+async def refresh_wbtop_data() -> bool:
+    global wbtop_data
+    data, code = await get_wbtop(wbtop_url)
+    if code != 200:
+        await wbtop.finish(data, at_sender=True)
+        return False
+    wbtop_data = data
+    return True
+
+
 @wbtop.handle()
 async def _(arg: Message = CommandArg()):
     global wbtop_data
@@ -44,24 +54,16 @@ async def _(arg: Message = CommandArg()):
     if wbtop_data:
         now_time = datetime.datetime.now()
         if now_time > wbtop_data["time"] + datetime.timedelta(minutes=5):
-            data, code = await get_wbtop(wbtop_url)
-            if code != 200:
-                await wbtop.finish(data, at_sender=True)
-            else:
-                wbtop_data = data
+            await refresh_wbtop_data()
     else:
-        data, code = await get_wbtop(wbtop_url)
-        if code != 200:
-            await wbtop.finish(data, at_sender=True)
-        else:
-            wbtop_data = data
+        await refresh_wbtop_data()
 
     if not msg:
         img = await asyncio.get_event_loop().run_in_executor(
             None, gen_wbtop_pic, wbtop_data["data"]
         )
         await wbtop.send(img)
-    if is_number(msg) and 0 < int(msg) <= 50:
+    if is_number(msg) and 0 < int(msg) <= len(wbtop_data["data"]):
         url = wbtop_data["data"][int(msg) - 1]["url"]
         await wbtop.send("开始截取数据...")
         try:
@@ -76,3 +78,5 @@ async def _(arg: Message = CommandArg()):
         except Exception as e:
             logger.warning(f"截取微博发生错误：{e}")
             await wbtop.finish("发生了一些错误.....")
+    elif msg:
+        await wbtop.finish(f"请输入 1-{len(wbtop_data['data'])} 的数字")

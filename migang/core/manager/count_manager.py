@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Union, Callable, Iterable
 
 import anyio
+from nonebot.log import logger
 from pydantic import BaseModel
 from nonebot.adapters.onebot.v11 import Event, Message
 
@@ -260,6 +261,9 @@ class CountManager:
             Args:
                 period (CountPeriod): 所需重置的对应周期
             """
+            if not hasattr(self, "_PluginCount__count_data"):
+                logger.warning(f"插件计数文件 {self.__file} 尚未初始化，跳过本次重置")
+                return
             for counts in self.__count_data.group.values():
                 counts[period._value_] = 0
             for counts in self.__count_data.user.values():

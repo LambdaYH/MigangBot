@@ -125,6 +125,8 @@ async def build_music_card(song) -> MessageSegment:
 
                 resp = await client.get(qq_card_api, params=params, timeout=8)
                 data = await resp.json()
+                if not isinstance(data, dict) or not isinstance(data.get("data"), dict):
+                    raise ValueError(f"unexpected QQ music card response: {data}")
                 return MessageSegment.json(data["data"])
         except Exception as e:
             logger.error(f"QQ Music Card API Error: {e}")

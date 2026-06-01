@@ -99,10 +99,20 @@ class Weather:
 
         res = res.json()
 
-        if res["code"] == "404":
+        if error := res.get("error"):
+            status = str(error.get("status", ""))
+            if status == "400":
+                raise CityNotFoundError()
+            raise APIError(
+                "错误! 错误代码: {}".format(status or error.get("title", "unknown"))
+                + self.__reference
+            )
+
+        code = res.get("code")
+        if code == "404":
             raise CityNotFoundError()
-        elif res["code"] != "200":
-            raise APIError("错误! 错误代码: {}".format(res["code"]) + self.__reference)
+        elif code != "200":
+            raise APIError("错误! 错误代码: {}".format(code) + self.__reference)
         else:
             self.city_name = res["location"][0]["name"]
             return res["location"][0]["id"]

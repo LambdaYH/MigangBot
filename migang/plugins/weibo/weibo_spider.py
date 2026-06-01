@@ -47,7 +47,13 @@ async def async_load_data(file: Path) -> List:
                 try:
                     data = json.loads(data_str)
                 except ValueError as e:
-                    raise Exception(f"json文件 {file} 解析失败：{e}")
+                    backup_file = file.with_suffix(file.suffix + ".bak")
+                    async with await anyio.open_file(
+                        backup_file, "w", encoding="utf-8"
+                    ) as backup:
+                        await backup.write(data_str)
+                    logger.warning(f"json文件 {file} 解析失败，已备份到 {backup_file} 并重建空数据：{e}")
+                    data = []
     return data if data is not None else []
 
 
@@ -118,7 +124,12 @@ class BaseWeiboSpider:
                         url, params=params, headers=self.__headers, timeout=20
                     )
                     if r.status == 200:
-                        js = await r.json()
+                        try:
+                            js = await r.json()
+                        except (aiohttp.ContentTypeError, ValueError) as e:
+                            logger.warning(f"获取微博数据{url}返回非 JSON 数据：{e}")
+                            await asyncio.sleep(random.randint(1, 3))
+                            continue
                         # 检查是否为认证页面（cookie过期）
                         if not isinstance(js, dict) or "data" not in js:
                             # cookie过期或无效，尝试刷新全局cookie
