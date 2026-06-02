@@ -5,7 +5,7 @@ from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
-from nonebot import on_keyword, on_message
+from nonebot import require, on_keyword, on_message
 from nonebot.adapters.onebot.v11 import (
     GROUP,
     Bot,
@@ -20,10 +20,14 @@ from migang.core.utils.image import pic_file_to_bytes
 from .exception import BreakSession
 from .config import get_agent_config
 from .agent import do_chat, pre_check
+from .utils import cleanup_image_cache
 from .tools import *  # noqa: F401,F403
 from .message_manager import MessageManager
 from .settings import register_chat_agent_configs
 from .data_source import hello, no_result, anti_zuichou
+
+require("nonebot_plugin_apscheduler")
+from nonebot_plugin_apscheduler import scheduler
 
 __plugin_hidden__ = True
 __plugin_meta__ = PluginMetadata(
@@ -41,6 +45,11 @@ usage：
 @pre_init_manager
 async def _():
     await register_chat_agent_configs()
+
+
+@scheduler.scheduled_job("cron", hour=4, minute=0)
+async def _():
+    await cleanup_image_cache()
 
 
 async def get_agent_chat(matcher: Matcher, event: GroupMessageEvent, bot: Bot):

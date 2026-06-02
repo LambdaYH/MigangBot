@@ -62,6 +62,12 @@ CHAT_AGENT_CONFIGS = (
         description="是否向模型发送图片 image_url；关闭后图片仅作为 [图片] 文本处理",
     ),
     ConfigItem(
+        key="image_cache_max_age_hours",
+        initial_value=360,
+        default_value=360,
+        description="chat_agent 图片缓存保留小时数，默认 15 天，超过该时间的缓存会被清理",
+    ),
+    ConfigItem(
         key="dialog_window_minutes",
         initial_value=10,
         default_value=10,

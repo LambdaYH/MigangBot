@@ -1,4 +1,5 @@
 import re
+import time
 import base64
 import hashlib
 import mimetypes
@@ -20,7 +21,9 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
 )
 
+from migang.core import get_config
 from migang.core.models import ChatGPTChatHistory
+from migang.core.exception import ConfigNoExistError
 
 DIRECT_OUTPUT_MARKERS = (
     "已成功调用该工具，工具结果已直接提供给用户，请勿再次调用",
@@ -28,6 +31,7 @@ DIRECT_OUTPUT_MARKERS = (
 )
 IMAGE_CACHE_DIR = Path("data/chat_agent/image_cache")
 IMAGE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+DEFAULT_IMAGE_CACHE_MAX_AGE_HOURS = 15 * 24
 
 
 @cache
@@ -84,6 +88,31 @@ async def _cache_image_bytes(
         async with await anyio.open_file(cache_path, "wb") as f:
             await f.write(data)
     return cache_path.resolve().as_uri()
+
+
+async def cleanup_image_cache() -> None:
+    now = time.time()
+    try:
+        try:
+            max_age_hours = await get_config(
+                "image_cache_max_age_hours",
+                plugin_name="chat_agent",
+            )
+        except ConfigNoExistError:
+            max_age_hours = DEFAULT_IMAGE_CACHE_MAX_AGE_HOURS
+        try:
+            max_age_seconds = max(0, float(max_age_hours)) * 60 * 60
+        except (TypeError, ValueError):
+            max_age_seconds = DEFAULT_IMAGE_CACHE_MAX_AGE_HOURS * 60 * 60
+
+        for path in IMAGE_CACHE_DIR.iterdir():
+            if not path.is_file():
+                continue
+            stat = path.stat()
+            if max_age_seconds and now - stat.st_mtime > max_age_seconds:
+                path.unlink(missing_ok=True)
+    except Exception as e:
+        logger.debug(f"清理 chat_agent 图片缓存失败: {e}")
 
 
 async def _resolve_image_file_uri(seg: MessageSegment, bot: Bot | None = None) -> str:
