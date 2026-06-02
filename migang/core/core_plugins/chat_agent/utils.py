@@ -423,6 +423,7 @@ async def message_to_model_content(
     bot: Bot,
     prefix_text: str = "",
     include_reply_context: bool = True,
+    multimodal_enabled: bool = True,
 ) -> str | List[Dict[str, Any]]:
     blocks: list[dict[str, Any]] = []
 
@@ -458,8 +459,12 @@ async def message_to_model_content(
                 )
                 append_text(f"@{user_name}" if user_name else "@用户")
         elif seg.type == "image":
-            image_block = await image_segment_to_model_block(seg, bot)
-            if image_block is not None:
+            image_block = (
+                await image_segment_to_model_block(seg, bot)
+                if multimodal_enabled
+                else None
+            )
+            if multimodal_enabled and image_block is not None:
                 blocks.append(image_block)
             else:
                 append_text("[图片]")

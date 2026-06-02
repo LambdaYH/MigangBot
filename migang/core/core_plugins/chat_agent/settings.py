@@ -56,6 +56,12 @@ CHAT_AGENT_CONFIGS = (
         description="是否启用 MiniMax reasoning_split，便于分离思考内容",
     ),
     ConfigItem(
+        key="multimodal_enabled",
+        initial_value=True,
+        default_value=True,
+        description="是否向模型发送图片 image_url；关闭后图片仅作为 [图片] 文本处理",
+    ),
+    ConfigItem(
         key="dialog_window_minutes",
         initial_value=10,
         default_value=10,
@@ -181,6 +187,7 @@ class ChatAgentSettings:
     memory_short_length: int
     memory_max_length: int
     reasoning_split: bool
+    multimodal_enabled: bool
     dialog_window_minutes: int
     intent_judge_enabled: bool
     intent_api_base: str
@@ -221,6 +228,9 @@ class ChatAgentSettings:
             ),
             reasoning_split=sync_get_agent_config(
                 "reasoning_split", default_value=True
+            ),
+            multimodal_enabled=sync_get_agent_config(
+                "multimodal_enabled", default_value=True
             ),
             dialog_window_minutes=sync_get_agent_config(
                 "dialog_window_minutes", default_value=10

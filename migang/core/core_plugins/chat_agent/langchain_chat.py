@@ -48,6 +48,7 @@ class LangChainChatBot:
         self.memory_max_length = self.settings.memory_max_length
         self.personality = self.settings.personality
         self.max_response_per_msg = self.settings.max_response_per_msg
+        self.multimodal_enabled = self.settings.multimodal_enabled
 
         self.current_key_index = 0
         self.llm = self._create_llm()
@@ -90,6 +91,33 @@ class LangChainChatBot:
 
         return tool_manager.get_tools()
 
+    @staticmethod
+    def _content_to_text_with_image_placeholders(content: Any) -> str:
+        if isinstance(content, str):
+            return content
+        if not isinstance(content, list):
+            return str(content or "")
+
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, str):
+                parts.append(block)
+                continue
+            if not isinstance(block, dict):
+                continue
+            if block.get("type") == "image_url":
+                parts.append("[图片]")
+            elif isinstance(block.get("text"), str):
+                parts.append(block["text"])
+        return "".join(parts)
+
+    def _messages_to_text_only(self, messages: List[Any]) -> List[Any]:
+        for message in messages:
+            content = getattr(message, "content", None)
+            if isinstance(content, list):
+                message.content = self._content_to_text_with_image_placeholders(content)
+        return messages
+
     def _infer_contextual_image_query(self, chat_history: List[Any]) -> str:
         for message in reversed(chat_history):
             if not isinstance(message, HumanMessage):
@@ -130,13 +158,19 @@ class LangChainChatBot:
             if chat.target_id:  # 机器人回复
                 if getattr(chat, "is_bot", False):
                     if is_langchain_message_payload(chat.message):
-                        messages.extend(deserialize_langchain_messages(chat.message))
+                        stored_messages = deserialize_langchain_messages(chat.message)
+                        if not self.multimodal_enabled:
+                            stored_messages = self._messages_to_text_only(
+                                stored_messages
+                            )
+                        messages.extend(stored_messages)
                     else:
                         message_content = await message_to_model_content(
                             deserialize_message(chat.message),
                             group_id=chat.group_id,
                             bot=bot,
                             prefix_text="",
+                            multimodal_enabled=self.multimodal_enabled,
                         )
                         messages.append(AIMessage(content=message_content))
                 else:
@@ -148,6 +182,7 @@ class LangChainChatBot:
                         group_id=chat.group_id,
                         bot=bot,
                         prefix_text=f"{user_name}: ",
+                        multimodal_enabled=self.multimodal_enabled,
                     )
                     messages.append(HumanMessage(content=message_content))
             else:
@@ -155,7 +190,10 @@ class LangChainChatBot:
                     bot=bot, group_id=chat.group_id, user_id=chat.user_id
                 )
                 message_content = await message_to_model_content(
-                    deserialize_message(chat.message), group_id=chat.group_id, bot=bot
+                    deserialize_message(chat.message),
+                    group_id=chat.group_id,
+                    bot=bot,
+                    multimodal_enabled=self.multimodal_enabled,
                 )
                 if isinstance(message_content, str):
                     message_content = f"{user_name}: {message_content}"
@@ -230,6 +268,7 @@ class LangChainChatBot:
                     group_id=event.group_id,
                     bot=bot,
                     prefix_text=f"{user_name}: ",
+                    multimodal_enabled=self.multimodal_enabled,
                 )
                 if contextual_image_query:
                     contextual_prefix = (
@@ -261,8 +300,10 @@ class LangChainChatBot:
 
                 from nonebot.adapters.onebot.v11 import Message
 
-                if direct_image_chat_mode:
+                if direct_image_chat_mode and self.multimodal_enabled:
                     logger.info("图片理解模式：保留工具，由模型自行决策")
+                elif has_image and not self.multimodal_enabled:
+                    logger.info("多模态配置已关闭，图片按 [图片] 文本处理")
 
                 agent = create_react_agent(self.llm, tools=self.tools, prompt=prompt)
                 input_message_count = len(messages)
