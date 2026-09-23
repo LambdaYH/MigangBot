@@ -7,10 +7,10 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 from migang.core.utils.langchain_tool import nb_langchain_tool
 from migang.core.core_plugins.help.data_source import get_plugin_help
 
+from ..utils import get_event_images
 from ..plugin_index import plugin_index
 from ..plugin_reranker import plugin_reranker
 from ..help_intent import normalize_help_query, is_help_overview_query
-from ..utils import get_event_images
 
 _LLM_BLOCKED_PLUGIN_NAMES = {"dismiss", "switch_bot"}
 _LLM_BLOCKED_COMMAND_PREFIXES = (".dismiss",)

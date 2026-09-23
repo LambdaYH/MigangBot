@@ -20,8 +20,8 @@ from nonebot.rule import (
 from migang.core.core_plugins.init.utils import get_plugin_list
 from migang.core.manager import user_manager, group_manager, plugin_manager
 
-from .help_intent import is_help_query
 from .utils import get_event_images
+from .help_intent import is_help_query
 from .image_intent import (
     is_explicit_image_tool_query,
     is_general_image_understanding_query,

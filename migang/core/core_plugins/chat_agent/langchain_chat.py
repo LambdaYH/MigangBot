@@ -20,8 +20,8 @@ from .image_intent import (
 from .utils import (
     get_bot_name,
     get_user_name,
-    get_event_images,
     uniform_message,
+    get_event_images,
     strip_think_tags,
     deserialize_message,
     message_content_to_text,

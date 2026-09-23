@@ -14,8 +14,8 @@ from .dialog_window import dialog_window_manager
 from .utils import (
     get_bot_name,
     gen_chat_text,
-    get_event_images,
     is_reply_to_bot,
+    get_event_images,
     serialize_message,
 )
 

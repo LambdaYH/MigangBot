@@ -5,9 +5,9 @@ import hashlib
 import mimetypes
 from pathlib import Path
 from functools import cache
+from urllib.request import url2pathname
 from typing import Any, Dict, List, Tuple
 from urllib.parse import unquote, urlparse
-from urllib.request import url2pathname
 
 import anyio
 import httpx
