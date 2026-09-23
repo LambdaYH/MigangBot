@@ -20,6 +20,7 @@ from .image_intent import (
 from .utils import (
     get_bot_name,
     get_user_name,
+    get_event_images,
     uniform_message,
     strip_think_tags,
     deserialize_message,
@@ -231,7 +232,7 @@ class LangChainChatBot:
                 uniformed_message = await uniform_message(
                     deserialize_message(trigger_text), group_id=event.group_id, bot=bot
                 )
-                has_image = any(item.get("type") == "image" for item in trigger_text)
+                has_image = bool(get_event_images(event))
                 contextual_image_query = ""
                 effective_user_query = uniformed_message
                 if has_image and uniformed_message.strip() == "[图片]":

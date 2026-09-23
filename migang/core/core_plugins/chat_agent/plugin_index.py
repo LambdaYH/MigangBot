@@ -21,6 +21,7 @@ from migang.core.core_plugins.init.utils import get_plugin_list
 from migang.core.manager import user_manager, group_manager, plugin_manager
 
 from .help_intent import is_help_query
+from .utils import get_event_images
 from .image_intent import (
     is_explicit_image_tool_query,
     is_general_image_understanding_query,
@@ -310,11 +311,11 @@ class PluginIndex:
             return f"没有找到与“{query}”相关的插件。"
 
         lines = [f"与“{query}”最相关的插件："]
-        has_image = bool(event and any(seg.type == "image" for seg in event.message))
+        has_image = bool(get_event_images(event))
         if has_image and is_explicit_image_tool_query(query):
             lines.append(
-                "当前用户消息已经附带图片。若插件匹配，请直接调用 invoke_project_plugin；"
-                "调用时会自动把当前图片一并带给插件，无需让用户重新发送图片。"
+                "当前或引用消息已经附带图片。若插件匹配，请直接调用 invoke_project_plugin；"
+                "调用时会自动把图片一并带给插件，无需让用户重新发送图片。"
             )
         for index, match in enumerate(matches, start=1):
             entry = match.entry
@@ -365,10 +366,10 @@ class PluginIndex:
                 lines.append(f"- {command.example} [{command.rule_type}]{suffix}")
         if entry.usage:
             lines.append(f"用法说明: {entry.usage}")
-        if event and any(seg.type == "image" for seg in event.message):
+        if get_event_images(event):
             lines.append(
-                "提示: 当前用户消息已附带图片。若该插件需要图片输入，"
-                "调用 invoke_project_plugin 时会自动携带当前图片，无需要求用户重发。"
+                "提示: 当前或引用消息已附带图片。若该插件需要图片输入，"
+                "调用 invoke_project_plugin 时会自动携带图片，无需要求用户重发。"
             )
         return "\n".join(lines)
 

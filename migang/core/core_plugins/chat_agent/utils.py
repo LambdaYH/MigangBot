@@ -7,6 +7,7 @@ from pathlib import Path
 from functools import cache
 from typing import Any, Dict, List, Tuple
 from urllib.parse import unquote, urlparse
+from urllib.request import url2pathname
 
 import anyio
 import httpx
@@ -64,7 +65,8 @@ async def get_user_name(bot: Bot, group_id: int, user_id: int) -> str:
 
 
 async def _read_local_bytes(path: str) -> bytes:
-    async with await anyio.open_file(unquote(urlparse(path).path), "rb") as f:
+    local_path = url2pathname(unquote(urlparse(path).path))
+    async with await anyio.open_file(local_path, "rb") as f:
         return await f.read()
 
 
@@ -171,6 +173,20 @@ def _extract_sender_value(sender: Any, key: str) -> Any:
     if isinstance(sender, dict):
         return sender.get(key)
     return getattr(sender, key, None)
+
+
+def get_event_images(event: Any) -> Message:
+    images = Message()
+    if event is None:
+        return images
+    reply = getattr(event, "reply", None)
+    for message in (getattr(event, "message", None), getattr(reply, "message", None)):
+        if not message:
+            continue
+        for seg in message:
+            if seg.type == "image":
+                images.append(seg)
+    return images
 
 
 async def _build_reply_context(
@@ -474,6 +490,16 @@ async def message_to_model_content(
                 append_text(
                     await _reply_segment_to_text(seg, group_id=group_id, bot=bot)
                 )
+                quoted_message = seg.data.get("message")
+                if multimodal_enabled and isinstance(quoted_message, list):
+                    for quoted_seg in deserialize_message(quoted_message):
+                        if quoted_seg.type != "image":
+                            continue
+                        image_block = await image_segment_to_model_block(
+                            quoted_seg, bot
+                        )
+                        if image_block is not None:
+                            blocks.append(image_block)
         elif seg.type == "at":
             qq = seg.data.get("qq", None)
             if not qq:

@@ -10,6 +10,7 @@ from migang.core.core_plugins.help.data_source import get_plugin_help
 from ..plugin_index import plugin_index
 from ..plugin_reranker import plugin_reranker
 from ..help_intent import normalize_help_query, is_help_overview_query
+from ..utils import get_event_images
 
 _LLM_BLOCKED_PLUGIN_NAMES = {"dismiss", "switch_bot"}
 _LLM_BLOCKED_COMMAND_PREFIXES = (".dismiss",)
@@ -35,22 +36,12 @@ def _blocked_command_reason(content: str) -> str | None:
 
 
 def _collect_current_images(event) -> Message:
-    if not event or not getattr(event, "message", None):
-        return Message()
-    image_message = Message()
-    for seg in event.message:
-        if seg.type == "image":
-            image_message.append(seg)
-    return image_message
+    return get_event_images(event)
 
 
 def _collect_current_image_urls(event) -> set[str]:
-    if not event or not getattr(event, "message", None):
-        return set()
     urls: set[str] = set()
-    for seg in event.message:
-        if seg.type != "image":
-            continue
+    for seg in _collect_current_images(event):
         for key in ("url", "file"):
             value = str(seg.data.get(key) or "").strip()
             if value and "://" in value:
@@ -95,7 +86,7 @@ async def _dispatch_plugin_command(
     image_count = sum(1 for seg in image_message if seg.type == "image")
     logger.info(
         f"触发插件: {content}"
-        + (f" | 携带当前消息图片={image_count}" if attach_current_images else "")
+        + (f" | 携带当前或引用消息图片={image_count}" if attach_current_images else "")
     )
     if isinstance(event, GroupMessageEvent):
         at_msg = MessageSegment.at(event.self_id) + Message(content)
@@ -123,7 +114,7 @@ async def trigger_plugin(content: str, attach_current_images: bool = False):
 
     Args:
         content (str): 触发插件的完整指令
-        attach_current_images (bool): 是否附带当前用户消息中的图片，用于需要图片输入的插件
+        attach_current_images (bool): 是否附带当前用户消息及其引用消息中的图片，用于需要图片输入的插件
     """
     return await _dispatch_plugin_command(
         content, attach_current_images=attach_current_images
@@ -270,9 +261,7 @@ async def invoke_project_plugin(plugin_name: str, command: str = "") -> str:
             )
         command = default_command
 
-    attach_current_images = any(
-        seg.type == "image" for seg in getattr(event, "message", [])
-    )
+    attach_current_images = bool(_collect_current_images(event))
     if attach_current_images:
         removable_urls = _collect_current_image_urls(event)
         command = _sanitize_command_for_attached_images(

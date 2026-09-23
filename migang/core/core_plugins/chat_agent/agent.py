@@ -11,7 +11,13 @@ from migang.core.models import ChatGPTChatHistory
 from .config import sync_get_agent_config
 from .intent_judge import chat_intent_judge
 from .dialog_window import dialog_window_manager
-from .utils import get_bot_name, gen_chat_text, is_reply_to_bot, serialize_message
+from .utils import (
+    get_bot_name,
+    gen_chat_text,
+    get_event_images,
+    is_reply_to_bot,
+    serialize_message,
+)
 
 ignore_prefix: Tuple[str] = tuple(
     sync_get_agent_config("ignore_prefix", default_value=[]) or []
@@ -23,7 +29,7 @@ dialog_window_minutes: int = int(
 
 async def pre_check(event: GroupMessageEvent, bot: Bot, state: T_State) -> bool:
     plain_text = event.get_plaintext()
-    has_image = any(seg.type == "image" for seg in event.message)
+    has_image = bool(get_event_images(event))
     window_was_active = dialog_window_manager.is_active(event)
     window_state = dialog_window_manager.get_state(event) if window_was_active else None
     if not plain_text and not has_image:
