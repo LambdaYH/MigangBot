@@ -12,11 +12,6 @@ require("nonebot_plugin_cesaa")
 import nonebot_plugin_saa as saa
 from nonebot_plugin_datastore.db import post_db_init
 from nonebot_plugin_wordcloud.config import plugin_config
-from nonebot_plugin_wordcloud import (
-    ensure_group,
-    admin_permission,
-    get_time_fromisoformat_with_timezone,
-)
 from nonebot_plugin_alconna import (
     Args,
     Match,
@@ -25,6 +20,11 @@ from nonebot_plugin_alconna import (
     Alconna,
     AlconnaQuery,
     on_alconna,
+)
+from nonebot_plugin_wordcloud import (
+    ensure_group,
+    admin_permission,
+    get_time_fromisoformat_with_timezone,
 )
 
 from .schedule import schedule_service

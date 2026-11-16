@@ -5,8 +5,8 @@ from typing import Set, Dict, List, Tuple, Union, Optional
 import anyio
 from pydantic import BaseModel
 
-from migang.core.manager.data_class import PluginType
 from migang.core.permission import NORMAL, Permission
+from migang.core.manager.data_class import PluginType
 
 CUSTOM_USAGE_FILE = Path() / "data" / "core" / "custom_usage.yaml"
 """若在此路径下存在插件名.txt，则插件用法以该文件为主

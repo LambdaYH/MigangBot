@@ -12,8 +12,8 @@ from .plugin_manager import PluginManager
 from .request_manager import RequestManager
 from .group_bot_manager import GroupBotManager
 from .task_manager import TaskItem, TaskManager
-from .permission_manager import PermissionManager
 from .count_manager import CountItem, CountManager
+from .permission_manager import PermissionManager
 from .config_manager import ConfigItem, ConfigManager
 from .data_class import CheckType, LimitType, PluginType, CountPeriod
 

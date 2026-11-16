@@ -1,6 +1,6 @@
 from nonebot.typing import T_State
-from nonebot.plugin import PluginMetadata
 from nonebot import require, on_startswith
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import MessageEvent
 
 __plugin_hidden__ = True

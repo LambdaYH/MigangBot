@@ -4,8 +4,8 @@ https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/sig
 import time
 import urllib.parse
 from hashlib import md5
-from functools import reduce
 from typing import Any, Dict
+from functools import reduce
 
 import aiohttp
 

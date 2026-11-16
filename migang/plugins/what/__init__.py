@@ -2,8 +2,8 @@
 """
 import re
 
-from nonebot.plugin import PluginMetadata
 from nonebot import on_command, on_keyword
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg, EventPlainText
 

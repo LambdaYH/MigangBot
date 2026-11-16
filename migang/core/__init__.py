@@ -10,12 +10,6 @@ from .path import (  # noqa
     RESOURCE_PATH,
     TEMPLATE_PATH,
 )
-from .utils.config_operation import (  # noqa
-    get_config,
-    sync_get_config,
-    pre_init_manager,
-    post_init_manager,
-)
 from .manager import (  # noqa
     CDItem,
     TaskItem,
@@ -24,4 +18,10 @@ from .manager import (  # noqa
     LimitType,
     ConfigItem,
     CountPeriod,
+)
+from .utils.config_operation import (  # noqa
+    get_config,
+    sync_get_config,
+    pre_init_manager,
+    post_init_manager,
 )

@@ -4,8 +4,8 @@ from typing import Dict, Tuple, Optional
 from nonebot.log import logger
 import nonebot_plugin_saa as saa
 from apscheduler.job import Job
-from nonebot_plugin_apscheduler import scheduler
 from sqlalchemy import JSON, Select, cast, select
+from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_datastore.db import get_engine
 from nonebot_plugin_datastore import create_session
 from nonebot_plugin_cesaa import get_messages_plain_text

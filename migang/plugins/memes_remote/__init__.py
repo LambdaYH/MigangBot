@@ -1,8 +1,8 @@
 import asyncio
 
 from nonebot.drivers import Driver
-from nonebot.plugin import PluginMetadata
 from nonebot import get_driver, on_message
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import MessageEvent
 
 from migang.core import ConfigItem, get_config, post_init_manager

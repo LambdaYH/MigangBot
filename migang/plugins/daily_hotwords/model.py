@@ -1,10 +1,10 @@
-from typing import Optional
 from datetime import time  # noqa
+from typing import Optional
 
 from sqlalchemy import JSON
 from nonebot_plugin_saa import PlatformTarget
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import JSONB
 from nonebot_plugin_datastore import get_plugin_data
 
 Model = get_plugin_data().Model

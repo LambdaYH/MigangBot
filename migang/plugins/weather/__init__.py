@@ -3,8 +3,8 @@ from typing import Any, Tuple
 
 from nonebot.matcher import Matcher
 from nonebot.params import RegexGroup
-from nonebot.plugin import PluginMetadata
 from nonebot import on_regex, on_fullmatch
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import MessageSegment
 
 from migang.core import ConfigItem, get_config
