@@ -170,6 +170,10 @@ class WebSocketConn:
             data = ujson.loads(raw_data)
             echo = data.get("echo", "")
             action = data["action"]
+            if action.endswith("_async") and len(action) > len("_async"):
+                # SnowLuma exposes the canonical OneBot action names but does not
+                # recognize the OneBot `_async` action-name suffix.
+                action = action[: -len("_async")]
             _proccess_api(action=action, data=data)
             params = data["params"]
             bot = get_bot(self.__bot_id_str)
